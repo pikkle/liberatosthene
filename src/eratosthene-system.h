@@ -19,18 +19,18 @@
  *
  */
 
-    /*! \file   eratosthene-element.h
+    /*! \file   eratosthene-system.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  Element module
+     *  System module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_SYSTEM_ELEMENT__
-    # define __LE_SYSTEM_ELEMENT__
+    # ifndef __LE_SYSTEM_INJECT__
+    # define __LE_SYSTEM_INJECT__
 
 /*
     header - C/C++ compatibility
@@ -50,6 +50,9 @@
     header - preprocessor definitions
  */
 
+    /* Define pseudo-constructor */
+    # define LE_SYSTEM__ { 0, 0, NULL, 0xFFFFFFFFFFFFFFFF }
+
 /*
     header - preprocessor macros
  */
@@ -62,22 +65,21 @@
     header - structures
  */
 
-    typedef struct le_element_struct {
+    typedef struct le_system_struct {
 
-        le_real_t em_pose[3];
-        le_byte_t em_data[3];
-        le_time_t em_time;
+        le_time_t sm_terl;
+        le_size_t sm_depth;
+        FILE **   sm_scale;
+        le_time_t sm_time;
 
-    } le_element_t;
+    } le_system_t;
 
 /*
     header - function prototypes
  */
 
-    le_enum_t le_element_scan( le_element_t * const le_element, FILE * const le_stream );
-    le_enum_t le_element_read( le_element_t * const le_element, FILE * const le_stream );
-    le_enum_t le_element_print( le_element_t const * const le_element, FILE * const le_stream );
-    le_enum_t le_element_write( le_element_t const * const le_element, FILE * const le_stream );
+    le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time, le_char_t const * const le_root );
+    le_void_t le_system_close( le_system_t * const le_system );
 
 /*
     header - C/C++ compatibility

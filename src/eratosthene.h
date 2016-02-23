@@ -11,7 +11,7 @@
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
@@ -61,6 +61,9 @@
 
     # include <stdio.h>
     # include <stdint.h>
+    # include <stdlib.h>
+    # include <string.h>
+    # include <sys/stat.h>
 
 /*
     header - preprocessor definitions
@@ -122,6 +125,8 @@
     # define LE_ERROR_IO_READ   1
     # define LE_ERROR_IO_WRITE  2
     # define LE_ERROR_IO_STREAM 3
+    # define LE_ERROR_IO_ACCESS 4
+    # define LE_ERROR_MEMORY    5
 
     /* Define mathematical constants */
     # define LE_PI 3.1415926535897932384626433832795029lf
