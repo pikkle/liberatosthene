@@ -54,9 +54,6 @@
     header - preprocessor macros
  */
 
-    # define LE_CLASS_DIGIT( n ) ( n  & 0x0F )
-    # define LE_CLASS_DAUGH( n ) ( n >> 0x04 )
-
 /*
     header - type definition
  */

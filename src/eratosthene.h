@@ -82,6 +82,8 @@
     # define _LE_VOID void
     # define _LE_BYTE uint8_t
     # define _LE_ENUM int
+    # define _LE_CHAR unsigned char
+    # define _LE_TIME int64_t
 
     /* Define class offset flags */
     # define _LE_OFFSET_32 32
@@ -121,6 +123,9 @@
     # define LE_ERROR_IO_WRITE  2
     # define LE_ERROR_IO_STREAM 3
 
+    /* Define mathematical constants */
+    # define LE_PI 3.1415926535897932384626433832795029lf
+
 /*
     header - preprocessor macros
  */
@@ -138,6 +143,9 @@
     /* General enumeration type */
     typedef _LE_ENUM le_enum_t;
 
+    /* General char type */
+    typedef _LE_CHAR le_char_t;
+
     /* General offset type */
     typedef _LE_SIZE le_size_t;
 
@@ -146,6 +154,9 @@
 
     /* General accumulation type */
     typedef _LE_MEAN le_mean_t;
+
+    /* Genral time type */
+    typedef _LE_TIME le_time_t;
 
 /*
     header - structures
