@@ -22,7 +22,7 @@
     /*! \file   eratosthene-class.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  Equivalence classe module
+     *  Classes module
      */
 
 /*
@@ -41,8 +41,10 @@
     # endif
 
 /*
-    header - Includes
+    header - includes
  */
+
+    # include "eratosthene.h"
 
 /*
     header - preprocessor definitions
@@ -52,6 +54,9 @@
     header - preprocessor macros
  */
 
+    # define LE_CLASS_DIGIT( n ) ( n  & 0x0F )
+    # define LE_CLASS_DAUGH( n ) ( n >> 0x04 )
+
 /*
     header - type definition
  */
@@ -60,9 +65,29 @@
     header - structures
  */
 
+    typedef struct le_class_struct {
+
+        le_byte_t cs_node;
+        le_size_t cs_addr[8];
+        le_real_t cs_data[3];
+        le_mean_t cs_mean;
+
+    } le_class_t;
+
 /*
     header - function prototypes
  */
+
+    le_byte_t le_class_get_digit( le_class_t const * const le_class );
+    le_byte_t le_class_get_dcc( le_class_t const * const le_class );
+    le_mean_t le_class_get_mean( le_class_t const * const le_class );
+    le_void_t le_class_set_clear( le_class_t * const le_class, le_byte_t const le_digit );
+    le_void_t le_class_set_digit( le_class_t * const le_class, le_byte_t const le_digit );
+    le_void_t le_class_set_dcc( le_class_t * const le_class, le_byte_t const le_dcc );
+    le_void_t le_class_set_node( le_class_t * const le_class, le_byte_t const le_digit, le_byte_t const le_dcc );
+    le_void_t le_class_set_inject( le_class_t * const le_class, le_real_t const le_red, le_real_t const le_green, le_real_t const le_blue );
+    le_enum_t le_class_io_read( le_class_t * const le_class, FILE * const le_stream );
+    le_enum_t le_class_io_write( le_class_t const * const le_class, FILE * const le_stream );
 
 /*
     header - C/C++ compatibility

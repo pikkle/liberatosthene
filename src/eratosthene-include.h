@@ -22,7 +22,7 @@
     /*! \file   eratosthene-include.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  Library includer
+     *  General inclusion header
      */
 
 /*
@@ -41,8 +41,10 @@
     # endif
 
 /*
-    header - Includes
+    header - includes
  */
+
+    # include "eratosthene.h"
 
 /*
     header - preprocessor definitions
