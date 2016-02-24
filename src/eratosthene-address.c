@@ -66,7 +66,7 @@
             le_pose[1] = ( le_pose[1] * 2.0 ) - le_buffer;
 
             /* Asynchronous dimension management */
-            if ( le_parse < 12 ) continue;
+            if ( le_parse < 10 ) continue;
 
             /* Normalised altitude processing */
             if ( le_pose[2] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
