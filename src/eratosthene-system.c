@@ -22,10 +22,20 @@
     # include "eratosthene-system.h"
 
 /*
+    source - injection methods
+ */
+
+    le_enum_t le_system_inject( le_system_t * const le_system, le_real_t const * const le_pose, le_byte_t const * const le_data, le_time_t const le_time ) {
+
+        return( 0 );
+
+    }
+
+/*
     source - i/o methods
  */
 
-    le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time, le_char_t const * const le_root ) {
+    le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time ) {
 
         /* Path variables */
         le_char_t le_path[256] = { 0 };
@@ -77,7 +87,7 @@
                 }
 
                 /* Create t-class scale path */
-                sprintf( ( char * ) le_path, "%s/%" _LE_P_TIME "/scale-%03" _LE_P_SIZE ".bin", le_root, le_system->sm_time, le_parse );
+                sprintf( ( char * ) le_path, "%s/%" _LE_P_TIME "/scale-%03" _LE_P_SIZE ".bin", le_system->sm_root, le_system->sm_time, le_parse );
 
                 /* Create scale stream - r+ read/write */
                 if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {

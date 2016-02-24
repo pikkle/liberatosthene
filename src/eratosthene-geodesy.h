@@ -51,8 +51,16 @@
  */
 
     /* Define WGS84 ellipsoid parameters */
-    # define LE_GEODESY_WGS84_A 6378137.0lf
-    # define LE_GEODESY_WGS84_F 298.257223563lf
+    # define LE_GEODESY_WGS84_A ( 6378137.0L )
+    # define LE_GEODESY_WGS84_F ( 298.257223563L )
+
+    /* Define ellispoidal coordinates boundaries */
+    # define LE_GEODESY_LMIN ( - LE_PI )
+    # define LE_GEODESY_LMAX ( + LE_PI )
+    # define LE_GEODESY_AMIN ( - LE_P2 )
+    # define LE_GEODESY_AMAX ( + LE_P2 )
+    # define LE_GEODESY_HMIN ( - 24459.84905126L / 2.0L )
+    # define LE_GEODESY_HMAX ( + 24459.84905126L / 2.0L )
 
 /*
     header - preprocessor macros

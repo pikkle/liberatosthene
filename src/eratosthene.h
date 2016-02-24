@@ -148,7 +148,9 @@
     # define LE_ERROR_MEMORY    5
 
     /* Define mathematical constants */
-    # define LE_PI 3.1415926535897932384626433832795029lf
+    # define LE_PI ( 3.1415926535897932384626433832795029L )
+    # define LE_P2 ( LE_PI / 2.0L )
+    # define LE_2P ( LE_PI * 2.0L )
 
 /*
     header - preprocessor macros

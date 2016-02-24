@@ -19,18 +19,18 @@
  *
  */
 
-    /*! \file   eratosthene-include.h
+    /*! \file   eratosthene-address.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  General inclusion header
+     *  Address module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_INCLUDE__
-    # define __LE_INCLUDE__
+    # ifndef __LE_SYSTEM_ADDRESS__
+    # define __LE_SYSTEM_ADDRESS__
 
 /*
     header - C/C++ compatibility
@@ -45,10 +45,7 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-address.h"
-    # include "eratosthene-element.h"
     # include "eratosthene-geodesy.h"
-    # include "eratosthene-system.h"
 
 /*
     header - preprocessor definitions
