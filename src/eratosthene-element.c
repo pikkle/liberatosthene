@@ -38,7 +38,7 @@
         # endif
 
         /* Scan element components */
-        if ( fscanf( le_stream, "%f %f %f %hhu %hhu %hhu %li",
+        if ( fscanf( le_stream, "%" _LE_S_REAL " %" _LE_S_REAL " %" _LE_S_REAL " %" _LE_S_BYTE " %" _LE_S_BYTE " %" _LE_S_BYTE " %" _LE_S_TIME,
 
             & le_element->em_pose[0],
             & le_element->em_pose[1],
@@ -118,7 +118,7 @@
         # endif
 
         /* Scan element components */
-        if ( fprintf( le_stream, "%.14e %.14e %.14e %hhu %hhu %hhu %li",
+        if ( fprintf( le_stream, "%" _LE_P_REAL " %" _LE_P_REAL " %" _LE_P_REAL " %" PRIu8 " %" PRIu8 " %" PRIu8 " %" _LE_P_TIME,
 
             le_element->em_pose[0],
             le_element->em_pose[1],

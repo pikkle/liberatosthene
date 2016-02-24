@@ -77,7 +77,7 @@
                 }
 
                 /* Create t-class scale path */
-                sprintf( ( char * ) le_path, "%s/%li/scale-%03i.bin", le_root, le_system->sm_time, le_parse );
+                sprintf( ( char * ) le_path, "%s/%" _LE_P_TIME "/scale-%03" _LE_P_SIZE ".bin", le_root, le_system->sm_time, le_parse );
 
                 /* Create scale stream - r+ read/write */
                 if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {

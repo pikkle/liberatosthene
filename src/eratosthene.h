@@ -61,6 +61,7 @@
 
     # include <stdio.h>
     # include <stdint.h>
+    # include <inttypes.h>
     # include <stdlib.h>
     # include <string.h>
     # include <sys/stat.h>
@@ -76,7 +77,7 @@
     /* Define features */
     # define _LE_USE_STDIO_EXT _LE_TRUE
 
-    /* Define feature implementation */
+    /* Define features implementation */
     # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
     # include <stdio_ext.h>
     # endif
@@ -88,36 +89,54 @@
     # define _LE_CHAR unsigned char
     # define _LE_TIME int64_t
 
-    /* Define class offset flags */
-    # define _LE_OFFSET_32 32
-    # define _LE_OFFSET_64 64
-    /* Define class offset */
-    # define _LE_OFFSET _LE_OFFSET_32
-
     /* Define class offset implementation */
-    # if   ( _LE_OFFSET == _LE_OFFSET_32 )
+    # define _LE_OFFSET 32
+    # if   ( _LE_OFFSET == 32 )
     # define _LE_SIZE uint32_t
-    # elif ( _LE_OFFSET == _LE_OFFSET_64 )
+    # elif ( _LE_OFFSET == 64 )
     # define _LE_SIZE uint64_t
     # else
     # error "Undefined class offset"
     # endif
 
-    /* Define class precision flags */
-    # define _LE_PRECISION_32 32
-    # define _LE_PRECISION_64 64
-    /* Define class precision */
-    # define _LE_PRECISION _LE_PRECISION_32
-
     /* Define class precision implementation */
-    # if   ( _LE_PRECISION == _LE_PRECISION_32 )
+    # define _LE_PRECISION 32
+    # if   ( _LE_PRECISION == 32 )
     # define _LE_REAL float
     # define _LE_MEAN uint32_t
-    # elif ( _LE_PRECISION == _LE_PRECISION_64 )
+    # elif ( _LE_PRECISION == 64 )
     # define _LE_REAL double
     # define _LE_MEAN uint64_t
     # else
     # error "Undefined class precision"
+    # endif
+
+    /* Define i/o specifiers */
+    # define _LE_P_BYTE PRIu8
+    # define _LE_S_BYTE SCNu8
+    # define _LE_P_ENUM "i"
+    # define _LE_S_ENUM "i"
+    # define _LE_P_CHAR "u"
+    # define _LE_S_CHAR "hhu"
+    # define _LE_P_TIME PRIi64
+    # define _LE_S_TIME SCNi64
+    # if   ( _LE_OFFSET == 32 )
+    # define _LE_P_SIZE PRIu32
+    # define _LE_S_SIZE SCNu32
+    # elif ( _LE_OFFSET == 64 )
+    # define _LE_P_SIZE PRIu64
+    # define _LE_S_SIZE SCNu64
+    # endif
+    # if   ( _LE_PRECISION == 32 )
+    # define _LE_P_REAL ".7e"
+    # define _LE_S_REAL "f"
+    # define _LE_P_MEAN PRIu32
+    # define _LE_S_MEAN SCNu32
+    # elif ( _LE_PRECISION == 64 )
+    # define _LE_P_REAL ".14e"
+    # define _LE_S_REAL "lf"
+    # define _LE_P_MEAN PRIu64
+    # define _LE_S_MEAN SCNu64
     # endif
 
     /* Define library errors */
