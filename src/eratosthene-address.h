@@ -67,6 +67,8 @@
     header - function prototypes
  */
 
+    le_void_t le_address_address( le_real_t * const le_pose, le_byte_t * const le_address, le_size_t const le_depth );
+
 /*
     header - C/C++ compatibility
  */

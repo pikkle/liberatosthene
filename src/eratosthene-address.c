@@ -34,15 +34,15 @@
         le_size_t le_parse = 0;
 
         /* Coordinates normalisation on [0,1[ range */
-        le_pose[0] = ( le_pose[0] + LE_GEODESY_LMIN ) / ( LE_GEODESY_LMAX - LE_GEODESY_LMIN );
-        le_pose[1] = ( le_pose[1] + LE_GEODESY_AMIN ) / ( LE_GEODESY_AMAX - LE_GEODESY_AMIN );
-        le_pose[2] = ( le_pose[2] + LE_GEODESY_HMIN ) / ( LE_GEODESY_HMAX - LE_GEODESY_HMIN );
+        le_pose[0] = ( le_pose[0] - LE_GEODESY_LMIN ) / ( LE_GEODESY_LMAX - LE_GEODESY_LMIN );
+        le_pose[1] = ( le_pose[1] - LE_GEODESY_AMIN ) / ( LE_GEODESY_AMAX - LE_GEODESY_AMIN );
+        le_pose[2] = ( le_pose[2] - LE_GEODESY_HMIN ) / ( LE_GEODESY_HMAX - LE_GEODESY_HMIN );
 
         /* Assign implicit address first digit */
         le_address[0] = 0;
 
         /* Composing address */
-        for ( le_parse = 1 ; le_parse < le_depth; le_parse ++ ) {
+        for ( le_parse = 1 ; le_parse <= le_depth; le_parse ++ ) {
 
             /* Normalised longitude processing */
             if ( le_pose[0] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
@@ -73,6 +73,9 @@
 
             /* Assign address digit */
             le_address[le_parse] |= le_buffer << 0x02;
+
+            /* Update normalised coordinate */
+            le_pose[1] = ( le_pose[1] * 2.0 ) - le_buffer;
 
         }
 
