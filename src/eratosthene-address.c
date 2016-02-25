@@ -72,7 +72,7 @@
             le_address[le_parse] |= le_buffer << 0x02;
 
             /* Update normalised coordinate */
-            le_pose[1] = ( le_pose[1] * 2.0 ) - le_buffer;
+            le_pose[2] = ( le_pose[2] * 2.0 ) - le_buffer;
 
         }
 
