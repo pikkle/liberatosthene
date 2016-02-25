@@ -22,6 +22,42 @@
     # include "eratosthene-system.h"
 
 /*
+    source - handle methods
+ */
+
+    le_enum_t le_system_create( le_system_t * const le_system, le_size_t const le_sdisc, le_time_t const le_tdisc, le_char_t const * const le_root ) {
+
+        /* Check consistency */
+        if ( le_sdisc >= LE_DEPTH_MAX ) {
+
+            /* Send message */
+            return( LE_ERROR_SYS_DEPTH );
+
+        }
+
+        /* Assign system discretisation */
+        le_system->sm_sdisc = le_sdisc;
+        le_system->sm_tdisc = le_tdisc;
+
+        /* Assign initial scale stream stack */
+        le_system->sm_scale = NULL;
+
+        /* Assign system root path */
+        strcpy( ( char * ) le_system->sm_root, ( char * ) le_root );
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
+    le_void_t le_system_delete( le_system_t * const le_system ) {
+
+        /* Delete scale stream stack */
+        le_system_close( le_system );
+
+    }
+
+/*
     source - mutator methods
  */
 
@@ -53,7 +89,7 @@
         le_size_t le_offnex = 0;
 
         /* Class tracker variables */
-        le_class_t le_class = LE_C_CLASS;
+        le_class_t le_class = LE_CLASS_C;
 
         /* Returned value variables */
         le_enum_t le_return = LE_ERROR_SUCCESS;

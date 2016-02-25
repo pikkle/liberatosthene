@@ -54,7 +54,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_C_SYSTEM { { 0 }, 0, 0, NULL }
+    # define LE_SYSTEM_C { { 0 }, 0, 0, NULL }
 
 /*
     header - preprocessor macros
@@ -81,6 +81,8 @@
     header - function prototypes
  */
 
+    le_enum_t le_system_create( le_system_t * const le_system, le_size_t const le_sdisc, le_time_t const le_tdisc, le_char_t const * const le_root );
+    le_void_t le_system_delete( le_system_t * const le_system );
     le_void_t le_system_init( le_system_t * const le_system, le_size_t const le_sdisc, le_time_t const le_tdisc, le_char_t const * const le_root );
     le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time );
     le_void_t le_system_close( le_system_t * const le_system );
