@@ -45,6 +45,8 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-address.h"
+    # include "eratosthene-class.h"
     # include "eratosthene-element.h"
 
 /*
@@ -52,7 +54,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_C_SYSTEM { { 0 }, 0, 0, NULL, 0xFFFFFFFFFFFFFFFF }
+    # define LE_C_SYSTEM { { 0 }, 0, 0, NULL }
 
 /*
     header - preprocessor macros
@@ -69,10 +71,9 @@
     typedef struct le_system_struct {
 
         char      sm_root[256];
-        le_time_t sm_terl;
-        le_size_t sm_depth;
+        le_time_t sm_tdisc;
+        le_size_t sm_sdisc;
         FILE **   sm_scale;
-        le_time_t sm_time;
 
     } le_system_t;
 
@@ -80,6 +81,7 @@
     header - function prototypes
  */
 
+    le_void_t le_system_init( le_system_t * const le_system, le_size_t const le_sdisc, le_time_t const le_tdisc, le_char_t const * const le_root );
     le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time );
     le_void_t le_system_close( le_system_t * const le_system );
 

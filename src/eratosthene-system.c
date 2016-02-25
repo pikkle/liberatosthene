@@ -22,12 +22,93 @@
     # include "eratosthene-system.h"
 
 /*
+    source - mutator methods
+ */
+
+    le_void_t le_system_init( le_system_t * const le_system, le_size_t const le_sdisc, le_time_t const le_tdisc, le_char_t const * const le_root ) {
+
+        /* Assign space-time discretisation */
+        le_system->sm_sdisc = le_sdisc > LE_DEPTH_MAX ? LE_DEPTH_MAX : le_sdisc;
+        le_system->sm_tdisc = le_tdisc;
+
+        /* Assign system root path */
+        strcpy( ( char * ) le_system->sm_root, ( char * ) le_root );
+
+    }
+
+/*
     source - injection methods
  */
 
-    le_enum_t le_system_inject( le_system_t * const le_system, le_real_t const * const le_pose, le_byte_t const * const le_data, le_time_t const le_time ) {
+    le_enum_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_real_t const * const le_data, le_time_t const le_time ) {
 
-        return( 0 );
+        /* Address variables */
+        le_byte_t le_addr[LE_DEPTH_MAX+1] = { 0 };
+
+        /* Injection depth variables */
+        le_size_t le_depth = 0;
+
+        /* Offset tracker variables */
+        le_size_t le_offset = 0;
+        le_size_t le_offnex = 0;
+
+        /* Class tracker variables */
+        le_class_t le_class = LE_C_CLASS;
+
+        /* Returned value variables */
+        le_enum_t le_return = LE_ERROR_SUCCESS;
+
+        /* System scale stream management */
+        if ( ( le_return = le_system_open( le_system, le_time ) ) != LE_ERROR_SUCCESS ) {
+
+            /* Send message */
+            return( le_return );
+
+        }
+
+        /* Compute address */
+        le_address_address( le_pose, le_addr, le_system->sm_sdisc );
+
+        /* Injection process */
+        while ( le_depth <= le_system->sm_sdisc ) {
+
+            /* Class importation */
+            if ( le_class_io_read( & le_class, le_offset, le_system->sm_scale[le_depth] ) == LE_ERROR_SUCCESS ) {
+
+                /* Inject element in class */
+                le_class_set_inject( & le_class, le_data );
+
+            } else {
+
+                /* Initialise class with element */
+                le_class_set_init( & le_class, le_data );
+
+            }
+
+            /* Retrieve daughter offset */
+            le_offnex = le_class_get_offset( & le_class, le_addr[le_depth] );
+
+            /* Check daughter state */
+            if ( ( le_offnex == LE_CLASS_NULL ) && ( le_depth < le_system->sm_sdisc ) ) {
+
+                /* Seek next scale eof */
+                fseek( le_system->sm_scale[le_depth+1], 0, SEEK_END );
+
+                /* Assign eof offset */
+                le_offnex = ftell( le_system->sm_scale[le_depth+1] );
+
+            }
+
+            /* Class exportation */
+            le_class_io_write( & le_class, le_offset, le_system->sm_scale[le_depth] );
+
+            /* Udpate offset tracker */
+            le_offset = le_offnex;
+
+        }
+
+        /* Send message */
+        return( le_return );
 
     }
 
@@ -43,8 +124,11 @@
         /* Parsing variables */
         le_size_t le_parse = 0;
 
+        /* Persistent time variables */
+        static le_time_t le_tflag = 0;
+
         /* Check necessities */
-        if ( ( le_time / le_system->sm_terl ) == le_system->sm_time ) {
+        if ( ( ( le_time / le_system->sm_tdisc ) == le_tflag ) && ( le_system->sm_scale != NULL ) ) {
 
             /* Send message */
             return( LE_ERROR_SUCCESS );
@@ -55,7 +139,7 @@
             if ( le_system->sm_scale == NULL ) {
 
                 /* Allocate stack memory */
-                if ( ( le_system->sm_scale = malloc( sizeof( FILE * ) * le_system->sm_depth ) ) == NULL ) {
+                if ( ( le_system->sm_scale = malloc( sizeof( FILE * ) * le_system->sm_sdisc ) ) == NULL ) {
 
                     /* Send message */
                     return( LE_ERROR_MEMORY );
@@ -63,7 +147,7 @@
                 }
 
                 /* Initialise stack */
-                for ( le_parse = 0; le_parse < le_system->sm_depth; le_parse ++ ) {
+                for ( le_parse = 0; le_parse < le_system->sm_sdisc; le_parse ++ ) {
 
                     /* Invalidate pointer */
                     le_system->sm_scale[le_parse] = NULL;
@@ -72,11 +156,11 @@
 
             }
 
-            /* Update system time */
-            le_system->sm_time = le_time / le_system->sm_terl;
+            /* Update presistent time */
+            le_tflag = le_time / le_system->sm_tdisc;
 
             /* Create scales streams */
-            for( le_parse = 0; le_parse < le_system->sm_depth; le_parse ++ ) {
+            for( le_parse = 0; le_parse < le_system->sm_sdisc; le_parse ++ ) {
 
                 /* Check scale stream */
                 if ( le_system->sm_scale[le_parse] != NULL ) {
@@ -87,7 +171,7 @@
                 }
 
                 /* Create t-class scale path */
-                sprintf( ( char * ) le_path, "%s/%" _LE_P_TIME "/scale-%03" _LE_P_SIZE ".bin", le_system->sm_root, le_system->sm_time, le_parse );
+                sprintf( ( char * ) le_path, "%s/%" _LE_P_TIME "/scale-%03" _LE_P_SIZE ".bin", le_system->sm_root, le_tflag, le_parse );
 
                 /* Create scale stream - r+ read/write */
                 if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
@@ -120,7 +204,7 @@
         if ( le_system->sm_scale != NULL ) {
 
             /* Parsing scales streams */
-            for( ; le_parse < le_system->sm_depth; le_parse ++ ) {
+            for( ; le_parse < le_system->sm_sdisc; le_parse ++ ) {
 
                 /* Check stream */
                 if ( le_system->sm_scale[le_parse] != NULL ) {
