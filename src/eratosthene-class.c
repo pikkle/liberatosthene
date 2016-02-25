@@ -25,17 +25,10 @@
     source - accessor methods
  */
 
-    le_byte_t le_class_get_digit( le_class_t const * const le_class ) {
+    le_size_t le_class_get_addr( le_class_t const * const le_class, le_size_t const le_addr ) {
 
-        /* Returns class digit */
-        return( le_class->cs_node & 0x0f );
-
-    }
-
-    le_byte_t le_class_get_dcc( le_class_t const * const le_class ) {
-
-        /* Return class daughter class count */
-        return( le_class->cs_node >> 0x04 );
+        /* Return daughter class offset */
+        return( le_class->cs_addr[ ( le_addr & 0x7 ) ] );
 
     }
 
@@ -52,8 +45,15 @@
 
     le_void_t le_class_set_clear( le_class_t * const le_class, le_byte_t const le_digit ) {
 
-        /* Assign class digit */
-        le_class->cs_node = ( le_digit & 0x0f );
+        /* Clear address */
+        le_class->cs_addr[0] = LE_CLASS_NULL;
+        le_class->cs_addr[1] = LE_CLASS_NULL;
+        le_class->cs_addr[2] = LE_CLASS_NULL;
+        le_class->cs_addr[3] = LE_CLASS_NULL;
+        le_class->cs_addr[4] = LE_CLASS_NULL;
+        le_class->cs_addr[5] = LE_CLASS_NULL;
+        le_class->cs_addr[6] = LE_CLASS_NULL;
+        le_class->cs_addr[7] = LE_CLASS_NULL;
 
         /* Clear colorimetry */
         le_class->cs_data[0] = 0.0;
@@ -65,24 +65,10 @@
 
     }
 
-    le_void_t le_class_set_digit( le_class_t * const le_class, le_byte_t const le_digit ) {
+    le_void_t le_class_set_addr( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
 
-        /* Assign class digit */
-        le_class->cs_node = ( le_class->cs_node & 0xf0 ) | ( le_digit & 0x0f );
-
-    }
-
-    le_void_t le_class_set_dcc( le_class_t * const le_class, le_byte_t const le_dcc ) {
-
-        /* Assign class daughter class count */
-        le_class->cs_node = ( le_class->cs_node & 0x0f ) | ( ( le_dcc & 0x0f ) << 0x04 );
-
-    }
-
-    le_void_t le_class_set_node( le_class_t * const le_class, le_byte_t const le_digit, le_byte_t const le_dcc ) {
-
-        /* Assign class digit and daughter class count */
-        le_class->cs_node = ( le_digit & 0x0f ) | ( ( le_dcc & 0x0f ) << 0x04 );
+        /* Update daughter class offset */
+        le_class->cs_addr[ ( le_addr & 0x7 ) ] = le_offset;
 
     }
 
@@ -113,14 +99,6 @@
 
         }
         # endif
-
-        /* Reading class node */
-        if ( fread( ( le_void_t * ) ( & ( le_class->cs_node ) ), sizeof( le_byte_t ), 1, le_stream ) != 1 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_READ );
-
-        }
 
         /* Writing class addresses */
         if ( fread( ( le_void_t * ) le_class->cs_addr, sizeof( le_size_t ), 8, le_stream ) != 8 ) {
@@ -164,14 +142,6 @@
 
         }
         # endif
-
-        /* Writing class node */
-        if ( fwrite( ( le_void_t * ) ( & ( le_class->cs_node ) ), sizeof( le_byte_t ), 1, le_stream ) != 1 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_WRITE );
-
-        }
 
         /* Writing class addresses */
         if ( fwrite( ( le_void_t * ) le_class->cs_addr, sizeof( le_size_t ), 8, le_stream ) != 8 ) {

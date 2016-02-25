@@ -111,6 +111,13 @@
     # error "Undefined class precision"
     # endif
 
+    /* Define boundary values */
+    # if   ( _LE_OFFSET == 32 )
+    # define _LE_SIZE_MAX UINT32_MAX
+    # elif ( _LE_OFFSET == 64 )
+    # define _LE_SIZE_MAX UINT64_MAX
+    # endif
+
     /* Define i/o specifiers */
     # define _LE_P_BYTE PRIu8
     # define _LE_S_BYTE SCNu8
