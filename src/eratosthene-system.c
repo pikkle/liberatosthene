@@ -91,10 +91,13 @@
         le_address_address( le_pose, le_addr, le_system->sm_sdisc );
 
         /* Injection process */
-        while ( le_depth < le_system->sm_sdisc ) {
+        do {
+
+            /* Memorise offset */
+            le_offnex = le_offset;
 
             /* Class importation */
-            if ( le_class_io_read( & le_class, le_offset, le_system->sm_scale[le_depth] ) == LE_ERROR_SUCCESS ) {
+            if ( le_class_io_read( & le_class, le_offnex, le_system->sm_scale[le_depth] ) == LE_ERROR_SUCCESS ) {
 
                 /* Inject element in class */
                 le_class_set_inject( & le_class, le_data );
@@ -107,32 +110,27 @@
             }
 
             /* Retrieve daughter offset */
-            le_offnex = le_class_get_offset( & le_class, le_addr[le_depth] );
+            le_offset = le_class_get_offset( & le_class, le_addr[le_depth] );
 
             /* Check daughter state */
-            if ( ( le_offnex == LE_CLASS_NULL ) && ( le_depth < ( le_system->sm_sdisc - 1 ) ) ) {
+            if ( ( le_offset == LE_CLASS_NULL ) && ( le_depth < ( le_system->sm_sdisc - 1 ) ) ) {
 
                 /* Seek next scale eof */
                 fseek( le_system->sm_scale[le_depth+1], 0, SEEK_END );
 
                 /* Assign eof offset */
-                le_offnex = ftell( le_system->sm_scale[le_depth+1] );
+                le_offset = ftell( le_system->sm_scale[le_depth+1] );
 
                 /* Insert offset in class */
-                le_class_set_offset( & le_class, le_addr[le_depth], le_offnex );
+                le_class_set_offset( & le_class, le_addr[le_depth], le_offset );
 
             }
 
             /* Class exportation */
-            le_class_io_write( & le_class, le_offset, le_system->sm_scale[le_depth] );
+            le_class_io_write( & le_class, le_offnex, le_system->sm_scale[le_depth] );
 
-            /* Update depth */
-            le_depth ++;
-
-            /* Udpate offset tracker */
-            le_offset = le_offnex;
-
-        }
+        /* Injection process condition */
+        } while ( ( ++ le_depth ) < le_system->sm_sdisc );
 
         /* Send message */
         return( le_return );
