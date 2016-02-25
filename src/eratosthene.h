@@ -150,14 +150,18 @@
     # define LE_ERROR_SUCCESS   0
     # define LE_ERROR_IO_READ   1
     # define LE_ERROR_IO_WRITE  2
-    # define LE_ERROR_IO_STREAM 3
-    # define LE_ERROR_IO_ACCESS 4
-    # define LE_ERROR_MEMORY    5
+    # define LE_ERROR_IO_SEEK   3
+    # define LE_ERROR_IO_STREAM 4
+    # define LE_ERROR_IO_ACCESS 5
+    # define LE_ERROR_MEMORY    6
 
     /* Define mathematical constants */
     # define LE_PI ( 3.1415926535897932384626433832795029L )
     # define LE_P2 ( LE_PI / 2.0L )
     # define LE_2P ( LE_PI * 2.0L )
+
+    /* Define limitations */
+    # define LE_DEPTH_MAX 64
 
 /*
     header - preprocessor macros
