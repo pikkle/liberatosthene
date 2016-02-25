@@ -110,7 +110,7 @@
             le_offnex = le_class_get_offset( & le_class, le_addr[le_depth] );
 
             /* Check daughter state */
-            if ( ( le_offnex == LE_CLASS_NULL ) && ( le_depth < le_system->sm_sdisc ) ) {
+            if ( ( le_offnex == LE_CLASS_NULL ) && ( le_depth < ( le_system->sm_sdisc - 1 ) ) ) {
 
                 /* Seek next scale eof */
                 fseek( le_system->sm_scale[le_depth+1], 0, SEEK_END );
@@ -125,6 +125,9 @@
 
             /* Class exportation */
             le_class_io_write( & le_class, le_offset, le_system->sm_scale[le_depth] );
+
+            /* Update depth */
+            le_depth ++;
 
             /* Udpate offset tracker */
             le_offset = le_offnex;
