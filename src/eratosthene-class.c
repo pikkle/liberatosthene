@@ -88,7 +88,7 @@
     source - i/o methods
  */
 
-    le_enum_t le_class_io_read( le_class_t * const le_class, FILE * const le_stream ) {
+    le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Check stream */
         # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
@@ -99,6 +99,9 @@
 
         }
         # endif
+
+        /* Move head to class offset */
+        fseek( le_stream, le_offset, SEEK_SET );
 
         /* Writing class addresses */
         if ( fread( ( le_void_t * ) le_class->cs_addr, sizeof( le_size_t ), 8, le_stream ) != 8 ) {
@@ -131,7 +134,7 @@
 
     }
 
-    le_enum_t le_class_io_write( le_class_t const * const le_class, FILE * const le_stream ) {
+    le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Check stream */
         # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
@@ -142,6 +145,9 @@
 
         }
         # endif
+
+        /* Move head to class offset */
+        fseek( le_stream, le_offset, SEEK_SET );
 
         /* Writing class addresses */
         if ( fwrite( ( le_void_t * ) le_class->cs_addr, sizeof( le_size_t ), 8, le_stream ) != 8 ) {

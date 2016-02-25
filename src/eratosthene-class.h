@@ -50,6 +50,9 @@
     header - preprocessor definitions
  */
 
+    /* Define pseudo-constructor */
+    # define LE_C_CLASS { { 0x0 }, { 0.0 }, 0 }
+
     /* Define invalid daughter offset */
     # define LE_CLASS_NULL _LE_SIZE_MAX
 
@@ -82,8 +85,8 @@
     le_void_t le_class_set_clear( le_class_t * const le_class, le_byte_t const le_digit );
     le_void_t le_class_set_addr( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
     le_void_t le_class_set_inject( le_class_t * const le_class, le_real_t const le_red, le_real_t const le_green, le_real_t const le_blue );
-    le_enum_t le_class_io_read( le_class_t * const le_class, FILE * const le_stream );
-    le_enum_t le_class_io_write( le_class_t const * const le_class, FILE * const le_stream );
+    le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream );
+    le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream );
 
 /*
     header - C/C++ compatibility
