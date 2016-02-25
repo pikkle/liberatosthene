@@ -39,7 +39,7 @@
         le_pose[2] = ( le_pose[2] - LE_GEODESY_HMIN ) / ( LE_GEODESY_HMAX - LE_GEODESY_HMIN );
 
         /* Composing address */
-        for ( ; le_parse <= le_depth; le_parse ++ ) {
+        for ( ; le_parse < le_depth; le_parse ++ ) {
 
             /* Normalised longitude processing */
             if ( le_pose[0] >= 0.5 ) le_buffer = 1; else le_buffer = 0;

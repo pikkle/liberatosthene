@@ -70,7 +70,7 @@
         le_address_address( le_pose, le_addr, le_system->sm_sdisc );
 
         /* Injection process */
-        while ( le_depth <= le_system->sm_sdisc ) {
+        while ( le_depth < le_system->sm_sdisc ) {
 
             /* Class importation */
             if ( le_class_io_read( & le_class, le_offset, le_system->sm_scale[le_depth] ) == LE_ERROR_SUCCESS ) {
@@ -118,14 +118,14 @@
 
     le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time ) {
 
+        /* Persistent time variables */
+        static le_time_t le_tflag = 0;
+
         /* Path variables */
         le_char_t le_path[256] = { 0 };
 
         /* Parsing variables */
         le_size_t le_parse = 0;
-
-        /* Persistent time variables */
-        static le_time_t le_tflag = 0;
 
         /* Check necessities */
         if ( ( ( le_time / le_system->sm_tdisc ) == le_tflag ) && ( le_system->sm_scale != NULL ) ) {
