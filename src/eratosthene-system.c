@@ -97,6 +97,9 @@
                 /* Assign eof offset */
                 le_offnex = ftell( le_system->sm_scale[le_depth+1] );
 
+                /* Insert offset in class */
+                le_class_set_offset( & le_class, le_addr[le_depth], le_offnex );
+
             }
 
             /* Class exportation */
