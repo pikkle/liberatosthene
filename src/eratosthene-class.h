@@ -51,7 +51,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_C_CLASS { { 0x0 }, { 0.0 }, 0 }
+    # define LE_CLASS_C { { 0x0 }, { 0.0 }, 0 }
 
     /* Define invalid daughter offset */
     # define LE_CLASS_NULL _LE_SIZE_MAX
