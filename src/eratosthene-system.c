@@ -58,21 +58,6 @@
     }
 
 /*
-    source - mutator methods
- */
-
-    le_void_t le_system_init( le_system_t * const le_system, le_size_t const le_sdisc, le_time_t const le_tdisc, le_char_t const * const le_root ) {
-
-        /* Assign space-time discretisation */
-        le_system->sm_sdisc = le_sdisc > LE_DEPTH_MAX ? LE_DEPTH_MAX : le_sdisc;
-        le_system->sm_tdisc = le_tdisc;
-
-        /* Assign system root path */
-        strcpy( ( char * ) le_system->sm_root, ( char * ) le_root );
-
-    }
-
-/*
     source - injection methods
  */
 
