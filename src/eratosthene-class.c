@@ -72,12 +72,12 @@
 
     }
 
-    le_void_t le_class_set_inject( le_class_t * const le_class, le_real_t const le_red, le_real_t const le_green, le_real_t const le_blue ) {
+    le_void_t le_class_set_inject( le_class_t * const le_class, le_real_t const * const le_data ) {
 
         /* Inject colorimetric information */
-        le_class->cs_data[0] = ( ( le_class->cs_data[0] * le_class->cs_mean ) + le_red   ) / ( le_class->cs_mean + 1 );
-        le_class->cs_data[1] = ( ( le_class->cs_data[1] * le_class->cs_mean ) + le_green ) / ( le_class->cs_mean + 1 );
-        le_class->cs_data[2] = ( ( le_class->cs_data[2] * le_class->cs_mean ) + le_blue  ) / ( le_class->cs_mean + 1 );
+        le_class->cs_data[0] = ( ( le_class->cs_data[0] * le_class->cs_mean ) + le_data[0] ) / ( le_class->cs_mean + 1 );
+        le_class->cs_data[1] = ( ( le_class->cs_data[1] * le_class->cs_mean ) + le_data[1] ) / ( le_class->cs_mean + 1 );
+        le_class->cs_data[2] = ( ( le_class->cs_data[2] * le_class->cs_mean ) + le_data[2] ) / ( le_class->cs_mean + 1 );
 
         /* Update class accumulator */
         le_class->cs_mean ++;
@@ -101,7 +101,12 @@
         # endif
 
         /* Move head to class offset */
-        fseek( le_stream, le_offset, SEEK_SET );
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_SEEK );
+
+        }
 
         /* Writing class addresses */
         if ( fread( ( le_void_t * ) le_class->cs_addr, sizeof( le_size_t ), 8, le_stream ) != 8 ) {
@@ -147,7 +152,12 @@
         # endif
 
         /* Move head to class offset */
-        fseek( le_stream, le_offset, SEEK_SET );
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_SEEK );
+
+        }
 
         /* Writing class addresses */
         if ( fwrite( ( le_void_t * ) le_class->cs_addr, sizeof( le_size_t ), 8, le_stream ) != 8 ) {
