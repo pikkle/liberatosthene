@@ -32,7 +32,7 @@
 
     }
 
-    le_mean_t le_class_get_mean( le_class_t const * const le_class ) {
+    le_size_t le_class_get_mean( le_class_t const * const le_class ) {
 
         /* Returns class accumulator */
         return( le_class->cs_mean );
@@ -65,7 +65,7 @@
 
     }
 
-    le_void_t le_class_set_init( le_class_t * const le_class, le_real_t const * const le_data ) {
+    le_void_t le_class_set_init( le_class_t * const le_class, le_data_t const * const le_data ) {
 
         /* Clear address */
         le_class->cs_addr[0] = LE_CLASS_NULL;
@@ -94,7 +94,7 @@
 
     }
 
-    le_void_t le_class_set_inject( le_class_t * const le_class, le_real_t const * const le_data ) {
+    le_void_t le_class_set_inject( le_class_t * const le_class, le_data_t const * const le_data ) {
 
         /* Inject colorimetric information */
         le_class->cs_data[0] = ( ( le_class->cs_data[0] * le_class->cs_mean ) + le_data[0] ) / ( le_class->cs_mean + 1 );
@@ -139,7 +139,7 @@
         }
 
         /* Writing class colorimetry */
-        if ( fread( ( le_void_t * ) le_class->cs_data, sizeof( le_real_t ), 3, le_stream ) != 3 ) {
+        if ( fread( ( le_void_t * ) le_class->cs_data, sizeof( le_data_t ), 3, le_stream ) != 3 ) {
 
             /* Send message */
             return( LE_ERROR_IO_READ );
@@ -147,7 +147,7 @@
         }
 
         /* Writing class accumulator */
-        if ( fread( ( le_void_t * ) ( & le_class->cs_mean ), sizeof( le_mean_t ), 1, le_stream ) != 1 ) {
+        if ( fread( ( le_void_t * ) ( & le_class->cs_mean ), sizeof( le_size_t ), 1, le_stream ) != 1 ) {
 
             /* Send message */
             return( LE_ERROR_IO_READ );
@@ -190,7 +190,7 @@
         }
 
         /* Writing class colorimetry */
-        if ( fwrite( ( le_void_t * ) le_class->cs_data, sizeof( le_real_t ), 3, le_stream ) != 3 ) {
+        if ( fwrite( ( le_void_t * ) le_class->cs_data, sizeof( le_data_t ), 3, le_stream ) != 3 ) {
 
             /* Send message */
             return( LE_ERROR_IO_WRITE );
@@ -198,7 +198,7 @@
         }
 
         /* Writing class accumulator */
-        if ( fwrite( ( le_void_t * ) ( & le_class->cs_mean ), sizeof( le_mean_t ), 1, le_stream ) != 1 ) {
+        if ( fwrite( ( le_void_t * ) ( & le_class->cs_mean ), sizeof( le_size_t ), 1, le_stream ) != 1 ) {
 
             /* Send message */
             return( LE_ERROR_IO_WRITE );

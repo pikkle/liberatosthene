@@ -40,7 +40,7 @@
     source - injection methods
  */
 
-    le_enum_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_real_t const * const le_data, le_time_t const le_time ) {
+    le_enum_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_data_t const * const le_data, le_time_t const le_time ) {
 
         /* Address variables */
         le_byte_t le_addr[LE_DEPTH_MAX+1] = { 0 };

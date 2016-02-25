@@ -71,8 +71,8 @@
     typedef struct le_class_struct {
 
         le_size_t cs_addr[8];
-        le_real_t cs_data[3];
-        le_mean_t cs_mean;
+        le_data_t cs_data[3];
+        le_size_t cs_mean;
 
     } le_class_t;
 
@@ -81,11 +81,11 @@
  */
 
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr );
-    le_mean_t le_class_get_mean( le_class_t const * const le_class );
+    le_size_t le_class_get_mean( le_class_t const * const le_class );
     le_void_t le_class_set_clear( le_class_t * const le_class );
-    le_void_t le_class_set_init( le_class_t * const le_class, le_real_t const * const le_data );
+    le_void_t le_class_set_init( le_class_t * const le_class, le_data_t const * const le_data );
     le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
-    le_void_t le_class_set_inject( le_class_t * const le_class, le_real_t const * const le_data );
+    le_void_t le_class_set_inject( le_class_t * const le_class, le_data_t const * const le_data );
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream );
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream );
 

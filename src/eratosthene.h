@@ -87,6 +87,7 @@
     # define _LE_BYTE uint8_t
     # define _LE_ENUM int
     # define _LE_CHAR unsigned char
+    # define _LE_DATA float
     # define _LE_TIME int64_t
 
     /* Define class offset implementation */
@@ -100,13 +101,11 @@
     # endif
 
     /* Define class precision implementation */
-    # define _LE_PRECISION 32
+    # define _LE_PRECISION 64
     # if   ( _LE_PRECISION == 32 )
     # define _LE_REAL float
-    # define _LE_MEAN uint32_t
     # elif ( _LE_PRECISION == 64 )
     # define _LE_REAL double
-    # define _LE_MEAN uint64_t
     # else
     # error "Undefined class precision"
     # endif
@@ -125,8 +124,6 @@
     # define _LE_S_ENUM "i"
     # define _LE_P_CHAR "u"
     # define _LE_S_CHAR "hhu"
-    # define _LE_P_TIME PRIi64
-    # define _LE_S_TIME SCNi64
     # if   ( _LE_OFFSET == 32 )
     # define _LE_P_SIZE PRIu32
     # define _LE_S_SIZE SCNu32
@@ -137,14 +134,14 @@
     # if   ( _LE_PRECISION == 32 )
     # define _LE_P_REAL ".7e"
     # define _LE_S_REAL "f"
-    # define _LE_P_MEAN PRIu32
-    # define _LE_S_MEAN SCNu32
     # elif ( _LE_PRECISION == 64 )
     # define _LE_P_REAL ".14e"
     # define _LE_S_REAL "lf"
-    # define _LE_P_MEAN PRIu64
-    # define _LE_S_MEAN SCNu64
     # endif
+    # define _LE_P_DATA ".4e"
+    # define _LE_S_DATA "f"
+    # define _LE_P_TIME PRIi64
+    # define _LE_S_TIME SCNi64
 
     /* Define library errors */
     # define LE_ERROR_SUCCESS   0
@@ -177,11 +174,11 @@
     /* General byte type */
     typedef _LE_BYTE le_byte_t;
 
-    /* General enumeration type */
-    typedef _LE_ENUM le_enum_t;
-
     /* General char type */
     typedef _LE_CHAR le_char_t;
+
+    /* General enumeration type */
+    typedef _LE_ENUM le_enum_t;
 
     /* General offset type */
     typedef _LE_SIZE le_size_t;
@@ -189,8 +186,8 @@
     /* General floating point type */
     typedef _LE_REAL le_real_t;
 
-    /* General accumulation type */
-    typedef _LE_MEAN le_mean_t;
+    /* General data type */
+    typedef _LE_DATA le_data_t;
 
     /* Genral time type */
     typedef _LE_TIME le_time_t;
