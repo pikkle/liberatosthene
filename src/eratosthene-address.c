@@ -38,11 +38,8 @@
         le_pose[1] = ( le_pose[1] - LE_GEODESY_AMIN ) / ( LE_GEODESY_AMAX - LE_GEODESY_AMIN );
         le_pose[2] = ( le_pose[2] - LE_GEODESY_HMIN ) / ( LE_GEODESY_HMAX - LE_GEODESY_HMIN );
 
-        /* Assign implicit address first digit */
-        le_address[0] = 0;
-
         /* Composing address */
-        for ( le_parse = 1 ; le_parse <= le_depth; le_parse ++ ) {
+        for ( ; le_parse <= le_depth; le_parse ++ ) {
 
             /* Normalised longitude processing */
             if ( le_pose[0] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
