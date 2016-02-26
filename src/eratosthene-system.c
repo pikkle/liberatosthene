@@ -141,7 +141,7 @@
     source - query methods
  */
 
-    le_void_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth ) {
+    le_element_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth ) {
 
         /* Query depth variables */
         le_size_t le_depth = 0;
@@ -152,16 +152,23 @@
         /* Class tracker variables */
         le_class_t le_class = LE_CLASS_C;
 
+        /* Returned array variables */
+        le_element_t le_return = LE_ELEMENT_C;
+
         /* Check consistency */
         if ( ( le_address_get_size( le_addr ) + le_sdepth ) > le_system->sm_sdisc ) {
-            /* Send message */
-            fprintf( stderr, "DEV[FAILURE](Consistency check)\n" );
+
+            /* Return element array */
+            return( le_return );
+
         }
 
         /* System scale stream management */
         if ( le_system_open( le_system, le_time ) != LE_ERROR_SUCCESS ) {
-            /* Send message */
-            fprintf( stderr, "DEV[FAILURE](System open)\n" );
+
+            /* Return element array */
+            return( le_return );
+
         }
 
         /* Query class search */
@@ -169,8 +176,10 @@
 
             /* Class importation */
             if ( le_class_io_read( & le_class, le_offset, le_system->sm_scale[le_depth] ) != LE_ERROR_SUCCESS ) {
-                /* Send message */
-                fprintf( stderr, "DEV[FAILURE](Class importation\n" );
+
+                /* Return element array */
+                return( le_return );
+
             }
 
             /* Extract daughter offset */
@@ -180,13 +189,15 @@
         } while ( ( ( ++ le_depth ) < le_address_get_size( le_addr ) ) && ( le_offset != LE_CLASS_NULL ) );
 
         /* Check query class search */
-        if ( le_depth != le_address_get_size( le_addr ) ) {
-            /* Send message */
-            fprintf( stderr, "DEV[FAILURE](Query class)\n" );
+        if ( le_depth == le_address_get_size( le_addr ) ) {
+
+            /* Gathering process */
+            le_system_gather( le_system, & le_return, le_addr, & le_class, le_depth, le_address_get_size( le_addr ) + le_sdepth );
+
         }
 
-        /* Gathering process */
-        le_system_gather( le_system, le_addr, & le_class, le_depth, le_address_get_size( le_addr ) + le_sdepth );
+        /* Return element array */
+        return( le_return );
            
     }
 
@@ -194,7 +205,7 @@
     source - gathering methods
  */
 
-    le_void_t le_system_gather( le_system_t * const le_system, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
+    le_void_t le_system_gather( le_system_t * const le_system, le_element_t * const le_qarray, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -214,18 +225,8 @@
             /* Retreive class representative */
             le_address2( le_addr, le_pose );
 
-            /* TEMPORARY[DEVEL] : display gathered class representative */
-            fprintf( stderr, 
-                "DEV[ELEMENT_PRINT] : %"_LE_P_DATA",%"_LE_P_DATA",%"_LE_P_DATA"\n"
-                "DEV[ELEMENT_PRINT] : %"_LE_P_REAL",%"_LE_P_REAL",%"_LE_P_REAL"\n"
-            ,
-                le_class->cs_data[0],
-                le_class->cs_data[1],
-                le_class->cs_data[2],
-                le_pose[0],
-                le_pose[1],
-                le_pose[2]
-            );
+            /* Inject gathered element in array */
+            le_element_set( le_qarray, le_pose, le_class_get_data( le_class ) );
 
         } else {
 
@@ -245,7 +246,7 @@
                     le_class_io_read( & le_clnex, le_offset, le_system->sm_scale[le_head] );
 
                     /* Recursive gathering process */
-                    le_system_gather( le_system, le_addr, & le_clnex, le_head + 1, le_target );
+                    le_system_gather( le_system, le_qarray, le_addr, & le_clnex, le_head + 1, le_target );
 
                 }
 

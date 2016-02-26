@@ -22,6 +22,24 @@
     # include "eratosthene-element.h"
 
 /*
+    source - accessor methods
+ */
+
+    le_real_t * le_element_get_pose( le_element_t const * const le_element, le_size_t const le_offset ) {
+
+        /* Return spatial components */
+        return( ( le_real_t * ) ( le_element->em_elem + ( le_offset * LE_ELEMENT_ELEN ) ) );
+
+    }
+
+    le_data_t * le_element_get_data( le_element_t const * const le_element, le_size_t const le_offset ) {
+
+        /* Return colorimetric components */
+        return( ( le_data_t * ) ( le_element->em_elem + ( le_offset * LE_ELEMENT_ELEN ) + LE_ELEMENT_SLEN ) );
+
+    }
+
+/*
     source - mutator methods
  */
 
@@ -43,19 +61,17 @@
 
     }
 
-    le_enum_t le_element_set( le_element_t * le_element, le_real_t const * const le_pose, le_data_t const * const le_data, le_size_t const le_offset ) {
+    le_enum_t le_element_set( le_element_t * le_element, le_real_t const * const le_pose, le_data_t const * const le_data ) {
 
         /* Allocation swap variables */
         le_byte_t * le_swap = NULL;
 
-        /* Array spatial pointer variables */
-        le_byte_t * le_pose_p = le_element->em_elem + ( le_offset * LE_ELEMENT_ELEN );
-
-        /* Array colorimetric pointer variables */
-        le_byte_t * le_data_p = le_pose_p + LE_ELEMENT_SLEN;
+        /* Array pointer variables */
+        le_byte_t * le_pose_p = NULL;
+        le_byte_t * le_data_p = NULL;
 
         /* Check array capacity */
-        if ( ( ( le_offset + 1 ) * LE_ELEMENT_ELEN ) >= le_element->em_size ) {
+        if ( ( le_element->em_head + LE_ELEMENT_ELEN ) >= le_element->em_size ) {
 
             /* Update array size */
             le_element->em_size += LE_ELEMENT_STEP;
@@ -93,6 +109,13 @@
             }
 
         }
+
+        /* Compute array pointers */
+        le_pose_p = le_element->em_elem + le_element->em_head;
+        le_data_p = le_element->em_elem + le_element->em_head + LE_ELEMENT_SLEN;        
+
+        /* Update array head */
+        le_element->em_head += LE_ELEMENT_ELEN;
 
         /* Inject spatial components */
         * ( ( ( le_real_t * ) le_pose_p )     ) = * ( le_pose     );

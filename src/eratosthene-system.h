@@ -84,8 +84,8 @@
     le_enum_t le_system_create( le_system_t * const le_system, le_size_t const le_sdisc, le_time_t const le_tdisc, le_char_t const * const le_root );
     le_void_t le_system_delete( le_system_t * const le_system );
     le_enum_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_data_t const * const le_data, le_time_t const le_time );
-    le_void_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth );
-    le_void_t le_system_gather( le_system_t * const le_system, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
+    le_element_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth );
+    le_void_t le_system_gather( le_system_t * const le_system, le_element_t * const le_qarray, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
     le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time );
     le_void_t le_system_close( le_system_t * const le_system );
 

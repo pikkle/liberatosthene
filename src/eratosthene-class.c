@@ -34,8 +34,15 @@
 
     le_size_t le_class_get_mean( le_class_t const * const le_class ) {
 
-        /* Returns class accumulator */
+        /* Return class accumulator */
         return( le_class->cs_mean );
+
+    }
+
+    le_data_t * le_class_get_data( le_class_t const * const le_class ) {
+
+        /* Return class data */
+        return( ( le_data_t * ) /*?*/ le_class->cs_data );
 
     }
 
