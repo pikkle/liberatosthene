@@ -192,7 +192,7 @@
         if ( le_depth == le_address_get_size( le_addr ) ) {
 
             /* Gathering process */
-            le_system_gather( le_system, & le_return, le_addr, & le_class, le_depth, le_address_get_size( le_addr ) + le_sdepth );
+            le_system_gather( le_system, & le_return, le_addr, & le_class, le_depth, le_depth + le_sdepth );
 
         }
 
@@ -236,11 +236,11 @@
                 /* Check daughter */
                 if ( ( le_offset = le_class_get_offset( le_class, le_parse ) ) != LE_CLASS_NULL ) {
 
-                    /* Set address size */
-                    le_address_set_size( le_addr, le_head + 1 );
+                    /* Set address size */  
+                    le_address_set_size( le_addr, le_head );
 
                     /* Set address digit */
-                    le_address_set_digit( le_addr, le_head, le_parse );
+                    le_address_set_digit( le_addr, le_head - 1, le_parse );
 
                     /* Read daughter */
                     le_class_io_read( & le_clnex, le_offset, le_system->sm_scale[le_head] );
