@@ -31,7 +31,7 @@
         if ( le_sdisc >= LE_DEPTH_MAX ) {
 
             /* Send message */
-            return( LE_ERROR_SYS_DEPTH );
+            return( LE_ERROR_DEPTH );
 
         }
 
@@ -63,9 +63,6 @@
 
     le_enum_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_data_t const * const le_data, le_time_t const le_time ) {
 
-        /* Address variables */
-        le_byte_t le_addr[LE_DEPTH_MAX+1] = { 0 };
-
         /* Injection depth variables */
         le_size_t le_depth = 0;
 
@@ -75,6 +72,9 @@
 
         /* Class tracker variables */
         le_class_t le_class = LE_CLASS_C;
+
+        /* Address variables */
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc );
 
         /* Returned value variables */
         le_enum_t le_return = LE_ERROR_SUCCESS;
@@ -88,7 +88,7 @@
         }
 
         /* Compute address */
-        le_address( le_pose, le_addr, le_system->sm_sdisc );
+        le_address( & le_addr, le_pose );
 
         /* Injection process */
         do {
@@ -110,7 +110,7 @@
             }
 
             /* Retrieve daughter offset */
-            le_offset = le_class_get_offset( & le_class, le_addr[le_depth] );
+            le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_depth ) );
 
             /* Check daughter state */
             if ( ( le_offset == LE_CLASS_NULL ) && ( le_depth < ( le_system->sm_sdisc - 1 ) ) ) {
@@ -122,7 +122,7 @@
                 le_offset = ftell( le_system->sm_scale[le_depth+1] );
 
                 /* Insert offset in class */
-                le_class_set_offset( & le_class, le_addr[le_depth], le_offset );
+                le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_depth ), le_offset );
 
             }
 
