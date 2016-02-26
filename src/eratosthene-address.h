@@ -83,6 +83,7 @@
     le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
     le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
     le_void_t le_address( le_address_t * const le_address, le_real_t * const le_pose );
+    le_void_t le_address2( le_address_t const * const le_address, le_real_t * const le_pose );
     le_void_t le_address_binary_string( le_address_t const * const le_address, le_char_t * const le_string );
     le_void_t le_address_string_binary( le_address_t * const le_address, le_char_t const * const le_string );
 
