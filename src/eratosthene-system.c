@@ -141,7 +141,7 @@
     source - query methods
  */
 
-    le_void_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t const * const le_addr, le_size_t const le_sdepth ) {
+    le_void_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth ) {
 
         /* Query depth variables */
         le_size_t le_depth = 0;
@@ -186,7 +186,7 @@
         }
 
         /* Gathering process */
-        le_system_gather( le_system, & le_class, le_depth, le_address_get_size( le_addr ) + le_sdepth );
+        le_system_gather( le_system, le_addr, & le_class, le_depth, le_address_get_size( le_addr ) + le_sdepth );
            
     }
 
@@ -194,7 +194,7 @@
     source - gathering methods
  */
 
-    le_void_t le_system_gather( le_system_t * const le_system, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
+    le_void_t le_system_gather( le_system_t * const le_system, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -208,11 +208,23 @@
         /* Check head and target */
         if ( le_head == le_target ) {
 
+            /* Spatial coordinates variables */
+            le_real_t le_pose[3] = { 0.0 };
+
+            /* Retreive class representative */
+            le_address2( le_addr, le_pose );
+
             /* TEMPORARY[DEVEL] : display gathered class representative */
-            fprintf( stderr, "DEV[ELEMENT_PRINT] : %"_LE_P_DATA",%"_LE_P_DATA",%"_LE_P_DATA"\n",
+            fprintf( stderr, 
+                "DEV[ELEMENT_PRINT] : %"_LE_P_DATA",%"_LE_P_DATA",%"_LE_P_DATA"\n"
+                "DEV[ELEMENT_PRINT] : %"_LE_P_REAL",%"_LE_P_REAL",%"_LE_P_REAL"\n"
+            ,
                 le_class->cs_data[0],
                 le_class->cs_data[1],
-                le_class->cs_data[2]
+                le_class->cs_data[2],
+                le_pose[0],
+                le_pose[1],
+                le_pose[2]
             );
 
         } else {
@@ -223,11 +235,14 @@
                 /* Check daughter */
                 if ( ( le_offset = le_class_get_offset( le_class, le_parse ) ) != LE_CLASS_NULL ) {
 
+                    /* Set address digit */
+                    le_address_set_digit( le_addr, le_head, le_parse );
+
                     /* Read daughter */
                     le_class_io_read( & le_clnex, le_offset, le_system->sm_scale[le_head] );
 
-                    /* Recusive gathering */
-                    le_system_gather( le_system, & le_clnex, le_head + 1, le_target );
+                    /* Recursive gathering process */
+                    le_system_gather( le_system, le_addr, & le_clnex, le_head + 1, le_target );
 
                 }
 
