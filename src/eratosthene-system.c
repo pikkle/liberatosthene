@@ -235,6 +235,9 @@
                 /* Check daughter */
                 if ( ( le_offset = le_class_get_offset( le_class, le_parse ) ) != LE_CLASS_NULL ) {
 
+                    /* Set address size */
+                    le_address_set_size( le_addr, le_head + 1 );
+
                     /* Set address digit */
                     le_address_set_digit( le_addr, le_head, le_parse );
 
