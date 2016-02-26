@@ -78,6 +78,7 @@
     header - function prototypes
  */
 
+    le_size_t le_address_get_size( le_address_t const * const le_address );
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_digit );
     le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
     le_void_t le_address( le_address_t * const le_address, le_real_t * const le_pose );

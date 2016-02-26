@@ -25,6 +25,13 @@
     source - accessor methods
  */
 
+    le_size_t le_address_get_size( le_address_t const * const le_address ) {
+
+        /* Return address size */
+        return( le_address->as_size );
+
+    }
+
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_digit ) {
 
         /* Return address digit */
