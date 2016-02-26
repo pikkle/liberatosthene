@@ -50,6 +50,17 @@
     header - preprocessor definitions
  */
 
+    /* Define pseudo-constructor */
+    # define LE_ELEMENT_C { 0, 0, 0, NULL }
+
+    /* Define element sizes */
+    # define LE_ELEMENT_SLEN ( sizeof( le_real_t ) * 3 )
+    # define LE_ELEMENT_DLEN ( sizeof( le_data_t ) * 3 )
+    # define LE_ELEMENT_ELEN ( LE_ELEMENT_SLEN + LE_ELEMENT_DLEN )
+
+    /* Define array allocation step */
+    # define LE_ELEMENT_STEP ( LE_ELEMENT_ELEN * 4096 )
+
 /*
     header - preprocessor macros
  */
@@ -64,9 +75,9 @@
 
     typedef struct le_element_struct {
 
-        le_real_t em_pose[3];
-        le_byte_t em_data[3];
-        le_time_t em_time;
+        le_size_t   em_size;
+        le_size_t   em_head;
+        le_byte_t * em_elem;
 
     } le_element_t;
 
@@ -74,10 +85,7 @@
     header - function prototypes
  */
 
-    le_enum_t le_element_scan( le_element_t * const le_element, FILE * const le_stream );
-    le_enum_t le_element_read( le_element_t * const le_element, FILE * const le_stream );
-    le_enum_t le_element_print( le_element_t const * const le_element, FILE * const le_stream );
-    le_enum_t le_element_write( le_element_t const * const le_element, FILE * const le_stream );
+    le_void_t le_element_set_clear( le_element_t * const le_element );
 
 /*
     header - C/C++ compatibility

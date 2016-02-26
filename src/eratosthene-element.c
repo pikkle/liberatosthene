@@ -22,166 +22,90 @@
     # include "eratosthene-element.h"
 
 /*
-    source - i/o methods
+    source - mutator methods
  */
 
-    le_enum_t le_element_scan( le_element_t * const le_element, FILE * const le_stream ) {
+    le_void_t le_element_set_clear( le_element_t * const le_element ) {
 
-        /* Check stream */
-        # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
-        if ( __freadable( le_stream ) == 0 ) {
+        /* Check array state */
+        if ( le_element->em_size > 0 ) {
 
-            /* Send message */
-            return( LE_ERROR_IO_STREAM );
+            /* Unallocate array memory */
+            free( le_element->em_elem );
 
-        }
-        # endif
+            /* Invalidate array pointer */
+            le_element->em_elem = NULL;
 
-        /* Scan element components */
-        if ( fscanf( le_stream, "%" _LE_S_REAL " %" _LE_S_REAL " %" _LE_S_REAL " %" _LE_S_BYTE " %" _LE_S_BYTE " %" _LE_S_BYTE " %" _LE_S_TIME,
-
-            & le_element->em_pose[0],
-            & le_element->em_pose[1],
-            & le_element->em_pose[2],
-            & le_element->em_data[0],
-            & le_element->em_data[1],
-            & le_element->em_data[2],
-            & le_element->em_time
-
-        ) != 7 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_READ );
-
-        } else {
-
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
+            /* Reset array size */
+            le_element->em_size = 0;           
 
         }
 
     }
 
-    le_enum_t le_element_read( le_element_t * const le_element, FILE * const le_stream ) {
+    le_enum_t le_element_set( le_element_t * le_element, le_real_t const * const le_pose, le_data_t const * const le_data, le_size_t const le_offset ) {
 
-        /* Check stream */
-        # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
-        if ( __freadable( le_stream ) == 0 ) {
+        /* Allocation swap variables */
+        le_byte_t * le_swap = NULL;
 
-            /* Send message */
-            return( LE_ERROR_IO_STREAM );
+        /* Array spatial pointer variables */
+        le_byte_t * le_pose_p = le_element->em_elem + ( le_offset * LE_ELEMENT_ELEN );
 
-        }
-        # endif
+        /* Array colorimetric pointer variables */
+        le_byte_t * le_data_p = le_pose_p + LE_ELEMENT_SLEN;
 
-        /* Write spatial components */
-        if ( fread( ( le_void_t * ) le_element->em_pose, sizeof( le_real_t ), 3, le_stream ) != 3 ) {
+        /* Check array capacity */
+        if ( ( ( le_offset + 1 ) * LE_ELEMENT_ELEN ) >= le_element->em_size ) {
 
-            /* Send message */
-            return( LE_ERROR_IO_READ );
+            /* Update array size */
+            le_element->em_size += LE_ELEMENT_STEP;
 
-        }
+            /* Check array state */
+            if ( le_element->em_elem == NULL ) {
 
-        /* Write colorimetric components */
-        if ( fread( ( le_void_t * ) le_element->em_data, sizeof( le_byte_t ), 3, le_stream ) != 3 ) {
+                /* Array memory allocation */
+                if ( ( le_element->em_elem = ( le_byte_t * ) malloc( le_element->em_size ) ) == NULL ) {
 
-            /* Send message */
-            return( LE_ERROR_IO_READ );
+                    /* Reset array size */
+                    le_element->em_size = 0;
 
-        }
+                    /* Send message */
+                    return( LE_ERROR_MEMORY );
 
-        /* Write temporal components */
-        if ( fread( ( le_void_t * ) ( & le_element->em_time ), sizeof( le_time_t ), 1, le_stream ) != 1 ) {
+                }
 
-            /* Send message */
-            return( LE_ERROR_IO_READ );
+            } else {
 
-        } else {
+                /* Array memory reallocation */
+                if ( ( le_swap = realloc( ( void * ) le_element->em_elem, le_element->em_size ) ) == NULL ) {
 
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
+                    /* Reset array size */
+                    le_element->em_size -= LE_ELEMENT_STEP;
 
-        }
+                    /* Send message */
+                    return( LE_ERROR_MEMORY );
 
-    }
+                }
 
-    le_enum_t le_element_print( le_element_t const * const le_element, FILE * const le_stream ) {
+                /* Assign reallocated memory */
+                le_element->em_elem = le_swap;
 
-        /* Check stream */
-        # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
-        if ( __fwritable( le_stream ) == 0 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_STREAM );
-
-        }
-        # endif
-
-        /* Scan element components */
-        if ( fprintf( le_stream, "%" _LE_P_REAL " %" _LE_P_REAL " %" _LE_P_REAL " %" PRIu8 " %" PRIu8 " %" PRIu8 " %" _LE_P_TIME,
-
-            le_element->em_pose[0],
-            le_element->em_pose[1],
-            le_element->em_pose[2],
-            le_element->em_data[0],
-            le_element->em_data[1],
-            le_element->em_data[2],
-            le_element->em_time
-
-        ) != 7 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_READ );
-
-        } else {
-
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
+            }
 
         }
 
-    }
+        /* Inject spatial components */
+        * ( ( ( le_real_t * ) le_pose_p )     ) = * ( le_pose     );
+        * ( ( ( le_real_t * ) le_pose_p ) + 1 ) = * ( le_pose + 1 );
+        * ( ( ( le_real_t * ) le_pose_p ) + 2 ) = * ( le_pose + 2 );
 
-    le_enum_t le_element_write( le_element_t const * const le_element, FILE * const le_stream ) {
+        /* Inject colorimetric components */
+        * ( ( ( le_data_t * ) le_data_p )     ) = * ( le_data     );
+        * ( ( ( le_data_t * ) le_data_p ) + 1 ) = * ( le_data + 1 );
+        * ( ( ( le_data_t * ) le_data_p ) + 2 ) = * ( le_data + 2 );
 
-        /* Check stream */
-        # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
-        if ( __fwritable( le_stream ) == 0 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_STREAM );
-
-        }
-        # endif
-
-        /* Write spatial components */
-        if ( fwrite( ( le_void_t * ) le_element->em_pose, sizeof( le_real_t ), 3, le_stream ) != 3 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_READ );
-
-        }
-
-        /* Write colorimetric components */
-        if ( fwrite( ( le_void_t * ) le_element->em_data, sizeof( le_byte_t ), 3, le_stream ) != 3 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_READ );
-
-        }
-
-        /* Write temporal components */
-        if ( fwrite( ( le_void_t * ) ( & le_element->em_time ), sizeof( le_time_t ), 1, le_stream ) != 1 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_READ );
-
-        } else {
-
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
-
-        }
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 
