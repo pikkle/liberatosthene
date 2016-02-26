@@ -60,7 +60,6 @@
     source - address methods
  */
 
-    //le_void_t le_address( le_real_t * const le_pose, le_byte_t * const le_address, le_size_t const le_depth ) {
     le_void_t le_address( le_address_t * const le_address, le_real_t * const le_pose ) {
 
         /* Digital buffer variables */
