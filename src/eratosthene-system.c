@@ -88,7 +88,7 @@
         }
 
         /* Compute address */
-        le_address_address( le_pose, le_addr, le_system->sm_sdisc );
+        le_address( le_pose, le_addr, le_system->sm_sdisc );
 
         /* Injection process */
         do {

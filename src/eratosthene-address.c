@@ -25,7 +25,7 @@
     source - translation methods
  */
 
-    le_void_t le_address_address( le_real_t * const le_pose, le_byte_t * const le_address, le_size_t const le_depth ) {
+    le_void_t le_address( le_real_t * const le_pose, le_byte_t * const le_address, le_size_t const le_depth ) {
 
         /* Digital buffer variables */
         le_byte_t le_buffer = 0;
@@ -75,6 +75,33 @@
             le_pose[2] = ( le_pose[2] * 2.0 ) - le_buffer;
 
         }
+
+    }
+
+/*
+    source - conversion methods
+ */
+
+    le_void_t le_address_binary_string( le_address_t const * const le_address, le_char_t * const le_string ) {
+
+        /* Parsing variables */
+        le_size_t le_parse = 0;
+
+        /* Conversion loop */
+        for ( ; le_parse < le_address->as_size; le_parse ++ ) le_string[le_parse] = le_address->as_addr[le_parse] + 48;
+
+    }
+
+    le_void_t le_address_string_binary( le_address_t * const le_address, le_char_t const * const le_string ) {
+
+        /* Parsing variables */
+        le_size_t le_parse = 0;
+
+        /* Assign address length */
+        le_address->as_size = strlen( ( char * ) le_string );
+ 
+        /* Conversion loop */
+        for ( ; le_parse < le_address->as_size; le_parse ++ ) le_address->as_addr[le_parse] = le_string[le_parse] - 48;
 
     }
 

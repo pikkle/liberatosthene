@@ -51,6 +51,9 @@
     header - preprocessor definitions
  */
 
+    /* Define pseudo-constructor */
+    # define LE_ADDRESS_C { 0, { 0 } }
+
 /*
     header - preprocessor macros
  */
@@ -63,11 +66,18 @@
     header - structures
  */
 
+    typedef struct le_address_struct {
+
+        le_size_t as_size;
+        le_byte_t as_addr[LE_DEPTH_MAX];
+
+    } le_address_t;
+
 /*
     header - function prototypes
  */
 
-    le_void_t le_address_address( le_real_t * const le_pose, le_byte_t * const le_address, le_size_t const le_depth );
+    le_void_t le_address( le_real_t * const le_pose, le_byte_t * const le_address, le_size_t const le_depth );
 
 /*
     header - C/C++ compatibility
