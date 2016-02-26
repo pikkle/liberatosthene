@@ -138,6 +138,106 @@
     }
 
 /*
+    source - query methods
+ */
+
+    le_void_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t const * const le_addr, le_size_t const le_sdepth ) {
+
+        /* Query depth variables */
+        le_size_t le_depth = 0;
+
+        /* Offset tracker variables */
+        le_size_t le_offset = 0;
+
+        /* Class tracker variables */
+        le_class_t le_class = LE_CLASS_C;
+
+        /* Check consistency */
+        if ( ( le_address_get_size( le_addr ) + le_sdepth ) > le_system->sm_sdisc ) {
+            /* Send message */
+            fprintf( stderr, "DEV[FAILURE](Consistency check)\n" );
+        }
+
+        /* System scale stream management */
+        if ( le_system_open( le_system, le_time ) != LE_ERROR_SUCCESS ) {
+            /* Send message */
+            fprintf( stderr, "DEV[FAILURE](System open)\n" );
+        }
+
+        /* Query class search */
+        do {
+
+            /* Class importation */
+            if ( le_class_io_read( & le_class, le_offset, le_system->sm_scale[le_depth] ) != LE_ERROR_SUCCESS ) {
+                /* Send message */
+                fprintf( stderr, "DEV[FAILURE](Class importation\n" );
+            }
+
+            /* Extract daughter offset */
+            le_offset = le_class.cs_addr[le_address_get_digit( le_addr, le_depth )];
+
+        /* Query class search condition */
+        } while ( ( ( ++ le_depth ) < le_address_get_size( le_addr ) ) && ( le_offset != LE_CLASS_NULL ) );
+
+        /* Check query class search */
+        if ( le_depth != le_address_get_size( le_addr ) ) {
+            /* Send message */
+            fprintf( stderr, "DEV[FAILURE](Query class)\n" );
+        }
+
+        /* Gathering process */
+        le_system_gather( le_system, & le_class, le_depth, le_address_get_size( le_addr ) + le_sdepth );
+           
+    }
+
+/*
+    source - gathering methods
+ */
+
+    le_void_t le_system_gather( le_system_t * const le_system, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
+
+        /* Parsing variables */
+        le_size_t le_parse = 0;
+
+        /* Offset variables */
+        le_size_t le_offset = 0;
+
+        /* Class variables */
+        le_class_t le_clnex = LE_CLASS_C;
+
+        /* Check head and target */
+        if ( le_head == le_target ) {
+
+            /* TEMPORARY[DEVEL] : display gathered class representative */
+            fprintf( stderr, "DEV[ELEMENT_PRINT] : %"_LE_P_DATA",%"_LE_P_DATA",%"_LE_P_DATA"\n",
+                le_class->cs_data[0],
+                le_class->cs_data[1],
+                le_class->cs_data[2]
+            );
+
+        } else {
+
+            /* Parsing class daughter */
+            for ( ; le_parse < 8; le_parse ++ ) {
+
+                /* Check daughter */
+                if ( ( le_offset = le_class_get_offset( le_class, le_parse ) ) != LE_CLASS_NULL ) {
+
+                    /* Read daughter */
+                    le_class_io_read( & le_clnex, le_offset, le_system->sm_scale[le_head] );
+
+                    /* Recusive gathering */
+                    le_system_gather( le_system, & le_clnex, le_head + 1, le_target );
+
+                }
+
+            }
+
+        }
+
+    }
+
+/*
     source - i/o methods
  */
 
