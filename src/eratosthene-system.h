@@ -29,8 +29,8 @@
     header - inclusion guard
  */
 
-    # ifndef __LE_SYSTEM_INJECT__
-    # define __LE_SYSTEM_INJECT__
+    # ifndef __LE_SYSTEM__
+    # define __LE_SYSTEM__
 
 /*
     header - C/C++ compatibility
