@@ -27,8 +27,18 @@
 
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr ) {
 
-        /* Return daughter class offset */
-        return( le_class->cs_addr[ ( le_addr & 0x7 ) ] );
+        /* Check consistency */
+        if ( le_addr < 8 ) {
+
+            /* Return daughter class offset */
+            return( le_class->cs_addr[ le_addr ] );
+
+        } else {
+
+            /* Return invalid daughter offset */
+            return( LE_CLASS_NULL );
+
+        }
 
     }
 
@@ -42,7 +52,7 @@
     le_data_t * le_class_get_data( le_class_t const * const le_class ) {
 
         /* Return class data */
-        return( ( le_data_t * ) /*?*/ le_class->cs_data );
+        return( ( le_data_t * ) le_class->cs_data );
 
     }
 
@@ -94,10 +104,23 @@
 
     }
 
-    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
+    le_enum_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
 
-        /* Update daughter class offset */
-        le_class->cs_addr[ ( le_addr & 0x7 ) ] = le_offset;
+        /* Check consistency */
+        if ( le_addr < 8 ) {
+
+            /* Update daughter class offset */
+            le_class->cs_addr[ le_addr ] = le_offset;
+
+            /* Send message */
+            return( LE_ERROR_SUCCESS );
+
+        } else {
+
+            /* Send message */
+            return( LE_ERROR_DIGIT );
+
+        }
 
     }
 

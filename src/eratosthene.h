@@ -152,6 +152,7 @@
     # define LE_ERROR_IO_ACCESS 5
     # define LE_ERROR_MEMORY    6
     # define LE_ERROR_DEPTH     7
+    # define LE_ERROR_DIGIT     8
 
     /* Define mathematical constants */
     # define LE_PI ( 3.1415926535897932384626433832795029L )

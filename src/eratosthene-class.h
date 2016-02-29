@@ -51,10 +51,10 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_CLASS_C { { 0x0 }, { 0.0 }, 0 }
+    # define LE_CLASS_C     { { 0x0 }, { 0.0 }, 0 }
 
     /* Define invalid daughter offset */
-    # define LE_CLASS_NULL _LE_SIZE_MAX
+    # define LE_CLASS_NULL  _LE_SIZE_MAX
 
 /*
     header - preprocessor macros
@@ -85,7 +85,7 @@
     le_data_t * le_class_get_data( le_class_t const * const le_class );
     le_void_t le_class_set_clear( le_class_t * const le_class );
     le_void_t le_class_set_init( le_class_t * const le_class, le_data_t const * const le_data );
-    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
+    le_enum_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
     le_void_t le_class_set_inject( le_class_t * const le_class, le_data_t const * const le_data );
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream );
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream );
