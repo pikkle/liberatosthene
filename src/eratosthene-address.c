@@ -34,8 +34,18 @@
 
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
 
-        /* Return address digit */
-        return( le_address->as_addr[le_offset] );
+        /* Check consistency */
+        if ( le_offset < le_address->as_size ) {
+
+            /* Return address digit */
+            return( le_address->as_addr[le_offset] );
+
+        } else {
+
+            /* Return null digit */
+            return( LE_ADDRESS_NULL );
+
+        }
 
     }
 
@@ -43,17 +53,43 @@
     source - mutator methods
  */
 
-    le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
+    le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
 
-        /* Assign address size */
-        le_address->as_size = le_size;
+        /* Check consistency */
+        if ( le_size < LE_DEPTH_MAX ) {
+
+            /* Assign address size */
+            le_address->as_size = le_size;
+
+            /* Send message */
+            return( LE_ERROR_SUCCESS );
+
+        } else {
+
+            /* Send message */
+            return( LE_ERROR_DEPTH );
+
+        }
 
     }
 
-    le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
+    le_enum_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
 
-        /* Assign address digit */
-        le_address->as_addr[le_offset] = le_digit;
+        /* Check consistency */
+        if ( le_offset < le_address->as_size ) {
+
+            /* Assign address digit */
+            le_address->as_addr[le_offset] = le_digit;
+
+            /* Send message */
+            return( LE_ERROR_SUCCESS );
+
+        } else {
+
+            /* Send message */
+            return( LE_ERROR_DEPTH );
+
+        }
 
     }
 
@@ -61,7 +97,7 @@
     source - address methods
  */
 
-    le_void_t le_address( le_address_t * const le_address, le_real_t * const le_pose ) {
+    le_void_t le_address_sys( le_address_t * const le_address, le_real_t * const le_pose ) {
 
         /* Digital buffer variables */
         le_byte_t le_buffer = 0;
@@ -114,7 +150,7 @@
 
     }
 
-    le_void_t le_address2( le_address_t const * const le_address, le_real_t * const le_pose ) {
+    le_void_t le_address_geo( le_address_t const * const le_address, le_real_t * const le_pose ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;

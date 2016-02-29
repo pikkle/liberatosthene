@@ -88,7 +88,7 @@
         }
 
         /* Compute address */
-        le_address( & le_addr, le_pose );
+        le_address_sys( & le_addr, le_pose );
 
         /* Injection process */
         do {
@@ -247,7 +247,7 @@
             le_real_t le_pose[3] = { 0.0 };
 
             /* Retreive class representative */
-            le_address2( le_addr, le_pose );
+            le_address_geo( le_addr, le_pose );
 
             /* Inject gathered element in array */
             le_element_set( le_qarray, le_pose, le_class_get_data( le_class ) );
