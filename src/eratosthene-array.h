@@ -52,7 +52,7 @@
 
     /* Define pseudo-constructor/destructor */
     # define LE_ARRAY_C    { 0, 0, NULL }
-    # define LE_ARRAY_D(a) { if ( a->ar_size > 0 ) { free( a->ar_data ); a->ar_size = 0; } }
+    # define LE_ARRAY_D(a) { if ( ( a )->ar_size > 0 ) { free( ( a )->ar_data ); ( a )->ar_size = 0; } }
 
     /* Define element sizes */
     # define LE_ARRAY_SLEN ( sizeof( le_real_t ) * 3 )
