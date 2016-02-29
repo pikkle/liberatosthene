@@ -22,15 +22,15 @@
     /*! \file   eratosthene-element.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  Element module
+     *  Array module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_SYSTEM_ELEMENT__
-    # define __LE_SYSTEM_ELEMENT__
+    # ifndef __LE_SYSTEM_ARRAY__
+    # define __LE_SYSTEM_ARRAY__
 
 /*
     header - C/C++ compatibility
@@ -50,16 +50,17 @@
     header - preprocessor definitions
  */
 
-    /* Define pseudo-constructor */
-    # define LE_ELEMENT_C { 0, 0, NULL }
+    /* Define pseudo-constructor/destructor */
+    # define LE_ARRAY_C    { 0, 0, NULL }
+    # define LE_ARRAY_D(a) { if ( a->ar_size > 0 ) { free( a->ar_data ); a->ar_size = 0; } }
 
     /* Define element sizes */
-    # define LE_ELEMENT_SLEN ( sizeof( le_real_t ) * 3 )
-    # define LE_ELEMENT_DLEN ( sizeof( le_data_t ) * 3 )
-    # define LE_ELEMENT_ELEN ( LE_ELEMENT_SLEN + LE_ELEMENT_DLEN )
+    # define LE_ARRAY_SLEN ( sizeof( le_real_t ) * 3 )
+    # define LE_ARRAY_DLEN ( sizeof( le_data_t ) * 3 )
+    # define LE_ARRAY_ELEN ( LE_ARRAY_SLEN + LE_ARRAY_DLEN )
 
     /* Define array allocation step */
-    # define LE_ELEMENT_STEP ( LE_ELEMENT_ELEN * 4096 )
+    # define LE_ARRAY_STEP ( LE_ARRAY_ELEN * 4096 )
 
 /*
     header - preprocessor macros
@@ -73,22 +74,21 @@
     header - structures
  */
 
-    typedef struct le_element_struct {
+    typedef struct le_array_struct {
 
-        le_size_t   em_size;
-        le_size_t   em_head;
-        le_byte_t * em_elem;
+        le_size_t   ar_size;
+        le_size_t   ar_head;
+        le_byte_t * ar_data;
 
-    } le_element_t;
+    } le_array_t;
 
 /*
     header - function prototypes
  */
 
-    le_real_t * le_element_get_pose( le_element_t const * const le_element, le_size_t const le_offset );
-    le_data_t * le_element_get_data( le_element_t const * const le_element, le_size_t const le_offset );
-    le_void_t le_element_set_clear( le_element_t * const le_element );
-    le_enum_t le_element_set( le_element_t * le_element, le_real_t const * const le_pose, le_data_t const * const le_data );
+    le_real_t * le_array_get_pose( le_array_t const * const le_array, le_size_t const le_offset );
+    le_data_t * le_array_get_data( le_array_t const * const le_array, le_size_t const le_offset );
+    le_enum_t le_array_set( le_array_t * le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
 
 /*
     header - C/C++ compatibility

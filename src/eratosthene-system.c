@@ -141,7 +141,7 @@
     source - query methods
  */
 
-    le_element_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth ) {
+    le_array_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth ) {
 
         /* Query depth variables */
         le_size_t le_depth = 0;
@@ -153,7 +153,7 @@
         le_class_t le_class = LE_CLASS_C;
 
         /* Returned array variables */
-        le_element_t le_return = LE_ELEMENT_C;
+        le_array_t le_return = LE_ARRAY_C;
 
         /* Check consistency */
         if ( ( le_address_get_size( le_addr ) + 1 + le_sdepth ) > le_system->sm_sdisc ) {
@@ -205,7 +205,7 @@
     source - gathering methods
  */
 
-    le_void_t le_system_gather( le_system_t * const le_system, le_element_t * const le_qarray, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
+    le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_qarray, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -250,7 +250,7 @@
             le_address_geo( le_addr, le_pose );
 
             /* Inject gathered element in array */
-            le_element_set( le_qarray, le_pose, le_class_get_data( le_class ) );
+            le_array_set( le_qarray, le_pose, le_class_get_data( le_class ) );
 
         }
 

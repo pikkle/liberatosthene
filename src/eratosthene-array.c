@@ -19,23 +19,23 @@
  *
  */
 
-    # include "eratosthene-element.h"
+    # include "eratosthene-array.h"
 
 /*
     source - accessor methods
  */
 
-    le_real_t * le_element_get_pose( le_element_t const * const le_element, le_size_t const le_offset ) {
+    le_real_t * le_array_get_pose( le_array_t const * const le_array, le_size_t const le_offset ) {
 
         /* Return spatial components */
-        return( ( le_real_t * ) ( le_element->em_elem + ( le_offset * LE_ELEMENT_ELEN ) ) );
+        return( ( le_real_t * ) ( le_array->ar_data + ( le_offset * LE_ARRAY_ELEN ) ) );
 
     }
 
-    le_data_t * le_element_get_data( le_element_t const * const le_element, le_size_t const le_offset ) {
+    le_data_t * le_array_get_data( le_array_t const * const le_array, le_size_t const le_offset ) {
 
         /* Return colorimetric components */
-        return( ( le_data_t * ) ( le_element->em_elem + ( le_offset * LE_ELEMENT_ELEN ) + LE_ELEMENT_SLEN ) );
+        return( ( le_data_t * ) ( le_array->ar_data + ( le_offset * LE_ARRAY_ELEN ) + LE_ARRAY_SLEN ) );
 
     }
 
@@ -43,25 +43,7 @@
     source - mutator methods
  */
 
-    le_void_t le_element_set_clear( le_element_t * const le_element ) {
-
-        /* Check array state */
-        if ( le_element->em_size > 0 ) {
-
-            /* Unallocate array memory */
-            free( le_element->em_elem );
-
-            /* Invalidate array pointer */
-            le_element->em_elem = NULL;
-
-            /* Reset array size */
-            le_element->em_size = 0;           
-
-        }
-
-    }
-
-    le_enum_t le_element_set( le_element_t * le_element, le_real_t const * const le_pose, le_data_t const * const le_data ) {
+    le_enum_t le_array_set( le_array_t * le_array, le_real_t const * const le_pose, le_data_t const * const le_data ) {
 
         /* Allocation swap variables */
         le_byte_t * le_swap = NULL;
@@ -71,19 +53,19 @@
         le_byte_t * le_data_p = NULL;
 
         /* Check array capacity */
-        if ( ( le_element->em_head + LE_ELEMENT_ELEN ) >= le_element->em_size ) {
+        if ( ( le_array->ar_head + LE_ARRAY_ELEN ) >= le_array->ar_size ) {
 
             /* Update array size */
-            le_element->em_size += LE_ELEMENT_STEP;
+            le_array->ar_size += LE_ARRAY_STEP;
 
             /* Check array state */
-            if ( le_element->em_elem == NULL ) {
+            if ( le_array->ar_data == NULL ) {
 
                 /* Array memory allocation */
-                if ( ( le_element->em_elem = ( le_byte_t * ) malloc( le_element->em_size ) ) == NULL ) {
+                if ( ( le_array->ar_data = ( le_byte_t * ) malloc( le_array->ar_size ) ) == NULL ) {
 
                     /* Reset array size */
-                    le_element->em_size = 0;
+                    le_array->ar_size = 0;
 
                     /* Send message */
                     return( LE_ERROR_MEMORY );
@@ -93,10 +75,10 @@
             } else {
 
                 /* Array memory reallocation */
-                if ( ( le_swap = realloc( ( void * ) le_element->em_elem, le_element->em_size ) ) == NULL ) {
+                if ( ( le_swap = realloc( ( void * ) le_array->ar_data, le_array->ar_size ) ) == NULL ) {
 
                     /* Reset array size */
-                    le_element->em_size -= LE_ELEMENT_STEP;
+                    le_array->ar_size -= LE_ARRAY_STEP;
 
                     /* Send message */
                     return( LE_ERROR_MEMORY );
@@ -104,18 +86,18 @@
                 }
 
                 /* Assign reallocated memory */
-                le_element->em_elem = le_swap;
+                le_array->ar_data = le_swap;
 
             }
 
         }
 
         /* Compute array pointers */
-        le_pose_p = le_element->em_elem + le_element->em_head;
-        le_data_p = le_element->em_elem + le_element->em_head + LE_ELEMENT_SLEN;        
+        le_pose_p = le_array->ar_data + le_array->ar_head;
+        le_data_p = le_array->ar_data + le_array->ar_head + LE_ARRAY_SLEN;        
 
         /* Update array head */
-        le_element->em_head += LE_ELEMENT_ELEN;
+        le_array->ar_head += LE_ARRAY_ELEN;
 
         /* Inject spatial components */
         * ( ( ( le_real_t * ) le_pose_p )     ) = * ( le_pose     );

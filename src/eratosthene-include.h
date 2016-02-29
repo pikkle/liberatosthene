@@ -46,7 +46,7 @@
 
     # include "eratosthene.h"
     # include "eratosthene-address.h"
-    # include "eratosthene-element.h"
+    # include "eratosthene-array.h"
     # include "eratosthene-geodesy.h"
     # include "eratosthene-system.h"
 
