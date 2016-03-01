@@ -61,10 +61,17 @@
 
     # include <stdio.h>
     # include <stdint.h>
-    # include <inttypes.h>
+    # include <unistd.h>
     # include <stdlib.h>
     # include <string.h>
+    # include <inttypes.h>
     # include <sys/stat.h>
+    # include <sys/types.h> 
+    # include <sys/socket.h>
+    # include <netinet/in.h>
+    # include <netinet/in.h>
+    # include <arpa/inet.h>
+    # include <netdb.h> 
 
 /*
     header - preprocessor definitions
@@ -89,6 +96,7 @@
     # define _LE_CHAR unsigned char
     # define _LE_DATA float
     # define _LE_TIME int64_t
+    # define _LE_SOCK int
 
     /* Define class offset implementation */
     # define _LE_OFFSET 32
@@ -144,15 +152,19 @@
     # define _LE_S_TIME SCNi64
 
     /* Define library errors */
-    # define LE_ERROR_SUCCESS   0
-    # define LE_ERROR_IO_READ   1
-    # define LE_ERROR_IO_WRITE  2
-    # define LE_ERROR_IO_SEEK   3
-    # define LE_ERROR_IO_STREAM 4
-    # define LE_ERROR_IO_ACCESS 5
-    # define LE_ERROR_MEMORY    6
-    # define LE_ERROR_DEPTH     7
-    # define LE_ERROR_DIGIT     8
+    # define LE_ERROR_SUCCESS    0
+    # define LE_ERROR_IO_READ    1
+    # define LE_ERROR_IO_WRITE   2
+    # define LE_ERROR_IO_SEEK    3
+    # define LE_ERROR_IO_STREAM  4
+    # define LE_ERROR_IO_ACCESS  5
+    # define LE_ERROR_MEMORY     6
+    # define LE_ERROR_DEPTH      7
+    # define LE_ERROR_DIGIT      8
+    # define LE_ERROR_SOCKET     9
+    # define LE_ERROR_BINDING   10
+    # define LE_ERROR_HEADER    11
+    # define LE_ERROR_INJECTION 12
 
     /* Define mathematical constants */
     # define LE_PI ( 3.1415926535897932384626433832795029L )
@@ -193,6 +205,9 @@
 
     /* Genral time type */
     typedef _LE_TIME le_time_t;
+
+    /* General socket type */
+    typedef _LE_SOCK le_sock_t;
 
 /*
     header - structures

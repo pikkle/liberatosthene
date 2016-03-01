@@ -87,6 +87,7 @@
     le_array_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth );
     le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_qarray, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
     le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time );
+    le_void_t le_system_flush( le_system_t * const le_system );
     le_void_t le_system_close( le_system_t * const le_system );
 
 /*

@@ -19,18 +19,18 @@
  *
  */
 
-    /*! \file   eratosthene-array.h
+    /*! \file   eratosthene-server.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  Array module
+     *  Server module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_SYSTEM_ARRAY__
-    # define __LE_SYSTEM_ARRAY__
+    # ifndef __LE_SERVER__
+    # define __LE_SERVER__
 
 /*
     header - C/C++ compatibility
@@ -45,22 +45,32 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-system.h"
 
 /*
     header - preprocessor definitions
  */
 
-    /* Define pseudo-constructor/destructor */
-    # define LE_ARRAY_C    { 0, 0, NULL }
-    # define LE_ARRAY_D(a) { if ( ( a )->ar_size > 0 ) { free( ( a )->ar_data ); ( a )->ar_size = 0; } }
+    /* Define the answer */
+    # define LE_SERVER_ANSWER 42
 
-    /* Define element sizes */
-    # define LE_ARRAY_SLEN ( sizeof( le_real_t ) * 3 )
-    # define LE_ARRAY_DLEN ( sizeof( le_data_t ) * 3 )
-    # define LE_ARRAY_ELEN ( LE_ARRAY_SLEN + LE_ARRAY_DLEN )
+    /* Define null socket */
+    # define LE_SERVER_NULL  -1
 
-    /* Define array allocation step */
-    # define LE_ARRAY_STEP ( LE_ARRAY_ELEN * 4096 )
+    /* Define server lisenting port */
+    # define LE_SERVER_PORT   555
+
+    /* Define element length */
+    # define LE_SERVER_ELEN   ( 3 * ( sizeof( le_real_t ) + sizeof( le_data_t ) ) + sizeof( le_time_t ) )
+
+    /* Define ethernet frame maximum size */
+    # define LE_SERVER_DGMAX  ( 30 * LE_SERVER_ELEN )
+
+    /* Define connection type */
+    # define LE_SERVER_CNNUL  0x00
+    # define LE_SERVER_CNINJ  0x01
+    # define LE_SERVER_CNQRY  0x02
+    # define LE_SERVER_VALID  0xFF
 
 /*
     header - preprocessor macros
@@ -74,21 +84,15 @@
     header - structures
  */
 
-    typedef struct le_array_struct {
-
-        le_size_t   ar_size;
-        le_size_t   ar_head;
-        le_byte_t * ar_data;
-
-    } le_array_t;
-
 /*
     header - function prototypes
  */
 
-    le_real_t * le_array_get_pose( le_array_t const * const le_array, le_size_t const le_offset );
-    le_data_t * le_array_get_data( le_array_t const * const le_array, le_size_t const le_offset );
-    le_enum_t le_array_set( le_array_t * le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
+    le_sock_t le_server_client_open( le_char_t const * const le_hostname, le_sock_t const le_port );
+    le_void_t le_server_client_close( le_sock_t const le_socket );
+    le_void_t le_server_inject( le_system_t * const le_system, int const le_client );
+    le_enum_t le_server_query( le_system_t * const le_system, int const le_client );
+    le_enum_t le_server( le_system_t * const le_system );
 
 /*
     header - C/C++ compatibility

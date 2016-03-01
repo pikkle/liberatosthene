@@ -339,6 +339,26 @@
 
     }
 
+    le_void_t le_system_flush( le_system_t * const le_system ) {
+
+        /* Parsing variables */
+        le_size_t le_parse = 0;
+
+        /* Parsing stream */
+        for ( ; le_parse < le_system->sm_sdisc; le_parse ++ ) {
+
+            /* Check stream state */
+            if ( le_system->sm_scale[le_parse] != NULL ) {
+
+                /* Flush stream */
+                fflush( le_system->sm_scale[le_parse] );
+
+            }
+
+        }
+
+    }
+
     le_void_t le_system_close( le_system_t * const le_system ) {
 
         /* Parser variables */
