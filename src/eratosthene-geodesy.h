@@ -22,7 +22,7 @@
     /*! \file   eratosthene-class.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  Classes module
+     *  Geodetic module
      */
 
 /*

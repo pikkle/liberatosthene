@@ -117,9 +117,12 @@
                 le_data = ( le_data_t * ) ( le_time + 1 );
 
                 /* Element injection */
-                le_system_inject( le_system, le_pose, le_data, * le_time );
+                le_system_inject( le_system, le_pose, * le_time, le_data );
 
             }
+
+/* TEMPORARY TRACKER */
+fprintf( stderr, "DEBUG : injection of %" _LE_SIZE_P " bytes(s) received from client\n", le_count );
 
         }
 

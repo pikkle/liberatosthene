@@ -25,17 +25,10 @@
     source - accessor methods
  */
 
-    le_real_t * le_array_get_pose( le_array_t const * const le_array, le_size_t const le_offset ) {
+    le_byte_t * le_array_get_byte( le_array_t * le_array ) {
 
-        /* Return spatial components */
-        return( ( le_real_t * ) ( le_array->ar_data + ( le_offset * LE_ARRAY_ELEN ) ) );
-
-    }
-
-    le_data_t * le_array_get_data( le_array_t const * const le_array, le_size_t const le_offset ) {
-
-        /* Return colorimetric components */
-        return( ( le_data_t * ) ( le_array->ar_data + ( le_offset * LE_ARRAY_ELEN ) + LE_ARRAY_SLEN ) );
+        /* Return array bytes pointer */
+        return( le_array->ar_data );
 
     }
 
@@ -43,20 +36,21 @@
     source - mutator methods
  */
 
-    le_enum_t le_array_set( le_array_t * le_array, le_real_t const * const le_pose, le_data_t const * const le_data ) {
+    le_enum_t le_array_set_push( le_array_t * le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
 
         /* Allocation swap variables */
         le_byte_t * le_swap = NULL;
 
         /* Array pointer variables */
-        le_byte_t * le_pose_p = NULL;
-        le_byte_t * le_data_p = NULL;
+        le_real_t * le_pose_p = NULL;
+        le_time_t * le_time_p = NULL;
+        le_data_t * le_data_p = NULL;
 
-        /* Check array capacity */
-        if ( ( le_array->ar_head + LE_ARRAY_ELEN ) >= le_array->ar_size ) {
+        /* Check reallocation necessities */
+        if ( ( le_array->ar_head + LE_ARRAY_ELEM_LEN ) >= le_array->ar_size ) {
 
             /* Update array size */
-            le_array->ar_size += LE_ARRAY_STEP;
+            le_array->ar_size += LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN;
 
             /* Check array state */
             if ( le_array->ar_data == NULL ) {
@@ -78,36 +72,40 @@
                 if ( ( le_swap = realloc( ( void * ) le_array->ar_data, le_array->ar_size ) ) == NULL ) {
 
                     /* Reset array size */
-                    le_array->ar_size -= LE_ARRAY_STEP;
+                    le_array->ar_size -= LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN;
 
                     /* Send message */
                     return( LE_ERROR_MEMORY );
 
                 }
 
-                /* Assign reallocated memory */
+                /* Memory reallocation pointer allocation */
                 le_array->ar_data = le_swap;
 
             }
 
         }
 
-        /* Compute array pointers */
-        le_pose_p = le_array->ar_data + le_array->ar_head;
-        le_data_p = le_array->ar_data + le_array->ar_head + LE_ARRAY_SLEN;        
+        /* Compute pointers */
+        le_pose_p = ( le_real_t * ) ( le_array->ar_data + le_array->ar_head );
+        le_time_p = ( le_time_t * ) ( le_pose_p + 3 );
+        le_data_p = ( le_data_t * ) ( le_time_p + 1 );
 
         /* Update array head */
-        le_array->ar_head += LE_ARRAY_ELEN;
+        le_array->ar_head += LE_ARRAY_ELEM_LEN;
 
         /* Inject spatial components */
-        * ( ( ( le_real_t * ) le_pose_p )     ) = * ( le_pose     );
-        * ( ( ( le_real_t * ) le_pose_p ) + 1 ) = * ( le_pose + 1 );
-        * ( ( ( le_real_t * ) le_pose_p ) + 2 ) = * ( le_pose + 2 );
+        * ( le_pose_p     ) = * ( le_pose     );
+        * ( le_pose_p + 1 ) = * ( le_pose + 1 );
+        * ( le_pose_p + 2 ) = * ( le_pose + 2 );
+
+        /* Inject temporal components */
+        * ( le_time_p ) = le_time;
 
         /* Inject colorimetric components */
-        * ( ( ( le_data_t * ) le_data_p )     ) = * ( le_data     );
-        * ( ( ( le_data_t * ) le_data_p ) + 1 ) = * ( le_data + 1 );
-        * ( ( ( le_data_t * ) le_data_p ) + 2 ) = * ( le_data + 2 );
+        * ( le_data_p     ) = * ( le_data     );
+        * ( le_data_p + 1 ) = * ( le_data + 1 );
+        * ( le_data_p + 2 ) = * ( le_data + 2 );
 
         /* Send message */
         return( LE_ERROR_SUCCESS );

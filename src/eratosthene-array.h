@@ -54,17 +54,23 @@
     # define LE_ARRAY_C    { 0, 0, NULL }
     # define LE_ARRAY_D(a) { if ( ( a )->ar_size > 0 ) { free( ( a )->ar_data ); ( a )->ar_size = 0; } }
 
-    /* Define element sizes */
-    # define LE_ARRAY_SLEN ( sizeof( le_real_t ) * 3 )
-    # define LE_ARRAY_DLEN ( sizeof( le_data_t ) * 3 )
-    # define LE_ARRAY_ELEN ( LE_ARRAY_SLEN + LE_ARRAY_DLEN )
+    /* Define heterogenous length */
+    # define LE_ARRAY_POSE_LEN     ( sizeof( le_real_t ) * 3 )
+    # define LE_ARRAY_TIME_LEN     ( sizeof( le_time_t )     )
+    # define LE_ARRAY_DATA_LEN     ( sizeof( le_data_t ) * 3 )
+    # define LE_ARRAY_ELEM_LEN     ( LE_ARRAY_POSE_LEN + LE_ARRAY_TIME_LEN + LE_ARRAY_DATA_LEN )
 
-    /* Define array allocation step */
-    # define LE_ARRAY_STEP ( LE_ARRAY_ELEN * 4096 )
+    /* Define array step */
+    # define LE_ARRAY_STEP         ( 4096 )
 
 /*
     header - preprocessor macros
  */
+
+    /* Define heterogenous data access macro */
+    # define LE_ARRAY_POSE( b, o ) ( ( le_real_t * ) ( b + ( o * LE_ARRAY_ELEM_LEN ) ) )
+    # define LE_ARRAY_TIME( b, o ) ( ( le_time_t * ) ( b + ( o * LE_ARRAY_ELEM_LEN ) + LE_ARRAY_POSE_LEN ) )
+    # define LE_ARRAY_DATA( b, o ) ( ( le_data_t * ) ( b + ( o * LE_ARRAY_ELEM_LEN ) + LE_ARRAY_POSE_LEN + LE_ARRAY_TIME_LEN ) )
 
 /*
     header - type definition
@@ -86,9 +92,8 @@
     header - function prototypes
  */
 
-    le_real_t * le_array_get_pose( le_array_t const * const le_array, le_size_t const le_offset );
-    le_data_t * le_array_get_data( le_array_t const * const le_array, le_size_t const le_offset );
-    le_enum_t le_array_set( le_array_t * le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
+    le_byte_t * le_array_get_byte( le_array_t * le_array );
+    le_enum_t le_array_set_push( le_array_t * le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
 /*
     header - C/C++ compatibility

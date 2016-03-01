@@ -28,14 +28,14 @@
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr ) {
 
         /* Check consistency */
-        if ( le_addr < 8 ) {
+        if ( le_addr < LE_ADDRESS_BASE ) {
 
             /* Return daughter class offset */
-            return( le_class->cs_addr[ le_addr ] );
+            return( le_class->cs_addr[le_addr] );
 
         } else {
 
-            /* Return invalid daughter offset */
+            /* Return invalid offset */
             return( LE_CLASS_NULL );
 
         }
@@ -60,31 +60,9 @@
     source - mutator methods
  */
 
-    le_void_t le_class_set_clear( le_class_t * const le_class ) {
-
-        /* Clear address */
-        le_class->cs_addr[0] = LE_CLASS_NULL;
-        le_class->cs_addr[1] = LE_CLASS_NULL;
-        le_class->cs_addr[2] = LE_CLASS_NULL;
-        le_class->cs_addr[3] = LE_CLASS_NULL;
-        le_class->cs_addr[4] = LE_CLASS_NULL;
-        le_class->cs_addr[5] = LE_CLASS_NULL;
-        le_class->cs_addr[6] = LE_CLASS_NULL;
-        le_class->cs_addr[7] = LE_CLASS_NULL;
-
-        /* Clear colorimetry */
-        le_class->cs_data[0] = 0.0;
-        le_class->cs_data[1] = 0.0;
-        le_class->cs_data[2] = 0.0;
-
-        /* Clear class accumulator */
-        le_class->cs_mean = 0;
-
-    }
-
     le_void_t le_class_set_init( le_class_t * const le_class, le_data_t const * const le_data ) {
 
-        /* Clear address */
+        /* Initialise address */
         le_class->cs_addr[0] = LE_CLASS_NULL;
         le_class->cs_addr[1] = LE_CLASS_NULL;
         le_class->cs_addr[2] = LE_CLASS_NULL;
@@ -94,12 +72,12 @@
         le_class->cs_addr[6] = LE_CLASS_NULL;
         le_class->cs_addr[7] = LE_CLASS_NULL;
 
-        /* Clear colorimetry */
+        /* Initialise colorimetry */
         le_class->cs_data[0] = le_data[0];
         le_class->cs_data[1] = le_data[1];
         le_class->cs_data[2] = le_data[2];
 
-        /* Clear class accumulator */
+        /* Initialise accumulator */
         le_class->cs_mean = 1;
 
     }
@@ -107,10 +85,10 @@
     le_enum_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
 
         /* Check consistency */
-        if ( le_addr < 8 ) {
+        if ( le_addr < LE_ADDRESS_BASE ) {
 
             /* Update daughter class offset */
-            le_class->cs_addr[ le_addr ] = le_offset;
+            le_class->cs_addr[le_addr] = le_offset;
 
             /* Send message */
             return( LE_ERROR_SUCCESS );
@@ -124,15 +102,15 @@
 
     }
 
-    le_void_t le_class_set_inject( le_class_t * const le_class, le_data_t const * const le_data ) {
+    le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
+
+        /* Mean value variables */
+        le_size_t le_mean = ( le_class->cs_mean ++ );
 
         /* Inject colorimetric information */
-        le_class->cs_data[0] = ( ( le_class->cs_data[0] * le_class->cs_mean ) + le_data[0] ) / ( le_class->cs_mean + 1 );
-        le_class->cs_data[1] = ( ( le_class->cs_data[1] * le_class->cs_mean ) + le_data[1] ) / ( le_class->cs_mean + 1 );
-        le_class->cs_data[2] = ( ( le_class->cs_data[2] * le_class->cs_mean ) + le_data[2] ) / ( le_class->cs_mean + 1 );
-
-        /* Update class accumulator */
-        le_class->cs_mean ++;
+        le_class->cs_data[0] = ( ( le_class->cs_data[0] * le_mean ) + le_data[0] ) / le_class->cs_mean;
+        le_class->cs_data[1] = ( ( le_class->cs_data[1] * le_mean ) + le_data[1] ) / le_class->cs_mean;
+        le_class->cs_data[2] = ( ( le_class->cs_data[2] * le_mean ) + le_data[2] ) / le_class->cs_mean;
 
     }
 

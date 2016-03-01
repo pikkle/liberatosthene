@@ -55,8 +55,8 @@
     # define LE_ADDRESS_C           { 0, { 0 } }
     # define LE_ADDRESS_C_SIZE( s ) { s, { 0 } }
 
-    /* Define null digit */
-    # define LE_ADDRESS_NULL        ( 0xFF )
+    /* Define digital boundaries */
+    # define LE_ADDRESS_BASE 8
 
 /*
     header - preprocessor macros
@@ -70,10 +70,14 @@
     header - structures
  */
 
+    /*! \struct le_address_struct
+        \brief address structure
+     */
+
     typedef struct le_address_struct {
 
         le_size_t as_size;
-        le_byte_t as_addr[LE_DEPTH_MAX];
+        le_byte_t as_addr[_LE_USE_DEPTH];
 
     } le_address_t;
 
@@ -81,14 +85,45 @@
     header - function prototypes
  */
 
+    /*! \brief accessor methods
+     */
+
     le_size_t le_address_get_size( le_address_t const * const le_address );
+
+    /*! \brief accessor methods
+     */
+
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
+
+    /*! \brief mutator methods
+     */
+
     le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
+
+    /*! \brief mutator methods
+     */
+
     le_enum_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
-    le_void_t le_address_sys( le_address_t * const le_address, le_real_t * const le_pose );
-    le_void_t le_address_geo( le_address_t const * const le_address, le_real_t * const le_pose );
-    le_void_t le_address_binary_string( le_address_t const * const le_address, le_char_t * const le_string );
-    le_void_t le_address_string_binary( le_address_t * const le_address, le_char_t const * const le_string );
+
+    /*! \brief conversion methods
+     */
+
+    le_void_t le_address_cgd( le_address_t * const le_address, le_real_t * const le_pose );
+
+    /*! \brief conversion methods
+     */
+
+    le_void_t le_address_cdg( le_address_t const * const le_address, le_real_t * const le_pose );
+
+    /*! \brief conversion methods
+     */
+
+    le_void_t le_address_cas( le_address_t const * const le_address, le_char_t * const le_string );
+
+    /*! \brief conversion methods
+     */
+
+    le_void_t le_address_csa( le_address_t * const le_address, le_char_t const * const le_string );
 
 /*
     header - C/C++ compatibility

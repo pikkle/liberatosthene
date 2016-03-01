@@ -42,8 +42,8 @@
 
         } else {
 
-            /* Return null digit */
-            return( LE_ADDRESS_NULL );
+            /* Return virtual digit */
+            return( 0 );
 
         }
 
@@ -56,7 +56,7 @@
     le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
 
         /* Check consistency */
-        if ( le_size < LE_DEPTH_MAX ) {
+        if ( le_size < _LE_USE_DEPTH ) {
 
             /* Assign address size */
             le_address->as_size = le_size;
@@ -94,10 +94,10 @@
     }
 
 /*
-    source - address methods
+    source - conversion methods
  */
 
-    le_void_t le_address_sys( le_address_t * const le_address, le_real_t * const le_pose ) {
+    le_void_t le_address_cgd( le_address_t * const le_address, le_real_t * const le_pose ) {
 
         /* Digital buffer variables */
         le_byte_t le_buffer = 0;
@@ -150,7 +150,7 @@
 
     }
 
-    le_void_t le_address_geo( le_address_t const * const le_address, le_real_t * const le_pose ) {
+    le_void_t le_address_cdg( le_address_t const * const le_address, le_real_t * const le_pose ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -190,11 +190,7 @@
 
     }
 
-/*
-    source - conversion methods
- */
-
-    le_void_t le_address_binary_string( le_address_t const * const le_address, le_char_t * const le_string ) {
+    le_void_t le_address_cas( le_address_t const * const le_address, le_char_t * const le_string ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -204,7 +200,7 @@
 
     }
 
-    le_void_t le_address_string_binary( le_address_t * const le_address, le_char_t const * const le_string ) {
+    le_void_t le_address_csa( le_address_t * const le_address, le_char_t const * const le_string ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
