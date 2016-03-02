@@ -45,6 +45,7 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-array.h"
     # include "eratosthene-system.h"
 
 /*
@@ -71,6 +72,10 @@
     # define LE_SERVER_CNINJ  0x01
     # define LE_SERVER_CNQRY  0x02
     # define LE_SERVER_VALID  0xFF
+
+    /* Define datagram length */
+    # define LE_SERVER_DGRAM_LEN ( LE_ARRAY_ELEM_LEN * 30     )
+    # define LE_SERVER_QUERY_LEN ( _LE_USE_DEPTH + 20 + 3 + 2 )
 
 /*
     header - preprocessor macros

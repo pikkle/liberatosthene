@@ -22,7 +22,7 @@
     # include "eratosthene-server.h"
 
 /*
-    source - connection methods
+    source - common methods
  */
 
     le_sock_t le_server_client_open( le_char_t const * const le_hostname, le_sock_t const le_port ) {
@@ -121,9 +121,6 @@
 
             }
 
-/* TEMPORARY TRACKER */
-fprintf( stderr, "DEBUG : injection of %" _LE_SIZE_P " bytes(s) received from client\n", le_count );
-
         }
 
         /* Force stream cache export */
@@ -132,6 +129,89 @@ fprintf( stderr, "DEBUG : injection of %" _LE_SIZE_P " bytes(s) received from cl
     }
 
     le_enum_t le_server_query( le_system_t * const le_system, int const le_client ) {
+
+        /* Query structure variables */
+        le_array_t le_query = LE_ARRAY_C;
+
+        /* Socket i/o count variables */
+        le_size_t le_count = 0;
+
+        /* Socket i/o buffer variables */
+        le_byte_t le_buffer = 0;
+
+        /* Parsing variables */
+        le_size_t le_parse = 0;
+
+        /* Query depth variables */
+        le_size_t le_depth = 0;
+
+        /* Query time variables */
+        le_time_t le_time = 0;
+
+        /* Query address variables */
+        le_address_t le_address = LE_ADDRESS_C;
+
+        /* Read query time */
+        if ( ( le_count = read( le_client, & le_time, sizeof( le_time_t ) ) ) != sizeof( le_time_t ) ) {
+
+            /* Send message */
+            return( LE_ERROR_QUERY );
+
+        }
+
+        /* Read query address length */
+        if ( ( le_count = read( le_client, & le_buffer, sizeof( le_byte_t ) ) ) != sizeof( le_byte_t ) ) {
+
+            /* Send message */
+            return( LE_ERROR_QUERY );
+
+        }
+
+        /* Assign address length */
+        le_address_set_size( & le_address, ( le_size_t ) le_buffer );
+
+        /* Read query address digits */
+        if ( ( le_count = read( le_client, le_address_get_digits( & le_address ), _LE_USE_DEPTH ) ) != _LE_USE_DEPTH ) {
+
+            /* Send message */
+            return( LE_ERROR_QUERY );
+
+        }
+
+        /* Read query depth */
+        if ( ( le_count = read( le_client, & le_depth, sizeof( le_depth ) ) ) != sizeof( le_size_t ) ) {
+
+            /* Send message */
+            return( LE_ERROR_QUERY );
+
+        }
+
+        /* Perform query */
+        le_query = le_system_query( le_system, le_time, & le_address, le_depth );
+
+        /* Check query results */
+        if ( le_array_get_size( & le_query ) > 0 ) {
+
+            /* Parsing query results */
+            for ( le_parse = 0; le_parse < le_array_get_size( & le_query ); le_parse += LE_SERVER_DGMAX ) {
+
+                /* Compute segment size */
+                le_count = ( le_parse + LE_SERVER_DGMAX ) >= le_array_get_size( & le_query ) ? LE_SERVER_DGMAX - ( ( le_parse + LE_SERVER_DGMAX ) - le_array_get_size( & le_query ) ) : LE_SERVER_DGMAX;
+
+                /* Send segment to socket */
+                if ( write( le_client, le_array_get_byte( & le_query ) + le_parse, le_count ) != le_count ) {
+
+                    /* Warning */
+                    fprintf( stderr, "DEBUG : warning on socket write\n" );
+
+                }
+
+            }
+
+            /* Delete query array */
+            LE_ARRAY_D( & le_query ); 
+
+        }
 
         /* Send message */
         return( LE_ERROR_SUCCESS );

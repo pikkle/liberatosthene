@@ -25,6 +25,13 @@
     source - accessor methods
  */
 
+    le_size_t le_array_get_size( le_array_t * le_array ) {
+
+        /* Return array size */
+        return( le_array->ar_head );
+
+    }
+
     le_byte_t * le_array_get_byte( le_array_t * le_array ) {
 
         /* Return array bytes pointer */

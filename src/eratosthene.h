@@ -157,9 +157,10 @@
     # define LE_ERROR_DEPTH     0x0007
     # define LE_ERROR_DIGIT     0x0008
     # define LE_ERROR_SOCKET    0x0009
-    # define LE_ERROR_BINDING   0x0010
-    # define LE_ERROR_HEADER    0x0011
-    # define LE_ERROR_INJECTION 0x0012
+    # define LE_ERROR_BINDING   0x000A
+    # define LE_ERROR_HEADER    0x000B
+    # define LE_ERROR_INJECTION 0x000C
+    # define LE_ERROR_QUERY     0x000D
 
     /* Define constants */
     # define LE_PI              ( 3.1415926535897932384626433832795029L )

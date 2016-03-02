@@ -98,6 +98,11 @@
     /*! \brief mutator methods
      */
 
+    le_byte_t * le_address_get_digits( le_address_t const * const le_address );
+
+    /*! \brief mutator methods
+     */
+
     le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
 
     /*! \brief mutator methods

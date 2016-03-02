@@ -49,6 +49,13 @@
 
     }
 
+    le_byte_t * le_address_get_digits( le_address_t const * const le_address ) {
+
+        /* Return address digits pointer */
+        return( ( le_byte_t * ) le_address->as_addr );
+
+    }
+
 /*
     source - mutator methods
  */

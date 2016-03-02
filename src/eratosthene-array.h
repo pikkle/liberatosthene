@@ -51,17 +51,17 @@
  */
 
     /* Define pseudo-constructor/destructor */
-    # define LE_ARRAY_C    { 0, 0, NULL }
-    # define LE_ARRAY_D(a) { if ( ( a )->ar_size > 0 ) { free( ( a )->ar_data ); ( a )->ar_size = 0; } }
+    # define LE_ARRAY_C        { 0, 0, NULL }
+    # define LE_ARRAY_D(a)     { if ( ( a )->ar_size > 0 ) { free( ( a )->ar_data ); ( a )->ar_size = 0; } }
 
     /* Define heterogenous length */
-    # define LE_ARRAY_POSE_LEN     ( sizeof( le_real_t ) * 3 )
-    # define LE_ARRAY_TIME_LEN     ( sizeof( le_time_t )     )
-    # define LE_ARRAY_DATA_LEN     ( sizeof( le_data_t ) * 3 )
-    # define LE_ARRAY_ELEM_LEN     ( LE_ARRAY_POSE_LEN + LE_ARRAY_TIME_LEN + LE_ARRAY_DATA_LEN )
+    # define LE_ARRAY_POSE_LEN ( sizeof( le_real_t ) * 3 )
+    # define LE_ARRAY_TIME_LEN ( sizeof( le_time_t )     )
+    # define LE_ARRAY_DATA_LEN ( sizeof( le_data_t ) * 3 )
+    # define LE_ARRAY_ELEM_LEN ( LE_ARRAY_POSE_LEN + LE_ARRAY_TIME_LEN + LE_ARRAY_DATA_LEN )
 
     /* Define array step */
-    # define LE_ARRAY_STEP         ( 4096 )
+    # define LE_ARRAY_STEP     ( 4096 )
 
 /*
     header - preprocessor macros
@@ -92,6 +92,7 @@
     header - function prototypes
  */
 
+    le_size_t le_array_get_size( le_array_t * le_array );
     le_byte_t * le_array_get_byte( le_array_t * le_array );
     le_enum_t le_array_set_push( le_array_t * le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
