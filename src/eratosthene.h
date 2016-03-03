@@ -42,9 +42,9 @@
     # ifndef __LE_ERATOSTHENE__
     # define __LE_ERATOSTHENE__
 
-# if ( __STDC_VERSION__ < 199901L )
+    # if ( __STDC_VERSION__ < 199901L )
     # error "this program requires C99 standard"
-# endif
+    # endif
 
 /*
     header - C/C++ compatibility
@@ -77,8 +77,8 @@
  */
 
     /* Boolean values */
-    # define _LE_FALSE 0
-    # define _LE_TRUE  1
+    # define _LE_FALSE          0
+    # define _LE_TRUE           1
 
     /* Features configuration */
     # define _LE_USE_STDIO_EXT  _LE_TRUE
@@ -88,35 +88,35 @@
     # define _LE_USE_MTU        1280
 
     /* Define features */
-# if ( _LE_USE_STDIO_EXT == _LE_TRUE )
+    # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
     # include <stdio_ext.h>
-# endif
+    # endif
 
     /* Define types */
     # define _LE_VOID           void
     # define _LE_BYTE           uint8_t
     # define _LE_CHAR           unsigned char
     # define _LE_ENUM           int
-# if   ( _LE_USE_SIZE_T == 32 )
+    # if   ( _LE_USE_SIZE_T == 32 )
     # define _LE_SIZE           uint32_t
-# elif ( _LE_USE_SIZE_T == 64 )
+    # elif ( _LE_USE_SIZE_T == 64 )
     # define _LE_SIZE           uint64_t
-# endif
-# if   ( _LE_USE_REAL_T == 32 )
+    # endif
+    # if   ( _LE_USE_REAL_T == 32 )
     # define _LE_REAL           float
-# elif ( _LE_USE_REAL_T == 64 )
+    # elif ( _LE_USE_REAL_T == 64 )
     # define _LE_REAL           double
-# endif
+    # endif
     # define _LE_TIME           int64_t
     # define _LE_DATA           float
     # define _LE_SOCK           int
 
     /* Define boundaries */
-# if   ( _LE_USE_SIZE_T == 32 )
+    # if   ( _LE_USE_SIZE_T == 32 )
     # define _LE_SIZE_MAX       UINT32_MAX
-# elif ( _LE_USE_SIZE_T == 64 )
+    # elif ( _LE_USE_SIZE_T == 64 )
     # define _LE_SIZE_MAX       UINT64_MAX
-# endif
+    # endif
     # define _LE_TIME_MAX       INT64_MAX
     # define _LE_TIME_MIN       INT64_MIN
 
@@ -127,20 +127,20 @@
     # define _LE_CHAR_S         "hhu"
     # define _LE_ENUM_P         "i"
     # define _LE_ENUM_S         "i"
-# if   ( _LE_USE_SIZE_T == 32 )
+    # if   ( _LE_USE_SIZE_T == 32 )
     # define _LE_SIZE_P         PRIu32
     # define _LE_SIZE_S         SCNu32
-# elif ( _LE_USE_SIZE_T == 64 )
+    # elif ( _LE_USE_SIZE_T == 64 )
     # define _LE_SIZE_P         PRIu64
     # define _LE_SIZE_S         SCNu64
-# endif
-# if   ( _LE_USE_REAL_T == 32 )
+    # endif
+    # if   ( _LE_USE_REAL_T == 32 )
     # define _LE_REAL_P         ".7e"
     # define _LE_REAL_S         "f"
-# elif ( _LE_USE_REAL_T == 64 )
+    # elif ( _LE_USE_REAL_T == 64 )
     # define _LE_REAL_P         ".14e"
     # define _LE_REAL_S         "lf"
-# endif
+    # endif
     # define _LE_TIME_P         PRIi64
     # define _LE_TIME_S         SCNi64
     # define _LE_DATA_P         ".4e"

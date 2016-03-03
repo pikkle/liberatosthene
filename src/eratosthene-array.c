@@ -21,20 +21,50 @@
     # include "eratosthene-array.h"
 
 /*
+    source - constructor/destructor methods
+ */
+
+    le_array_t le_array_create( le_void_t ) {
+
+        /* Array variables */
+        le_array_t le_array = LE_ARRAY_C;
+
+        /* Return initialised array */
+        return( le_array );
+
+    }
+
+    le_void_t le_array_delete( le_array_t * const le_array ) {
+
+        /* Check array state */
+        if ( le_array->ar_vsze > 0 ) {
+
+            /* Unallocate array memory */
+            free( le_array->ar_byte );
+
+            /* Reset array size */
+            le_array->ar_vsze = 0;
+            le_array->ar_size = 0;
+
+        }
+
+    }
+
+/*
     source - accessor methods
  */
 
     le_size_t le_array_get_size( le_array_t * le_array ) {
 
         /* Return array size */
-        return( le_array->ar_head );
+        return( le_array->ar_size );
 
     }
 
     le_byte_t * le_array_get_byte( le_array_t * le_array ) {
 
         /* Return array bytes pointer */
-        return( le_array->ar_data );
+        return( le_array->ar_byte );
 
     }
 
@@ -44,28 +74,28 @@
 
     le_enum_t le_array_set_push( le_array_t * le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
 
-        /* Allocation swap variables */
+        /* Memory swap variables */
         le_byte_t * le_swap = NULL;
 
         /* Array pointer variables */
-        le_real_t * le_pose_p = NULL;
-        le_time_t * le_time_p = NULL;
-        le_data_t * le_data_p = NULL;
+        le_real_t * le_ptrp = NULL;
+        le_time_t * le_ptrt = NULL;
+        le_data_t * le_ptrd = NULL;
 
-        /* Check reallocation necessities */
-        if ( ( le_array->ar_head + LE_ARRAY_ELEM_LEN ) >= le_array->ar_size ) {
+        /* Check necessities */
+        if ( ( le_array->ar_size + LE_ARRAY_ELEM_LEN ) >= le_array->ar_vsze ) {
 
-            /* Update array size */
-            le_array->ar_size += LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN;
+            /* Update virtual size */
+            le_array->ar_vsze += ( LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN );
 
             /* Check array state */
-            if ( le_array->ar_data == NULL ) {
+            if ( le_array->ar_vsze == ( LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN ) ) {
 
                 /* Array memory allocation */
-                if ( ( le_array->ar_data = ( le_byte_t * ) malloc( le_array->ar_size ) ) == NULL ) {
+                if ( ( le_array->ar_byte = ( le_byte_t * ) malloc( le_array->ar_vsze ) ) == NULL ) {
 
-                    /* Reset array size */
-                    le_array->ar_size = 0;
+                    /* Reset virtual size */
+                    le_array->ar_vsze = 0;
 
                     /* Send message */
                     return( LE_ERROR_MEMORY );
@@ -75,43 +105,39 @@
             } else {
 
                 /* Array memory reallocation */
-                if ( ( le_swap = realloc( ( void * ) le_array->ar_data, le_array->ar_size ) ) == NULL ) {
+                if ( ( le_swap = realloc( ( void * ) le_array->ar_byte, le_array->ar_vsze ) ) == NULL ) {
 
-                    /* Reset array size */
-                    le_array->ar_size -= LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN;
+                    /* Reset virtual size */
+                    le_array->ar_vsze -= ( LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN );
 
                     /* Send message */
                     return( LE_ERROR_MEMORY );
 
                 }
 
-                /* Memory reallocation pointer allocation */
-                le_array->ar_data = le_swap;
+                /* Swap memory pointers */
+                le_array->ar_byte = le_swap;
 
             }
 
         }
 
         /* Compute pointers */
-        le_pose_p = ( le_real_t * ) ( le_array->ar_data + le_array->ar_head );
-        le_time_p = ( le_time_t * ) ( le_pose_p + 3 );
-        le_data_p = ( le_data_t * ) ( le_time_p + 1 );
+        le_ptrp = ( le_real_t * ) ( le_array->ar_byte + le_array->ar_size );
+        le_ptrt = ( le_time_t * ) ( le_ptrp + 3 );
+        le_ptrd = ( le_data_t * ) ( le_ptrt + 1 );
+
+        /* Push element coordinates */
+        le_ptrp[0] = le_pose[0];
+        le_ptrp[1] = le_pose[1];
+        le_ptrp[2] = le_pose[2];
+        le_ptrt[0] = le_time;
+        le_ptrd[0] = le_data[0];
+        le_ptrd[1] = le_data[1];
+        le_ptrd[2] = le_data[2];
 
         /* Update array head */
-        le_array->ar_head += LE_ARRAY_ELEM_LEN;
-
-        /* Inject spatial components */
-        * ( le_pose_p     ) = * ( le_pose     );
-        * ( le_pose_p + 1 ) = * ( le_pose + 1 );
-        * ( le_pose_p + 2 ) = * ( le_pose + 2 );
-
-        /* Inject temporal components */
-        * ( le_time_p ) = le_time;
-
-        /* Inject colorimetric components */
-        * ( le_data_p     ) = * ( le_data     );
-        * ( le_data_p + 1 ) = * ( le_data + 1 );
-        * ( le_data_p + 2 ) = * ( le_data + 2 );
+        le_array->ar_size += LE_ARRAY_ELEM_LEN;
 
         /* Send message */
         return( LE_ERROR_SUCCESS );

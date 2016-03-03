@@ -50,7 +50,7 @@
 
     le_data_t * le_class_get_data( le_class_t const * const le_class ) {
 
-        /* Return class data */
+        /* Return class pointer */
         return( ( le_data_t * ) le_class->cs_data );
 
     }

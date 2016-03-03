@@ -233,45 +233,6 @@
     source - processing methods
  */
 
-    le_void_t le_server_inject( le_system_t * const le_system, int const le_client ) {
-
-        /* Parsing variables */
-        le_size_t le_parse = 0;
-
-        /* Socket i/o count variables */
-        le_size_t le_count = 0;
-
-        /* Socket i/o pointers variables */
-        le_real_t * le_pose = NULL;
-        le_data_t * le_data = NULL;
-        le_time_t * le_time = NULL;
-
-        /* Socket i/o buffer variables */
-        le_byte_t le_buffer[LE_SERVER_DGMAX] = { 0 };
-
-        /* Read incoming elements */
-        while ( ( le_count = read( le_client, le_buffer, LE_SERVER_DGMAX ) ) > 0 ) {
-
-            /* Inject element in system */
-            for ( le_parse = 0; le_parse < le_count; le_parse += LE_SERVER_ELEN ) {
-
-                /* Compute i/o pointers */
-                le_pose = ( le_real_t * ) ( le_buffer + le_parse );
-                le_time = ( le_time_t * ) ( le_pose + 3 );
-                le_data = ( le_data_t * ) ( le_time + 1 );
-
-                /* Element injection */
-                le_system_inject( le_system, le_pose, * le_time, le_data );
-
-            }
-
-        }
-
-        /* Force stream cache export */
-        le_system_flush( le_system );
-
-    }
-
     le_enum_t le_server_query( le_system_t * const le_system, int const le_client ) {
 
         /* Query structure variables */
@@ -353,7 +314,7 @@
             }
 
             /* Delete query array */
-            LE_ARRAY_D( & le_query ); 
+            le_array_delete( & le_query ); 
 
         }
 

@@ -55,7 +55,7 @@
     # define LE_ADDRESS_C_SIZE( s ) { s, { 0 } }
 
     /* Define digital boundaries */
-    # define LE_ADDRESS_BASE 8
+    # define LE_ADDRESS_BASE        8
 
 /*
     header - preprocessor macros
