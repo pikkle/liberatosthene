@@ -22,66 +22,24 @@
     # include "eratosthene-server.h"
 
 /*
-    source - common methods
+    source - constructor/destructor methods
  */
 
-    le_sock_t le_server_client_open( le_char_t const * const le_hostname, le_sock_t const le_port ) {
+    le_sock_t le_server_create( le_size_t le_port ) {
 
-        /* Host entity variables */
-        struct hostent * le_host = NULL;
-
-        /* Host address variables */
-        struct sockaddr_in le_addr;
-
-        /* Socket variables */
-        le_sock_t le_socket = LE_SERVER_NULL;
-
-        /* Check socket */
-        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
-
-            /* Send message */
-            return( LE_SERVER_NULL );
-
-        }
-
-        /* Resovle hostname */
-        if ( ( le_host = gethostbyname( ( char * ) le_hostname ) ) == NULL ) {
-
-            /* Close socket */
-            close( le_socket );
-
-            /* Send message */
-            return( LE_SERVER_NULL );
-
-        }
-
-        /* Create address structure */
-        le_addr.sin_family = AF_INET;
-        le_addr.sin_port   = htons( le_port );
-
-        /* Copy IP address */
-        memcpy( & le_addr.sin_addr, le_host->h_addr_list[0], le_host->h_length );
-
-        /* Create connection */
-        if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( le_addr ) ) < 0 ) {
-
-            /* Close socket */
-            close( le_socket );
-
-            /* Send message */
-            return( LE_SERVER_NULL );
-
-        }
-
-        /* Return created socket */
-        return( le_socket );
+        return( 0 );
 
     }
 
-    le_void_t le_server_client_close( le_sock_t const le_socket ) {
+    le_void_t le_server_delete( le_sock_t const le_socket ) {
 
-        /* Close socket */
-        close( le_socket );
+        /* Check socket */
+        if ( le_socket != LE_NETWORK_NULL ) {
+
+            /* Close socket */
+            close( le_socket );
+
+        }
 
     }
 

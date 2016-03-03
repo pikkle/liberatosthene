@@ -19,18 +19,18 @@
  *
  */
 
-    /*! \file   eratosthene-include.h
+    /*! \file   eratosthene-network.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  General inclusion header
+     *  Network module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_INCLUDE__
-    # define __LE_INCLUDE__
+    # ifndef __LE_NETWORK__
+    # define __LE_NETWORK__
 
 /*
     header - C/C++ compatibility
@@ -45,17 +45,17 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-address.h"
-    # include "eratosthene-array.h"
-    # include "eratosthene-client.h"
-    # include "eratosthene-geodesy.h"
-    # include "eratosthene-network.h"
-    # include "eratosthene-server.h"
-    # include "eratosthene-system.h"
 
 /*
     header - preprocessor definitions
  */
+
+    /* Define pseudo-constructor */
+    # define LE_SOCKADDR_IN_C           { 0 }
+    # define LE_SOCKADDR_IN_C_PORT( p ) { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
+
+    /* Define state flags */
+    # define LE_NETWORK_NULL ( -1 )
 
 /*
     header - preprocessor macros

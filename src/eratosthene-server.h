@@ -46,6 +46,7 @@
 
     # include "eratosthene.h"
     # include "eratosthene-array.h"
+    # include "eratosthene-network.h"
     # include "eratosthene-system.h"
 
 /*
@@ -93,8 +94,6 @@
     header - function prototypes
  */
 
-    le_sock_t le_server_client_open( le_char_t const * const le_hostname, le_sock_t const le_port );
-    le_void_t le_server_client_close( le_sock_t const le_socket );
     le_void_t le_server_inject( le_system_t * const le_system, int const le_client );
     le_enum_t le_server_query( le_system_t * const le_system, int const le_client );
     le_enum_t le_server( le_system_t * const le_system );

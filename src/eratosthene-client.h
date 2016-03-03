@@ -19,18 +19,18 @@
  *
  */
 
-    /*! \file   eratosthene-include.h
+    /*! \file   eratosthene-client.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  General inclusion header
+     *  Client module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_INCLUDE__
-    # define __LE_INCLUDE__
+    # ifndef __LE_CLIENT__
+    # define __LE_CLIENT__
 
 /*
     header - C/C++ compatibility
@@ -45,13 +45,7 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-address.h"
-    # include "eratosthene-array.h"
-    # include "eratosthene-client.h"
-    # include "eratosthene-geodesy.h"
     # include "eratosthene-network.h"
-    # include "eratosthene-server.h"
-    # include "eratosthene-system.h"
 
 /*
     header - preprocessor definitions
@@ -72,6 +66,9 @@
 /*
     header - function prototypes
  */
+
+    le_sock_t le_client_create( le_char_t const * const le_ip, le_size_t const le_port );
+    le_void_t le_client_delete( le_sock_t const le_socket );    
 
 /*
     header - C/C++ compatibility
