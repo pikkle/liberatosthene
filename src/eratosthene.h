@@ -86,6 +86,7 @@
     # define _LE_USE_SIZE_T     32
     # define _LE_USE_REAL_T     64
     # define _LE_USE_DEPTH      64
+    # define _LE_USE_MTU        1280
 
     /* Define features */
 # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
@@ -161,6 +162,7 @@
     # define LE_ERROR_HEADER    0x000B
     # define LE_ERROR_INJECTION 0x000C
     # define LE_ERROR_QUERY     0x000D
+    # define LE_ERROR_AUTH      0x000E
 
     /* Define constants */
     # define LE_PI              ( 3.1415926535897932384626433832795029L )

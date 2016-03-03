@@ -50,12 +50,31 @@
     header - preprocessor definitions
  */
 
-    /* Define pseudo-constructor */
+    /* Define pseudo-constructor - external */
     # define LE_SOCKADDR_IN_C           { 0 }
     # define LE_SOCKADDR_IN_C_PORT( p ) { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
 
+    /* Define pseudo-constructor */
+    # define LE_NETWORK_BUFFER_C        { 0 }
+
     /* Define state flags */
-    # define LE_NETWORK_NULL ( -1 )
+    # define LE_NETWORK_NULL            ( -1 )
+
+    /* Define server configuration */
+    # define LE_NETWORK_PORT            ( 555 )
+    # define LE_NETWORK_PEND            ( 5 )
+
+    /* Define network modes */
+    # define LE_NETWORK_MODE_NULL       ( 0x00 )
+    # define LE_NETWORK_MODE_IMOD       ( 0x01 )
+    # define LE_NETWORK_MODE_QMOD       ( 0x02 )
+    # define LE_NETWORK_MODE_IATH       ( 0x81 )
+    # define LE_NETWORK_MODE_QATH       ( 0x82 )
+
+    /* Define network buffer size */
+    # define LE_NETWORK_BUFFER_HAND     ( 1 )
+    # define LE_NETWORK_BUFFER_ADDR     ( 256 )
+    # define LE_NETWORK_BUFFER_SYNC     ( ( _LE_USE_MTU / LE_ARRAY_ELEM_LEN ) * LE_ARRAY_ELEM_LEN )
 
 /*
     header - preprocessor macros

@@ -34,7 +34,7 @@
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
 
         /* Convert address */
-        if( inet_pton( AF_INET, ( char * ) le_ip, & le_addr.sin_addr ) <=0 ) {
+        if ( inet_pton( AF_INET, ( char * ) le_ip, & le_addr.sin_addr ) <= 0 ) {
 
             /* Send message */
             return( LE_NETWORK_NULL );
@@ -42,7 +42,7 @@
         }
 
         /* Create socket */
-        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
+        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == LE_NETWORK_NULL ) {
 
             /* Send message */
             return( LE_NETWORK_NULL );
@@ -50,7 +50,7 @@
         }
 
         /* Sockets connection */
-        if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( le_addr ) ) < 0 ) {
+        if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( le_addr ) ) == LE_NETWORK_NULL ) {
 
             /* Close socket */
             close( le_socket );
@@ -72,6 +72,50 @@
 
             /* Close socket */
             close( le_socket );
+
+        }
+
+    }
+
+/*
+    source - handshaked methods
+ */
+
+    le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode ) {
+
+        /* Handshake buffer variables */
+        le_byte_t le_buffer = ( le_byte_t ) le_mode;
+
+        /* Write handshake */
+        if ( write( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
+
+            /* Wait handshake authorisation */
+            if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
+
+                /* Check authorisation */
+                if ( ( le_buffer & 0x7F ) == le_mode ) {
+
+                    /* Send message */
+                    return( LE_ERROR_SUCCESS );
+
+                } else {
+
+                    /* Send message */
+                    return( LE_ERROR_AUTH );
+
+                }
+
+            } else {
+
+                /* Send message */
+                return( LE_ERROR_SOCKET );
+
+            }
+
+        } else {
+
+            /* Send message */
+            return( LE_ERROR_SOCKET );
 
         }
 

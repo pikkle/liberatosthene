@@ -68,7 +68,8 @@
  */
 
     le_sock_t le_client_create( le_char_t const * const le_ip, le_size_t const le_port );
-    le_void_t le_client_delete( le_sock_t const le_socket );    
+    le_void_t le_client_delete( le_sock_t const le_socket );
+    le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode ); 
 
 /*
     header - C/C++ compatibility
