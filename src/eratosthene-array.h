@@ -44,6 +44,7 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-network.h"
 
 /*
     header - preprocessor definitions
@@ -90,6 +91,7 @@
     le_size_t le_array_get_size( le_array_t * le_array );
     le_byte_t * le_array_get_byte( le_array_t * le_array );
     le_enum_t le_array_set_push( le_array_t * le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+    le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility

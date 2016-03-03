@@ -144,3 +144,41 @@
 
     }
 
+/*
+    source - i/o methods
+ */
+
+    le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket ) {
+
+        /* Status variables */
+        le_enum_t le_status = LE_ERROR_SUCCESS;
+
+        /* Boundaries variables */
+        le_size_t le_lbound = 0;
+        le_size_t le_ubound = LE_NETWORK_BUFFER_SYNC;
+
+        /* Writing array to socket */
+        while ( le_lbound < le_array->ar_size ) {
+
+            /* Check upper boundary */
+            le_ubound = ( le_ubound < le_array->ar_size ) ? le_ubound : ( LE_NETWORK_BUFFER_SYNC << 1 ) + ( le_array->ar_size - le_ubound );
+
+            /* Write bloc to socket */
+            if ( write( le_socket, le_array->ar_byte + le_lbound, le_ubound - le_lbound ) != ( le_ubound - le_lbound ) ) {
+
+                /* Update writing status */
+                le_status = LE_ERROR_IO_WRITE;
+
+            }
+
+            /* Update bloc boundaries */
+            le_lbound = le_ubound;
+            le_ubound = le_ubound + LE_NETWORK_BUFFER_SYNC;
+
+        }
+
+        /* Return writing status */
+        return( le_status );
+
+    }
+

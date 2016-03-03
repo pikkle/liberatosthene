@@ -126,7 +126,7 @@
                             if ( le_server_handshake_auth( le_client, LE_NETWORK_MODE_QATH ) == LE_ERROR_SUCCESS ) {
 
                                 /* Connection to system query */
-                                le_server_query( le_system, le_client );
+                                le_server_system_query( le_client, le_system );
 
                             }
 
@@ -229,6 +229,38 @@
 
     }
 
+    le_enum_t le_server_system_query( le_sock_t const le_socket, le_system_t * const le_system ) {
+
+        /* Array variables */
+        le_array_t le_array = LE_ARRAY_C;
+
+        /* Address variables */
+        le_address_t le_address = LE_ADDRESS_C;
+
+        /* Socket i/o buffer variables */
+        le_byte_t le_buffer[LE_NETWORK_BUFFER_ADDR] = LE_NETWORK_BUFFER_C;
+
+        /* Read query address */
+        if ( read( le_socket, le_buffer, LE_NETWORK_BUFFER_ADDR ) != LE_NETWORK_BUFFER_ADDR ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_READ );
+
+        }
+
+        /* Decompose address string */
+        le_address_cvsa( & le_address, le_buffer );
+
+        /* Send system query */
+        le_array = le_system_query( le_system, le_address_get_time( & le_address ), & le_address, le_address_get_depth( & le_address ) );
+
+fprintf( stderr, "DEBUG=%" _LE_SIZE_P "\n", le_array.ar_size );
+
+        /* Write array to socket and send message */
+        return( le_array_io_write( & le_array, le_socket ) );
+
+    }
+
 /*
     source - processing methods
  */
@@ -319,113 +351,6 @@
         }
 
         /* Send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-/*
-    source - server
- */
-
-    le_enum_t le_server( le_system_t * const le_system ) {
-
-        /* Socket handles variables */
-        int le_server = -1;
-        int le_client = -1;
-
-        /* Socket length variables */
-        socklen_t le_slen = 0;
-
-        /* TCP/IP buffer variables */
-        le_byte_t le_buffer = 0;
-
-        /* TCP/IP address variables */
-        struct sockaddr_in le_saddr;
-        struct sockaddr_in le_caddr;
-
-        /* Create server socket */
-        if ( ( le_server = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
-
-            /* Send message */
-            return( LE_ERROR_SOCKET );
-
-        }
-
-        /* Address configuration */
-        le_saddr.sin_family = AF_INET;
-        le_saddr.sin_addr.s_addr = INADDR_ANY;
-        le_saddr.sin_port = htons( LE_SERVER_PORT );
-
-        /* Bind socket */
-        if ( bind( le_server, ( struct sockaddr * ) & le_saddr, sizeof( le_saddr ) ) < 0 ) {
-
-            /* Send message */
-            return( LE_ERROR_BINDING );
-
-        }
-        
-        /* TCP/IP listening configuration */
-        listen( le_server, 5 );
-
-        /* TCP/IP listening */
-        while ( LE_SERVER_ANSWER == 42 ) {
-
-            /* Waiting incomming connection */
-            if ( ( le_client = accept( le_server, ( struct sockaddr * ) & le_caddr, & le_slen ) ) >= 0 ) {
-
-                /* Secondary handshake */
-                if ( read( le_client, & le_buffer, sizeof( le_buffer ) ) == sizeof( le_buffer ) ) {
-
-                    /* Switch on connection type */
-                    switch ( le_buffer ) {
-
-                        /* Injection connection */
-                        case ( LE_SERVER_CNINJ ) : {
-
-                            /* Validate connection */
-                            le_buffer = LE_SERVER_VALID;
-
-                            /* Write secondary handshake answer */
-                            if ( write( le_client, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_buffer ) ) {
-
-                                /* Injection connection management */
-                                le_server_inject( le_system, le_client );
-
-                            }
-
-                        } break;
-
-                        /* Query connection */
-                        case ( LE_SERVER_CNQRY ) : {
-
-                            /* Validate connection */
-                            le_buffer = LE_SERVER_VALID;
-
-                            /* Write secondary handshake answer */
-                            if ( write( le_client, & le_buffer, sizeof ( le_byte_t ) ) == sizeof( le_byte_t ) ) {
-
-                                /* Query connection management */
-                                le_server_query( le_system, le_client );
-
-                            }
-
-                        } break;
-
-                    }
-
-                }
-
-                /* Close client socket */
-                close( le_client );
-
-            }            
-
-        }
-
-        /* Close server socket */
-        close( le_server );
-
-        /* Return null pointer */
         return( LE_ERROR_SUCCESS );
 
     }

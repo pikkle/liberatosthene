@@ -99,10 +99,9 @@
     le_enum_t le_server_handshake_mode( le_sock_t const le_socket );
     le_enum_t le_server_handshake_auth( le_sock_t const le_socket, le_enum_t const le_auth );
     le_void_t le_server_system_inject( le_sock_t const le_socket, le_system_t * const le_system );
+    le_enum_t le_server_system_query( le_sock_t const le_socket, le_system_t * const le_system );
 
-    le_void_t le_server_inject( le_system_t * const le_system, int const le_client );
     le_enum_t le_server_query( le_system_t * const le_system, int const le_client );
-    le_enum_t le_server( le_system_t * const le_system );
 
 /*
     header - C/C++ compatibility
