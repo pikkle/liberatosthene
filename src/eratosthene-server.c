@@ -27,38 +27,38 @@
     le_sock_t le_server_create( le_size_t le_port ) {
 
         /* Socket variables */
-        le_sock_t le_socket = LE_NETWORK_NULL;
+        le_sock_t le_socket = _LE_SOCK_NULL;
 
         /* Address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
         
         /* Create socket */
-        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == LE_NETWORK_NULL ) {
+        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) {
 
             /* Send message */
-            return( LE_NETWORK_NULL );
+            return( _LE_SOCK_NULL );
 
         }
 
         /* Assign address to socket */
-        if ( bind( le_socket, ( struct sockaddr * ) ( & le_addr ), sizeof( struct sockaddr_in ) ) == LE_NETWORK_NULL ) {
+        if ( bind( le_socket, ( struct sockaddr * ) ( & le_addr ), sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
 
             /* Close socket */
             close( le_socket );
 
             /* Send message */
-            return( LE_NETWORK_NULL );
+            return( _LE_SOCK_NULL );
 
         }
         
         /* Make socket ready to accept connection */
-        if ( listen( le_socket, LE_NETWORK_PEND ) == LE_NETWORK_NULL ) {
+        if ( listen( le_socket, LE_NETWORK_PEND ) == _LE_SOCK_NULL ) {
 
             /* Close socket */
             close( le_socket );
 
             /* Send message */
-            return( LE_NETWORK_NULL );
+            return( _LE_SOCK_NULL );
 
         }
 
@@ -70,7 +70,7 @@
     le_void_t le_server_delete( le_sock_t const le_socket ) {
 
         /* Check socket */
-        if ( le_socket != LE_NETWORK_NULL ) {
+        if ( le_socket != _LE_SOCK_NULL ) {
 
             /* Close socket */
             close( le_socket );
@@ -130,7 +130,7 @@
     le_void_t le_server( le_sock_t const le_socket, le_system_t * const le_system ) {
 
         /* Client socket variables */
-        le_sock_t le_client = LE_NETWORK_NULL;
+        le_sock_t le_client = _LE_SOCK_NULL;
 
         /* Client address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C;
@@ -139,13 +139,13 @@
         socklen_t le_len = sizeof( struct sockaddr_in );
 
         /* Check socket */
-        if ( le_socket != LE_NETWORK_NULL ) {
+        if ( le_socket != _LE_SOCK_NULL ) {
 
             /* Incoming connection handle */
             for ( ; ; ) {
 
                 /* Accept incoming connection */
-                if ( ( le_client = accept( le_socket, ( struct sockaddr * ) & le_addr, & le_len ) ) != LE_NETWORK_NULL ) {
+                if ( ( le_client = accept( le_socket, ( struct sockaddr * ) & le_addr, & le_len ) ) != _LE_SOCK_NULL ) {
 
                     /* Switch on handshake */
                     switch ( le_server_handshake_mode( le_client ) ) {

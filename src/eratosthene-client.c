@@ -27,7 +27,7 @@
     le_sock_t le_client_create( le_char_t const * const le_ip, le_size_t const le_port ) {
 
         /* Socket variables */
-        le_sock_t le_socket = LE_NETWORK_NULL;
+        le_sock_t le_socket = _LE_SOCK_NULL;
 
         /* Address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
@@ -36,26 +36,26 @@
         if ( inet_pton( AF_INET, ( char * ) le_ip, & le_addr.sin_addr ) <= 0 ) {
 
             /* Send message */
-            return( LE_NETWORK_NULL );
+            return( _LE_SOCK_NULL );
 
         }
 
         /* Create socket */
-        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == LE_NETWORK_NULL ) {
+        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) {
 
             /* Send message */
-            return( LE_NETWORK_NULL );
+            return( _LE_SOCK_NULL );
 
         }
 
         /* Sockets connection */
-        if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( le_addr ) ) == LE_NETWORK_NULL ) {
+        if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( le_addr ) ) == _LE_SOCK_NULL ) {
 
             /* Close socket */
             close( le_socket );
 
             /* Send message */
-            return( LE_NETWORK_NULL );
+            return( _LE_SOCK_NULL );
 
         }
 
@@ -67,7 +67,7 @@
     le_void_t le_client_delete( le_sock_t const le_socket ) {
 
         /* Check socket */
-        if ( le_socket != LE_NETWORK_NULL ) {
+        if ( le_socket != _LE_SOCK_NULL ) {
 
             /* Close socket */
             close( le_socket );

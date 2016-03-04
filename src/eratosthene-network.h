@@ -56,9 +56,6 @@
     /* Define pseudo-constructor */
     # define LE_NETWORK_BUFFER_C        { 0 }
 
-    /* Define state flags */
-    # define LE_NETWORK_NULL            ( -1 )
-
     /* Define server configuration */
     # define LE_NETWORK_PORT            ( 555 )
     # define LE_NETWORK_PEND            ( 5 )
