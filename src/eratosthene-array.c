@@ -153,27 +153,30 @@
         /* Status variables */
         le_enum_t le_status = LE_ERROR_SUCCESS;
 
-        /* Boundaries variables */
-        le_size_t le_lbound = 0;
-        le_size_t le_ubound = LE_NETWORK_BUFFER_SYNC;
+        /* Segmentation variables */
+        le_size_t le_parse = 0;
+        le_size_t le_count = 0;
+
+        /* Virtual size variables */
+        le_size_t le_vsize = le_array->ar_size;
 
         /* Writing array to socket */
-        while ( le_lbound < le_array->ar_size ) {
+        while ( ( le_parse < le_array->ar_size ) && ( le_status == LE_ERROR_SUCCESS ) ) {
 
-            /* Check upper boundary */
-            le_ubound = ( le_ubound < le_array->ar_size ) ? le_ubound : LE_NETWORK_BUFFER_SYNC + ( le_array->ar_size - le_ubound );
+            /* Compute bloc size through virtual size */
+            le_count = ( le_vsize < LE_NETWORK_BUFFER_SYNC ) ? le_vsize : LE_NETWORK_BUFFER_SYNC;
 
-            /* Write bloc to socket */
-            if ( write( le_socket, le_array->ar_byte + le_lbound, le_ubound - le_lbound ) != ( le_ubound - le_lbound ) ) {
+            /* Write bloc on socket */
+            if ( write( le_socket, le_array->ar_byte + le_parse, le_count ) != le_count ) {
 
                 /* Update writing status */
                 le_status = LE_ERROR_IO_WRITE;
 
             }
 
-            /* Update bloc boundaries */
-            le_lbound = le_ubound;
-            le_ubound = le_ubound + LE_NETWORK_BUFFER_SYNC;
+            /* Update parser */
+            le_parse += LE_NETWORK_BUFFER_SYNC;
+            le_vsize -= LE_NETWORK_BUFFER_SYNC;
 
         }
 
