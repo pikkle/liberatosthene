@@ -160,6 +160,14 @@
         /* Virtual size variables */
         le_size_t le_vsize = le_array->ar_size;
 
+        /* Check socket */
+        if ( le_socket == _LE_SOCK_NULL ) {
+
+            /* Send message */
+            return( LE_ERROR_SOCKET );
+
+        }
+
         /* Writing array to socket */
         while ( ( le_parse < le_array->ar_size ) && ( le_status == LE_ERROR_SUCCESS ) ) {
 
