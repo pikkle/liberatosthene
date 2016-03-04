@@ -81,7 +81,6 @@
     # define _LE_TRUE           1
 
     /* Features configuration */
-    # define _LE_USE_STDIO_EXT  _LE_TRUE
     # define _LE_USE_SIZE_T     32
     # define _LE_USE_REAL_T     64
     # define _LE_USE_DEPTH      64
@@ -89,11 +88,6 @@
     # define _LE_USE_BASE       8
     # define _LE_USE_PORT       555
     # define _LE_USE_PENDING    5
-
-    /* Define features */
-    # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
-    # include <stdio_ext.h>
-    # endif
 
     /* Define types */
     # define _LE_VOID           void

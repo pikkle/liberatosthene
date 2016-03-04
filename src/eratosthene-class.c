@@ -120,14 +120,12 @@
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Check stream */
-        # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
-        if ( __freadable( le_stream ) == 0 ) {
+        if ( ( le_stream->_flags & _IO_NO_READS ) != 0 ) {
 
             /* Send message */
             return( LE_ERROR_IO_STREAM );
 
         }
-        # endif
 
         /* Move head to class offset */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
@@ -171,14 +169,12 @@
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Check stream */
-        # if ( _LE_USE_STDIO_EXT == _LE_TRUE )
-        if ( __fwritable( le_stream ) == 0 ) {
+        if ( ( le_stream->_flags & _IO_NO_WRITES ) != 0 ) {
 
             /* Send message */
             return( LE_ERROR_IO_STREAM );
 
         }
-        # endif
 
         /* Move head to class offset */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
