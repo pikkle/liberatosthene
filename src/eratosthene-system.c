@@ -106,7 +106,7 @@
         le_class_t le_class = LE_CLASS_C;
 
         /* Address variables */
-        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc - 1 );
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc - 2 );
 
         /* System scale stream management */
         if ( ( le_return = le_system_open( le_system, le_time ) ) != LE_ERROR_SUCCESS ) {
@@ -117,7 +117,7 @@
         }
 
         /* Compute address */
-        le_address_cgd( & le_addr, le_pose );
+        le_address_set_pose( & le_addr, le_pose );
 
         /* Injection process */
         do {
@@ -185,7 +185,7 @@
         le_array_t le_return = LE_ARRAY_C;
 
         /* Check consistency */
-        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sdisc ) {
+        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) + 1 ) >= le_system->sm_sdisc ) {
 
             /* Return element array */
             return( le_return );
@@ -274,7 +274,7 @@
         } else {
 
             /* Retreive class representative */
-            le_address_cdg( le_addr, le_pose );
+            le_address_get_pose( le_addr, le_pose );
 
             /* Inject gathered element in array */
             le_array_set_push( le_array, le_pose, le_address_get_time( le_addr ), le_class_get_data( le_class ) );

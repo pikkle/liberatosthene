@@ -102,17 +102,22 @@
     /*! \brief accessor methods
      */
 
+    le_byte_t * le_address_get_digits( le_address_t const * const le_address );
+
+    /*! \brief accessor methods
+     */
+
     le_size_t le_address_get_depth( le_address_t const * const le_address );
+
+    /*! \brief accessor methods
+     */
+
+    le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose );
 
     /*! \brief mutator methods
      */
 
     le_void_t le_address_set_time( le_address_t * const le_address, le_time_t const le_time );
-
-    /*! \brief mutator methods
-     */
-
-    le_byte_t * le_address_get_digits( le_address_t const * const le_address );
 
     /*! \brief mutator methods
      */
@@ -129,15 +134,10 @@
 
     le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
 
-    /*! \brief geodetic methods
+    /*! \brief mutator methods
      */
 
-    le_void_t le_address_cgd( le_address_t * const le_address, le_real_t * const le_pose );
-
-    /*! \brief geodetic methods
-     */
-
-    le_void_t le_address_cdg( le_address_t const * const le_address, le_real_t * const le_pose );
+    le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
 
     /*! \brief conversion methods
      */

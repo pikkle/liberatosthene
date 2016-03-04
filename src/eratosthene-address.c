@@ -69,6 +69,46 @@
 
     }
 
+    le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose ) {
+
+        /* Parsing variables */
+        le_size_t le_parse = 0;
+
+        /* Scales variables */
+        le_real_t le_scale[3] = { 1.0, 1.0, 1.0 };
+
+        /* Initialise spatial coordinates */
+        le_pose[0] = 0.0;
+        le_pose[1] = 0.0;
+        le_pose[2] = 0.0;
+
+        /* Decomposing address */
+        for ( ; le_parse < le_address->as_size; le_parse ++ ) {
+
+            /* Analyse address digit and coordinates update */
+            le_pose[0] += ( ( le_real_t ) ( le_address->as_addr[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
+
+            /* Asynchronous dimension management */
+            if ( le_parse < 2 ) continue;
+
+            /* Analyse address digit and coordinates update */
+            le_pose[1] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x02 ) >> 1 ) ) * ( le_scale[1] /= 2.0 );
+
+            /* Asynchronous dimension management */
+            if ( le_parse < 10 ) continue;
+
+            /* Analyse address digit and coordinates update */
+            le_pose[2] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x04 ) >> 2 ) ) * ( le_scale[2] /= 2.0 );
+
+        }
+
+        /* Coordinates denormalisation */
+        le_pose[0] = LE_GEODESY_LMIN + le_pose[0] * ( LE_GEODESY_LMAX - LE_GEODESY_LMIN );
+        le_pose[1] = LE_GEODESY_AMIN + le_pose[1] * ( LE_GEODESY_AMAX - LE_GEODESY_AMIN );
+        le_pose[2] = LE_GEODESY_HMIN + le_pose[2] * ( LE_GEODESY_HMAX - LE_GEODESY_HMIN );
+
+    }
+
 /*
     source - mutator methods
  */
@@ -127,11 +167,7 @@
 
     }
 
-/*
-    source - geodetic methods
- */
-
-    le_void_t le_address_cgd( le_address_t * const le_address, le_real_t * const le_pose ) {
+    le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose ) {
 
         /* Digital buffer variables */
         le_byte_t le_buffer = 0;
@@ -181,46 +217,6 @@
             le_pose[2] = ( le_pose[2] * 2.0 ) - le_buffer;
 
         }
-
-    }
-
-    le_void_t le_address_cdg( le_address_t const * const le_address, le_real_t * const le_pose ) {
-
-        /* Parsing variables */
-        le_size_t le_parse = 0;
-
-        /* Scales variables */
-        le_real_t le_scale[3] = { 1.0, 1.0, 1.0 };
-
-        /* Initialise spatial coordinates */
-        le_pose[0] = 0.0;
-        le_pose[1] = 0.0;
-        le_pose[2] = 0.0;
-
-        /* Decomposing address */
-        for ( ; le_parse < le_address->as_size; le_parse ++ ) {
-
-            /* Analyse address digit and coordinates update */
-            le_pose[0] += ( ( le_real_t ) ( le_address->as_addr[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
-
-            /* Asynchronous dimension management */
-            if ( le_parse < 2 ) continue;
-
-            /* Analyse address digit and coordinates update */
-            le_pose[1] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x02 ) >> 1 ) ) * ( le_scale[1] /= 2.0 );
-
-            /* Asynchronous dimension management */
-            if ( le_parse < 10 ) continue;
-
-            /* Analyse address digit and coordinates update */
-            le_pose[2] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x04 ) >> 2 ) ) * ( le_scale[2] /= 2.0 );
-
-        }
-
-        /* Coordinates denormalisation */
-        le_pose[0] = LE_GEODESY_LMIN + le_pose[0] * ( LE_GEODESY_LMAX - LE_GEODESY_LMIN );
-        le_pose[1] = LE_GEODESY_AMIN + le_pose[1] * ( LE_GEODESY_AMAX - LE_GEODESY_AMIN );
-        le_pose[2] = LE_GEODESY_HMIN + le_pose[2] * ( LE_GEODESY_HMAX - LE_GEODESY_HMIN );
 
     }
 
