@@ -161,7 +161,7 @@
         if ( le_socket == _LE_SOCK_NULL ) {
 
             /* Send message */
-            return( LE_ERROR_SOCKET );
+            return( LE_ERROR_IO_SOCKET );
 
         }
 

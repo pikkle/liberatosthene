@@ -41,15 +41,15 @@
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
 
         /* Check consistency */
-        if ( le_offset < le_address->as_size ) {
+        if ( le_offset >= le_address->as_size ) {
 
-            /* Return address digit */
-            return( le_address->as_addr[le_offset] );
+            /* Return null digit */
+            return( _LE_BYTE_NULL );
 
         } else {
 
-            /* Return virtual digit */
-            return( 0 );
+            /* Return address digit */
+            return( le_address->as_addr[le_offset] );
 
         }
 
@@ -123,18 +123,18 @@
     le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
 
         /* Check consistency */
-        if ( le_size < _LE_USE_DEPTH ) {
+        if ( le_size >= _LE_USE_DEPTH ) {
+
+            /* Send message */
+            return( LE_ERROR_DEPTH );
+
+        } else {
 
             /* Assign address size */
             le_address->as_size = le_size;
 
             /* Send message */
             return( LE_ERROR_SUCCESS );
-
-        } else {
-
-            /* Send message */
-            return( LE_ERROR_DEPTH );
 
         }
 
@@ -143,20 +143,26 @@
     le_enum_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
 
         /* Check consistency */
-        if ( le_offset < le_address->as_size ) {
-
-            /* Assign address digit */
-            le_address->as_addr[le_offset] = le_digit;
-
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
-
-        } else {
+        if ( le_offset >= le_address->as_size ) {
 
             /* Send message */
             return( LE_ERROR_DEPTH );
 
         }
+
+        /* Check consistency */
+        if ( le_digit >= _LE_USE_BASE ) {
+
+            /* Send message */
+            return( LE_ERROR_BASE );
+
+        }
+
+        /* Assign address digit */
+        le_address->as_addr[le_offset] = le_digit;
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 
@@ -233,7 +239,7 @@
         le_size_t le_parse = 0;
 
         /* Convert geodetic address */
-        for ( ; le_parse < le_address->as_size; le_parse ++ ) le_buffer[le_parse] = le_address->as_addr[le_parse] + 48;
+        for ( ; le_parse < le_address->as_size; le_parse ++ ) le_buffer[le_parse] = le_address->as_addr[le_parse] + _LE_USE_ASCII_ITOA;
 
         /* Composing address string */
         sprintf( ( char * ) le_string, "/%" _LE_TIME_P "/%s/%" _LE_SIZE_P, le_address->as_time, le_buffer, le_address->as_dept );
@@ -255,7 +261,7 @@
         le_address->as_size = strlen( ( char * ) le_buffer );
 
         /* Convert geodetic address */
-        for ( ; le_parse < le_address->as_size; le_parse ++ ) le_address->as_addr[le_parse] = le_buffer[le_parse] - 48;
+        for ( ; le_parse < le_address->as_size; le_parse ++ ) le_address->as_addr[le_parse] = le_buffer[le_parse] - _LE_USE_ASCII_ITOA;
 
     }
 

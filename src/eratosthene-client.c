@@ -107,14 +107,14 @@
             } else {
 
                 /* Send message */
-                return( LE_ERROR_SOCKET );
+                return( LE_ERROR_IO_SOCKET );
 
             }
 
         } else {
 
             /* Send message */
-            return( LE_ERROR_SOCKET );
+            return( LE_ERROR_IO_SOCKET );
 
         }
 

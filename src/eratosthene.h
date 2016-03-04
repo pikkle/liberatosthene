@@ -88,6 +88,7 @@
     # define _LE_USE_BASE       8
     # define _LE_USE_PORT       555
     # define _LE_USE_PENDING    5
+    # define _LE_USE_ASCII_ITOA 48
 
     /* Define types */
     # define _LE_VOID           void
@@ -118,6 +119,7 @@
     # define _LE_TIME_MIN       INT64_MIN
 
     /* Define type nulls */
+    # define _LE_BYTE_NULL      0xff
     # define _LE_SIZE_NULL      _LE_SIZE_MAX
     # define _LE_SOCK_NULL      -1
 
@@ -149,20 +151,16 @@
 
     /* Define errors */
     # define LE_ERROR_SUCCESS   0x0000
-    # define LE_ERROR_IO_READ   0x0001
-    # define LE_ERROR_IO_WRITE  0x0002
-    # define LE_ERROR_IO_SEEK   0x0003
-    # define LE_ERROR_IO_STREAM 0x0004
-    # define LE_ERROR_IO_ACCESS 0x0005
-    # define LE_ERROR_MEMORY    0x0006
-    # define LE_ERROR_DEPTH     0x0007
-    # define LE_ERROR_DIGIT     0x0008
-    # define LE_ERROR_SOCKET    0x0009
-    # define LE_ERROR_BINDING   0x000A
-    # define LE_ERROR_HEADER    0x000B
-    # define LE_ERROR_INJECTION 0x000C
-    # define LE_ERROR_QUERY     0x000D
-    # define LE_ERROR_AUTH      0x000E
+    # define LE_ERROR_IO_ACCESS 0x0001
+    # define LE_ERROR_IO_READ   0x0002
+    # define LE_ERROR_IO_WRITE  0x0003
+    # define LE_ERROR_IO_SEEK   0x0004
+    # define LE_ERROR_IO_STREAM 0x0005
+    # define LE_ERROR_IO_SOCKET 0x0006
+    # define LE_ERROR_MEMORY    0x0007
+    # define LE_ERROR_DEPTH     0x0008
+    # define LE_ERROR_BASE      0x0009
+    # define LE_ERROR_AUTH      0x000a
 
     /* Define constants */
     # define LE_PI              ( 3.1415926535897932384626433832795029L )

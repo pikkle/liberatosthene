@@ -95,7 +95,7 @@
         } else {
 
             /* Send message */
-            return( LE_ERROR_DIGIT );
+            return( LE_ERROR_BASE );
 
         }
 
