@@ -29,7 +29,7 @@
         /* Array variables */
         le_array_t le_array = LE_ARRAY_C;
 
-        /* Return initialised array */
+        /* Return array */
         return( le_array );
 
     }
@@ -42,7 +42,7 @@
             /* Unallocate array memory */
             free( le_array->ar_byte );
 
-            /* Reset array size */
+            /* Reset array descriptors */
             le_array->ar_vsze = 0;
             le_array->ar_size = 0;
 
@@ -54,17 +54,17 @@
     source - accessor methods
  */
 
-    le_size_t le_array_get_size( le_array_t * le_array ) {
+    le_size_t le_array_get_size( le_array_t const * const le_array ) {
 
         /* Return array size */
         return( le_array->ar_size );
 
     }
 
-    le_byte_t * le_array_get_byte( le_array_t * le_array ) {
+    le_byte_t * le_array_get_byte( le_array_t const * const le_array ) {
 
         /* Return array bytes pointer */
-        return( le_array->ar_byte );
+        return( ( le_byte_t * ) le_array->ar_byte );
 
     }
 
@@ -72,7 +72,7 @@
     source - mutator methods
  */
 
-    le_enum_t le_array_set_push( le_array_t * le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
+    le_enum_t le_array_set_push( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
 
         /* Memory swap variables */
         le_byte_t * le_swap = NULL;
@@ -83,13 +83,13 @@
         le_data_t * le_ptrd = NULL;
 
         /* Check necessities */
-        if ( ( le_array->ar_size + LE_ARRAY_ELEM_LEN ) >= le_array->ar_vsze ) {
+        if ( ( le_array->ar_size + LE_ARRAY_LINE ) >= le_array->ar_vsze ) {
 
             /* Update virtual size */
-            le_array->ar_vsze += ( LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN );
+            le_array->ar_vsze += ( LE_ARRAY_STEP * LE_ARRAY_LINE );
 
             /* Check array state */
-            if ( le_array->ar_vsze == ( LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN ) ) {
+            if ( le_array->ar_vsze == ( LE_ARRAY_STEP * LE_ARRAY_LINE ) ) {
 
                 /* Array memory allocation */
                 if ( ( le_array->ar_byte = ( le_byte_t * ) malloc( le_array->ar_vsze ) ) == NULL ) {
@@ -108,7 +108,7 @@
                 if ( ( le_swap = realloc( ( void * ) le_array->ar_byte, le_array->ar_vsze ) ) == NULL ) {
 
                     /* Reset virtual size */
-                    le_array->ar_vsze -= ( LE_ARRAY_STEP * LE_ARRAY_ELEM_LEN );
+                    le_array->ar_vsze -= ( LE_ARRAY_STEP * LE_ARRAY_LINE );
 
                     /* Send message */
                     return( LE_ERROR_MEMORY );
@@ -137,7 +137,7 @@
         le_ptrd[2] = le_data[2];
 
         /* Update array head */
-        le_array->ar_size += LE_ARRAY_ELEM_LEN;
+        le_array->ar_size += LE_ARRAY_LINE;
 
         /* Send message */
         return( LE_ERROR_SUCCESS );

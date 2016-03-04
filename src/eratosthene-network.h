@@ -66,7 +66,7 @@
     /* Define network buffer size */
     # define LE_NETWORK_BUFFER_HAND     ( 1 )
     # define LE_NETWORK_BUFFER_ADDR     ( 256 )
-    # define LE_NETWORK_BUFFER_SYNC     ( ( _LE_USE_MTU / LE_ARRAY_ELEM_LEN ) * LE_ARRAY_ELEM_LEN )
+    # define LE_NETWORK_BUFFER_SYNC     ( ( _LE_USE_MTU / LE_ARRAY_LINE ) * LE_ARRAY_LINE )
 
 /*
     header - preprocessor macros

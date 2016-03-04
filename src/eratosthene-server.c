@@ -213,7 +213,7 @@
         while ( ( le_count = read( le_socket, le_buffer, LE_NETWORK_BUFFER_SYNC ) ) > 0 ) {
 
             /* Parsing received elements */
-            for ( le_parse = 0; le_parse < le_count; le_parse += LE_ARRAY_ELEM_LEN ) {
+            for ( le_parse = 0; le_parse < le_count; le_parse += LE_ARRAY_LINE ) {
 
                 /* Compute element pointers */
                 le_ptrp = ( le_real_t * ) ( le_buffer + le_parse );

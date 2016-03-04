@@ -50,17 +50,14 @@
     header - preprocessor definitions
  */
 
-    /* Define pseudo-constructor/destructor */
-    # define LE_ARRAY_C        { 0, 0, NULL }
+    /* Define pseudo-constructor */
+    # define LE_ARRAY_C    { 0, 0, NULL }
 
-    /* Define heterogenous length */
-    # define LE_ARRAY_POSE_LEN ( sizeof( le_real_t ) * 3 )
-    # define LE_ARRAY_TIME_LEN ( sizeof( le_time_t )     )
-    # define LE_ARRAY_DATA_LEN ( sizeof( le_data_t ) * 3 )
-    # define LE_ARRAY_ELEM_LEN ( LE_ARRAY_POSE_LEN + LE_ARRAY_TIME_LEN + LE_ARRAY_DATA_LEN )
+    /* Define array entry length (bytes) */
+    # define LE_ARRAY_LINE ( ( sizeof( le_real_t ) + sizeof( le_data_t ) ) * 3 + sizeof( le_time_t ) )
 
-    /* Define array step */
-    # define LE_ARRAY_STEP     ( 4096 )
+    /* Define array step (bytes) */
+    # define LE_ARRAY_STEP ( 4096 )
 
 /*
     header - preprocessor macros
@@ -103,17 +100,17 @@
     /*! \brief accessor methods
      */
 
-    le_size_t le_array_get_size( le_array_t * le_array );
+    le_size_t le_array_get_size( le_array_t const * const le_array );
 
     /*! \brief accessor methods
      */
 
-    le_byte_t * le_array_get_byte( le_array_t * le_array );
+    le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
     /*! \brief mutator methods
      */
 
-    le_enum_t le_array_set_push( le_array_t * le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+    le_enum_t le_array_set_push( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
     /*! \brief i/o methods
      */
