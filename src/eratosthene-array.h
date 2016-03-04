@@ -74,6 +74,10 @@
     header - structures
  */
 
+    /*! \struct le_array_struct
+        \brief array structure
+     */
+
     typedef struct le_array_struct {
 
         le_size_t   ar_vsze;
@@ -86,11 +90,34 @@
     header - function prototypes
  */
 
+    /*! \brief constructor/destructor methods
+     */
+
     le_array_t le_array_create( le_void_t );
+
+    /*! \brief constructor/destructor methods
+     */
+
     le_void_t le_array_delete( le_array_t * const le_array );
+
+    /*! \brief accessor methods
+     */
+
     le_size_t le_array_get_size( le_array_t * le_array );
+
+    /*! \brief accessor methods
+     */
+
     le_byte_t * le_array_get_byte( le_array_t * le_array );
+
+    /*! \brief mutator methods
+     */
+
     le_enum_t le_array_set_push( le_array_t * le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+
+    /*! \brief i/o methods
+     */
+
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
 
 /*
