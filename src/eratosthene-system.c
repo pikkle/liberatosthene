@@ -170,7 +170,7 @@
     source - query methods
  */
 
-    le_array_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth ) {
+    le_array_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr ) {
 
         /* Query depth variables */
         le_size_t le_depth = 0;
@@ -185,7 +185,7 @@
         le_array_t le_return = LE_ARRAY_C;
 
         /* Check consistency */
-        if ( ( le_address_get_size( le_addr ) + le_sdepth ) >= le_system->sm_sdisc ) {
+        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sdisc ) {
 
             /* Return element array */
             return( le_return );
@@ -193,7 +193,7 @@
         }
 
         /* System scale stream management */
-        if ( le_system_open( le_system, le_time ) != LE_ERROR_SUCCESS ) {
+        if ( le_system_open( le_system, le_address_get_time( le_addr ) ) != LE_ERROR_SUCCESS ) {
 
             /* Return element array */
             return( le_return );
@@ -223,7 +223,7 @@
         if ( ( -- le_depth ) == le_address_get_size( le_addr ) ) {
 
             /* Gathering process */
-            le_system_gather( le_system, & le_return, le_time, le_addr, & le_class, le_depth, le_depth + le_sdepth );
+            le_system_gather( le_system, & le_return, le_addr, & le_class, le_depth, le_depth + le_address_get_depth( le_addr ) );
 
         }
 
@@ -232,7 +232,7 @@
            
     }
 
-    le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_qarray, le_time_t const le_time, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
+    le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -265,7 +265,7 @@
                     le_class_io_read( & le_clnex, le_offset, le_system->sm_scale[le_head+1] );
 
                     /* Recursive gathering process */
-                    le_system_gather( le_system, le_qarray, le_time, le_addr, & le_clnex, le_head + 1, le_target );
+                    le_system_gather( le_system, le_array, le_addr, & le_clnex, le_head + 1, le_target );
 
                 }
 
@@ -277,7 +277,7 @@
             le_address_cdg( le_addr, le_pose );
 
             /* Inject gathered element in array */
-            le_array_set_push( le_qarray, le_pose, le_time, le_class_get_data( le_class ) );
+            le_array_set_push( le_array, le_pose, le_address_get_time( le_addr ), le_class_get_data( le_class ) );
 
         }
 

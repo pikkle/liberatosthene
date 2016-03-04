@@ -252,7 +252,7 @@
         le_address_cvsa( & le_address, le_buffer );
 
         /* Send system query */
-        le_array = le_system_query( le_system, le_address_get_time( & le_address ), & le_address, le_address_get_depth( & le_address ) );
+        le_array = le_system_query( le_system, & le_address );
 
         /* Write array to socket and send message */
         return( le_array_io_write( & le_array, le_socket ) );
