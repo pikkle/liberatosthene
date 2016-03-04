@@ -254,8 +254,6 @@
         /* Send system query */
         le_array = le_system_query( le_system, le_address_get_time( & le_address ), & le_address, le_address_get_depth( & le_address ) );
 
-fprintf( stderr, "DEBUG=%" _LE_SIZE_P "\n", le_array.ar_size );
-
         /* Write array to socket and send message */
         return( le_array_io_write( & le_array, le_socket ) );
 

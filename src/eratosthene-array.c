@@ -161,7 +161,7 @@
         while ( le_lbound < le_array->ar_size ) {
 
             /* Check upper boundary */
-            le_ubound = ( le_ubound < le_array->ar_size ) ? le_ubound : ( LE_NETWORK_BUFFER_SYNC << 1 ) + ( le_array->ar_size - le_ubound );
+            le_ubound = ( le_ubound < le_array->ar_size ) ? le_ubound : LE_NETWORK_BUFFER_SYNC + ( le_array->ar_size - le_ubound );
 
             /* Write bloc to socket */
             if ( write( le_socket, le_array->ar_byte + le_lbound, le_ubound - le_lbound ) != ( le_ubound - le_lbound ) ) {
