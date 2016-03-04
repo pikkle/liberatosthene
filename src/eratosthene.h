@@ -121,6 +121,9 @@
     # define _LE_TIME_MAX       INT64_MAX
     # define _LE_TIME_MIN       INT64_MIN
 
+    /* Define type nulls */
+    # define _LE_SIZE_NULL      _LE_SIZE_MAX
+
     /* Define input specifiers */
     # define _LE_BYTE_P         PRIu8
     # define _LE_BYTE_S         SCNu8

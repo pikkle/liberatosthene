@@ -35,7 +35,7 @@
         } else {
 
             /* Return invalid offset */
-            return( LE_CLASS_NULL );
+            return( _LE_SIZE_NULL );
 
         }
 
@@ -62,14 +62,14 @@
     le_void_t le_class_set_init( le_class_t * const le_class, le_data_t const * const le_data ) {
 
         /* Initialise address */
-        le_class->cs_addr[0] = LE_CLASS_NULL;
-        le_class->cs_addr[1] = LE_CLASS_NULL;
-        le_class->cs_addr[2] = LE_CLASS_NULL;
-        le_class->cs_addr[3] = LE_CLASS_NULL;
-        le_class->cs_addr[4] = LE_CLASS_NULL;
-        le_class->cs_addr[5] = LE_CLASS_NULL;
-        le_class->cs_addr[6] = LE_CLASS_NULL;
-        le_class->cs_addr[7] = LE_CLASS_NULL;
+        le_class->cs_addr[0] = _LE_SIZE_NULL;
+        le_class->cs_addr[1] = _LE_SIZE_NULL;
+        le_class->cs_addr[2] = _LE_SIZE_NULL;
+        le_class->cs_addr[3] = _LE_SIZE_NULL;
+        le_class->cs_addr[4] = _LE_SIZE_NULL;
+        le_class->cs_addr[5] = _LE_SIZE_NULL;
+        le_class->cs_addr[6] = _LE_SIZE_NULL;
+        le_class->cs_addr[7] = _LE_SIZE_NULL;
 
         /* Initialise colorimetry */
         le_class->cs_data[0] = le_data[0];

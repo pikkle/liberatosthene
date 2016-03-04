@@ -51,10 +51,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_CLASS_C     { { LE_CLASS_NULL }, { 0.0 }, 0 }
-
-    /* Define invalid offset */
-    # define LE_CLASS_NULL  _LE_SIZE_MAX
+    # define LE_CLASS_C     { { _LE_SIZE_NULL }, { 0.0 }, 0 }
 
 /*
     header - preprocessor macros
