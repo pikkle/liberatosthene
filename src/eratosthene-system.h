@@ -73,7 +73,7 @@
 
     typedef struct le_system_struct {
 
-        char      sm_root[256];
+        le_char_t sm_root[256];
         le_size_t sm_sdisc;
         le_time_t sm_tdisc;
         FILE **   sm_scale;
