@@ -80,6 +80,50 @@
     }
 
 /*
+    source - handshake methods
+ */
+
+    le_enum_t le_server_handshake_mode( le_sock_t const le_socket ) {
+
+        /* Handshake buffer variable */
+        le_byte_t le_buffer = LE_NETWORK_MODE_NULL;
+
+        /* Read handshake */
+        if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
+
+            /* Send received mode */
+            return( ( le_enum_t ) le_buffer );
+
+        } else {
+
+            /* Send message */
+            return( LE_NETWORK_MODE_NULL );
+
+        }
+
+    }
+
+    le_enum_t le_server_handshake_auth( le_sock_t const le_socket, le_enum_t const le_auth ) {
+
+        /* Handshake buffer variable */
+        le_byte_t le_buffer = ( le_byte_t ) le_auth;
+
+        /* Write handshake authorisation */
+        if ( write( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
+
+            /* Send message */
+            return( LE_ERROR_SUCCESS );
+
+        } else {
+
+            /* Send message */
+            return( LE_ERROR_SOCKET );
+
+        }
+
+    }
+
+/*
     source - server methods
  */
 
@@ -140,50 +184,6 @@
                 close( le_client );
 
             }
-
-        }
-
-    }
-
-/*
-    source - handshake methods
- */
-
-    le_enum_t le_server_handshake_mode( le_sock_t const le_socket ) {
-
-        /* Handshake buffer variable */
-        le_byte_t le_buffer = LE_NETWORK_MODE_NULL;
-
-        /* Read handshake */
-        if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
-
-            /* Send received mode */
-            return( ( le_enum_t ) le_buffer );
-
-        } else {
-
-            /* Send message */
-            return( LE_NETWORK_MODE_NULL );
-
-        }
-
-    }
-
-    le_enum_t le_server_handshake_auth( le_sock_t const le_socket, le_enum_t const le_auth ) {
-
-        /* Handshake buffer variable */
-        le_byte_t le_buffer = ( le_byte_t ) le_auth;
-
-        /* Write handshake authorisation */
-        if ( write( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
-
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
-
-        } else {
-
-            /* Send message */
-            return( LE_ERROR_SOCKET );
 
         }
 

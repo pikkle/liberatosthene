@@ -78,11 +78,6 @@
 
     le_void_t le_server_delete( le_sock_t const le_socket );
 
-    /*! \brief server methods
-     */
-
-    le_void_t le_server( le_sock_t const le_socket, le_system_t * const le_system );
-
     /*! \brief handshake methods
      */
 
@@ -92,6 +87,11 @@
      */
 
     le_enum_t le_server_handshake_auth( le_sock_t const le_socket, le_enum_t const le_auth );
+
+    /*! \brief server methods
+     */
+
+    le_void_t le_server( le_sock_t const le_socket, le_system_t * const le_system );
 
     /*! \brief connection methods
      */

@@ -18,7 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    /*! \file   eratosthene-class.h
+    /*! \file   eratosthene-geodesy.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
      *  Geodetic module
@@ -54,12 +54,12 @@
     # define LE_GEODESY_WGS84_F ( 298.257223563L )
 
     /* Define ellispoidal coordinates boundaries */
-    # define LE_GEODESY_LMIN ( - LE_PI )
-    # define LE_GEODESY_LMAX ( + LE_PI )
-    # define LE_GEODESY_AMIN ( - LE_P2 )
-    # define LE_GEODESY_AMAX ( + LE_P2 )
-    # define LE_GEODESY_HMIN ( - LE_GEODESY_WGS84_A / 1024.0L )
-    # define LE_GEODESY_HMAX ( + LE_GEODESY_WGS84_A / 1024.0L )
+    # define LE_GEODESY_LMIN    ( - LE_PI )
+    # define LE_GEODESY_LMAX    ( + LE_PI )
+    # define LE_GEODESY_AMIN    ( - LE_P2 )
+    # define LE_GEODESY_AMAX    ( + LE_P2 )
+    # define LE_GEODESY_HMIN    ( - LE_GEODESY_WGS84_A / 1024.0L )
+    # define LE_GEODESY_HMAX    ( + LE_GEODESY_WGS84_A / 1024.0L )
 
 /*
     header - preprocessor macros

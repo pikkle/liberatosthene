@@ -77,7 +77,7 @@
     }
 
 /*
-    source - handshaked methods
+    source - handshake methods
  */
 
     le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode ) {

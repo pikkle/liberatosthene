@@ -21,7 +21,7 @@
     /*! \file   eratosthene-include.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  General inclusion header
+     *  Inclusion header
      */
 
 /*
@@ -46,6 +46,7 @@
     # include "eratosthene.h"
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
+    # include "eratosthene-class.h"
     # include "eratosthene-client.h"
     # include "eratosthene-geodesy.h"
     # include "eratosthene-network.h"
