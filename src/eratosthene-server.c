@@ -52,7 +52,7 @@
         }
         
         /* Make socket ready to accept connection */
-        if ( listen( le_socket, LE_NETWORK_PEND ) == _LE_SOCK_NULL ) {
+        if ( listen( le_socket, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
 
             /* Close socket */
             close( le_socket );
