@@ -67,6 +67,10 @@
     header - structures
  */
 
+    /*! \struct le_system_struct
+        \brief system structure
+     */
+
     typedef struct le_system_struct {
 
         char      sm_root[256];
@@ -80,13 +84,44 @@
     header - function prototypes
  */
 
+    /*! \brief constructor/destructor methods
+     */
+
     le_enum_t le_system_create( le_system_t * const le_system, le_char_t const * const le_root );
+
+    /*! \brief constructor/destructor methods
+     */
+
     le_void_t le_system_delete( le_system_t * const le_system );
+
+    /*! \brief injection methods
+     */
+
     le_enum_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+
+    /*! \brief query methods
+     */
+
     le_array_t le_system_query( le_system_t * const le_system, le_time_t const le_time, le_address_t * const le_addr, le_size_t const le_sdepth );
+
+    /*! \brief query methods
+     */
+
     le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_qarray, le_time_t const le_time, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
+
+    /*! \brief i/o methods
+     */
+
     le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time );
+
+    /*! \brief i/o methods
+     */
+
     le_void_t le_system_flush( le_system_t * const le_system );
+
+    /*! \brief i/o methods
+     */
+
     le_void_t le_system_close( le_system_t * const le_system );
 
 /*
