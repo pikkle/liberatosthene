@@ -27,15 +27,15 @@
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr ) {
 
         /* Check consistency */
-        if ( le_addr < _LE_USE_BASE ) {
-
-            /* Return daughter class offset */
-            return( le_class->cs_addr[le_addr] );
-
-        } else {
+        if ( le_addr >= _LE_USE_BASE ) {
 
             /* Return invalid offset */
             return( _LE_SIZE_NULL );
+
+        } else {
+
+            /* Return daughter offset */
+            return( le_class->cs_addr[le_addr] );
 
         }
 
@@ -84,18 +84,18 @@
     le_enum_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
 
         /* Check consistency */
-        if ( le_addr < _LE_USE_BASE ) {
+        if ( le_addr >= _LE_USE_BASE ) {
 
-            /* Update daughter class offset */
+            /* Send message */
+            return( LE_ERROR_BASE );
+
+        } else {
+
+            /* Update daughter offset */
             le_class->cs_addr[le_addr] = le_offset;
 
             /* Send message */
             return( LE_ERROR_SUCCESS );
-
-        } else {
-
-            /* Send message */
-            return( LE_ERROR_BASE );
 
         }
 
@@ -107,9 +107,9 @@
         le_size_t le_mean = ( le_class->cs_mean ++ );
 
         /* Inject colorimetric information */
-        le_class->cs_data[0] = ( ( le_class->cs_data[0] * le_mean ) + le_data[0] ) / le_class->cs_mean;
-        le_class->cs_data[1] = ( ( le_class->cs_data[1] * le_mean ) + le_data[1] ) / le_class->cs_mean;
-        le_class->cs_data[2] = ( ( le_class->cs_data[2] * le_mean ) + le_data[2] ) / le_class->cs_mean;
+        le_class->cs_data[0] = ( ( ( ( long double ) le_class->cs_data[0] ) * le_mean ) + le_data[0] ) / le_class->cs_mean;
+        le_class->cs_data[1] = ( ( ( ( long double ) le_class->cs_data[1] ) * le_mean ) + le_data[1] ) / le_class->cs_mean;
+        le_class->cs_data[2] = ( ( ( ( long double ) le_class->cs_data[2] ) * le_mean ) + le_data[2] ) / le_class->cs_mean;
 
     }
 
