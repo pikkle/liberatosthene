@@ -85,36 +85,40 @@
         /* Handshake buffer variables */
         le_byte_t le_buffer = ( le_byte_t ) le_mode;
 
+        /* Check consistency */
+        if ( le_socket == _LE_SOCK_NULL ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_SOCKET );
+
+        }
+
         /* Write handshake */
-        if ( write( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
+        if ( write( le_socket, & le_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
 
-            /* Wait handshake authorisation */
-            if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
+            /* Send message */
+            return( LE_ERROR_IO_WRITE );
 
-                /* Check authorisation */
-                if ( ( le_buffer & 0x7F ) == le_mode ) {
+        }
 
-                    /* Send message */
-                    return( LE_ERROR_SUCCESS );
+        /* Wait handshake authorisation */
+        if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
 
-                } else {
+            /* Send message */
+            return( LE_ERROR_IO_READ );
 
-                    /* Send message */
-                    return( LE_ERROR_AUTH );
+        }
 
-                }
+        /* Check authorisation */
+        if ( ( le_buffer & 0x7F ) != le_mode ) {
 
-            } else {
-
-                /* Send message */
-                return( LE_ERROR_IO_SOCKET );
-
-            }
+            /* Send message */
+            return( LE_ERROR_AUTH );
 
         } else {
 
             /* Send message */
-            return( LE_ERROR_IO_SOCKET );
+            return( LE_ERROR_SUCCESS );
 
         }
 
