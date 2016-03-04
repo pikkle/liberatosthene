@@ -24,7 +24,7 @@
     source - constructor/destructor methods
  */
 
-    le_sock_t le_server_create( le_size_t le_port ) {
+    le_sock_t le_server_create( le_size_t const le_port ) {
 
         /* Socket variables */
         le_sock_t le_socket = _LE_SOCK_NULL;
@@ -89,15 +89,15 @@
         le_byte_t le_buffer = LE_NETWORK_MODE_NULL;
 
         /* Read handshake */
-        if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
-
-            /* Send received mode */
-            return( ( le_enum_t ) le_buffer );
-
-        } else {
+        if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
 
             /* Send message */
             return( LE_NETWORK_MODE_NULL );
+
+        } else {
+
+            /* Send received mode */
+            return( ( le_enum_t ) le_buffer );
 
         }
 
@@ -109,15 +109,15 @@
         le_byte_t le_buffer = ( le_byte_t ) le_auth;
 
         /* Write handshake authorisation */
-        if ( write( le_socket, & le_buffer, sizeof( le_byte_t ) ) == sizeof( le_byte_t ) ) {
+        if ( write( le_socket, & le_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
 
             /* Send message */
-            return( LE_ERROR_SUCCESS );
+            return( LE_ERROR_IO_WRITE );
 
         } else {
 
             /* Send message */
-            return( LE_ERROR_IO_SOCKET );
+            return( LE_ERROR_SUCCESS );
 
         }
 

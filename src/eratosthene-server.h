@@ -71,7 +71,7 @@
     /*! \brief constructor/destructor methods
      */
 
-    le_sock_t le_server_create( le_size_t le_port );
+    le_sock_t le_server_create( le_size_t const le_port );
 
     /*! \brief constructor/destructor methods
      */
