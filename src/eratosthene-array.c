@@ -150,9 +150,6 @@
 
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket ) {
 
-        /* Status variables */
-        le_enum_t le_status = LE_ERROR_SUCCESS;
-
         /* Segmentation variables */
         le_size_t le_parse = 0;
         le_size_t le_count = 0;
@@ -169,7 +166,7 @@
         }
 
         /* Writing array to socket */
-        while ( ( le_parse < le_array->ar_size ) && ( le_status == LE_ERROR_SUCCESS ) ) {
+        while ( le_parse < le_array->ar_size ) {
 
             /* Compute bloc size through virtual size */
             le_count = ( le_vsize < LE_NETWORK_BUFFER_SYNC ) ? le_vsize : LE_NETWORK_BUFFER_SYNC;
@@ -178,7 +175,7 @@
             if ( write( le_socket, le_array->ar_byte + le_parse, le_count ) != le_count ) {
 
                 /* Update writing status */
-                le_status = LE_ERROR_IO_WRITE;
+                return( LE_ERROR_IO_WRITE );
 
             }
 
@@ -188,8 +185,8 @@
 
         }
 
-        /* Return writing status */
-        return( le_status );
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 
