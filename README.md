@@ -1,3 +1,3 @@
-## Eratosthene
+## liberatosthene
 
 ## Copyright and License
