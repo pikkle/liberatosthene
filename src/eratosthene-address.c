@@ -89,7 +89,7 @@
             le_pose[0] += ( ( le_real_t ) ( le_address->as_addr[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
 
             /* Asynchronous dimension management */
-            if ( le_parse < 2 ) continue;
+            if ( le_parse < 1 ) continue;
 
             /* Analyse address digit and coordinates update */
             le_pose[1] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x02 ) >> 1 ) ) * ( le_scale[1] /= 2.0 );
