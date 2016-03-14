@@ -58,8 +58,8 @@
     # define LE_GEODESY_LMAX    ( + LE_PI )
     # define LE_GEODESY_AMIN    ( - LE_P2 )
     # define LE_GEODESY_AMAX    ( + LE_P2 )
-    # define LE_GEODESY_HMIN    ( - LE_GEODESY_WGS84_A / 1024.0L )
-    # define LE_GEODESY_HMAX    ( + LE_GEODESY_WGS84_A / 1024.0L )
+    # define LE_GEODESY_HMIN    ( - ( 2.0 * LE_PI * LE_GEODESY_WGS84_A ) / 1024.0L )
+    # define LE_GEODESY_HMAX    ( + ( 2.0 * LE_PI * LE_GEODESY_WGS84_A ) / 1024.0L )
 
 /*
     header - preprocessor macros

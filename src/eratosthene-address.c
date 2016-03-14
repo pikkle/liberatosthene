@@ -199,7 +199,7 @@
             le_pose[0] = ( le_pose[0] * 2.0 ) - le_buffer;
 
             /* Asynchronous dimension management */
-            if ( le_parse < 2 ) continue;
+            if ( le_parse < 1 ) continue;
 
             /* Normalised latitude processing */
             if ( le_pose[1] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
