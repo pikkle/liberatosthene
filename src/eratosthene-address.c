@@ -69,6 +69,44 @@
 
     }
 
+    le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb ) {
+
+        /* Parsing variables */
+        le_size_t le_parse = 0;
+
+        /* Compare size */
+        if ( le_addra->as_size != le_addrb->as_size )  {
+
+            /* Return answer */
+            return( _LE_FALSE );
+
+        } else {
+
+            /* Compare address */
+            while ( le_parse < le_addra->as_size ) {
+
+                /* Compare address digits */
+                if ( le_addra->as_addr[le_parse] != le_addrb->as_addr[le_parse] ) {
+
+                    /* Return answer */
+                    return( _LE_FALSE );
+
+                } else {
+
+                    /* Update parser */
+                    le_parse ++;
+
+                }
+
+            }
+
+            /* Return answer */
+            return( _LE_TRUE );
+
+        }
+        
+    }
+
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose ) {
 
         /* Parsing variables */
