@@ -231,6 +231,9 @@
 
     le_enum_t le_server_system_query( le_sock_t const le_socket, le_system_t * const le_system ) {
 
+        /* Message variables */
+        le_enum_t le_message = LE_ERROR_SUCCESS;
+
         /* Array variables */
         le_array_t le_array = LE_ARRAY_C;
 
@@ -254,8 +257,14 @@
         /* Send system query */
         le_array = le_system_query( le_system, & le_address );
 
-        /* Write array to socket and send message */
-        return( le_array_io_write( & le_array, le_socket ) );
+        /* Write array to socket */
+        le_message = le_array_io_write( & le_array, le_socket );
+
+        /* Unallocate array memory */
+        le_array_delete( & le_array );
+
+        /* Send message */
+        return( le_message );
 
     }
 
