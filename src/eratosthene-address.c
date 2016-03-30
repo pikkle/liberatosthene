@@ -69,44 +69,6 @@
 
     }
 
-    le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb ) {
-
-        /* Parsing variables */
-        le_size_t le_parse = 0;
-
-        /* Compare size */
-        if ( le_addra->as_size != le_addrb->as_size )  {
-
-            /* Return answer */
-            return( _LE_FALSE );
-
-        } else {
-
-            /* Compare address */
-            while ( le_parse < le_addra->as_size ) {
-
-                /* Compare address digits */
-                if ( le_addra->as_addr[le_parse] != le_addrb->as_addr[le_parse] ) {
-
-                    /* Return answer */
-                    return( _LE_FALSE );
-
-                } else {
-
-                    /* Update parser */
-                    le_parse ++;
-
-                }
-
-            }
-
-            /* Return answer */
-            return( _LE_TRUE );
-
-        }
-        
-    }
-
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose ) {
 
         /* Parsing variables */
@@ -259,6 +221,50 @@
 
             /* Update normalised coordinate */
             le_pose[2] = ( le_pose[2] * 2.0 ) - le_buffer;
+
+        }
+
+    }
+
+    le_void_t le_address_set_pp( le_address_t * const le_address, le_size_t const le_scale, le_size_t const le_const ) {
+
+        /* Carry variables */
+        le_size_t le_xcarry = ( le_const & 0x1 );
+        le_size_t le_ycarry = ( le_const & 0x2 ) >> 1;
+        le_size_t le_zcarry = ( le_const & 0x4 ) >> 2;
+
+        /* Digit variables */
+        le_size_t le_xdigit = 0;
+        le_size_t le_ydigit = 0;
+        le_size_t le_zdigit = 0;
+
+        /* Parsing variables */
+        le_size_t le_parse = le_scale;
+
+        /* Incremental loop */
+        while ( ( le_xcarry != 0 ) || ( le_ycarry != 0 ) || ( le_zcarry != 0 ) ) {
+
+            /* Extract digits */
+            le_xdigit = ( le_address->as_addr[le_parse] & 0x1 );
+            le_ydigit = ( le_address->as_addr[le_parse] & 0x2 ) >> 1;
+            le_zdigit = ( le_address->as_addr[le_parse] & 0x4 ) >> 2;
+
+            /* Digital addition */
+            le_xcarry = le_xdigit + le_xcarry;
+            le_xdigit = le_xcarry % 2;
+            le_xcarry = le_xcarry / 2;
+            le_ycarry = le_ydigit + le_ycarry;
+            le_ydigit = le_ycarry % 2;
+            le_ycarry = le_ycarry / 2;
+            le_zcarry = le_zdigit + le_zcarry;
+            le_zdigit = le_zcarry % 2;
+            le_zcarry = le_zcarry / 2;
+
+            /* Rebuild digit */
+            le_address->as_addr[le_parse] = ( le_xdigit ) | ( le_ydigit << 1 ) | ( le_zdigit << 2 );
+
+            /* Update scale */
+            le_parse ++;
 
         }
 
