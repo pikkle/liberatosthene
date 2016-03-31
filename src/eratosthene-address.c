@@ -226,45 +226,29 @@
 
     }
 
-    le_void_t le_address_set_pp( le_address_t * const le_address, le_size_t const le_scale, le_size_t const le_const ) {
-
-        /* Carry variables */
-        le_size_t le_xcarry = ( le_const & 0x1 );
-        le_size_t le_ycarry = ( le_const & 0x2 ) >> 1;
-        le_size_t le_zcarry = ( le_const & 0x4 ) >> 2;
-
-        /* Digit variables */
-        le_size_t le_xdigit = 0;
-        le_size_t le_ydigit = 0;
-        le_size_t le_zdigit = 0;
+    le_void_t le_address_set_shift( le_address_t * const le_address, le_size_t const le_scale, le_diff_t le_xcarry, le_diff_t le_ycarry, le_diff_t le_zcarry ) {
 
         /* Parsing variables */
-        le_size_t le_parse = le_scale;
+        le_diff_t le_parse = le_scale;
 
-        /* Incremental loop */
-        while ( ( le_xcarry != 0 ) || ( le_ycarry != 0 ) || ( le_zcarry != 0 ) ) {
+        /* Decremental loop */
+        while ( ( le_parse >= 0 ) && ( ( le_xcarry != 0 ) || ( le_ycarry != 0 ) || ( le_zcarry != 0 ) ) ) {
 
-            /* Extract digits */
-            le_xdigit = ( le_address->as_addr[le_parse] & 0x1 );
-            le_ydigit = ( le_address->as_addr[le_parse] & 0x2 ) >> 1;
-            le_zdigit = ( le_address->as_addr[le_parse] & 0x4 ) >> 2;
+            /* Dimensional carry addition */
+            le_xcarry += ( le_address->as_addr[le_parse] & 0x1 );
+            le_ycarry += ( le_address->as_addr[le_parse] & 0x2 ) >> 1;
+            le_zcarry += ( le_address->as_addr[le_parse] & 0x4 ) >> 2;
 
-            /* Digital addition */
-            le_xcarry = le_xdigit + le_xcarry;
-            le_xdigit = le_xcarry % 2;
-            le_xcarry = le_xcarry / 2;
-            le_ycarry = le_ydigit + le_ycarry;
-            le_ydigit = le_ycarry % 2;
-            le_ycarry = le_ycarry / 2;
-            le_zcarry = le_zdigit + le_zcarry;
-            le_zdigit = le_zcarry % 2;
-            le_zcarry = le_zcarry / 2;
+            /* Compute address digit */
+            le_address->as_addr[le_parse] = ( le_mod( le_xcarry, 2 ) ) | ( le_mod( le_ycarry, 2 ) << 1 ) | ( le_mod( le_zcarry, 2 ) << 2 );
 
-            /* Rebuild digit */
-            le_address->as_addr[le_parse] = ( le_xdigit ) | ( le_ydigit << 1 ) | ( le_zdigit << 2 );
+            /* Remaining carry computation */
+            le_xcarry = ( le_xcarry / 2 ) - ( le_xcarry == -1 ? 1 : 0 );
+            le_ycarry = ( le_ycarry / 2 ) - ( le_ycarry == -1 ? 1 : 0 );
+            le_zcarry = ( le_zcarry / 2 ) - ( le_zcarry == -1 ? 1 : 0 );
 
             /* Update scale */
-            le_parse ++;
+            le_parse --;
 
         }
 

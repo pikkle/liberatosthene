@@ -142,7 +142,7 @@
     /*! \brief mutator methods
      */
 
-    le_void_t le_address_set_pp( le_address_t * const le_address, le_size_t const le_scale, le_size_t const le_const );
+    le_void_t le_address_set_shift( le_address_t * const le_address, le_size_t const le_scale, le_diff_t le_xcarry, le_diff_t le_ycarry, le_diff_t le_zcarry );
 
     /*! \brief conversion methods
      */

@@ -97,8 +97,10 @@
     # define _LE_ENUM           int
     # if   ( _LE_USE_SIZE_T == 32 )
     # define _LE_SIZE           uint32_t
+    # define _LE_DIFF           int32_t
     # elif ( _LE_USE_SIZE_T == 64 )
     # define _LE_SIZE           uint64_t
+    # define _LE_DIFF           int64_t
     # endif
     # if   ( _LE_USE_REAL_T == 32 )
     # define _LE_REAL           float
@@ -171,6 +173,9 @@
     header - preprocessor macros
  */
 
+    /* Define modulo */
+    # define le_mod(i,j)        ( (i) < 0 ? ( (j) + ( (i) % (j) ) ) % (j) : (i) % (j) )
+
 /*
     header - type definition
  */
@@ -181,6 +186,7 @@
     typedef _LE_CHAR le_char_t;
     typedef _LE_ENUM le_enum_t;
     typedef _LE_SIZE le_size_t;
+    typedef _LE_DIFF le_diff_t;
     typedef _LE_REAL le_real_t;
     typedef _LE_TIME le_time_t;
     typedef _LE_DATA le_data_t;
