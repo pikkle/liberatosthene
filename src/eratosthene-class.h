@@ -89,6 +89,11 @@
     /*! \brief accessor methods
      */
 
+    le_size_t * le_class_get_addr( le_class_t const * const le_class );
+
+    /*! \brief accessor methods
+     */
+
     le_size_t le_class_get_mean( le_class_t const * const le_class );
 
     /*! \brief accessor methods

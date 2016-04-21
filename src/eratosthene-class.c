@@ -41,6 +41,13 @@
 
     }
 
+    le_size_t * le_class_get_addr( le_class_t const * const le_class ) {
+
+        /* Return class pointer */
+        return( ( le_size_t * ) le_class->cs_addr );
+
+    }
+
     le_size_t le_class_get_mean( le_class_t const * const le_class ) {
 
         /* Return class accumulator */
