@@ -54,8 +54,8 @@
     # define LE_GEODESY_WGS84_F ( 298.257223563L )
 
     /* Asynchronous dimension edges */
-    # define LE_GEODESY_ASY_LAT (  1 )
-    # define LE_GEODESY_ASY_HGT ( 10 )
+    # define LE_GEODESY_ASYP    (  1 )
+    # define LE_GEODESY_ASYA    ( 10 )
 
     /* Define ellispoidal coordinates boundaries */
     # define LE_GEODESY_LMIN    ( - LE_PI )

@@ -43,7 +43,7 @@
         /* Check consistency */
         if ( le_offset >= le_address->as_size ) {
 
-            /* Return null digit */
+            /* Return invalid digit */
             return( _LE_BYTE_NULL );
 
         } else {
@@ -78,22 +78,35 @@
         for ( ; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* Asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASY_LAT ) {
+            if ( le_parse < LE_GEODESY_ASYP ) {
 
                 /* Check digit validity */
-                if ( le_address->as_addr[le_parse] > 1 ) return( _LE_FALSE );
+                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 2 ) ) {
 
-            /* Asynchronous dimension management */
-            } else if ( le_parse < LE_GEODESY_ASY_HGT ) {
+                    /* Return negative answer */
+                    return( _LE_FALSE );
+
+                }
+
+            } else if ( le_parse < LE_GEODESY_ASYA ) {
 
                 /* Check digit validity */
-                if ( le_address->as_addr[le_parse] > 3 ) return( _LE_FALSE );
+                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 1 ) ) {
 
-            /* Asynchronous dimension management */
+                    /* Return negative answer */
+                    return( _LE_FALSE );
+
+                }
+
             } else {
 
                 /* Check digit validity */
-                if ( le_address->as_addr[le_parse] > 7 ) return( _LE_FALSE );
+                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE ) ) {
+
+                    /* Return negative answer */
+                    return( _LE_FALSE );
+
+                }
 
             }
 
@@ -124,13 +137,13 @@
             le_pose[0] += ( ( le_real_t ) ( le_address->as_addr[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
 
             /* Asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASY_LAT ) continue;
+            if ( le_parse < LE_GEODESY_ASYP ) continue;
 
             /* Analyse address digit and coordinates update */
             le_pose[1] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x02 ) >> 1 ) ) * ( le_scale[1] /= 2.0 );
 
             /* Asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASY_HGT ) continue;
+            if ( le_parse < LE_GEODESY_ASYA ) continue;
 
             /* Analyse address digit and coordinates update */
             le_pose[2] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x04 ) >> 2 ) ) * ( le_scale[2] /= 2.0 );
@@ -234,7 +247,7 @@
             le_pose[0] = ( le_pose[0] * 2.0 ) - le_buffer;
 
             /* Asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASY_LAT ) continue;
+            if ( le_parse < LE_GEODESY_ASYP ) continue;
 
             /* Normalised latitude processing */
             if ( le_pose[1] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
@@ -246,7 +259,7 @@
             le_pose[1] = ( le_pose[1] * 2.0 ) - le_buffer;
 
             /* Asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASY_HGT ) continue;
+            if ( le_parse < LE_GEODESY_ASYA ) continue;
 
             /* Normalised altitude processing */
             if ( le_pose[2] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
