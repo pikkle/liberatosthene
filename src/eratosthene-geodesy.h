@@ -53,13 +53,17 @@
     # define LE_GEODESY_WGS84_A ( 6378137.0L )
     # define LE_GEODESY_WGS84_F ( 298.257223563L )
 
+    /* Asynchronous dimension edges */
+    # define LE_GEODESY_ASY_LAT (  1 )
+    # define LE_GEODESY_ASY_HGT ( 10 )
+
     /* Define ellispoidal coordinates boundaries */
     # define LE_GEODESY_LMIN    ( - LE_PI )
     # define LE_GEODESY_LMAX    ( + LE_PI )
     # define LE_GEODESY_AMIN    ( - LE_P2 )
     # define LE_GEODESY_AMAX    ( + LE_P2 )
-    # define LE_GEODESY_HMIN    ( - ( 2.0 * LE_PI * LE_GEODESY_WGS84_A ) / 1024.0L )
-    # define LE_GEODESY_HMAX    ( + ( 2.0 * LE_PI * LE_GEODESY_WGS84_A ) / 1024.0L )
+    # define LE_GEODESY_HMIN    ( - ( LE_PI * LE_GEODESY_WGS84_A ) / 1024.0L )
+    # define LE_GEODESY_HMAX    ( + ( LE_PI * LE_GEODESY_WGS84_A ) / 1024.0L )
 
 /*
     header - preprocessor macros

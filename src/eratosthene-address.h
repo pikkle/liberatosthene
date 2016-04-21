@@ -112,6 +112,11 @@
     /*! \brief accessor methods
      */
 
+    le_enum_t le_address_get_valid( le_address_t const * const le_address );
+
+    /*! \brief accessor methods
+     */
+
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose );
 
     /*! \brief mutator methods
