@@ -64,7 +64,7 @@
 
     }
 
-    le_void_t le_client_delete( le_sock_t const le_socket ) {
+    le_sock_t le_client_delete( le_sock_t const le_socket ) {
 
         /* Check socket */
         if ( le_socket != _LE_SOCK_NULL ) {
@@ -73,6 +73,9 @@
             close( le_socket );
 
         }
+
+        /* Return null socket */
+        return( _LE_SOCK_NULL );
 
     }
 
