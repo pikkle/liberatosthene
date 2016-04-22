@@ -79,7 +79,17 @@
     /*! \brief handshake methods
      */
 
-    le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode ); 
+    le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode );
+
+    /*! \brief connection methods
+     */
+
+    le_size_t le_client_system_sdisc( le_sock_t const le_socket );
+
+    /*! \brief connection methods
+     */
+
+    le_time_t le_client_system_tdisc( le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility

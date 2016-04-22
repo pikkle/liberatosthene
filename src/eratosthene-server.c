@@ -283,7 +283,7 @@
         /* Space discretisation i/o variables */
         le_size_t le_sdisc = le_system_get_sdisc( le_system );
 
-        /* Send configuration */
+        /* Write configuration */
         if ( write( le_socket, & le_sdisc, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) {
 
             /* Send message */
@@ -303,7 +303,7 @@
         /* Time discretisation i/o variables */
         le_time_t le_tdisc = le_system_get_tdisc( le_system );
 
-        /* Send configuration */
+        /* Write configuration */
         if ( write( le_socket, & le_tdisc, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) {
 
             /* Send message */

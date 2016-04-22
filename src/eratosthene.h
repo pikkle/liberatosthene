@@ -123,6 +123,7 @@
     /* Define type nulls */
     # define _LE_BYTE_NULL      0xff
     # define _LE_SIZE_NULL      _LE_SIZE_MAX
+    # define _LE_TIME_NULL      0
     # define _LE_SOCK_NULL      -1
 
     /* Define input specifiers */
