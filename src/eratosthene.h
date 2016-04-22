@@ -170,8 +170,9 @@
     # define LE_ERROR_IO_SOCKET 0x0006
     # define LE_ERROR_MEMORY    0x0007
     # define LE_ERROR_DEPTH     0x0008
-    # define LE_ERROR_BASE      0x0009
-    # define LE_ERROR_AUTH      0x000a
+    # define LE_ERROR_TIME      0x0009
+    # define LE_ERROR_BASE      0x000a
+    # define LE_ERROR_AUTH      0x000b
 
     /* Define constants */
     # define LE_PI              ( 3.1415926535897932384626433832795029L )
@@ -181,6 +182,9 @@
 /*
     header - preprocessor macros
  */
+
+    /* Define standard construction macro */
+    # define le_cons(t,p,c)     { t u = c; * ( p ) = u; }
 
     /* Define modulo */
     # define le_mod(i,j)        ( (i) < 0 ? ( (j) + ( (i) % (j) ) ) % (j) : (i) % (j) )
