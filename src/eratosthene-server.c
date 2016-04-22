@@ -176,11 +176,27 @@
 
                         } break;
 
-                        /* System configuration mode */
+                        /* System spatial configuration mode */
                         case ( LE_NETWORK_MODE_SMOD ) : {
 
                             /* Send authorisation */
                             if ( le_server_handshake_auth( le_client, LE_NETWORK_MODE_SATH ) == LE_ERROR_SUCCESS ) {
+
+                                /* Connection to system configuration */
+                                le_server_system_sdisc( le_client, le_system );
+
+                            }
+
+                        } break;
+
+                        /* System temporal configuration mode */
+                        case ( LE_NETWORK_MODE_TMOD ) : {
+
+                            /* Send authorisation */
+                            if ( le_server_handshake_auth( le_client, LE_NETWORK_MODE_TATH ) == LE_ERROR_SUCCESS ) {
+
+                                /* Connection to system configuration */
+                                le_server_system_tdisc( le_client, le_system );
 
                             }
 
