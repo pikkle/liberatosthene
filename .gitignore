@@ -2,3 +2,7 @@ bin
 dev
 doc/html
 obj
+lib/*/bin
+lib/*/dev
+lib/*/doc/html
+lib/*/obj
