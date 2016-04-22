@@ -26,9 +26,6 @@
 
     le_enum_t le_system_create( le_system_t * const le_system, le_char_t const * const le_root ) {
 
-        /* Reading count variables */
-        le_size_t le_count = 0;
-
         /* Stream variables */
         FILE * le_stream = NULL;
 
@@ -44,52 +41,48 @@
             /* Send message */
             return( LE_ERROR_IO_ACCESS );
 
-        } else {
+        }
 
-            /* Read system configuration */
-            le_count = fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & ( le_system->sm_sdisc ), & ( le_system->sm_tdisc ) );
+        /* Check configuration reading */
+        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & ( le_system->sm_sdisc ), & ( le_system->sm_tdisc ) ) != 2 ) {
 
             /* Close configuration stream */
             fclose( le_stream );
 
-            /* Check configuration reading */
-            if ( le_count != 2 ) {
+            /* Send message */
+            return( LE_ERROR_IO_READ );
 
-                /* Send message */
-                return( LE_ERROR_IO_READ );
+        } else {
 
-            } else {
+            /* Close configuration stream */
+            fclose( le_stream );
 
-                /* Check consistency */
-                if ( ( le_system->sm_sdisc <= 0 ) || ( le_system->sm_sdisc >= _LE_USE_DEPTH ) ) {
+        }
 
-                    /* Send message */
-                    return( LE_ERROR_DEPTH );
+        /* Check consistency */
+        if ( ( le_system->sm_sdisc <= 0 ) || ( le_system->sm_sdisc >= _LE_USE_DEPTH ) ) {
 
-                } else {
+            /* Send message */
+            return( LE_ERROR_DEPTH );
 
-                    /* Check consistency */
-                    if ( le_system->sm_tdisc <= 0 ) {
+        }
 
-                        /* Send message */
-                        return( LE_ERROR_TIME );
+        /* Check consistency */
+        if ( le_system->sm_tdisc <= 0 ) {
 
-                    } else {
+            /* Send message */
+            return( LE_ERROR_TIME );
 
-                        /* Initialise streams stack */
-                        le_system->sm_scale = NULL;
+        } else {
 
-                        /* Assign provided root path */
-                        strcpy( ( char * ) le_system->sm_root, ( char * ) le_root );
+            /* Initialise streams stack */
+            le_system->sm_scale = NULL;
 
-                        /* Send message */
-                        return( LE_ERROR_SUCCESS );
+            /* Assign provided root path */
+            strcpy( ( char * ) le_system->sm_root, ( char * ) le_root );
 
-                    }
-
-                }
-
-            }
+            /* Send message */
+            return( LE_ERROR_SUCCESS );
 
         }
 
@@ -140,7 +133,8 @@
         le_class_t le_class = LE_CLASS_C;
 
         /* Address variables */
-        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc - 2 );
+        //le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc - 2 );
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc - 1 );
 
         /* System scale stream management */
         if ( ( le_return = le_system_open( le_system, le_time ) ) != LE_ERROR_SUCCESS ) {
