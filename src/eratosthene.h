@@ -46,8 +46,12 @@
     # error "this program requires C99 standard"
     # endif
 
-    # if defined ( __BYTE_ORDER__ ) && ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
+    # if defined ( __BYTE_ORDER__ )
+    # if ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
     # error "this program expects little-endian architecture"
+    # endif
+    # else
+    # error "this program expects endianness detection possibility"
     # endif
 
 /*
