@@ -176,6 +176,16 @@
 
                         } break;
 
+                        /* System configuration mode */
+                        case ( LE_NETWORK_MODE_SMOD ) : {
+
+                            /* Send authorisation */
+                            if ( le_server_handshake_auth( le_client, LE_NETWORK_MODE_SATH ) == LE_ERROR_SUCCESS ) {
+
+                            }
+
+                        } break;
+
                     }
 
                 }
@@ -265,6 +275,46 @@
 
         /* Send message */
         return( le_message );
+
+    }
+
+    le_enum_t le_server_system_sdisc( le_sock_t const le_socket, le_system_t const * const le_system ) {
+
+        /* Space discretisation i/o variables */
+        le_size_t le_sdisc = le_system_get_sdisc( le_system );
+
+        /* Send configuration */
+        if ( write( le_socket, & le_sdisc, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_WRITE );
+
+        } else {
+
+            /* Send message */
+            return( LE_ERROR_SUCCESS );
+
+        }
+
+    }
+
+    le_enum_t le_server_system_tdisc( le_sock_t const le_socket, le_system_t const * const le_system ) {
+
+        /* Time discretisation i/o variables */
+        le_time_t le_tdisc = le_system_get_tdisc( le_system );
+
+        /* Send configuration */
+        if ( write( le_socket, & le_tdisc, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_WRITE );
+
+        } else {
+
+            /* Send messsage */
+            return( LE_ERROR_SUCCESS );
+
+        }
 
     }
 

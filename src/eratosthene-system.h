@@ -94,6 +94,16 @@
 
     le_void_t le_system_delete( le_system_t * const le_system );
 
+    /*! \brief accessor methods
+     */
+
+    le_size_t le_system_get_sdisc( le_system_t const * const le_system );
+
+    /*! \brief accessor methods
+     */
+
+    le_time_t le_system_get_tdisc( le_system_t const * const le_system );
+
     /*! \brief injection methods
      */
 

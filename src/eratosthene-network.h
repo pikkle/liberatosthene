@@ -60,8 +60,12 @@
     # define LE_NETWORK_MODE_NULL       ( 0x00 )
     # define LE_NETWORK_MODE_IMOD       ( 0x01 )
     # define LE_NETWORK_MODE_QMOD       ( 0x02 )
+    # define LE_NETWORK_MODE_SMOD       ( 0x03 )
+    # define LE_NETWORK_MODE_TMOD       ( 0x04 )
     # define LE_NETWORK_MODE_IATH       ( 0x81 )
     # define LE_NETWORK_MODE_QATH       ( 0x82 )
+    # define LE_NETWORK_MODE_SATH       ( 0x83 )
+    # define LE_NETWORK_MODE_TATH       ( 0x84 )
 
     /* Define network buffer size */
     # define LE_NETWORK_BUFFER_HAND     ( 1 )

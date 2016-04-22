@@ -87,6 +87,24 @@
     }
 
 /*
+    source - accessor methods
+ */
+
+    le_size_t le_system_get_sdisc( le_system_t const * const le_system ) {
+
+        /* Return system space discretisation */
+        return( le_system->sm_sdisc );
+
+    }
+
+    le_time_t le_system_get_tdisc( le_system_t const * const le_system ) {
+
+        /* Return system time discretisation */
+        return( le_system->sm_tdisc );
+
+    }
+
+/*
     source - injection methods
  */
 
