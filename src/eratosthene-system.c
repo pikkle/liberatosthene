@@ -213,7 +213,8 @@
         le_array_t le_return = LE_ARRAY_C;
 
         /* Check consistency */
-        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) + 1 ) >= le_system->sm_sdisc ) {
+        //if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) + 1 ) >= le_system->sm_sdisc ) {
+        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sdisc ) {
 
             /* Return element array */
             return( le_return );
