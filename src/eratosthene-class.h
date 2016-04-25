@@ -51,7 +51,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_CLASS_C { { _LE_SIZE_NULL }, { 0.0 }, 0 }
+    # define LE_CLASS_C { { _LE_SIZE_NULL }, { 0 }, 0 }
 
 /*
     header - preprocessor macros

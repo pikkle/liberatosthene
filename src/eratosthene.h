@@ -89,7 +89,7 @@
     # define _LE_TRUE           1
 
     /* Features configuration */
-    # define _LE_USE_SIZE_T     32
+    # define _LE_USE_SIZE_T     64 //32
     # define _LE_USE_REAL_T     64
     # define _LE_USE_DEPTH      64
     # define _LE_USE_MTU        1280
@@ -116,7 +116,7 @@
     # define _LE_REAL           double
     # endif
     # define _LE_TIME           int64_t
-    # define _LE_DATA           float
+    # define _LE_DATA           uint8_t //float
     # define _LE_SOCK           int
 
     /* Define boundaries */

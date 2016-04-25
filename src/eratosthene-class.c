@@ -114,9 +114,9 @@
         le_size_t le_mean = ( le_class->cs_mean ++ );
 
         /* Inject colorimetric information */
-        le_class->cs_data[0] = ( ( ( ( long double ) le_class->cs_data[0] ) * le_mean ) + le_data[0] ) / le_class->cs_mean;
-        le_class->cs_data[1] = ( ( ( ( long double ) le_class->cs_data[1] ) * le_mean ) + le_data[1] ) / le_class->cs_mean;
-        le_class->cs_data[2] = ( ( ( ( long double ) le_class->cs_data[2] ) * le_mean ) + le_data[2] ) / le_class->cs_mean;
+        le_class->cs_data[0] = ( le_data_t ) ( ( ( ( ( long double ) le_class->cs_data[0] ) * le_mean ) + le_data[0] ) / le_class->cs_mean );
+        le_class->cs_data[1] = ( le_data_t ) ( ( ( ( ( long double ) le_class->cs_data[1] ) * le_mean ) + le_data[1] ) / le_class->cs_mean );
+        le_class->cs_data[2] = ( le_data_t ) ( ( ( ( ( long double ) le_class->cs_data[2] ) * le_mean ) + le_data[2] ) / le_class->cs_mean );
 
     }
 
