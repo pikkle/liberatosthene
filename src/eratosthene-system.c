@@ -241,7 +241,8 @@
             } else {
 
                 /* Extract daughter offset */
-                le_offset = le_class.cs_addr[le_address_get_digit( le_addr, le_depth )];
+                //le_offset = le_class.cs_addr[le_address_get_digit( le_addr, le_depth )];
+                le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_depth ) );
 
             }
 
