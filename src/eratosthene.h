@@ -92,7 +92,7 @@
     # define _LE_USE_SIZE_T     64 //32
     # define _LE_USE_REAL_T     64
     # define _LE_USE_DEPTH      64
-    # define _LE_USE_MTU        1280
+    # define _LE_USE_MTU        1120 //1280
     # define _LE_USE_BASE       8
     # define _LE_USE_PORT       555
     # define _LE_USE_PENDING    5
