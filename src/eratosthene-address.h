@@ -68,7 +68,44 @@
  */
 
     /*! \struct le_address_struct
-        \brief address structure
+     *  \brief address structure
+     *
+     *  This structure holds the address of an equivalence class defined on the
+     *  geodetic parameters space. It consists in a sequence of digits going
+     *  from zero to seven stored in the structure array. The number of digit
+     *  engeged in the class addressing is stored in the size field of the
+     *  structure. Digits are understood as the parent-daughter classes 
+     *  relationship explaining which daughter to consider when considering a 
+     *  given parent class.
+     *
+     *  In addition to the class address, the structure also contains the time
+     *  at which the class as to be searched. In this way, this structure is
+     *  able to address four dimensional equivalence classes.
+     *
+     *  Finally, the structure offers the possibility to store an additional
+     *  depth considered when performing queries on the daughters of the class
+     *  pointed by the address.
+     *
+     *  The geodetic parameters space is understood as a three dimensional
+     *  sub-space of R3 for longitude, latitude and normalised altitude, in 
+     *  this order and expressed in radians and metres. The first dimension 
+     *  range is then [0,2pi[, ]-pi/2,pi/2[ for the second and [hmin, hmax] for 
+     *  the thrid dimension.
+     *
+     *  Times are given by signed whole numbers giving the number of seconds
+     *  since EPOCH (UTC). Time are assumed to follow TAI more than UTC.
+     *
+     *  See eratosthene-geodesy header for more information on parametric
+     *  ranges.
+     *
+     *  \var le_address_struct::as_size
+     *  Size of the address - number of digits of the address
+     *  \var le_address_struct::as_time
+     *  Time of the class pointed by the address
+     *  \var le_address_struct::as_addr
+     *  Address digits array - contains whole number in [0,8[
+     *  \var le_address_struct::as_dept
+     *  Address query depth
      */
 
     typedef struct le_address_struct {
