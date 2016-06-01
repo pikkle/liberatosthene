@@ -68,7 +68,28 @@
  */
 
     /*! \struct le_system_struct
-        \brief system structure
+     *  \brief system structure
+     *
+     *  This structure holds the server configuration data. The main parameters
+     *  are the root path of the equivalence classes storage structure 
+     *  \b sm_root and the space-time indexation parameters.
+     *
+     *  The space indexation is fixed through the number of scale \b sm_sdisc
+     *  along which class are defined and stored. The \b sm_tdisc gives, in
+     *  seconds, the linear and contigous size of the equivalence class in the
+     *  time dimension.
+     *
+     *  An additional field is used to store the descriptors of the stream
+     *  opened on classes storage file to reduce i/o operations.
+     *
+     *  \var le_system_struct::sm_root
+     *  Storage structure path
+     *  \var le_system_struct::sm_sdisc
+     *  System number of scales
+     *  \var le_system_struct::sm_tdisc
+     *  System time discretisation
+     *  \var le_system_struct::sm_scale
+     *  Storage structure stream descriptors
      */
 
     typedef struct le_system_struct {

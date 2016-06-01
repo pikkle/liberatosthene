@@ -89,8 +89,8 @@
      *  The geodetic parameters space is understood as a three dimensional
      *  sub-space of R3 for longitude, latitude and normalised altitude, in 
      *  this order and expressed in radians and metres. The first dimension 
-     *  range is then [0,2pi[, ]-pi/2,pi/2[ for the second and [hmin, hmax] for 
-     *  the thrid dimension.
+     *  range is then ]-pi,pi], ]-pi/2,pi/2[ for the second and [hmin, hmax] 
+     *  for the thrid dimension.
      *
      *  Times are given by signed whole numbers giving the number of seconds
      *  since EPOCH (UTC). Time are assumed to follow TAI more than UTC.
