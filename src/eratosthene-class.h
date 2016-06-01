@@ -67,6 +67,26 @@
 
     /*! \struct le_class_struct
      *  \brief class structure
+     *
+     *  This structure holds the representative of an equivalence class defined
+     *  on three dimensional colorimetric points.
+     *
+     *  The representative stored by the structure has a color stored in the
+     *  \b cs_data field. The \b cs_mean field gives the number of points
+     *  considered to compute the representative color.
+     *
+     *  The spatial information of the equivalence class is stored through the
+     *  \b cs_addr array giving the file storage offset of the daughter
+     *  structures in the next scale. In other words, the proper spatial
+     *  information of the equivalence class can only be accessed following
+     *  the offsets chains along the storage structure scales.
+     *
+     *  \var le_class_struct::cs_addr
+     *  Offset, in bytes, of the class daughter in the next scale storage file
+     *  \var le_class_struct::cs_data
+     *  Class representative color
+     *  \var le_class_struct::cs_mean
+     *  Number of points considered to compute the representative color
      */
 
     typedef struct le_class_struct {
