@@ -51,7 +51,7 @@
     # error "this program expects little-endian architecture"
     # endif
     # else
-    # error "this program expects endianness detection possibility"
+    # error "this program expects endianness detection availability"
     # endif
 
 /*
@@ -89,10 +89,10 @@
     # define _LE_TRUE           1
 
     /* Features configuration */
-    # define _LE_USE_SIZE_T     64 //32
+    # define _LE_USE_SIZE_T     64
     # define _LE_USE_REAL_T     64
     # define _LE_USE_DEPTH      64
-    # define _LE_USE_MTU        1120 //1280
+    # define _LE_USE_MTU        1120
     # define _LE_USE_BASE       8
     # define _LE_USE_PORT       555
     # define _LE_USE_PENDING    5
@@ -116,7 +116,7 @@
     # define _LE_REAL           double
     # endif
     # define _LE_TIME           int64_t
-    # define _LE_DATA           uint8_t //float
+    # define _LE_DATA           uint8_t
     # define _LE_SOCK           int
 
     /* Define boundaries */
@@ -182,9 +182,6 @@
 /*
     header - preprocessor macros
  */
-
-    /* Define standard construction macro */
-    # define le_cons(t,p,c)     { t u = c; * ( p ) = u; }
 
     /* Define modulo */
     # define le_mod(i,j)        ( (i) < 0 ? ( (j) + ( (i) % (j) ) ) % (j) : (i) % (j) )

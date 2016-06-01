@@ -30,7 +30,7 @@
         FILE * le_stream = NULL;
 
         /* Construct structure */
-        le_cons( le_system_t, le_system, LE_SYSTEM_C );
+        le_system_t le_cons = LE_SYSTEM_C; * ( le_system ) = le_cons;
 
         /* Copy provided root path */
         strcpy( ( char * ) le_system->sm_root, ( char * ) le_root );
