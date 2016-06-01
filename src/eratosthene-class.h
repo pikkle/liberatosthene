@@ -66,7 +66,7 @@
  */
 
     /*! \struct le_class_struct
-        \brief class structure
+     *  \brief class structure
      */
 
     typedef struct le_class_struct {

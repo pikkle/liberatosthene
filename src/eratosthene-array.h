@@ -72,7 +72,29 @@
  */
 
     /*! \struct le_array_struct
-        \brief array structure
+     *  \brief array structure
+     *
+     *  This structure simply holds the definition of an unidemensional array
+     *  storing four dimensionnal colorimetric points.
+     *
+     *  The byte array memory pointed by the structure field is arranged in
+     *  successive lines containing seven values each : three spatial 
+     *  components, a time component and three colorimetric components.
+     *
+     *  The spatial components are stored using \b le_real_t type when time is
+     *  coded using \b le_time_t type. The three colorimetric components are
+     *  stored using the \b le_data_t type.
+     *
+     *  In addition to the array size, giving the number of colorimetric points
+     *  stored in the array, the structure holds an asynchronous size used to
+     *  reduce the amount of memory dynamic reallocation.
+     *
+     *  \var le_array_struct::ar_vsze
+     *  Array asynchronous size, in number of points
+     *  \var le_array_struct::ar_size
+     *  Array size, in number of points
+     *  \var le_array_struct::ar_byte
+     *  Pointer to array bytes.
      */
 
     typedef struct le_array_struct {
