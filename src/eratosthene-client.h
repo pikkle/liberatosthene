@@ -67,26 +67,65 @@
  */
 
     /*! \brief constructor/destructor methods
+     *
+     *  This function creates a client socket descriptor. It establish the
+     *  connection to the provided server and return the initialised descriptor.
+     *
+     *  \param le_ip   Server ip address
+     *  \param le_port Server service port
+     *
+     *  \return Created socket descriptor and _LE_SOCK_NULL on error
      */
 
     le_sock_t le_client_create( le_char_t const * const le_ip, le_size_t const le_port );
 
     /*! \brief constructor/destructor methods
+     *
+     *  This function uninitialise a socket descriptor created by the function
+     *  \b le_client_create. It close the connection with the server and returns
+     *  a null descriptor.
+     *
+     *  \param le_socket Socket descriptor
+     *
+     *  \return Returns _LE_SOCK_NULL socket descriptor
      */
 
     le_sock_t le_client_delete( le_sock_t const le_socket );
 
     /*! \brief handshake methods
+     *
+     *  This function sends the query handshake to the server connected through
+     *  the socket descriptor and waits the server answer. It then checks if the
+     *  server allows the client to continue the query.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_mode   Query mode descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode );
 
     /*! \brief connection methods
+     *
+     *  This function performs a spatial indexation parameter query to the
+     *  server connected through the socket descriptor.
+     *
+     *  \param le_socket Socket descriptor
+     *
+     *  \return Spatial indexation parameter on success, _LE_SIZE_NULL on error
      */
 
     le_size_t le_client_system_sdisc( le_sock_t const le_socket );
 
     /*! \brief connection methods
+     *
+     *  This function performs a time indexation parameter query to the server
+     *  connected through the socket descriptor.
+     *
+     *  \param le_socket Socket descriptor
+     *
+     *  \return Time indexation parameter on success, _LE_TIME_NULL on error
      */
 
     le_time_t le_client_system_tdisc( le_sock_t const le_socket );
