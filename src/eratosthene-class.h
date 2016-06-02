@@ -102,46 +102,115 @@
  */
 
     /*! \brief accessor methods
+     *
+     *  Returns storage offset of the daughter class pointed by \b le_addr
+     *  index.
+     *
+     *  \param le_class Class structure
+     *  \param le_addr  Daughter class index
+     *
+     *  \return Daughter class storage offset
      */
 
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr );
 
     /*! \brief accessor methods
+     *
+     *  Returns daughter class storage offset array pointer.
+     *
+     *  \param le_class Class structure
+     *
+     *  \return Daughter storage offset array
      */
 
     le_size_t * le_class_get_addr( le_class_t const * const le_class );
 
     /*! \brief accessor methods
+     *
+     *  Returns the number of element used to compute the class representative
+     *  color.
+     *
+     *  \param le_class Class structure
+     *
+     *  \return Number of point element of the class
      */
 
     le_size_t le_class_get_mean( le_class_t const * const le_class );
 
     /*! \brief accessor methods
+     *
+     *  Returns pointer to class representative color.
+     *
+     *  \param le_class Class structure
+     *
+     *  \return Class representative color array
      */
 
     le_data_t * le_class_get_data( le_class_t const * const le_class );
 
-    /*! \breif mutator methods
+    /*! \brief mutator methods
+     *
+     *  Initialise class structure with default values and considering the
+     *  provided initialisation color (first implicit injection).
+     *
+     *  \param le_class Class structure
+     *  \param le_data  Initialisation color array
      */
 
     le_void_t le_class_set_init( le_class_t * const le_class, le_data_t const * const le_data );
 
-    /*! \breif mutator methods
+    /*! \brief mutator methods
+     *
+     *  Set the storage offset of the daughter class pointed by \b le_addr.
+     *
+     *  \param le_class  Class structure
+     *  \param le_addr   Daughter class index
+     *  \param le_offset Daughter class storage offset
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success and LE_ERROR_BASE on
+     *  inconsistent index
      */
 
     le_enum_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
 
-    /*! \breif mutator methods
+    /*! \brief mutator methods
+     *
+     *  This function injects an new element in the class. It then recomputes
+     *  the class representative color taking into account the injected
+     *  element color.
+     *
+     *  \param le_class Class structure
+     *  \param le_data  Injected element color array
      */
 
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data );
 
-    /*! \breif i/o methods
+    /*! \brief i/o methods
+     *
+     *  This function reads the storage representation of a class structure and
+     *  imports it in the provided class structure. The \b le_stream has to
+     *  contain the descriptor of an already opened file in binary mode.
+     *
+     *  \param le_class  Class structure
+     *  \param le_offset Class storage offset
+     *  \param le_stream Stream to an opened file in binary read mode
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream );
 
-    /*! \breif i/o methods
+    /*! \brief i/o methods
+     *
+     *  This function performs the invert operation of \b le_class_io_write
+     *  function. It writes the class structure in am already opened stream in
+     *  binary mode.
+     *
+     *  \param le_class  Class structure
+     *  \param le_offset Class storage offset
+     *  \param le_stream Stream to an opened file in binary write mode
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream );
