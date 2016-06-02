@@ -133,7 +133,6 @@
         le_class_t le_class = LE_CLASS_C;
 
         /* Address variables */
-        //le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc - 2 );
         le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc - 1 );
 
         /* System scale stream management */
@@ -213,7 +212,6 @@
         le_array_t le_return = LE_ARRAY_C;
 
         /* Check consistency */
-        //if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) + 1 ) >= le_system->sm_sdisc ) {
         if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sdisc ) {
 
             /* Return element array */
@@ -241,7 +239,6 @@
             } else {
 
                 /* Extract daughter offset */
-                //le_offset = le_class.cs_addr[le_address_get_digit( le_addr, le_depth )];
                 le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_depth ) );
 
             }
