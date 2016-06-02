@@ -108,8 +108,8 @@
     /*! \brief constructor/destructor methods
      *
      *  This function creates and returns a server system descriptor. It starts
-     *  by reading server storage implementation configuration data and checks
-     *  thier consistency.
+     *  by reading server storage implementation configuration and checks its
+     *  consistency.
      *
      *  \param le_system Server system descriptor
      *  \param le_root   Server storage implementation path
@@ -155,7 +155,7 @@
      *
      *  This function injects the element provided as parameter in the server
      *  system storage structure. It waits the element position, time and color
-     *  information.
+     *  information to inject it in the structure.
      *
      *  See \b le_address_struct documentation for more information on frames.
      *
@@ -172,14 +172,14 @@
     /*! \brief query methods
      *
      *  This function query the class structure storage representation reading
-     *  a class address structure. It search in the server system storage
+     *  a class address structure. It searches in the server system storage
      *  structure the class and ask the gathering function \b le_system_gather
      *  to fill the returned array with queried class representatives.
      *
      *  \param le_system Server system descriptor
      *  \param le_addr   Query address structure
      *
-     *  \return Class representative array
+     *  \return Class representatives array
      */
 
     le_array_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr );
@@ -193,18 +193,18 @@
      *
      *  \param le_system Server system descriptor
      *  \param le_array  Array filled with class representatives
-     *  \param le_addr   Address structure of parent class
+     *  \param le_addr   Address structure of the parent class
      *  \param le_class  Class structure of the parent class
-     *  \param le_head   Scale of the parent class
-     *  \param le_target Scale of the target daughter classes
+     *  \param le_head   Scale index of the parent class
+     *  \param le_target Scale index of the target daughter classes
      */
 
     le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
 
     /*! \brief i/o methods
      *
-     *  This function opens the server system storage structure streams that
-     *  contains the storage scale files for a given time equivalence class.
+     *  This function creates the file streams to the server system storage
+     *  structure for a provided time index.
      *
      *  \param le_system Server system descriptor
      *  \param le_time   Time equivalence class index
@@ -226,8 +226,8 @@
 
     /*! \brief i/o methods
      *
-     *  This function closes the streams on scale storage files opened by the
-     *  \b le_system_open function.
+     *  This function closes the file streams opened by the \b le_system_open
+     *  function.
      *
      *  \param le_system Server system descriptor
      */
