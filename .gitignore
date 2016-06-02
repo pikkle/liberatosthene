@@ -6,3 +6,7 @@ lib/*/bin
 lib/*/dev
 lib/*/doc/html
 lib/*/obj
+src/*/bin
+src/*/dev
+src/*/doc/html
+src/*/obj
