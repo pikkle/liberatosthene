@@ -116,30 +116,30 @@
 
     /*! \brief accessor methods
      *
-     *  Returns daughter class storage offset array pointer.
+     *  Returns pointer to daughter class storage offset array.
      *
      *  \param le_class Class structure
      *
-     *  \return Daughter storage offset array
+     *  \return Daughter class storage offset array
      */
 
     le_size_t * le_class_get_addr( le_class_t const * const le_class );
 
     /*! \brief accessor methods
      *
-     *  Returns the number of element used to compute the class representative
+     *  Returns the number of elements used to compute the class representative
      *  color.
      *
      *  \param le_class Class structure
      *
-     *  \return Number of point element of the class
+     *  \return Number of element injected in the class
      */
 
     le_size_t le_class_get_mean( le_class_t const * const le_class );
 
     /*! \brief accessor methods
      *
-     *  Returns pointer to class representative color.
+     *  Returns pointer to class representative color array.
      *
      *  \param le_class Class structure
      *
@@ -150,8 +150,8 @@
 
     /*! \brief mutator methods
      *
-     *  Initialise class structure with default values and considering the
-     *  provided initialisation color (first implicit injection).
+     *  Initialise the class structure with default values and considering the
+     *  provided initialisation color (implicit first injection).
      *
      *  \param le_class Class structure
      *  \param le_data  Initialisation color array
@@ -176,8 +176,8 @@
     /*! \brief mutator methods
      *
      *  This function injects an new element in the class. It then recomputes
-     *  the class representative color taking into account the injected
-     *  element color.
+     *  the class representative color taking into account the injected point
+     *  color.
      *
      *  \param le_class Class structure
      *  \param le_data  Injected element color array
@@ -203,8 +203,8 @@
     /*! \brief i/o methods
      *
      *  This function performs the invert operation of \b le_class_io_write
-     *  function. It writes the class structure in am already opened stream in
-     *  binary mode.
+     *  function. It creates the storage representation of the provided class
+     *  in the stream that decribe an already opened file in binary mode.
      *
      *  \param le_class  Class structure
      *  \param le_offset Class storage offset
