@@ -1,5 +1,5 @@
 /*
- *  liberatosthene - geodetic system
+ *  liberatosthene - eratosthene indexation server
  *
  *      Nils Hamel - nils.hamel@bluewin.ch
  *      Copyright (c) 2016 EPFL CDH DHLAB
