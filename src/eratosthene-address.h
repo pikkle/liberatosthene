@@ -122,76 +122,193 @@
  */
 
     /*! \brief accessor methods
+     *
+     *  Return time stored in the address structure.
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Address time
      */
 
     le_time_t le_address_get_time( le_address_t const * const le_address );
 
     /*! \brief accessor methods
+     *
+     *  Return the size, i. e. the number of digits, of the address stored in
+     *  the structure.
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Address size
      */
 
     le_size_t le_address_get_size( le_address_t const * const le_address );
 
     /*! \brief accessor methods
+     *
+     *  Returns the digit at queried offset of the address stored in the
+     *  structure.
+     *
+     *  \param le_address Address structure
+     *  \param le_offset  Offset of the digit - zero based
+     *
+     *  \retrun Return digit found at queried offset, _LE_BYTE_NULL otherwise
      */
 
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
+     *
+     *  Returns the pointer to the digit array of the address stored in the
+     *  structure.
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Digits array pointer
      */
 
     le_byte_t * le_address_get_digits( le_address_t const * const le_address );
 
     /*! \brief accessor methods
+     *
+     *  Returns query depth of the address stored in the structure.
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Query depth
      */
 
     le_size_t le_address_get_depth( le_address_t const * const le_address );
 
     /*! \brief accessor methods
+     *
+     *  Checks if the digits array of the structure describe a valid class
+     *  address.
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Returns _LE_TRUE if digits describe a valid address, _LE_FALSE
+     *  otherwise
      */
 
     le_enum_t le_address_get_valid( le_address_t const * const le_address );
 
     /*! \brief accessor methods
+     *
+     *  This function converts the indexation address of the class stored in
+     *  the structure into a geodetic coordinates vector. The position is
+     *  expressed in the spatial ranges on which indexation is defined.
+     *
+     *  See structure documentation for more information on frames.
+     *
+     *  \param le_address Address structure
+     *  \param le_pose    Array receiving the position coordinates
      */
 
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose );
 
     /*! \brief mutator methods
+     *
+     *  Set the time of the class stored in the address structure.
+     *
+     *  See structure documentation for more information on frames.
+     *
+     *  \param le_address Address structure
+     *  \param le_time    Address time
      */
 
     le_void_t le_address_set_time( le_address_t * const le_address, le_time_t const le_time );
 
     /*! \brief mutator methods
+     *
+     *  Set the size of the class address stored in the address structure.
+     *
+     *  \param le_address Address structure
+     *  \param le_size    Address sizs
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH otherwise
      */
 
     le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
 
     /*! \brief mutator methods
+     *
+     *  Set address digit at queried offset of the class address stored in the
+     *  structure.
+     *
+     *  \param le_address Address structure
+     *  \param le_offset  Offset of the digit to set
+     *  \param le_digit   Digit value
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH if offset is
+     *  inconsistent and LE_ERROR_BASE if digit is inconsistent
      */
 
     le_enum_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
 
     /*! \brief mutator methods
+     *
+     *  Set address query depth of the class stored in the structure.
+     *
+     *  \param le_address Address structure
+     *  \param le_depth   Query depth
      */
 
     le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
 
     /*! \brief mutator methods
+     *
+     *  This function convert a geodetic coordinate vector into a class address
+     *  following the defined spatial indexation. The size of the computed
+     *  address is read in the structure size field that as to contain the
+     *  desired value before calling this function.
+     *
+     *  The position vector has to be expressed in the geodetic coordinate
+     *  ranges on which spatial indexation is defined.
+     *
+     *  See structure documentation for more information on frames.
+     *
+     *  \param le_address Address structure
+     *  \param le_pose    Array containing the position coordinates
      */
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
 
     /*! \brief mutator methods
+     *
+     *  This function translate the address contained in the class address
+     *  structure of a given translation vector on the desired scale.
+     *
+     *  \param le_address Address structure
+     *  \param le_scale   Scale on which translation apply
+     *  \param le_xcarry  Value of the translation in x dimension
+     *  \param le_ycarry  Value of the translation in y dimension
+     *  \param le_zcarry  Value of the translation in z dimension
      */
 
     le_void_t le_address_set_shift( le_address_t * const le_address, le_size_t const le_scale, le_diff_t le_xcarry, le_diff_t le_ycarry, le_diff_t le_zcarry );
 
     /*! \brief conversion methods
+     *
+     *  This function converts the address structure into a single string that
+     *  is used as a query standard by the server. Considering the class time t,
+     *  address digits dd...d and query depth q, the string is composed as
+     *  follows : /t/dd..d/q
+     *
+     *  \param le_address Address structure
+     *  \param le_string  String receiving the converted address structure
      */
 
     le_void_t le_address_cvas( le_address_t const * const le_address, le_char_t * const le_string );
 
     /*! \brief conversion methods
+     *
+     *  This function performs the invert operation done by \b le_address_cvas
+     *  function. The string has to follow the expected standard in order to
+     *  compute a correct class address structure.
+     *
+     *  \param le_address Address structure
+     *  \param le_string  String containing the converted address structure
      */
 
     le_void_t le_address_cvsa( le_address_t * const le_address, le_char_t const * const le_string );
