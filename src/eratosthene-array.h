@@ -110,31 +110,75 @@
  */
 
     /*! \brief constructor/destructor methods
+     *
+     *  This function simply returns an array structure initialised with default
+     *  values.
+     *
+     *  \return Returns initialised structure
      */
 
     le_array_t le_array_create( le_void_t );
 
     /*! \brief constructor/destructor methods
+     *
+     *  This function uninitialise the provided array structure. It unallocates
+     *  memory when required and clears the structure field with default values.
+     *
+     *  \param le_array Array structure
      */
 
     le_void_t le_array_delete( le_array_t * const le_array );
 
     /*! \brief accessor methods
+     *
+     *  Returns the size, in element count, of the array contained in the array
+     *  structure.
+     *
+     *  \param le_array Array structure
+     *
+     *  \return Array element count
      */
 
     le_size_t le_array_get_size( le_array_t const * const le_array );
 
     /*! \brief accessor methods
+     *
+     *  Returns the pointer to bytes of the array contained in the array
+     *  structure.
+     *
+     *  \param le_array Array structure
+     *
+     *  \return Returns pointer to array first byte
      */
 
     le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
     /*! \brief mutator methods
+     *
+     *  This function allows to push a new element in the array contained in
+     *  the array structure.
+     *
+     *  \param le_array Array structure
+     *  \param le_pose  Array containing the point position
+     *  \param le_time  Time of the point
+     *  \param le_data  Array containing the point color
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_MEMORY on memory
+     *  allocation failure
      */
 
     le_enum_t le_array_set_push( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
     /*! \brief i/o methods
+     *
+     *  This function writes the byte content of the array structure in the
+     *  provided socket. The socket has to be an already opened socket.
+     *
+     *  \param le_array  Array structure
+     *  \param le_socket Opened socket
+     *
+     *  \return Returns LE_ERROR_SUCCESS on sucess, LE_ERROR_IO_SOCKET for an
+     *  invalid socket and LE_ERROR_IO_WRITE on socket i/o failure.
      */
 
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
