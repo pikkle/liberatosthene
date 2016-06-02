@@ -1,6 +1,8 @@
 ## liberatosthene
 
-The _liberatosthene_ library is dedicated to the storage and management of colorimetric and georeferenced points coming from environment digitisation. Using a specific storage and query methodology based on equivalence relation, it offers a convinient way of implementing web clients interface based on 3D tiling of earth.
+The _liberatosthene_ library implements a colorimetric and georeferenced points server. It takes advantage of an indexation of space and time based on the definition of equivalence classes, to offers convenient and efficient management of large amount of point distributed all over the earth.
+
+The server is designed to offer a simple interface for points injection and query through the specific space and time indexation. Due to the simplicity of the indexation it implements, large amount of colorimetric and georeferenced points are made suitable by the server for many different applications.
 
 ## Dependencies
 
