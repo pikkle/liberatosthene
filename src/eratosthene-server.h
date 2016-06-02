@@ -69,46 +69,116 @@
  */
 
     /*! \brief constructor/destructor methods
+     *
+     *  This function creates a server socket descriptor. The service is created
+     *  on the local machine using the provided port as service port.
+     *
+     *  \param le_port Server service port
+     *
+     *  \return Created socket descriptor on success, _LE_SOCK_NULL otherwise
      */
 
     le_sock_t le_server_create( le_size_t const le_port );
 
     /*! \brief constructor/destructor methods
+     *
+     *  This function delete the server socket descriptor created through the
+     *  \b le_server_create function. It closes the service port and returns a
+     *  null socket descriptor.
+     *
+     *  \param le_socket Socket descriptor
+     *
+     *  \return Always _LE_SOCK_NULL socket descriptor
      */
 
     le_sock_t le_server_delete( le_sock_t const le_socket );
 
     /*! \brief handshake methods
+     *
+     *  This function reads and returns the client query mode sent through the
+     *  handshake procedure.
+     *
+     *  \param le_socket Socket descriptor
+     *
+     *  \return Query mode descriptor on success, LE_NETWORK_MODE_NULL on error
      */
 
     le_enum_t le_server_handshake_mode( le_sock_t const le_socket );
 
     /*! \brief handshake methods
+     *
+     *  This function sends the provided query authorisation through the server
+     *  handshake answer.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_auth   Server authorisation
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
      */
 
     le_enum_t le_server_handshake_auth( le_sock_t const le_socket, le_enum_t const le_auth );
 
     /*! \brief server methods
+     *
+     *  This function is the server main idle function. It starts a infinite
+     *  loop waiting for client incoming connection. It then receives the client
+     *  query handshakes and answer them. The proper query answer is then sent
+     *  through this function.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_system Server system descriptor
      */
 
     le_void_t le_server( le_sock_t const le_socket, le_system_t * const le_system );
 
     /*! \brief connection methods
+     *
+     *  This function answer to client injection query. After client/server
+     *  handshake, it receives the injection data coming from the client and
+     *  ask the server system to insert the data into the storage structure.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_system Server system descriptor
      */
 
     le_void_t le_server_system_inject( le_sock_t const le_socket, le_system_t * const le_system );
 
     /*! \brief connection methods
+     *
+     *  This function answer to client query on classes. After client/server
+     *  handshake, it ask the server system to gather the queried classes and
+     *  sends them to the client.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_system Server system descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_server_system_query( le_sock_t const le_socket, le_system_t * const le_system );
 
     /*! \brief connection methods
+     *
+     *  This function answer to client spatial indexation parameter query. After
+     *  client/server handshake, it sends the parameter to the client.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_system Server system descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
      */
 
     le_enum_t le_server_system_sdisc( le_sock_t const le_socket, le_system_t const * const le_system );
 
     /*! \brief connection methods
+     *
+     *  This function answer to client time indexation parameter query. After
+     *  client/server handshake, it sends the parameter to the client.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_system Server system descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
      */
 
     le_enum_t le_server_system_tdisc( le_sock_t const le_socket, le_system_t const * const le_system );
