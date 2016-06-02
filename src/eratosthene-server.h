@@ -82,7 +82,7 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function delete the server socket descriptor created through the
+     *  This function deletes the server socket descriptor created through the
      *  \b le_server_create function. It closes the service port and returns a
      *  null socket descriptor.
      *
@@ -107,8 +107,8 @@
 
     /*! \brief handshake methods
      *
-     *  This function sends the provided query authorisation through the server
-     *  handshake answer.
+     *  This function sends the query authorisation to the client through the
+     *  server handshake answer.
      *
      *  \param le_socket Socket descriptor
      *  \param le_auth   Server authorisation
@@ -121,9 +121,9 @@
     /*! \brief server methods
      *
      *  This function is the server main idle function. It starts a infinite
-     *  loop waiting for client incoming connection. It then receives the client
-     *  query handshakes and answer them. The proper query answer is then sent
-     *  through this function.
+     *  loop waiting for client incoming connections. It then receives the
+     *  clients queries handshakes and answer them. The proper queries answers
+     *  are then sent by this function.
      *
      *  \param le_socket Socket descriptor
      *  \param le_system Server system descriptor
@@ -133,9 +133,9 @@
 
     /*! \brief connection methods
      *
-     *  This function answer to client injection query. After client/server
-     *  handshake, it receives the injection data coming from the client and
-     *  ask the server system to insert the data into the storage structure.
+     *  This function answer to client injection queries. It receives the
+     *  injected data coming from the client and ask the server system to insert
+     *  them into the storage structure.
      *
      *  \param le_socket Socket descriptor
      *  \param le_system Server system descriptor
@@ -145,9 +145,8 @@
 
     /*! \brief connection methods
      *
-     *  This function answer to client query on classes. After client/server
-     *  handshake, it ask the server system to gather the queried classes and
-     *  sends them to the client.
+     *  This function answer to client queries on classes. It ask the server
+     *  system to gather the queried classes and sends them to the client.
      *
      *  \param le_socket Socket descriptor
      *  \param le_system Server system descriptor
@@ -159,8 +158,7 @@
 
     /*! \brief connection methods
      *
-     *  This function answer to client spatial indexation parameter query. After
-     *  client/server handshake, it sends the parameter to the client.
+     *  This function answer to client spatial indexation parameter query.
      *
      *  \param le_socket Socket descriptor
      *  \param le_system Server system descriptor
@@ -172,8 +170,7 @@
 
     /*! \brief connection methods
      *
-     *  This function answer to client time indexation parameter query. After
-     *  client/server handshake, it sends the parameter to the client.
+     *  This function answer to client time indexation parameter query.
      *
      *  \param le_socket Socket descriptor
      *  \param le_system Server system descriptor
