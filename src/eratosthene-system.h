@@ -106,51 +106,130 @@
  */
 
     /*! \brief constructor/destructor methods
+     *
+     *  This function creates and returns a server system descriptor. It starts
+     *  by reading server storage implementation configuration data and checks
+     *  thier consistency.
+     *
+     *  \param le_system Server system descriptor
+     *  \param le_root   Server storage implementation path
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_system_create( le_system_t * const le_system, le_char_t const * const le_root );
 
     /*! \brief constructor/destructor methods
+     *
+     *  This function deletes a server system descriptor created by the function
+     *  \b le_system_create.
+     *
+     *  \param le_system Server system descriptor
      */
 
     le_void_t le_system_delete( le_system_t * const le_system );
 
     /*! \brief accessor methods
+     *
+     *  This function returns the server system spatial indexation parameter.
+     *
+     *  \param le_system Server system descriptor
+     *
+     *  \return Server system spatial indexation parameter
      */
 
     le_size_t le_system_get_sdisc( le_system_t const * const le_system );
 
     /*! \brief accessor methods
+     *
+     *  This function returns the server system time indexation parameter.
+     *
+     *  \param le_system Server system descriptor
+     *
+     *  \return Server system time indexation parameter
      */
 
     le_time_t le_system_get_tdisc( le_system_t const * const le_system );
 
     /*! \brief injection methods
+     *
+     *  This function injects the element provided as parameter in the server
+     *  system storage structure. It waits the element position, time and color
+     *  information.
+     *
+     *  See \b le_address_struct documentation for more information on frames.
+     *
+     *  \param le_system Server system descriptor
+     *  \param le_pose   Element position array
+     *  \param le_time   Element time
+     *  \param le_data   Element color array
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
     /*! \brief query methods
+     *
+     *  This function query the class structure storage representation reading
+     *  a class address structure. It search in the server system storage
+     *  structure the class and ask the gathering function \b le_system_gather
+     *  to fill the returned array with queried class representatives.
+     *
+     *  \param le_system Server system descriptor
+     *  \param le_addr   Query address structure
+     *
+     *  \return Class representative array
      */
 
     le_array_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr );
 
     /*! \brief query methods
+     *
+     *  This function gather the daughter class representatives of a provided
+     *  parent class based on the query depth and server system storage
+     *  structure. It appends the found class representatives in the array
+     *  provided as parameter.
+     *
+     *  \param le_system Server system descriptor
+     *  \param le_array  Array filled with class representatives
+     *  \param le_addr   Address structure of parent class
+     *  \param le_class  Class structure of the parent class
+     *  \param le_head   Scale of the parent class
+     *  \param le_target Scale of the target daughter classes
      */
 
     le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
 
     /*! \brief i/o methods
+     *
+     *  This function opens the server system storage structure streams that
+     *  contains the storage scale files for a given time equivalence class.
+     *
+     *  \param le_system Server system descriptor
+     *  \param le_time   Time equivalence class index
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time );
 
     /*! \brief i/o methods
+     *
+     *  This function forces to empty caches of file streams opened by the
+     *  \b le_system_open function.
+     *
+     *  \param le_system Server system descriptor
      */
 
     le_void_t le_system_flush( le_system_t * const le_system );
 
     /*! \brief i/o methods
+     *
+     *  This function closes the streams on scale storage files opened by the
+     *  \b le_system_open function.
+     *
+     *  \param le_system Server system descriptor
      */
 
     le_void_t le_system_close( le_system_t * const le_system );
