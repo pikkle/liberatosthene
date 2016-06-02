@@ -123,7 +123,9 @@
 
     /*! \brief accessor methods
      *
-     *  Return time stored in the address structure.
+     *  Returns time of the class stored in the address structure.
+     *
+     *  See \b le_address_struct documentation for more information on frames.
      *
      *  \param le_address Address structure
      *
@@ -134,8 +136,8 @@
 
     /*! \brief accessor methods
      *
-     *  Return the size, i. e. the number of digits, of the address stored in
-     *  the structure.
+     *  Returns the size, i. e. the number of digits, of the class address 
+     *  stored in the address structure.
      *
      *  \param le_address Address structure
      *
@@ -146,21 +148,21 @@
 
     /*! \brief accessor methods
      *
-     *  Returns the digit at queried offset of the address stored in the
-     *  structure.
+     *  Returns the digit at queried offset of the class address stored in the
+     *  address structure.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of the digit - zero based
      *
-     *  \retrun Return digit found at queried offset, _LE_BYTE_NULL otherwise
+     *  \return Returns digit found at queried offset, _LE_BYTE_NULL otherwise
      */
 
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
      *
-     *  Returns the pointer to the digit array of the address stored in the
-     *  structure.
+     *  Returns the pointer to the digit array of the class address stored in
+     *  the address structure.
      *
      *  \param le_address Address structure
      *
@@ -171,7 +173,7 @@
 
     /*! \brief accessor methods
      *
-     *  Returns query depth of the address stored in the structure.
+     *  Returns query depth of the class stored in the address structure.
      *
      *  \param le_address Address structure
      *
@@ -182,8 +184,8 @@
 
     /*! \brief accessor methods
      *
-     *  Checks if the digits array of the structure describe a valid class
-     *  address.
+     *  Checks if the digits array of the class address describe a correct class
+     *  index.
      *
      *  \param le_address Address structure
      *
@@ -196,10 +198,10 @@
     /*! \brief accessor methods
      *
      *  This function converts the indexation address of the class stored in
-     *  the structure into a geodetic coordinates vector. The position is
-     *  expressed in the spatial ranges on which indexation is defined.
+     *  the address structure into a geodetic coordinates vector. The position
+     *  is expressed in the spatial ranges on which indexation is defined.
      *
-     *  See structure documentation for more information on frames.
+     *  See \b le_address_struct documentation for more information on frames.
      *
      *  \param le_address Address structure
      *  \param le_pose    Array receiving the position coordinates
@@ -211,7 +213,7 @@
      *
      *  Set the time of the class stored in the address structure.
      *
-     *  See structure documentation for more information on frames.
+     *  See \b le_address_struct documentation for more information on frames.
      *
      *  \param le_address Address structure
      *  \param le_time    Address time
@@ -233,8 +235,8 @@
 
     /*! \brief mutator methods
      *
-     *  Set address digit at queried offset of the class address stored in the
-     *  structure.
+     *  Set address digit at provided offset of the class address stored in the
+     *  address structure.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of the digit to set
@@ -248,7 +250,7 @@
 
     /*! \brief mutator methods
      *
-     *  Set address query depth of the class stored in the structure.
+     *  Set the query depth of the class stored in the address structure.
      *
      *  \param le_address Address structure
      *  \param le_depth   Query depth
@@ -266,7 +268,7 @@
      *  The position vector has to be expressed in the geodetic coordinate
      *  ranges on which spatial indexation is defined.
      *
-     *  See structure documentation for more information on frames.
+     *  See \b le_address_struct documentation for more information on frames.
      *
      *  \param le_address Address structure
      *  \param le_pose    Array containing the position coordinates
@@ -276,7 +278,7 @@
 
     /*! \brief mutator methods
      *
-     *  This function translate the address contained in the class address
+     *  This function translate the class address contained in the address
      *  structure of a given translation vector on the desired scale.
      *
      *  \param le_address Address structure
@@ -290,10 +292,11 @@
 
     /*! \brief conversion methods
      *
-     *  This function converts the address structure into a single string that
-     *  is used as a query standard by the server. Considering the class time t,
-     *  address digits dd...d and query depth q, the string is composed as
-     *  follows : /t/dd..d/q
+     *  This function translate the address structure into a query string used
+     *  for client/server communication. Considering the class time t, address
+     *  digits dd...d and query depth q, the string is composed as follows : 
+     *
+     *      /t/dd..d/q
      *
      *  \param le_address Address structure
      *  \param le_string  String receiving the converted address structure
