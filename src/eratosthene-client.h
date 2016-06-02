@@ -69,12 +69,13 @@
     /*! \brief constructor/destructor methods
      *
      *  This function creates a client socket descriptor. It establish the
-     *  connection to the provided server and return the initialised descriptor.
+     *  connection to the provided server ip address and return the initialised 
+     *  socket descriptor.
      *
      *  \param le_ip   Server ip address
      *  \param le_port Server service port
      *
-     *  \return Created socket descriptor and _LE_SOCK_NULL on error
+     *  \return Created socket descriptor on success, _LE_SOCK_NULL on error
      */
 
     le_sock_t le_client_create( le_char_t const * const le_ip, le_size_t const le_port );
@@ -83,11 +84,11 @@
      *
      *  This function uninitialise a socket descriptor created by the function
      *  \b le_client_create. It close the connection with the server and returns
-     *  a null descriptor.
+     *  a null socket descriptor.
      *
      *  \param le_socket Socket descriptor
      *
-     *  \return Returns _LE_SOCK_NULL socket descriptor
+     *  \return Always _LE_SOCK_NULL socket descriptor
      */
 
     le_sock_t le_client_delete( le_sock_t const le_socket );
