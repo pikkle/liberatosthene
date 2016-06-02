@@ -125,18 +125,20 @@
      *  memory when required and clears the structure field with default values.
      *
      *  \param le_array Array structure
+     *
+     *  \return Returns uninitialised structure
      */
 
     le_void_t le_array_delete( le_array_t * const le_array );
 
     /*! \brief accessor methods
      *
-     *  Returns the size, in element count, of the array contained in the array
+     *  Returns the size, in elements count, of the array contained in the array
      *  structure.
      *
      *  \param le_array Array structure
      *
-     *  \return Array element count
+     *  \return Array elements count
      */
 
     le_size_t le_array_get_size( le_array_t const * const le_array );
@@ -148,20 +150,20 @@
      *
      *  \param le_array Array structure
      *
-     *  \return Returns pointer to array first byte
+     *  \return Returns pointer to array memory first byte
      */
 
     le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
     /*! \brief mutator methods
      *
-     *  This function allows to push a new element in the array contained in
-     *  the array structure.
+     *  This function allows to push a new point in the array contained in the
+     *  array structure.
      *
      *  \param le_array Array structure
-     *  \param le_pose  Array containing the point position
+     *  \param le_pose  3-Array containing the point position
      *  \param le_time  Time of the point
-     *  \param le_data  Array containing the point color
+     *  \param le_data  3-Array containing the point color
      *
      *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_MEMORY on memory
      *  allocation failure
@@ -175,9 +177,9 @@
      *  provided socket. The socket has to be an already opened socket.
      *
      *  \param le_array  Array structure
-     *  \param le_socket Opened socket
+     *  \param le_socket Opened socket descriptor
      *
-     *  \return Returns LE_ERROR_SUCCESS on sucess, LE_ERROR_IO_SOCKET for an
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_SOCKET for an
      *  invalid socket and LE_ERROR_IO_WRITE on socket i/o failure.
      */
 
