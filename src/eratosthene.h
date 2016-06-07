@@ -170,8 +170,8 @@
     # endif
     # define _LE_TIME_P         PRIi64
     # define _LE_TIME_S         SCNi64
-    # define _LE_DATA_P         ".4e"
-    # define _LE_DATA_S         "f"
+    # define _LE_DATA_P         PRIu8
+    # define _LE_DATA_S         SCNu8
 
     /* Define errors */
     # define LE_ERROR_SUCCESS   0x0000
