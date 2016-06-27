@@ -72,12 +72,12 @@
             if ( le_offset < LE_GEODESY_ASYP ) {
 
                 /* Assign offset base */
-                le_base = _LE_USE_BASE << 2;
+                le_base = _LE_USE_BASE >> 2;
 
             } else if ( le_offset < LE_GEODESY_ASYA ) {
 
                 /* Assign offset base */
-                le_base = _LE_USE_BASE << 1;
+                le_base = _LE_USE_BASE >> 1;
 
             } else {
 
@@ -119,16 +119,34 @@
         * le_addr = * le_addr1;
 
         /* Address addition */
-        for ( le_size_t le_parse = le_addr->as_size; le_parse != _LE_SIZE_MAX; le_parse -- ) {
+        for ( le_size_t le_offset = le_addr->as_size; le_offset != _LE_SIZE_MAX; le_offset -- ) {
+
+            /* Compute offset base */
+            if ( le_offset < LE_GEODESY_ASYP ) {
+
+                /* Assign offset base */
+                le_base = _LE_USE_BASE >> 2;
+
+            } else if ( le_offset < LE_GEODESY_ASYA ) {
+
+                /* Assign offset base */
+                le_base = _LE_USE_BASE >> 1;
+
+            } else {
+
+                /* Assign offset base */
+                le_base = _LE_USE_BASE;
+
+            }
 
             /* Add current digits */
-            le_addr->as_addr[le_parse] += le_addr2->as_addr[le_parse] + le_remain;
+            le_addr->as_addr[le_offset] += le_addr2->as_addr[le_offset] + le_remain;
 
             /* Compute remainder */
-            le_remain = le_addr->as_addr[le_parse] / le_base;
+            le_remain = le_addr->as_addr[le_offset] / le_base;
 
             /* Compute address digit */
-            le_addr->as_addr[le_parse] %= le_base;
+            le_addr->as_addr[le_offset] %= le_base;
 
         }
 
