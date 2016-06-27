@@ -21,6 +21,31 @@
     # include "eratosthene-address-arithmetic.h"
 
 /*
+    source - accessor methods
+ */
+
+    le_size_t le_address_get_dist( le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
+
+        /* Address size variables */
+        le_size_t le_size = ( le_addr1->as_size < le_addr2->as_size ) ? le_addr1->as_size : le_addr2->as_size;
+
+        /* Returned value variables */
+        le_size_t le_return = le_size + 1;
+
+        /* Computing address distance */
+        for ( le_size_t le_parse = le_size; le_parse >= 0; le_parse -- ) {
+
+            /* Check digits */
+            if ( le_addr1->as_addr[le_parse] != le_addr2->as_addr[le_parse] ) le_return = le_parse;
+
+        }
+
+        /* Return computed distance */
+        return( le_return );
+
+    }
+
+/*
     source - mutator methods
  */
 
@@ -41,7 +66,7 @@
         for ( le_size_t le_parse = le_offset + 1; le_parse < le_address->as_size; le_parse ++ ) le_address->as_addr[le_parse] = 0;
 
         /* Convert value into address index */
-        while ( le_offset >= 0 ) {
+        while ( le_offset != _LE_SIZE_MAX ) {
 
             /* Compute offset base */
             if ( le_offset < LE_GEODESY_ASYP ) {

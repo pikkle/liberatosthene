@@ -66,6 +66,16 @@
     header - function prototypes
  */
 
+    /*! \brief accessor methods
+     *
+     */
+
+    le_size_t le_address_get_dist( le_address_t const * const le_addr1, le_address_t const * const le_addr2 );
+
+    /*! \brief mutator methods
+     *
+     */
+
     le_enum_t le_address_set_value( le_address_t * const le_address, le_size_t le_offset, le_size_t le_value );
 
 /*
