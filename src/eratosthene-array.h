@@ -59,6 +59,18 @@
     /* Define array step (bytes) */
     # define LE_ARRAY_STEP ( 4096 )
 
+    /* Define array formats */
+    # define LE_ARRAY_64S     ( 0x00 )
+    # define LE_ARRAY_64R     ( 0x01 )
+    # define LE_ARRAY_32S     ( 0x02 )
+    # define LE_ARRAY_32R     ( 0x03 )
+
+    /* Define array formats records length */
+    # define LE_ARRAY_64S_LEN ( 8 + 8 + 8 + 8 + 3 ) // 34 bytes
+    # define LE_ARRAY_64R_LEN ( 8 + 8 + 8 + 3 )     // 26 bytes
+    # define LE_ARRAY_32S_LEN ( 4 + 4 + 4 + 4 + 3 ) // 18 bytes
+    # define LE_ARRAY_32R_LEN ( 4 + 4 + 4 + 3 )     // 14 bytes
+
 /*
     header - preprocessor macros
  */
@@ -155,6 +167,8 @@
 
     le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
+    le_enum_t le_array_set_memory( le_array_t * const le_array, le_size_t const le_length );
+
     /*! \brief mutator methods
      *
      *  This function allows to push a new point in the array contained in the
@@ -169,7 +183,7 @@
      *  allocation failure
      */
 
-    le_enum_t le_array_set_push( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+    le_enum_t le_array_set_push( le_array_t * const le_array, le_enum_t const le_format, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
     /*! \brief i/o methods
      *

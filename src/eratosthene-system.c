@@ -304,7 +304,7 @@
             le_address_get_pose( le_addr, le_pose );
 
             /* Inject gathered element in array */
-            le_array_set_push( le_array, le_pose, le_address_get_time( le_addr ), le_class_get_data( le_class ) );
+            le_array_set_push( le_array, LE_ARRAY_64S, le_pose, le_address_get_time( le_addr ), le_class_get_data( le_class ) );
 
         }
 

@@ -43,7 +43,6 @@
     header - includes
  */
 
-    # include "eratosthene.h"
     # include "eratosthene-address.h"
 
 /*

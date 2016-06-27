@@ -186,6 +186,7 @@
     # define LE_ERROR_TIME      0x0009
     # define LE_ERROR_BASE      0x000a
     # define LE_ERROR_AUTH      0x000b
+    # define LE_ERROR_FORMAT    0x000c
 
     /* Define constants */
     # define LE_PI              ( 3.1415926535897932384626433832795029L )
