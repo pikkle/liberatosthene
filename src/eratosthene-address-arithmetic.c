@@ -155,3 +155,59 @@
 
     }
 
+    le_enum_t le_address_set_sub( le_address_t * const le_addr, le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
+
+        /* Remainder variables */
+        le_byte_t le_remain = 0;
+
+        /* Offset base variables */
+        le_size_t le_base = _LE_USE_BASE;
+
+        /* Check consistency */
+        if ( le_addr1->as_size != le_addr2->as_size ) {
+
+            /* Send message */
+            return( LE_ERROR_DEPTH );
+
+        }
+
+        /* Initialise result structure */
+        * le_addr = * le_addr1;
+
+        /* Address substraction */
+        for ( le_size_t le_offset = le_addr->as_size; le_offset != _LE_SIZE_MAX; le_offset -- ) {
+
+            /* Compute offset base */
+            if ( le_offset < LE_GEODESY_ASYP ) {
+
+                /* Assign offset base */
+                le_base = _LE_USE_BASE >> 2;
+
+            } else if ( le_offset < LE_GEODESY_ASYA ) {
+
+                /* Assign offset base */
+                le_base = _LE_USE_BASE >> 1;
+
+            } else {
+
+                /* Assign offset base */
+                le_base = _LE_USE_BASE;
+
+            }
+
+            /* Substract current digits */
+            le_addr->as_addr[le_offset] -= le_addr2->as_addr[le_offset] + le_remain;
+
+            /* Compute remainder */
+            le_remain = ( le_addr->as_addr[le_offset] >= _LE_USE_BASE ) ? 1 : 0;
+
+            /* Compute address digit */
+            le_addr->as_addr[le_offset] = ( le_addr->as_addr[le_offset] >= _LE_USE_BASE ) ? le_addr->as_addr[le_offset] + le_base : le_addr->as_addr[le_offset];
+
+        }
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
