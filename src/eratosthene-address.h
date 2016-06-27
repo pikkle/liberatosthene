@@ -184,19 +184,6 @@
 
     /*! \brief accessor methods
      *
-     *  Checks if the digits array of the class address describe a correct class
-     *  index.
-     *
-     *  \param le_address Address structure
-     *
-     *  \return Returns _LE_TRUE if digits describe a valid address, _LE_FALSE
-     *  otherwise
-     */
-
-    le_enum_t le_address_get_valid( le_address_t const * const le_address );
-
-    /*! \brief accessor methods
-     *
      *  This function converts the indexation address of the class stored in
      *  the address structure into a geodetic coordinates vector. The position
      *  is expressed in the spatial ranges on which indexation is defined.
@@ -208,6 +195,19 @@
      */
 
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose );
+
+    /*! \brief accessor methods
+     *
+     *  Checks if the digits array of the class address describe a correct class
+     *  index.
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Returns _LE_TRUE if digits describe a valid address, _LE_FALSE
+     *  otherwise
+     */
+
+    le_enum_t le_address_get_valid( le_address_t const * const le_address );
 
     /*! \brief mutator methods
      *

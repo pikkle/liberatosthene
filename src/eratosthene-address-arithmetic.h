@@ -18,18 +18,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    /*! \file   eratosthene-include.h
+    /*! \file   eratosthene-address.h
      *  \author Nils Hamel <n.hamel@bluewin.ch>
      *
-     *  Inclusion header
+     *  Address module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_INCLUDE__
-    # define __LE_INCLUDE__
+    # ifndef __LE_SYSTEM_ADDRESS_ARITHMETIC__
+    # define __LE_SYSTEM_ADDRESS_ARITHMETIC__
 
 /*
     header - C/C++ compatibility
@@ -45,14 +45,6 @@
 
     # include "eratosthene.h"
     # include "eratosthene-address.h"
-    # include "eratosthene-address-arithmetic.h"
-    # include "eratosthene-array.h"
-    # include "eratosthene-class.h"
-    # include "eratosthene-client.h"
-    # include "eratosthene-geodesy.h"
-    # include "eratosthene-network.h"
-    # include "eratosthene-server.h"
-    # include "eratosthene-system.h"
 
 /*
     header - preprocessor definitions
@@ -73,6 +65,8 @@
 /*
     header - function prototypes
  */
+
+    le_enum_t le_address_set_value( le_address_t * const le_address, le_size_t le_offset, le_size_t le_value );
 
 /*
     header - C/C++ compatibility
