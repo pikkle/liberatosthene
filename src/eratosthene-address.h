@@ -254,9 +254,11 @@
      *
      *  \param le_address Address structure
      *  \param le_depth   Query depth
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH otherwise
      */
 
-    le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
+    le_enum_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
 
     /*! \brief mutator methods
      *
@@ -275,20 +277,6 @@
      */
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
-
-    /*! \brief mutator methods
-     *
-     *  This function translate the class address contained in the address
-     *  structure of a given translation vector on the desired scale.
-     *
-     *  \param le_address Address structure
-     *  \param le_scale   Scale on which translation apply
-     *  \param le_xcarry  Value of the translation in x dimension
-     *  \param le_ycarry  Value of the translation in y dimension
-     *  \param le_zcarry  Value of the translation in z dimension
-     */
-
-    le_void_t le_address_set_shift( le_address_t * const le_address, le_size_t const le_scale, le_diff_t le_xcarry, le_diff_t le_ycarry, le_diff_t le_zcarry );
 
     /*! \brief conversion methods
      *
