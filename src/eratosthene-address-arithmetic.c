@@ -99,3 +99,41 @@
 
     }
 
+    le_enum_t le_address_set_add( le_address_t * const le_addr, le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
+
+        /* Remainder variables */
+        le_byte_t le_remain = 0;
+
+        /* Offset base variables */
+        le_size_t le_base = _LE_USE_BASE;
+
+        /* Check consistency */
+        if ( le_addr1->as_size != le_addr2->as_size ) {
+
+            /* Send message */
+            return( LE_ERROR_DEPTH );
+
+        }
+
+        /* Initialise result structure */
+        * le_addr = * le_addr1;
+
+        /* Address addition */
+        for ( le_size_t le_parse = le_addr->as_size; le_parse != _LE_SIZE_MAX; le_parse -- ) {
+
+            /* Add current digits */
+            le_addr->as_addr[le_parse] += le_addr2->as_addr[le_parse] + le_remain;
+
+            /* Compute remainder */
+            le_remain = le_addr->as_addr[le_parse] / le_base;
+
+            /* Compute address digit */
+            le_addr->as_addr[le_parse] %= le_base;
+
+        }
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+

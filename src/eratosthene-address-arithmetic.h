@@ -78,6 +78,12 @@
 
     le_enum_t le_address_set_value( le_address_t * const le_address, le_size_t le_offset, le_size_t le_value );
 
+    /*! \brief mutator methods
+     *
+     */
+
+    le_enum_t le_address_set_add( le_address_t * const le_addr, le_address_t const * const le_addr1, le_address_t const * const le_addr2 );
+
 /*
     header - C/C++ compatibility
  */
