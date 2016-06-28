@@ -229,30 +229,52 @@
 
         /* Socket i/o count variables */
         le_size_t le_count = 0;
+        le_size_t le_round = 0;
 
-        /* Socket i/o buffer variables */
-        le_byte_t le_buffer[LE_NETWORK_BUFFER_SYNC] = LE_NETWORK_BUFFER_C;
+        /* Socket i/o reading variables */
+        le_size_t le_retry  = 0;
+        le_size_t le_bridge = 0;
 
-        /* Array pointer variables */
-        le_real_t * le_ptrp = NULL;
-        le_time_t * le_ptrt = NULL;
-        le_data_t * le_ptrd = NULL;
+        /* Socket i/o circular buffer variables */
+        le_byte_t le_buffer[LE_NETWORK_SB_STRM] = LE_NETWORK_C;
 
-        /* Reading incoming elements */
-        while ( ( le_count = read( le_socket, le_buffer, LE_NETWORK_BUFFER_SYNC ) ) > 0 ) {
+        /* Buffer array variables */
+        le_real_t * le_sp = NULL;
+        le_time_t * le_tp = NULL;
+        le_data_t * le_dp = NULL;
 
-            /* Parsing received elements */
-            for ( le_parse = 0; le_parse < le_count; le_parse += LE_ARRAY_LINE ) {
+        /* Injection streaming loop */
+        while ( le_retry < _LE_USE_RETRY ) {
 
-                /* Compute element pointers */
-                le_ptrp = ( le_real_t * ) ( le_buffer + le_parse );
-                le_ptrt = ( le_time_t * ) ( le_ptrp + 3 );
-                le_ptrd = ( le_data_t * ) ( le_ptrt + 1 );
+            /* Read streaming bloc */
+            if ( ( le_count = read( le_socket, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) >= LE_ARRAY_64S_LEN ) {
 
-                /* Inject received element */
-                le_system_inject( le_system, le_ptrp, * le_ptrt, le_ptrd );
+                /* Compute available records */
+                le_round = le_count - ( le_count % LE_ARRAY_64S_LEN );
 
-            }
+                /* Parsing received streaming bloc */
+                for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_64S_LEN ) {
+
+                    /* Compute buffer pointers */
+                    le_sp = ( le_real_t * ) ( le_buffer + le_parse );
+                    le_tp = ( le_time_t * ) ( le_sp + 3 );
+                    le_dp = ( le_data_t * ) ( le_tp + 1 );
+
+                    /* Inject received element */
+                    le_system_inject( le_system, le_sp, * le_tp, le_dp );
+
+                }
+
+                /* Compute bridge value */
+                if ( ( le_bridge = le_count % LE_ARRAY_64S_LEN ) != 0 ) {
+
+                    /* Apply circular condition */
+                    memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
+
+                }                
+
+            /* Update retry flag */
+            le_retry = 0; } else { le_retry ++; }
 
         }
 
@@ -270,10 +292,10 @@
         le_address_t le_address = LE_ADDRESS_C;
 
         /* Socket i/o buffer variables */
-        le_byte_t le_buffer[LE_NETWORK_BUFFER_ADDR] = LE_NETWORK_BUFFER_C;
+        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Read query address */
-        if ( read( le_socket, le_buffer, LE_NETWORK_BUFFER_ADDR ) != LE_NETWORK_BUFFER_ADDR ) {
+        if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) {
 
             /* Send message */
             return( LE_ERROR_IO_READ );

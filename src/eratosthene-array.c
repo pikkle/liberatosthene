@@ -235,7 +235,7 @@
 
         /* Array pointer variables */
         le_byte_t * le_lbloc = le_array->ar_byte;
-        le_byte_t * le_hbloc = le_array->ar_byte + 1280;
+        le_byte_t * le_hbloc = le_array->ar_byte + _LE_USE_MTU;
         le_byte_t * le_sbloc = le_array->ar_byte + le_array->ar_size;
 
         /* Segment size variables */
@@ -259,8 +259,8 @@
             if ( write( le_socket, le_lbloc, le_size ) != le_size ) return( LE_ERROR_IO_WRITE );
 
             /* Update pointers */
-            le_lbloc += 1280;
-            le_hbloc += 1280;
+            le_lbloc += _LE_USE_MTU;
+            le_hbloc += _LE_USE_MTU;
 
         }
             
@@ -290,13 +290,13 @@
         while ( le_read < 5 ) {
 
             /* Array memory allocation - Send message */
-            if ( ( le_return = le_array_set_memory( le_array, 1280 ) ) != LE_ERROR_SUCCESS ) return( le_return );
+            if ( ( le_return = le_array_set_memory( le_array, _LE_USE_MTU ) ) != LE_ERROR_SUCCESS ) return( le_return );
 
             /* Array size management */
-            le_array->ar_size -= 1280;
+            le_array->ar_size -= _LE_USE_MTU;
 
             /* Read bloc on socket */
-            if ( ( le_size = read( le_socket, le_array->ar_byte + le_array->ar_size, 1280 ) ) > 0 ) {
+            if ( ( le_size = read( le_socket, le_array->ar_byte + le_array->ar_size, _LE_USE_MTU ) ) > 0 ) {
 
                 /* Array size management */
                 le_array->ar_size += le_size;

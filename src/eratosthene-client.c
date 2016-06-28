@@ -174,7 +174,7 @@
     le_enum_t le_client_system_array( le_sock_t const le_socket, le_array_t * const le_array, le_char_t const * const le_query ) {
 
         /* Query buffer variables */
-        le_byte_t le_buffer[LE_NETWORK_BUFFER_SYNC] = LE_NETWORK_BUFFER_C;
+        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Check consistency */
         if ( le_socket == _LE_SOCK_NULL ) {
@@ -188,7 +188,7 @@
         strcpy( ( char * ) le_buffer, ( char * ) le_query );
 
         /* Send query to socket */
-        if ( write( le_socket, le_buffer, LE_NETWORK_BUFFER_SYNC ) != LE_NETWORK_BUFFER_SYNC ) {
+        if ( write( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) {
 
             /* Send message */
             return( LE_ERROR_IO_WRITE );

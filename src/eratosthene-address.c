@@ -279,7 +279,7 @@
     le_void_t le_address_cvas( le_address_t const * const le_address, le_char_t * const le_string ) {
 
         /* Conversion buffer variables */
-        le_char_t le_buffer[LE_NETWORK_BUFFER_ADDR] = LE_NETWORK_BUFFER_C;
+        le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Convert geodetic address */
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_buffer[le_parse] = le_address->as_addr[le_parse] + _LE_USE_ASCII_ITOA;
@@ -292,7 +292,7 @@
     le_void_t le_address_cvsa( le_address_t * const le_address, le_char_t const * const le_string ) {
 
         /* Conversion buffer variables */
-        le_char_t le_buffer[LE_NETWORK_BUFFER_ADDR] = LE_NETWORK_BUFFER_C;
+        le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Decompose address string */
         sscanf( ( char * ) le_string, "/%" _LE_TIME_S "/%[^/]/%" _LE_SIZE_S, & le_address->as_time, le_buffer, & le_address->as_dept );

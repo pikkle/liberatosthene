@@ -98,17 +98,19 @@
  */
 
     /* Boolean values */
-    # define _LE_FALSE          0
-    # define _LE_TRUE           1
+    # define _LE_FALSE          ( 0 )
+    # define _LE_TRUE           ( 1 )
 
     /* Features configuration */
-    # define _LE_USE_SIZE_T     64
-    # define _LE_USE_DEPTH      64
-    # define _LE_USE_MTU        1280
-    # define _LE_USE_BASE       8
-    # define _LE_USE_PORT       555
-    # define _LE_USE_PENDING    5
-    # define _LE_USE_ASCII_ITOA 48
+    # define _LE_USE_SIZE_T     ( 64 )
+    # define _LE_USE_DEPTH      ( 64 )
+    # define _LE_USE_QUERY      ( _LE_USE_DEPTH + 24 )
+    # define _LE_USE_MTU        ( 1280 )
+    # define _LE_USE_RETRY      ( 3 )
+    # define _LE_USE_BASE       ( 8 )
+    # define _LE_USE_PORT       ( 555 )
+    # define _LE_USE_PENDING    ( 5 )
+    # define _LE_USE_ASCII_ITOA ( 48 )
 
     /* Define types */
     # define _LE_VOID           void
@@ -140,7 +142,7 @@
     /* Define type nulls */
     # define _LE_BYTE_NULL      0xff
     # define _LE_SIZE_NULL      _LE_SIZE_MAX
-    # define _LE_TIME_NULL      0
+    # define _LE_TIME_NULL      0               // <<<<<<<<<<< to correct after checking
     # define _LE_SOCK_NULL      -1
 
     /* Define input specifiers */
