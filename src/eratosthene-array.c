@@ -173,14 +173,15 @@
 
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket ) {
 
-        /* Segmentation variables */
-        le_size_t le_parse = 0;
-        le_size_t le_count = 0;
+        /* Array pointer variables */
+        le_byte_t * le_lbloc = le_array->ar_byte;
+        le_byte_t * le_hbloc = le_array->ar_byte + 1280;
+        le_byte_t * le_sbloc = le_array->ar_byte + le_array->ar_size;
 
-        /* Virtual size variables */
-        le_size_t le_vsize = le_array->ar_size;
+        /* Segment size variables */
+        le_size_t le_size = 0;
 
-        /* Check socket */
+        /* Check consistency */
         if ( le_socket == _LE_SOCK_NULL ) {
 
             /* Send message */
@@ -188,23 +189,63 @@
 
         }
 
-        /* Writing array to socket */
-        while ( le_parse < le_array->ar_size ) {
+        /* Sending array over TCP/IP */
+        while ( le_lbloc < le_sbloc ) {
 
-            /* Compute bloc size through virtual size */
-            le_count = ( le_vsize < LE_NETWORK_BUFFER_SYNC ) ? le_vsize : LE_NETWORK_BUFFER_SYNC;
+            /* Compute bloc size */
+            le_size = ( le_size_t ) ( le_hbloc > le_sbloc ? le_sbloc - le_lbloc : le_hbloc - le_lbloc );
 
-            /* Write bloc on socket */
-            if ( write( le_socket, le_array->ar_byte + le_parse, le_count ) != le_count ) {
+            /* Send bloc to socket - Send message */
+            if ( write( le_socket, le_lbloc, le_size ) != le_size ) return( LE_ERROR_IO_WRITE );
 
-                /* Update writing status */
-                return( LE_ERROR_IO_WRITE );
+            /* Update pointers */
+            le_lbloc += 1280;
+            le_hbloc += 1280;
 
-            }
+        }
+            
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
 
-            /* Update parser */
-            le_parse += LE_NETWORK_BUFFER_SYNC;
-            le_vsize -= LE_NETWORK_BUFFER_SYNC;
+    }
+
+    le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
+
+        /* Returned value variables */
+        le_enum_t le_return = LE_ERROR_SUCCESS;
+
+        /* Socket i/o variables */
+        le_size_t le_size = 0;
+        le_size_t le_read = 0;
+
+        /* Check consistency */
+        if ( le_socket == _LE_SOCK_NULL ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_SOCKET );
+
+        }
+
+        /* Receiving array over TCP/IP */
+        while ( le_read < 5 ) {
+
+            /* Array memory allocation - Send message */
+            if ( ( le_return = le_array_set_memory( le_array, 1280 ) ) != LE_ERROR_SUCCESS ) return( le_return );
+
+            /* Array size management */
+            le_array->ar_size -= 1280;
+
+            /* Read bloc on socket */
+            if ( ( le_size = read( le_socket, le_array->ar_byte + le_array->ar_size, 1280 ) ) > 0 ) {
+
+                /* Array size management */
+                le_array->ar_size += le_size;
+
+                /* Clear reading value */
+                le_read = 0;
+
+            /* Update reading value */
+            } else { le_read ++; }
 
         }
 

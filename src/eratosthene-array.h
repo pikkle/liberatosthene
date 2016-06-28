@@ -185,19 +185,9 @@
 
     le_enum_t le_array_set_push( le_array_t * const le_array, le_enum_t const le_format, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
-    /*! \brief i/o methods
-     *
-     *  This function writes the byte content of the array structure in the
-     *  provided socket. The socket has to be an already opened socket.
-     *
-     *  \param le_array  Array structure
-     *  \param le_socket Opened socket descriptor
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_SOCKET for an
-     *  invalid socket and LE_ERROR_IO_WRITE on socket i/o failure.
-     */
-
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
+
+    le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility
