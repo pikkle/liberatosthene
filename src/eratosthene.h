@@ -103,9 +103,8 @@
 
     /* Features configuration */
     # define _LE_USE_SIZE_T     64
-    # define _LE_USE_REAL_T     64
     # define _LE_USE_DEPTH      64
-    # define _LE_USE_MTU        560 //1120
+    # define _LE_USE_MTU        1280
     # define _LE_USE_BASE       8
     # define _LE_USE_PORT       555
     # define _LE_USE_PENDING    5
@@ -123,11 +122,8 @@
     # define _LE_SIZE           uint64_t
     # define _LE_DIFF           int64_t
     # endif
-    # if   ( _LE_USE_REAL_T == 32 )
-    # define _LE_REAL           float
-    # elif ( _LE_USE_REAL_T == 64 )
     # define _LE_REAL           double
-    # endif
+    # define _LE_REAR           float
     # define _LE_TIME           int64_t
     # define _LE_DATA           uint8_t
     # define _LE_SOCK           int
@@ -161,13 +157,8 @@
     # define _LE_SIZE_P         PRIu64
     # define _LE_SIZE_S         SCNu64
     # endif
-    # if   ( _LE_USE_REAL_T == 32 )
-    # define _LE_REAL_P         ".7e"
-    # define _LE_REAL_S         "f"
-    # elif ( _LE_USE_REAL_T == 64 )
     # define _LE_REAL_P         ".14e"
     # define _LE_REAL_S         "lf"
-    # endif
     # define _LE_TIME_P         PRIi64
     # define _LE_TIME_S         SCNi64
     # define _LE_DATA_P         PRIu8
@@ -212,6 +203,7 @@
     typedef _LE_SIZE le_size_t;
     typedef _LE_DIFF le_diff_t;
     typedef _LE_REAL le_real_t;
+    typedef _LE_REAR le_rear_t;
     typedef _LE_TIME le_time_t;
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;

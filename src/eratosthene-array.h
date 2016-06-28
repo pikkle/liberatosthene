@@ -51,13 +51,13 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_ARRAY_C    { 0, 0, NULL }
+    # define LE_ARRAY_C       { 0, 0, NULL }
 
     /* Define array entry length (bytes) */
     # define LE_ARRAY_LINE ( ( sizeof( le_real_t ) + sizeof( le_data_t ) ) * 3 + sizeof( le_time_t ) )
 
     /* Define array step (bytes) */
-    # define LE_ARRAY_STEP ( 65356 )
+    # define LE_ARRAY_STEP    ( 65356 )
 
     /* Define array formats */
     # define LE_ARRAY_64S     ( 0x00 )

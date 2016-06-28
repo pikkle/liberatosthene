@@ -112,7 +112,7 @@
         /* Switch on format */
         switch ( le_format ) {
 
-            /* 64S16D array format */
+            /* 64S array format */
             case ( LE_ARRAY_64S ) : {
 
                 /* Array memory allocation */
@@ -123,11 +123,15 @@
                     le_time_t * le_tp = ( le_time_t * ) ( le_sp + 3 );
                     le_data_t * le_dp = ( le_data_t * ) ( le_tp + 1 );
 
-                    /* Assign array record elements */
+                    /* Record element - space */
                     le_sp[0] = le_pose[0];
                     le_sp[1] = le_pose[1];
                     le_sp[2] = le_pose[2];
+
+                    /* Record element - time */
                     le_tp[0] = le_time;
+
+                    /* Record element - information */
                     le_dp[0] = le_data[0];
                     le_dp[1] = le_data[1];
                     le_dp[2] = le_data[2];
@@ -137,7 +141,7 @@
 
             } break;
 
-            /* 64S16D array format */
+            /* 64R array format */
             case ( LE_ARRAY_64R ) : {
 
                 /* Array memory allocation */
@@ -147,10 +151,12 @@
                     le_real_t * le_sp = ( le_real_t * ) ( le_array->ar_byte + le_array->ar_size - LE_ARRAY_64R_LEN );
                     le_data_t * le_dp = ( le_data_t * ) ( le_sp + 3 );
 
-                    /* Assign array record elements */
+                    /* Record element - space */
                     le_sp[0] = le_pose[0];
                     le_sp[1] = le_pose[1];
                     le_sp[2] = le_pose[2];
+
+                    /* Record element - information */
                     le_dp[0] = le_data[0];
                     le_dp[1] = le_data[1];
                     le_dp[2] = le_data[2];
@@ -159,6 +165,60 @@
                 } return( le_return );
 
             } break;
+
+            /* 32S array format */
+            case ( LE_ARRAY_32S ) : {
+
+                /* Array memory allocation */
+                if ( ( le_return = le_array_set_memory( le_array, LE_ARRAY_32S_LEN ) ) == LE_ERROR_SUCCESS ) {
+
+                    /* Array pointer variables */
+                    le_rear_t * le_sp = ( le_rear_t * ) ( le_array->ar_byte + le_array->ar_size - LE_ARRAY_64S_LEN );
+                    le_time_t * le_tp = ( le_time_t * ) ( le_sp + 3 );
+                    le_data_t * le_dp = ( le_data_t * ) ( le_tp + 1 );
+
+                    /* Record element - space */
+                    le_sp[0] = ( le_rear_t ) le_pose[0];
+                    le_sp[1] = ( le_rear_t ) le_pose[1];
+                    le_sp[2] = ( le_rear_t ) le_pose[2];
+
+                    /* Record element - time */
+                    le_tp[0] = le_time;
+
+                    /* Record element - information */
+                    le_dp[0] = le_data[0];
+                    le_dp[1] = le_data[1];
+                    le_dp[2] = le_data[2];
+
+                /* Send message */
+                } return( le_return );
+
+            }
+
+            /* 32R array format */
+            case ( LE_ARRAY_32R ) : {
+
+                /* Array memory allocation */
+                if ( ( le_return = le_array_set_memory( le_array, LE_ARRAY_32R_LEN ) ) == LE_ERROR_SUCCESS ) {
+
+                    /* Array pointer variables */
+                    le_rear_t * le_sp = ( le_rear_t * ) ( le_array->ar_byte + le_array->ar_size - LE_ARRAY_64S_LEN );
+                    le_data_t * le_dp = ( le_data_t * ) ( le_sp + 3 );
+
+                    /* Record element - space */
+                    le_sp[0] = ( le_rear_t ) le_pose[0];
+                    le_sp[1] = ( le_rear_t ) le_pose[1];
+                    le_sp[2] = ( le_rear_t ) le_pose[2];
+
+                    /* Record element - information */
+                    le_dp[0] = le_data[0];
+                    le_dp[1] = le_data[1];
+                    le_dp[2] = le_data[2];
+
+                /* Send message */
+                } return( le_return );
+
+            }
 
         };
 
