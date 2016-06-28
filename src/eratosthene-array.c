@@ -193,7 +193,7 @@
                 /* Send message */
                 } return( le_return );
 
-            }
+            } break;
 
             /* 32R array format */
             case ( LE_ARRAY_32R ) : {
@@ -218,7 +218,7 @@
                 /* Send message */
                 } return( le_return );
 
-            }
+            } break;
 
         };
 
