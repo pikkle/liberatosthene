@@ -125,15 +125,7 @@
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Class i/o buffer variables */
-        le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE+8] = { 0 };
-
-        /* Check stream */
-        if ( ( le_stream->_flags & _IO_NO_READS ) != 0 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_STREAM );
-
-        }
+        static le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE+8];
 
         /* Move head to class offset */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
@@ -175,15 +167,7 @@
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Class i/o buffer variables */
-        le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE + 8] = { 0 };
-
-        /* Check stream */
-        if ( ( le_stream->_flags & _IO_NO_WRITES ) != 0 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_STREAM );
-
-        }
+        static le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE + 8];
 
         /* Move head to class offset */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
@@ -193,7 +177,7 @@
 
         }
 
-        /* Class buffer - heap and data segment */
+        /* Class buffer - data and heap segment */
         le_buffer[0] = le_class->cs_data[0];
         le_buffer[1] = le_class->cs_data[1];
         le_buffer[2] = le_class->cs_data[2];
