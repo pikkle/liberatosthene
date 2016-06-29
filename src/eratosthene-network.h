@@ -57,7 +57,6 @@
     # define LE_NETWORK_C               { 0 }
 
     /* Define network standard buffers */
-    # define LE_NETWORK_SB_HAND         ( 1 )
     # define LE_NETWORK_SB_ADDR         ( _LE_USE_QUERY )
     # define LE_NETWORK_SB_SYNC         ( _LE_USE_MTU )
     # define LE_NETWORK_SB_STRM         ( _LE_USE_MTU * 2 )
