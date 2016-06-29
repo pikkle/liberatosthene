@@ -52,7 +52,11 @@
 
     /* Define pseudo-constructor */
     # define LE_CLASS_C             { { _LE_SIZE_NULL }, { 0 }, 0 }
-    # define LE_CLASS_C_DATA(r,g,b) { { _LE_SIZE_NULL }, { r, g, b }, 0 } 
+    # define LE_CLASS_C_DATA(r,g,b) { { _LE_SIZE_NULL }, { r, g, b }, 0 }
+
+    /* Define class buffer size */
+    # define LE_CLASS_BUFFER_C      { 0 }
+    # define LE_CLASS_BUFFER_SIZE   ( 68 )
 
 /*
     header - preprocessor macros

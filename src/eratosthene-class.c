@@ -122,6 +122,61 @@
     source - i/o methods
  */
 
+    le_enum_t le_class_io_read2( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream, le_size_t const le_format ) {
+
+        /* Buffer size variables */
+        le_size_t le_size = le_format * 8 + 4;
+
+        /* Class i/o buffer variables */
+        le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE] = LE_CLASS_BUFFER_C;
+
+        /* Check stream */
+        if ( ( le_stream->_flags & _IO_NO_READS ) != 0 ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_STREAM );
+
+        }
+
+        /* Move head to class offset */
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_SEEK );
+
+        }
+
+        /* Read class buffer */
+        if ( fread( ( le_void_t * ) le_buffer, 1, le_size, le_stream ) != le_size ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_WRITE );
+
+        }
+
+        /* Class buffer - heap segment */
+        le_class->cs_heap = * ( le_buffer );
+
+        /* Class buffer - data segment */
+        * ( le_class->cs_data     ) = * ( le_buffer + 1 );
+        * ( le_class->cs_data + 1 ) = * ( le_buffer + 2 );
+        * ( le_class->cs_data + 2 ) = * ( le_buffer + 3 );
+
+        /* Class buffer - offset segment */
+        * ( le_class->cs_addr     ) = * ( ( le_size_t * ) ( le_buffer + 4                 ) );
+        * ( le_class->cs_addr + 1 ) = * ( ( le_size_t * ) ( le_buffer + 4 + le_format     ) );
+        * ( le_class->cs_addr + 2 ) = * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 2 ) );
+        * ( le_class->cs_addr + 3 ) = * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 3 ) );
+        * ( le_class->cs_addr + 4 ) = * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 4 ) );
+        * ( le_class->cs_addr + 5 ) = * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 5 ) );
+        * ( le_class->cs_addr + 6 ) = * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 6 ) );
+        * ( le_class->cs_addr + 7 ) = * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 7 ) );
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Check stream */
@@ -170,6 +225,62 @@
         }
 
     }
+
+    le_enum_t le_class_io_write2( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream, le_size_t const le_format ) {
+
+        /* Buffer size variables */
+        le_size_t le_size = le_format * 8 + 4;
+
+        /* Class i/o buffer variables */
+        le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE] = LE_CLASS_BUFFER_C;
+
+        /* Check stream */
+        if ( ( le_stream->_flags & _IO_NO_WRITES ) != 0 ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_STREAM );
+
+        }
+
+        /* Move head to class offset */
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_SEEK );
+
+        }
+
+        /* Class buffer - heap segment */
+        * ( le_buffer ) = le_class->cs_heap;
+
+        /* Class buffer - data segment */
+        * ( le_buffer + 1 ) = * ( le_class->cs_data     );
+        * ( le_buffer + 2 ) = * ( le_class->cs_data + 1 );
+        * ( le_buffer + 3 ) = * ( le_class->cs_data + 2 );
+
+        /* Class buffer - offset segment */
+        * ( ( le_size_t * ) ( le_buffer + 4                 ) ) = * ( le_class->cs_addr     );
+        * ( ( le_size_t * ) ( le_buffer + 4 + le_format     ) ) = * ( le_class->cs_addr + 1 );
+        * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 2 ) ) = * ( le_class->cs_addr + 2 );
+        * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 3 ) ) = * ( le_class->cs_addr + 3 );
+        * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 4 ) ) = * ( le_class->cs_addr + 4 );
+        * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 5 ) ) = * ( le_class->cs_addr + 5 );
+        * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 6 ) ) = * ( le_class->cs_addr + 6 );
+        * ( ( le_size_t * ) ( le_buffer + 4 + le_format * 7 ) ) = * ( le_class->cs_addr + 7 );
+
+        /* Write class buffer */
+        if ( fwrite( ( le_void_t * ) le_buffer, 1, le_size, le_stream ) != le_size ) {
+
+            /* Send message */
+            return( LE_ERROR_IO_WRITE );
+
+        }
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
 
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 

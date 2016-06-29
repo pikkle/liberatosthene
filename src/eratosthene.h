@@ -59,6 +59,11 @@
     # error "this program requires C99 standard"
     # endif
 
+    # include <limits.h>
+    # if ( CHAR_BIT != 8 )
+    # error "this program expects 8 bits byte"
+    # endif
+
     # if defined ( __BYTE_ORDER__ )
     # if ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
     # error "this program expects little-endian architecture"
