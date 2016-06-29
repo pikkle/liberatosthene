@@ -76,7 +76,7 @@
         }
 
         /* Check consistency */
-        if ( ( le_system.sm_smode < 2 ) || ( le_system.sm_smode > sizeof( le_size_t ) ) ) {
+        if ( le_system.sm_smode != _LE_USE_OFFSET ) {
 
             /* Send message */
             le_system._status = LE_ERROR_FORMAT; return( le_system );
@@ -189,7 +189,7 @@
             } else {
 
                 /* Initialise class with element */
-                le_class = le_class_create( le_data );
+                le_class = le_class_create( le_data, le_system->sm_smode );
 
             }
 
@@ -197,7 +197,7 @@
             le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_depth ) );
 
             /* Check daughter state */
-            if ( ( le_offset == _LE_SIZE_NULL ) && ( le_depth < ( le_system->sm_sdisc - 1 ) ) ) {
+            if ( ( le_offset == _LE_OFFS_NULL ) && ( le_depth < ( le_system->sm_sdisc - 1 ) ) ) {
 
                 /* Seek next scale eof */
                 fseek( le_system->sm_scale[le_depth+1], 0, SEEK_END );
@@ -272,7 +272,7 @@
             }
 
         /* Query class search condition */
-        } while ( ( ( ++ le_depth ) <= le_address_get_size( le_addr ) ) && ( le_offset != _LE_SIZE_NULL ) );
+        } while ( ( ( ++ le_depth ) <= le_address_get_size( le_addr ) ) && ( le_offset != _LE_OFFS_NULL ) );
 
         /* Check query class search */
         if ( ( -- le_depth ) == le_address_get_size( le_addr ) ) {
@@ -308,7 +308,7 @@
             for ( ; le_parse < 8; le_parse ++ ) {
 
                 /* Check daughter */
-                if ( ( le_offset = le_class_get_offset( le_class, le_parse ) ) != _LE_SIZE_NULL ) {
+                if ( ( le_offset = le_class_get_offset( le_class, le_parse ) ) != _LE_OFFS_NULL ) {
 
                     /* Set address size */  
                     le_address_set_size( le_addr, le_head + 1 );

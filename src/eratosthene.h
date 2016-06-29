@@ -108,6 +108,12 @@
 
     /* Features configuration */
     # define _LE_USE_SIZE_T     ( 64 )
+    # define _LE_USE_OFFSET     ( 5 )
+    # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
+    # error "offset out of range"
+    # elif ( _LE_USE_SIZE_T != 64 ) && ( _LE_USE_OFFSET > 4 )
+    # error "offset and size incompatibility"
+    # endif
     # define _LE_USE_DEPTH      ( 64 )
     # define _LE_USE_QUERY      ( _LE_USE_DEPTH + 24 )
     # define _LE_USE_MTU        ( 1280 )
@@ -151,6 +157,7 @@
     # define _LE_SIZE_NULL      _LE_SIZE_MAX
     # define _LE_TIME_NULL      _LE_TIME_MIN
     # define _LE_SOCK_NULL      -1
+    # define _LE_OFFS_NULL      ( ( ( uint64_t ) 1 << ( _LE_USE_OFFSET * 8 ) ) - 1 )
 
     /* Define input specifiers */
     # define _LE_BYTE_P         PRIu8

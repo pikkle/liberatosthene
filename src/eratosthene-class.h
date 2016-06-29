@@ -51,12 +51,12 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_CLASS_C             { { _LE_SIZE_NULL }, { 0 }, 0 }
-    # define LE_CLASS_C_DATA(r,g,b) { { _LE_SIZE_NULL }, { r, g, b }, 0 }
+    # define LE_CLASS_C             { { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }, { 0 }, 0 }
+    # define LE_CLASS_C_DATA(r,g,b) { { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }, { r, g, b }, 0 }
 
     /* Define class buffer size */
     # define LE_CLASS_BUFFER_C      { 0 }
-    # define LE_CLASS_BUFFER_SIZE   ( 68 )
+    # define LE_CLASS_BUFFER_SIZE   ( _LE_USE_OFFSET * 8 + 4 )
 
 /*
     header - preprocessor macros
@@ -110,7 +110,7 @@
      *
      */
 
-    le_class_t le_class_create( le_data_t const * const le_data );
+    le_class_t le_class_create( le_data_t const * const le_data, le_size_t const le_format );
 
     /*! \brief constructor/destructor methods
      *

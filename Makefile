@@ -79,7 +79,7 @@ endif
 endif
     MAKE_HEADEX:=h
     MAKE_COMPIL:=$(MAKE_CC_BLD)
-    MAKE_OPTION:=$(MAKE_OPTION) -std=gnu99
+    MAKE_OPTION:=$(MAKE_OPTION) -std=c99
 else
 ifeq ($(CONFIG_CODE),cpp)
 ifeq ($(CONFIG_TYPE),libstatic)
