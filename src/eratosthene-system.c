@@ -24,33 +24,33 @@
     source - constructor/destructor methods
  */
 
-    le_enum_t le_system_create( le_system_t * const le_system, le_char_t const * const le_root ) {
+    le_system_t le_system_create( le_char_t const * const le_root ) {
 
         /* Stream variables */
         FILE * le_stream = NULL;
 
         /* Construct structure */
-        le_system_t le_cons = LE_SYSTEM_C; * ( le_system ) = le_cons;
+        le_system_t le_system = LE_SYSTEM_C;
 
         /* Copy provided root path */
-        strcpy( ( char * ) le_system->sm_root, ( char * ) le_root );
+        strcpy( ( char * ) le_system.sm_root, ( char * ) le_root );
 
         /* Open configuration stream */
-        if ( ( le_stream = fopen( strcat( ( char * ) le_system->sm_root, "/system" ), "r" ) ) == NULL ) {
+        if ( ( le_stream = fopen( strcat( ( char * ) le_system.sm_root, "/system" ), "r" ) ) == NULL ) {
 
             /* Send message */
-            return( LE_ERROR_IO_ACCESS );
+            le_system._status = LE_ERROR_IO_ACCESS; return( le_system );
 
         }
 
         /* Check configuration reading */
-        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & ( le_system->sm_sdisc ), & ( le_system->sm_tdisc ) ) != 2 ) {
+        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S " %" _LE_SIZE_S " %" _LE_ENUM_S " %" _LE_ENUM_S, & ( le_system.sm_sdisc ), & ( le_system.sm_tdisc ), & ( le_system.sm_smode ), & ( le_system.sm_imode ), & ( le_system.sm_qmode ) ) != 5 ) {
 
             /* Close configuration stream */
             fclose( le_stream );
 
             /* Send message */
-            return( LE_ERROR_IO_READ );
+            le_system._status = LE_ERROR_IO_READ; return( le_system );
 
         } else {
 
@@ -60,38 +60,66 @@
         }
 
         /* Check consistency */
-        if ( ( le_system->sm_sdisc <= 0 ) || ( le_system->sm_sdisc >= _LE_USE_DEPTH ) ) {
+        if ( ( le_system.sm_sdisc <= 0 ) || ( le_system.sm_sdisc >= _LE_USE_DEPTH ) ) {
 
             /* Send message */
-            return( LE_ERROR_DEPTH );
+            le_system._status = LE_ERROR_DEPTH; return( le_system );
 
         }
 
         /* Check consistency */
-        if ( le_system->sm_tdisc <= 0 ) {
+        if ( le_system.sm_tdisc <= 0 ) {
 
             /* Send message */
-            return( LE_ERROR_TIME );
-
-        } else {
-
-            /* Initialise streams stack */
-            le_system->sm_scale = NULL;
-
-            /* Assign provided root path */
-            strcpy( ( char * ) le_system->sm_root, ( char * ) le_root );
-
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
+            le_system._status = LE_ERROR_TIME; return( le_system );
 
         }
+
+        /* Check consistency */
+        if ( ( le_system.sm_smode < 2 ) || ( le_system.sm_smode > sizeof( le_size_t ) ) ) {
+
+            /* Send message */
+            le_system._status = LE_ERROR_FORMAT; return( le_system );
+
+        }
+
+        /* Check consistency */
+        if ( le_system.sm_imode != LE_ARRAY_64S ) {
+
+            /* Send message */
+            le_system._status = LE_ERROR_FORMAT; return( le_system );
+
+        }
+
+        /* Check consistency */
+        if ( ( le_system.sm_qmode < LE_ARRAY_MIN ) || ( le_system.sm_qmode > LE_ARRAY_MAX ) ) {
+
+            /* Send message */
+            le_system._status = LE_ERROR_FORMAT; return( le_system );
+
+        }
+
+        /* Initialise streams stack */
+        le_system.sm_scale = NULL;
+
+        /* Assign provided root path */
+        strcpy( ( char * ) le_system.sm_root, ( char * ) le_root );
+
+        /* Return created structure */
+        return( le_system );
 
     }
 
-    le_void_t le_system_delete( le_system_t * const le_system ) {
+    le_system_t le_system_delete( le_system_t * const le_system ) {
+
+        /* Returned structure variables */
+        le_system_t le_return = LE_SYSTEM_C;
 
         /* Delete streams stack */
         le_system_close( le_system );
+
+        /* Return deleted structure */
+        return( le_return );
 
     }
 

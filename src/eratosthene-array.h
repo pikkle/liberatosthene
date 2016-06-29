@@ -61,6 +61,8 @@
     # define LE_ARRAY_64R     ( 0x01 )
     # define LE_ARRAY_32S     ( 0x02 )
     # define LE_ARRAY_32R     ( 0x03 )
+    # define LE_ARRAY_MIN     ( LE_ARRAY_64S )
+    # define LE_ARRAY_MAX     ( LE_ARRAY_32R )
 
     /* Define array formats records length */
     # define LE_ARRAY_64S_LEN ( 8 + 8 + 8 + 8 + 3 ) // 34 bytes

@@ -53,7 +53,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_SYSTEM_C { { 0 }, 0, 0, NULL }
+    # define LE_SYSTEM_C { { 0 }, 0, 0, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -97,9 +97,12 @@
         le_char_t sm_root[256];
         le_size_t sm_sdisc;
         le_time_t sm_tdisc;
+        le_size_t sm_smode;
+        le_enum_t sm_imode;
+        le_enum_t sm_qmode;
         FILE **   sm_scale;
 
-    } le_system_t;
+    le_enum_t _status; } le_system_t;
 
 /*
     header - function prototypes
@@ -117,7 +120,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_system_create( le_system_t * const le_system, le_char_t const * const le_root );
+    le_system_t le_system_create( le_char_t const * const le_root );
 
     /*! \brief constructor/destructor methods
      *
@@ -127,7 +130,7 @@
      *  \param le_system Server system descriptor
      */
 
-    le_void_t le_system_delete( le_system_t * const le_system );
+    le_system_t le_system_delete( le_system_t * const le_system );
 
     /*! \brief accessor methods
      *
