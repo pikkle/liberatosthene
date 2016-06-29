@@ -21,6 +21,30 @@
     # include "eratosthene-class.h"
 
 /*
+    source - constructor/destructor methods
+ */
+
+    le_class_t le_class_create( le_data_t const * const le_data ) {
+
+        /* Returned structure variables */
+        le_class_t le_class = LE_CLASS_C_DATA( le_data[0], le_data[1], le_data[2] );
+
+        /* Return constructed structure */
+        return( le_class );
+
+    }
+
+    le_class_t le_class_delete( le_void_t ) {
+
+        /* Returned structure variables */
+        le_class_t le_class = LE_CLASS_C;
+
+        /* Return deleted structure */
+        return( le_class );
+
+    }
+
+/*
     source - accessor methods
  */
 
@@ -48,13 +72,6 @@
 
     }
 
-    le_size_t le_class_get_mean( le_class_t const * const le_class ) {
-
-        /* Return class accumulator */
-        return( le_class->cs_mean );
-
-    }
-
     le_data_t * le_class_get_data( le_class_t const * const le_class ) {
 
         /* Return class pointer */
@@ -65,28 +82,6 @@
 /*
     source - mutator methods
  */
-
-    le_void_t le_class_set_init( le_class_t * const le_class, le_data_t const * const le_data ) {
-
-        /* Initialise address */
-        le_class->cs_addr[0] = _LE_SIZE_NULL;
-        le_class->cs_addr[1] = _LE_SIZE_NULL;
-        le_class->cs_addr[2] = _LE_SIZE_NULL;
-        le_class->cs_addr[3] = _LE_SIZE_NULL;
-        le_class->cs_addr[4] = _LE_SIZE_NULL;
-        le_class->cs_addr[5] = _LE_SIZE_NULL;
-        le_class->cs_addr[6] = _LE_SIZE_NULL;
-        le_class->cs_addr[7] = _LE_SIZE_NULL;
-
-        /* Initialise colorimetry */
-        le_class->cs_data[0] = le_data[0];
-        le_class->cs_data[1] = le_data[1];
-        le_class->cs_data[2] = le_data[2];
-
-        /* Initialise accumulator */
-        le_class->cs_mean = 1;
-
-    }
 
     le_enum_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
 
@@ -110,13 +105,16 @@
 
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
 
-        /* Mean value variables */
-        le_size_t le_mean = ( le_class->cs_mean ++ );
+        /* Corrected heap variables */
+        le_real_t le_heap = le_class->cs_heap + 1;
 
-        /* Inject colorimetric information */
-        le_class->cs_data[0] = ( le_data_t ) ( ( ( ( ( long double ) le_class->cs_data[0] ) * le_mean ) + le_data[0] ) / le_class->cs_mean );
-        le_class->cs_data[1] = ( le_data_t ) ( ( ( ( ( long double ) le_class->cs_data[1] ) * le_mean ) + le_data[1] ) / le_class->cs_mean );
-        le_class->cs_data[2] = ( le_data_t ) ( ( ( ( ( long double ) le_class->cs_data[2] ) * le_mean ) + le_data[2] ) / le_class->cs_mean );
+        /* Class data injection */
+        le_class->cs_data[0] = ( ( le_heap * ( le_real_t ) le_class->cs_data[0] ) + ( le_real_t ) le_data[0] ) / ( le_heap + 1 );
+        le_class->cs_data[1] = ( ( le_heap * ( le_real_t ) le_class->cs_data[1] ) + ( le_real_t ) le_data[1] ) / ( le_heap + 1 );
+        le_class->cs_data[2] = ( ( le_heap * ( le_real_t ) le_class->cs_data[2] ) + ( le_real_t ) le_data[2] ) / ( le_heap + 1 );
+
+        /* Check heap value */
+        if ( le_class->cs_heap < _LE_BYTE_MAX ) le_class->cs_heap ++;
 
     }
 
@@ -159,7 +157,7 @@
         }
 
         /* Writing class accumulator */
-        if ( fread( ( le_void_t * ) ( & le_class->cs_mean ), sizeof( le_size_t ), 1, le_stream ) != 1 ) {
+        if ( fread( ( le_void_t * ) ( & le_class->cs_heap ), sizeof( le_byte_t ), 1, le_stream ) != 1 ) {
 
             /* Send message */
             return( LE_ERROR_IO_READ );
@@ -208,7 +206,7 @@
         }
 
         /* Writing class accumulator */
-        if ( fwrite( ( le_void_t * ) ( & le_class->cs_mean ), sizeof( le_size_t ), 1, le_stream ) != 1 ) {
+        if ( fwrite( ( le_void_t * ) ( & le_class->cs_heap ), sizeof( le_byte_t ), 1, le_stream ) != 1 ) {
 
             /* Send message */
             return( LE_ERROR_IO_WRITE );

@@ -51,7 +51,8 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_CLASS_C { { _LE_SIZE_NULL }, { 0 }, 0 }
+    # define LE_CLASS_C             { { _LE_SIZE_NULL }, { 0 }, 0 }
+    # define LE_CLASS_C_DATA(r,g,b) { { _LE_SIZE_NULL }, { r, g, b }, 0 } 
 
 /*
     header - preprocessor macros
@@ -93,13 +94,25 @@
 
         le_size_t cs_addr[8];
         le_data_t cs_data[3];
-        le_size_t cs_mean;
+        le_byte_t cs_heap;
 
     } le_class_t;
 
 /*
     header - function prototypes
  */
+
+    /*! \brief constructor/destructor methods
+     *
+     */
+
+    le_class_t le_class_create( le_data_t const * const le_data );
+
+    /*! \brief constructor/destructor methods
+     *
+     */
+
+    le_class_t le_class_delete( le_void_t );
 
     /*! \brief accessor methods
      *
@@ -127,18 +140,6 @@
 
     /*! \brief accessor methods
      *
-     *  Returns the number of elements used to compute the class representative
-     *  color.
-     *
-     *  \param le_class Class structure
-     *
-     *  \return Number of element injected in the class
-     */
-
-    le_size_t le_class_get_mean( le_class_t const * const le_class );
-
-    /*! \brief accessor methods
-     *
      *  Returns pointer to class representative color array.
      *
      *  \param le_class Class structure
@@ -147,17 +148,6 @@
      */
 
     le_data_t * le_class_get_data( le_class_t const * const le_class );
-
-    /*! \brief mutator methods
-     *
-     *  Initialise the class structure with default values and considering the
-     *  provided initialisation color (implicit first injection).
-     *
-     *  \param le_class Class structure
-     *  \param le_data  Initialisation color array
-     */
-
-    le_void_t le_class_set_init( le_class_t * const le_class, le_data_t const * const le_data );
 
     /*! \brief mutator methods
      *

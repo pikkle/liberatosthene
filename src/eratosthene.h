@@ -131,6 +131,8 @@
     # define _LE_SOCK           int
 
     /* Define boundaries */
+    # define _LE_BYTE_MIN       0
+    # define _LE_BYTE_MAX       UINT8_MAX
     # if   ( _LE_USE_SIZE_T == 32 )
     # define _LE_SIZE_MAX       UINT32_MAX
     # elif ( _LE_USE_SIZE_T == 64 )

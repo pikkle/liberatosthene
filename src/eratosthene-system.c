@@ -189,7 +189,7 @@
             } else {
 
                 /* Initialise class with element */
-                le_class_set_init( & le_class, le_data );
+                le_class = le_class_create( le_data );
 
             }
 
