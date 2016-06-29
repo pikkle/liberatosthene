@@ -54,7 +54,7 @@
         if ( le_addr >= _LE_USE_BASE ) {
 
             /* Return invalid offset */
-            return( _LE_SIZE_NULL );
+            return( _LE_OFFS_NULL );
 
         } else {
 
@@ -106,7 +106,7 @@
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
 
         /* Corrected heap variables */
-        le_real_t le_heap = le_class->cs_heap + 1;
+        le_real_t le_heap = le_class->cs_data[4] + 1;
 
         /* Class data injection */
         le_class->cs_data[0] = ( ( le_heap * ( le_real_t ) le_class->cs_data[0] ) + ( le_real_t ) le_data[0] ) / ( le_heap + 1 );
@@ -114,7 +114,7 @@
         le_class->cs_data[2] = ( ( le_heap * ( le_real_t ) le_class->cs_data[2] ) + ( le_real_t ) le_data[2] ) / ( le_heap + 1 );
 
         /* Check heap value */
-        if ( le_class->cs_heap < _LE_BYTE_MAX ) le_class->cs_heap ++;
+        if ( le_class->cs_data[4] < _LE_BYTE_MAX ) le_class->cs_data[4] ++;
 
     }
 
@@ -125,7 +125,7 @@
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Class i/o buffer variables */
-        le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE+8] = LE_CLASS_BUFFER_C;
+        le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE+8] = { 0 };
 
         /* Check stream */
         if ( ( le_stream->_flags & _IO_NO_READS ) != 0 ) {
@@ -151,13 +151,11 @@
 
         }
 
-        /* Class buffer - heap segment */
-        le_class->cs_heap = le_buffer[0];
-
-        /* Class buffer - data segment */
-        le_class->cs_data[0] = le_buffer[1];
-        le_class->cs_data[1] = le_buffer[2];
-        le_class->cs_data[2] = le_buffer[3];
+        /* Class buffer - data and heap segment */
+        le_class->cs_data[0] = le_buffer[0];
+        le_class->cs_data[1] = le_buffer[1];
+        le_class->cs_data[2] = le_buffer[2];
+        le_class->cs_data[3] = le_buffer[3];
 
         /* Class buffer - offset segment */
         * ( le_class->cs_addr     ) = * ( ( le_size_t * ) ( le_buffer + 4 + _LE_USE_OFFSET * 0 ) ) & _LE_OFFS_NULL;
@@ -177,7 +175,7 @@
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* Class i/o buffer variables */
-        le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE + 8] = LE_CLASS_BUFFER_C;
+        le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE + 8] = { 0 };
 
         /* Check stream */
         if ( ( le_stream->_flags & _IO_NO_WRITES ) != 0 ) {
@@ -196,10 +194,10 @@
         }
 
         /* Class buffer - heap and data segment */
-        le_buffer[0] = le_class->cs_heap;
-        le_buffer[1] = le_class->cs_data[0];
-        le_buffer[2] = le_class->cs_data[1];
-        le_buffer[3] = le_class->cs_data[2];
+        le_buffer[0] = le_class->cs_data[0];
+        le_buffer[1] = le_class->cs_data[1];
+        le_buffer[2] = le_class->cs_data[2];
+        le_buffer[3] = le_class->cs_data[3];
 
         /* Class buffer - offset segment */
         * ( ( le_size_t * ) ( le_buffer + 4 + _LE_USE_OFFSET * 0 ) ) = * ( le_class->cs_addr     );

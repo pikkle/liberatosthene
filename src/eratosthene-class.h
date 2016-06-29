@@ -51,11 +51,10 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_CLASS_C             { { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }, { 0 }, 0 }
-    # define LE_CLASS_C_DATA(r,g,b) { { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }, { r, g, b }, 0 }
+    # define LE_CLASS_C             { { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }, { 0 } }
+    # define LE_CLASS_C_DATA(r,g,b) { { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }, { r, g, b, 0 } }
 
     /* Define class buffer size */
-    # define LE_CLASS_BUFFER_C      { 0 }
     # define LE_CLASS_BUFFER_SIZE   ( _LE_USE_OFFSET * 8 + 4 )
 
 /*
@@ -97,8 +96,7 @@
     typedef struct le_class_struct {
 
         le_size_t cs_addr[8];
-        le_data_t cs_data[3];
-        le_byte_t cs_heap;
+        le_data_t cs_data[4];
 
     } le_class_t;
 
