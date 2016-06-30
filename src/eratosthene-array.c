@@ -187,13 +187,8 @@
         /* Segment size variables */
         le_size_t le_size = 0;
 
-        /* Check consistency */
-        if ( le_socket == _LE_SOCK_NULL ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_SOCKET );
-
-        }
+        /* Check consistency - send message */
+        if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
 
         /* Sending array over TCP/IP */
         while ( le_lbloc < le_sbloc ) {
@@ -224,13 +219,8 @@
         le_size_t le_size = 0;
         le_size_t le_read = 0;
 
-        /* Check consistency */
-        if ( le_socket == _LE_SOCK_NULL ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_SOCKET );
-
-        }
+        /* Check consistency - send message */
+        if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
 
         /* Receiving array over TCP/IP */
         while ( le_read < 5 ) {

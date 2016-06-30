@@ -32,13 +32,8 @@
         /* Address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
         
-        /* Create socket */
-        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) {
-
-            /* Send message */
-            return( _LE_SOCK_NULL );
-
-        }
+        /* Create socket - send message */
+        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) return( _LE_SOCK_NULL );
 
         /* Assign address to socket */
         if ( bind( le_socket, ( struct sockaddr * ) ( & le_addr ), sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
@@ -69,13 +64,8 @@
 
     le_sock_t le_server_delete( le_sock_t const le_socket ) {
 
-        /* Check socket */
-        if ( le_socket != _LE_SOCK_NULL ) {
-
-            /* Close socket */
-            close( le_socket );
-
-        }
+        /* Check socket - close socket */
+        if ( le_socket != _LE_SOCK_NULL ) close( le_socket );
 
         /* Return null socket */
         return( _LE_SOCK_NULL );
@@ -91,18 +81,11 @@
         /* Handshake buffer variables */
         le_hand_t le_buffer = _LE_HAND_NULL;
 
-        /* Read handshake */
-        if ( read( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) {
+        /* Read handshake - send message */
+        if ( read( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) return( _LE_HAND_NULL );
 
-            /* Return null handshake */
-            return( _LE_HAND_NULL );
-
-        } else {
-
-            /* Return received handshake */
-            return( le_buffer );
-
-        }
+        /* Return received handshake */
+        return( le_buffer );
 
     }
 
@@ -111,28 +94,11 @@
         /* Handshake buffer variables */
         le_hand_t le_buffer = le_auth;
 
-        /* Write authorisation on socket */
-        if ( write( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) {
+        /* Write authorisation on socket - send message */
+        if ( write( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) return( LE_ERROR_IO_WRITE );
 
-            /* Send message */
-            return( LE_ERROR_IO_WRITE );
-
-        } else {
-
-            /* Check authorisation */
-            if ( le_auth == _LE_HAND_NULL ) {
-
-                /* Send message */
-                return( LE_ERROR_AUTH );
-
-            } else {
-
-                /* Send message */
-                return( LE_ERROR_SUCCESS );
-
-            }
-
-        }
+        /* Send authorisation */
+        return( le_auth == _LE_HAND_NULL ? LE_ERROR_AUTH : LE_ERROR_SUCCESS );
 
     }
 
@@ -307,13 +273,8 @@
         /* Socket i/o buffer variables */
         le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
-        /* Read query address */
-        if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_READ );
-
-        }
+        /* Read query address - send message */
+        if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
 
         /* Decompose address string */
         le_address_cvsa( & le_address, le_buffer );
@@ -337,18 +298,11 @@
         /* Space discretisation i/o variables */
         le_size_t le_sparam = le_system_get_sparam( le_system );
 
-        /* Write configuration */
-        if ( write( le_socket, & le_sparam, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) {
+        /* Write configuration - send messasge */
+        if ( write( le_socket, & le_sparam, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) return( LE_ERROR_IO_WRITE );
 
-            /* Send message */
-            return( LE_ERROR_IO_WRITE );
-
-        } else {
-
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
-
-        }
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 
@@ -357,18 +311,11 @@
         /* Time discretisation i/o variables */
         le_time_t le_tparam = le_system_get_tparam( le_system );
 
-        /* Write configuration */
-        if ( write( le_socket, & le_tparam, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) {
+        /* Write configuration - send message */
+        if ( write( le_socket, & le_tparam, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) return( LE_ERROR_IO_WRITE );
 
-            /* Send message */
-            return( LE_ERROR_IO_WRITE );
-
-        } else {
-
-            /* Send messsage */
-            return( LE_ERROR_SUCCESS );
-
-        }
+        /* Send messsage */
+        return( LE_ERROR_SUCCESS );
 
     }
 

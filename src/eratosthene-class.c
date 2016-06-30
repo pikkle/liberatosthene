@@ -110,21 +110,11 @@
         /* Class i/o buffer variables */
         static le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE+8];
 
-        /* Move head to class offset */
-        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
+        /* Move head to class offset - send message */
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) return( LE_ERROR_IO_SEEK );
 
-            /* Send message */
-            return( LE_ERROR_IO_SEEK );
-
-        }
-
-        /* Read class buffer */
-        if ( fread( ( le_void_t * ) le_buffer, 1, LE_CLASS_BUFFER_SIZE, le_stream ) != LE_CLASS_BUFFER_SIZE ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_WRITE );
-
-        }
+        /* Read class buffer - send message */
+        if ( fread( ( le_void_t * ) le_buffer, 1, LE_CLASS_BUFFER_SIZE, le_stream ) != LE_CLASS_BUFFER_SIZE ) return( LE_ERROR_IO_WRITE );
 
         /* Class buffer - data and heap segment */
         le_class->cs_data[0] = le_buffer[0];
@@ -152,13 +142,8 @@
         /* Class i/o buffer variables */
         static le_byte_t le_buffer[LE_CLASS_BUFFER_SIZE + 8];
 
-        /* Move head to class offset */
-        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_SEEK );
-
-        }
+        /* Move head to class offset - send message */
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) return( LE_ERROR_IO_SEEK );
 
         /* Class buffer - data and heap segment */
         le_buffer[0] = le_class->cs_data[0];
@@ -176,13 +161,8 @@
         * ( ( le_size_t * ) ( le_buffer + 4 + _LE_USE_OFFSET * 6 ) ) = * ( le_class->cs_addr + 6 );
         * ( ( le_size_t * ) ( le_buffer + 4 + _LE_USE_OFFSET * 7 ) ) = * ( le_class->cs_addr + 7 );
 
-        /* Write class buffer */
-        if ( fwrite( ( le_void_t * ) le_buffer, 1, LE_CLASS_BUFFER_SIZE, le_stream ) != LE_CLASS_BUFFER_SIZE ) {
-
-            /* Send message */
-            return( LE_ERROR_IO_WRITE );
-
-        }
+        /* Write class buffer - send message */
+        if ( fwrite( ( le_void_t * ) le_buffer, 1, LE_CLASS_BUFFER_SIZE, le_stream ) != LE_CLASS_BUFFER_SIZE ) return( LE_ERROR_IO_WRITE );
 
         /* Send message */
         return( LE_ERROR_SUCCESS );

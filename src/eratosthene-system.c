@@ -91,9 +91,6 @@
 
         }
 
-        /* Initialise streams stack */
-        le_system.sm_scale = NULL;
-
         /* Assign provided root path */
         strcpy( ( char * ) le_system.sm_root, ( char * ) le_root );
 
@@ -240,13 +237,8 @@
         /* Address variables */
         le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sparam - 1 );
 
-        /* System scale stream management */
-        if ( ( le_return = le_system_open( le_system, le_time ) ) != LE_ERROR_SUCCESS ) {
-
-            /* Send message */
-            return( le_return );
-
-        }
+        /* System scale stream management - send message */
+        if ( ( le_return = le_system_open( le_system, le_time ) ) != LE_ERROR_SUCCESS ) return( le_return );
 
         /* Compute address */
         le_address_set_pose( & le_addr, le_pose );
@@ -316,21 +308,11 @@
         /* Returned array variables */
         le_array_t le_return = LE_ARRAY_C;
 
-        /* Check consistency */
-        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sparam ) {
+        /* Check consistency - send array */
+        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sparam ) return( le_return );
 
-            /* Return element array */
-            return( le_return );
-
-        }
-
-        /* System scale stream management */
-        if ( le_system_open( le_system, le_address_get_time( le_addr ) ) != LE_ERROR_SUCCESS ) {
-
-            /* Return element array */
-            return( le_return );
-
-        }
+        /* System scale stream management - send array */
+        if ( le_system_open( le_system, le_address_get_time( le_addr ) ) != LE_ERROR_SUCCESS ) return( le_return );
 
         /* Query class search */
         do {
@@ -430,80 +412,73 @@
         /* Persistent time variables */
         static le_time_t le_flag = _LE_TIME_MIN;
 
-        /* Check necessities */
-        if ( ( ( le_time / le_system->sm_tparam ) == le_flag ) && ( le_system->sm_scale != NULL ) ) {
+        /* Check necessities - send message */
+        if ( ( ( le_time / le_system->sm_tparam ) == le_flag ) && ( le_system->sm_scale != NULL ) ) return( LE_ERROR_SUCCESS );
 
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
+        /* Check stream stack */
+        if ( le_system->sm_scale == NULL ) {
 
-        } else {
+            /* Allocate stack memory */
+            if ( ( le_system->sm_scale = malloc( sizeof( FILE * ) * le_system->sm_sparam ) ) == NULL ) {
 
-            /* Check stream stack */
-            if ( le_system->sm_scale == NULL ) {
-
-                /* Allocate stack memory */
-                if ( ( le_system->sm_scale = malloc( sizeof( FILE * ) * le_system->sm_sparam ) ) == NULL ) {
-
-                    /* Send message */
-                    return( LE_ERROR_MEMORY );
-
-                }
-
-                /* Initialise stack */
-                for ( le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
-
-                    /* Invalidate pointer */
-                    le_system->sm_scale[le_parse] = NULL;
-
-                }
+                /* Send message */
+                return( LE_ERROR_MEMORY );
 
             }
 
-            /* Update presistent time */
-            le_flag = le_time / le_system->sm_tparam;
+            /* Initialise stack */
+            for ( le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
-            /* Create time directory path */
-            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_system->sm_root, le_flag );
-
-            /* Create time directory */
-            mkdir( ( char * ) le_path, 0777 );
-
-            /* Create scales streams */
-            for( le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
-
-                /* Check scale stream */
-                if ( le_system->sm_scale[le_parse] != NULL ) {
-
-                    /* Delete scale stream */
-                    fclose( le_system->sm_scale[le_parse] );
-
-                }
-
-                /* Create scale path */
-                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_system->sm_root, le_flag, le_parse );
-
-                /* Create scale stream - r+ read/write */
-                if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
-
-                    /* Create scale stream - w+ read/write */
-                    if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) {
-
-                        /* Send message */
-                        return( LE_ERROR_IO_ACCESS );
-
-                    }
-
-                }
-
-                /* Handle file/directory permission */
-                chmod( ( char * ) le_path, 0777 );
+                /* Invalidate pointer */
+                le_system->sm_scale[le_parse] = NULL;
 
             }
-
-            /* Send message */
-            return( LE_ERROR_SUCCESS );
 
         }
+
+        /* Update presistent time */
+        le_flag = le_time / le_system->sm_tparam;
+
+        /* Create time directory path */
+        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_system->sm_root, le_flag );
+
+        /* Create time directory */
+        mkdir( ( char * ) le_path, 0777 );
+
+        /* Create scales streams */
+        for( le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
+
+            /* Check scale stream */
+            if ( le_system->sm_scale[le_parse] != NULL ) {
+
+                /* Delete scale stream */
+                fclose( le_system->sm_scale[le_parse] );
+
+            }
+
+            /* Create scale path */
+            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_system->sm_root, le_flag, le_parse );
+
+            /* Create scale stream - r+ read/write */
+            if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
+
+                /* Create scale stream - w+ read/write */
+                if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) {
+
+                    /* Send message */
+                    return( LE_ERROR_IO_ACCESS );
+
+                }
+
+            }
+
+            /* Handle file/directory permission */
+            chmod( ( char * ) le_path, 0777 );
+
+        }
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 

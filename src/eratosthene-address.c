@@ -40,18 +40,8 @@
 
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
 
-        /* Check consistency */
-        if ( le_offset >= le_address->as_size ) {
-
-            /* Return invalid digit */
-            return( _LE_BYTE_NULL );
-
-        } else {
-
-            /* Return address digit */
-            return( le_address->as_addr[le_offset] );
-
-        }
+        /* Check consistency - return address digit */
+        return( le_offset >= le_address->as_size ? _LE_BYTE_NULL : le_address->as_addr[le_offset] );
 
     }
 
@@ -114,33 +104,18 @@
             /* Asynchronous dimension management */
             if ( le_parse < LE_GEODESY_ASYP ) {
 
-                /* Check digit validity */
-                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 2 ) ) {
-
-                    /* Return negative answer */
-                    return( _LE_FALSE );
-
-                }
+                /* Check digit validity - send message */
+                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 2 ) ) return( _LE_FALSE );
 
             } else if ( le_parse < LE_GEODESY_ASYA ) {
 
-                /* Check digit validity */
-                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 1 ) ) {
-
-                    /* Return negative answer */
-                    return( _LE_FALSE );
-
-                }
+                /* Check digit validity - send message */
+                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 1 ) ) return( _LE_FALSE );
 
             } else {
 
-                /* Check digit validity */
-                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE ) ) {
-
-                    /* Return negative answer */
-                    return( _LE_FALSE );
-
-                }
+                /* Check digit validity - send message */
+                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE ) ) return( _LE_FALSE );
 
             }
 
@@ -162,13 +137,8 @@
 
     le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
 
-        /* Check consistency */
-        if ( le_size >= _LE_USE_DEPTH ) {
-
-            /* Send message */
-            return( LE_ERROR_DEPTH );
-
-        }
+        /* Check consistency - send message */
+        if ( le_size >= _LE_USE_DEPTH ) return( LE_ERROR_DEPTH );
 
         /* Assign address size */
         le_address->as_size = le_size;
@@ -180,21 +150,11 @@
 
     le_enum_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
 
-        /* Check consistency */
-        if ( le_offset >= le_address->as_size ) {
+        /* Check consistency - send message */
+        if ( le_offset >= le_address->as_size ) return( LE_ERROR_DEPTH );
 
-            /* Send message */
-            return( LE_ERROR_DEPTH );
-
-        }
-
-        /* Check consistency */
-        if ( le_digit >= _LE_USE_BASE ) {
-
-            /* Send message */
-            return( LE_ERROR_BASE );
-
-        }
+        /* Check consistency - send message */
+        if ( le_digit >= _LE_USE_BASE ) return( LE_ERROR_BASE );
 
         /* Assign address digit */
         le_address->as_addr[le_offset] = le_digit;
@@ -206,13 +166,8 @@
 
     le_enum_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth ) {
 
-        /* Check consistency */
-        if ( le_depth >= _LE_USE_DEPTH ) {
-
-            /* Send message */
-            return( LE_ERROR_DEPTH );
-
-        }
+        /* Check consistency - send message */
+        if ( le_depth >= _LE_USE_DEPTH ) return( LE_ERROR_DEPTH );
 
         /* Assign address depth */
         le_address->as_dept = le_depth;

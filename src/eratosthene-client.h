@@ -107,7 +107,8 @@
      */
 
     le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode, le_enum_t le_format );
-    //le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode );
+
+    le_enum_t le_client_system_query_array( le_sock_t const le_socket, le_array_t * const le_array, le_char_t const * const le_query );
 
     /*! \brief connection methods
      *
@@ -132,8 +133,6 @@
      */
 
     le_time_t le_client_system_tparam( le_sock_t const le_socket );
-
-    le_enum_t le_client_system_array( le_sock_t const le_socket, le_array_t * const le_array, le_char_t const * const le_query );
 
 /*
     header - C/C++ compatibility
