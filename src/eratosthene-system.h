@@ -204,6 +204,8 @@
 
     le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
 
+    le_array_t le_system_times( le_system_t const * const le_system );
+
     /*! \brief i/o methods
      *
      *  This function creates the file streams to the server system storage

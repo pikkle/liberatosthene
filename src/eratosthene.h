@@ -90,6 +90,7 @@
     # include <stdlib.h>
     # include <string.h>
     # include <inttypes.h>
+    # include <dirent.h>
     # include <sys/stat.h>
     # include <sys/types.h> 
     # include <sys/socket.h>

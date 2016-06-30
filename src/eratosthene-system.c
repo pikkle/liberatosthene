@@ -382,6 +382,51 @@
     }
 
 /*
+    source - temporal methods
+ */
+
+    le_array_t le_system_times( le_system_t const * const le_system ) {
+
+        /* Time buffer variables */
+        le_time_t le_buffer = _LE_TIME_NULL;
+
+        /* Returned structure variables */
+        le_array_t le_array = LE_ARRAY_C;
+
+        /* Directory variables */
+        DIR * le_directory = NULL;
+
+        /* Directory entity variables */
+        struct dirent * le_entity = NULL;
+
+        /* Create directory handle - send message */
+        if ( ( le_directory = opendir( ( char * ) le_system->sm_root ) ) == NULL ) return( le_array );
+
+        /* Directory entity enumeration */
+        while ( ( le_entity = readdir( le_directory ) ) != NULL ) {
+
+            /* Check entity type */
+            if ( le_entity->d_type == DT_DIR ) {
+
+                /* Convert directory name */
+                le_buffer = le_system->sm_tparam * strtoull( le_entity->d_name, NULL, 10 );
+
+                /* Push buffer in array */
+                le_array_set_push( & le_array, LE_ARRAY_64T, NULL, le_buffer, NULL );
+
+            }
+
+        }
+
+        /* Delete directory handle */
+        closedir( le_directory );
+
+        /* Return structure */
+        return( le_array );
+
+    }
+
+/*
     source - i/o methods
  */
 

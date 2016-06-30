@@ -26,7 +26,7 @@
     MAKE_STABLD:=ar
     MAKE_DOCBLD:=doxygen
 
-    BUILD_FLAGS:=-Wall -funsigned-char -O3
+    BUILD_FLAGS:=-Wall -funsigned-char -O3 -D_BSD_SOURCE
     BUILD_LINKD:=-lm
     BUILD_SUBMD:=
 

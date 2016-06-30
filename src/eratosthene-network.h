@@ -67,10 +67,12 @@
     # define LE_NETWORK_MODE_QMOD       ( 0x02 )
     # define LE_NETWORK_MODE_SMOD       ( 0x03 )
     # define LE_NETWORK_MODE_TMOD       ( 0x04 )
+    # define LE_NETWORK_MODE_AMOD       ( 0x05 )
     # define LE_NETWORK_MODE_IATH       ( 0x81 )
     # define LE_NETWORK_MODE_QATH       ( 0x82 )
     # define LE_NETWORK_MODE_SATH       ( 0x83 )
     # define LE_NETWORK_MODE_TATH       ( 0x84 )
+    # define LE_NETWORK_MODE_AATH       ( 0x85 )
 
 /*
     header - preprocessor macros
