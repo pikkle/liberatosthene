@@ -84,7 +84,7 @@
         }
 
         /* Check consistency */
-        if ( ( le_system.sm_tformat < LE_ARRAY_MIN ) || ( le_system.sm_tformat > LE_ARRAY_MAX ) ) {
+        if ( ( le_system.sm_tformat != LE_ARRAY_64S ) && ( le_system.sm_tformat != LE_ARRAY_64R ) ) {
 
             /* Send message */
             le_system._status = LE_ERROR_FORMAT; return( le_system );
