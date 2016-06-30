@@ -156,6 +156,8 @@
 
     le_enum_t le_server_system_query( le_sock_t const le_socket, le_system_t * const le_system );
 
+    le_enum_t le_server_system_times( le_sock_t const le_socket, le_system_t const * const le_system );
+
     /*! \brief connection methods
      *
      *  This function answer to client spatial indexation parameter query.

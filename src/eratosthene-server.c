@@ -158,6 +158,19 @@
 
                         } break;
 
+                        /* System times array mode */
+                        case ( LE_NETWORK_MODE_AMOD ) : {
+
+                            /* Send authorisation */
+                            if ( le_server_authorise( le_client, le_system_set_format( le_system, le_hand ) ) == LE_ERROR_SUCCESS ) {
+
+                                /* Connection to system times */
+                                le_server_system_times( le_client, le_system );
+
+                            }
+
+                        } break;
+
                         /* System spatial configuration mode */
                         case ( LE_NETWORK_MODE_SMOD ) : {
 
