@@ -119,7 +119,7 @@
      *  \return Spatial indexation parameter on success, _LE_SIZE_NULL on error
      */
 
-    le_size_t le_client_system_sdisc( le_sock_t const le_socket );
+    le_size_t le_client_system_sparam( le_sock_t const le_socket );
 
     /*! \brief connection methods
      *
@@ -131,7 +131,7 @@
      *  \return Time indexation parameter on success, _LE_TIME_NULL on error
      */
 
-    le_time_t le_client_system_tdisc( le_sock_t const le_socket );
+    le_time_t le_client_system_tparam( le_sock_t const le_socket );
 
     le_enum_t le_client_system_array( le_sock_t const le_socket, le_array_t * const le_array, le_char_t const * const le_query );
 
