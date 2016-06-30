@@ -240,7 +240,7 @@
         if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
 
         /* Receiving array over TCP/IP */
-        while ( le_read < 5 ) {
+        while ( le_read < _LE_USE_RETRY ) {
 
             /* Array memory allocation - Send message */
             if ( ( le_return = le_array_set_memory( le_array, _LE_USE_MTU ) ) != LE_ERROR_SUCCESS ) return( le_return );
