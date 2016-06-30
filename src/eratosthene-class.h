@@ -108,7 +108,7 @@
      *
      */
 
-    le_class_t le_class_create( le_data_t const * const le_data, le_size_t const le_format );
+    le_class_t le_class_create( le_data_t const * const le_data );
 
     /*! \brief constructor/destructor methods
      *

@@ -24,7 +24,7 @@
     source - constructor/destructor methods
  */
 
-    le_class_t le_class_create( le_data_t const * const le_data, le_size_t const le_format ) {
+    le_class_t le_class_create( le_data_t const * const le_data ) {
 
         /* Returned structure variables */
         le_class_t le_class = LE_CLASS_C_DATA( le_data[0], le_data[1], le_data[2] );

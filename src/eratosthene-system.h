@@ -53,7 +53,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_SYSTEM_C { { 0 }, 0, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
+    # define LE_SYSTEM_C { { 0 }, 0, 0, LE_ARRAY_64S, NULL, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -97,8 +97,7 @@
         le_char_t sm_root[256];
         le_size_t sm_sparam;
         le_time_t sm_tparam;
-        le_size_t sm_sformat;
-        le_enum_t sm_tformat;
+        le_enum_t sm_format;
         FILE **   sm_scale;
 
     le_enum_t _status; } le_system_t;
