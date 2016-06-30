@@ -166,7 +166,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
      */
 
-    le_enum_t le_server_system_sdisc( le_sock_t const le_socket, le_system_t const * const le_system );
+    le_enum_t le_server_system_sparam( le_sock_t const le_socket, le_system_t const * const le_system );
 
     /*! \brief connection methods
      *
@@ -178,7 +178,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
      */
 
-    le_enum_t le_server_system_tdisc( le_sock_t const le_socket, le_system_t const * const le_system );
+    le_enum_t le_server_system_tparam( le_sock_t const le_socket, le_system_t const * const le_system );
 
 /*
     header - C/C++ compatibility

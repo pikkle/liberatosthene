@@ -74,8 +74,8 @@
      *  are the root path of the equivalence classes storage structure 
      *  \b sm_root and the space-time indexation parameters.
      *
-     *  The space indexation is fixed through the number of scale \b sm_sdisc
-     *  along which class are defined and stored. The \b sm_tdisc gives, in
+     *  The space indexation is fixed through the number of scale \b sm_sparam
+     *  along which class are defined and stored. The \b sm_tparam gives, in
      *  seconds, the linear and contigous size of the equivalence class in the
      *  time dimension.
      *
@@ -84,9 +84,9 @@
      *
      *  \var le_system_struct::sm_root
      *  Storage structure path
-     *  \var le_system_struct::sm_sdisc
+     *  \var le_system_struct::sm_sparam
      *  System number of scales
-     *  \var le_system_struct::sm_tdisc
+     *  \var le_system_struct::sm_tparam
      *  System time discretisation
      *  \var le_system_struct::sm_scale
      *  Storage structure stream descriptors
@@ -95,8 +95,8 @@
     typedef struct le_system_struct {
 
         le_char_t sm_root[256];
-        le_size_t sm_sdisc;
-        le_time_t sm_tdisc;
+        le_size_t sm_sparam;
+        le_time_t sm_tparam;
         le_size_t sm_sformat;
         le_enum_t sm_tformat;
         FILE **   sm_scale;
@@ -140,7 +140,7 @@
      *  \return Server system spatial indexation parameter
      */
 
-    le_size_t le_system_get_sdisc( le_system_t const * const le_system );
+    le_size_t le_system_get_sparam( le_system_t const * const le_system );
 
     /*! \brief accessor methods
      *
@@ -151,7 +151,7 @@
      *  \return Server system time indexation parameter
      */
 
-    le_time_t le_system_get_tdisc( le_system_t const * const le_system );
+    le_time_t le_system_get_tparam( le_system_t const * const le_system );
 
     le_hand_t le_system_set_format( le_system_t * const le_system, le_hand_t const le_hand );
 

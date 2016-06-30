@@ -44,7 +44,7 @@
         }
 
         /* Check configuration reading */
-        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S " %" _LE_SIZE_S " %" _LE_ENUM_S, & ( le_system.sm_sdisc ), & ( le_system.sm_tdisc ), & ( le_system.sm_sformat ), & ( le_system.sm_tformat ) ) != 4 ) {
+        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S " %" _LE_SIZE_S " %" _LE_ENUM_S, & ( le_system.sm_sparam ), & ( le_system.sm_tparam ), & ( le_system.sm_sformat ), & ( le_system.sm_tformat ) ) != 4 ) {
 
             /* Close configuration stream */
             fclose( le_stream );
@@ -60,7 +60,7 @@
         }
 
         /* Check consistency */
-        if ( ( le_system.sm_sdisc <= 0 ) || ( le_system.sm_sdisc >= _LE_USE_DEPTH ) ) {
+        if ( ( le_system.sm_sparam <= 0 ) || ( le_system.sm_sparam >= _LE_USE_DEPTH ) ) {
 
             /* Send message */
             le_system._status = LE_ERROR_DEPTH; return( le_system );
@@ -68,7 +68,7 @@
         }
 
         /* Check consistency */
-        if ( le_system.sm_tdisc <= 0 ) {
+        if ( le_system.sm_tparam <= 0 ) {
 
             /* Send message */
             le_system._status = LE_ERROR_TIME; return( le_system );
@@ -119,17 +119,17 @@
     source - accessor methods
  */
 
-    le_size_t le_system_get_sdisc( le_system_t const * const le_system ) {
+    le_size_t le_system_get_sparam( le_system_t const * const le_system ) {
 
         /* Return system space discretisation */
-        return( le_system->sm_sdisc );
+        return( le_system->sm_sparam );
 
     }
 
-    le_time_t le_system_get_tdisc( le_system_t const * const le_system ) {
+    le_time_t le_system_get_tparam( le_system_t const * const le_system ) {
 
         /* Return system time discretisation */
-        return( le_system->sm_tdisc );
+        return( le_system->sm_tparam );
 
     }
 
@@ -238,7 +238,7 @@
         le_class_t le_class = LE_CLASS_C;
 
         /* Address variables */
-        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sdisc - 1 );
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sparam - 1 );
 
         /* System scale stream management */
         if ( ( le_return = le_system_open( le_system, le_time ) ) != LE_ERROR_SUCCESS ) {
@@ -274,7 +274,7 @@
             le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_depth ) );
 
             /* Check daughter state */
-            if ( ( le_offset == _LE_OFFS_NULL ) && ( le_depth < ( le_system->sm_sdisc - 1 ) ) ) {
+            if ( ( le_offset == _LE_OFFS_NULL ) && ( le_depth < ( le_system->sm_sparam - 1 ) ) ) {
 
                 /* Seek next scale eof */
                 fseek( le_system->sm_scale[le_depth+1], 0, SEEK_END );
@@ -291,7 +291,7 @@
             le_class_io_write( & le_class, le_offnex, le_system->sm_scale[le_depth] );
 
         /* Injection process condition */
-        } while ( ( ++ le_depth ) < le_system->sm_sdisc );
+        } while ( ( ++ le_depth ) < le_system->sm_sparam );
 
         /* Send message */
         return( le_return );
@@ -317,7 +317,7 @@
         le_array_t le_return = LE_ARRAY_C;
 
         /* Check consistency */
-        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sdisc ) {
+        if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sparam ) {
 
             /* Return element array */
             return( le_return );
@@ -431,7 +431,7 @@
         static le_time_t le_flag = _LE_TIME_MIN;
 
         /* Check necessities */
-        if ( ( ( le_time / le_system->sm_tdisc ) == le_flag ) && ( le_system->sm_scale != NULL ) ) {
+        if ( ( ( le_time / le_system->sm_tparam ) == le_flag ) && ( le_system->sm_scale != NULL ) ) {
 
             /* Send message */
             return( LE_ERROR_SUCCESS );
@@ -442,7 +442,7 @@
             if ( le_system->sm_scale == NULL ) {
 
                 /* Allocate stack memory */
-                if ( ( le_system->sm_scale = malloc( sizeof( FILE * ) * le_system->sm_sdisc ) ) == NULL ) {
+                if ( ( le_system->sm_scale = malloc( sizeof( FILE * ) * le_system->sm_sparam ) ) == NULL ) {
 
                     /* Send message */
                     return( LE_ERROR_MEMORY );
@@ -450,7 +450,7 @@
                 }
 
                 /* Initialise stack */
-                for ( le_parse = 0; le_parse < le_system->sm_sdisc; le_parse ++ ) {
+                for ( le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
                     /* Invalidate pointer */
                     le_system->sm_scale[le_parse] = NULL;
@@ -460,7 +460,7 @@
             }
 
             /* Update presistent time */
-            le_flag = le_time / le_system->sm_tdisc;
+            le_flag = le_time / le_system->sm_tparam;
 
             /* Create time directory path */
             sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_system->sm_root, le_flag );
@@ -469,7 +469,7 @@
             mkdir( ( char * ) le_path, 0777 );
 
             /* Create scales streams */
-            for( le_parse = 0; le_parse < le_system->sm_sdisc; le_parse ++ ) {
+            for( le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
                 /* Check scale stream */
                 if ( le_system->sm_scale[le_parse] != NULL ) {
@@ -513,7 +513,7 @@
         le_size_t le_parse = 0;
 
         /* Parsing stream */
-        for ( ; le_parse < le_system->sm_sdisc; le_parse ++ ) {
+        for ( ; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
             /* Check stream state */
             if ( le_system->sm_scale[le_parse] != NULL ) {
@@ -536,7 +536,7 @@
         if ( le_system->sm_scale != NULL ) {
 
             /* Parsing scales streams */
-            for( ; le_parse < le_system->sm_sdisc; le_parse ++ ) {
+            for( ; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
                 /* Check stream */
                 if ( le_system->sm_scale[le_parse] != NULL ) {
