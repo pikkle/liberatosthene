@@ -166,6 +166,23 @@
 
             } break;
 
+            /* 64T array format */
+            case ( LE_ARRAY_64T ) : {
+
+                /* Array memory allocation */
+                if ( ( le_return = le_array_set_memory( le_array, LE_ARRAY_64T_LEN ) ) == LE_ERROR_SUCCESS ) {
+
+                    /* Array pointer variables */
+                    le_time_t * le_tp = ( le_time_t * ) ( le_array->ar_byte + le_array->ar_size - LE_ARRAY_64T_LEN );
+
+                    /* Record element - time */
+                    le_tp[0] = le_time;
+
+                /* Send message */
+                } return( le_return );
+
+            } break;
+
         };
 
         /* Send message */

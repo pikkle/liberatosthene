@@ -60,10 +60,12 @@
     # define LE_ARRAY_NULL    ( 0x00 )
     # define LE_ARRAY_64S     ( 0x01 )
     # define LE_ARRAY_64R     ( 0x02 )
+    # define LE_ARRAY_64T     ( 0x03 )
 
     /* Define array formats records length */
     # define LE_ARRAY_64S_LEN ( 8 + 8 + 8 + 8 + 3 ) // 34 bytes
     # define LE_ARRAY_64R_LEN ( 8 + 8 + 8 + 3 )     // 26 bytes
+    # define LE_ARRAY_64T_LEN ( 8 )                 //  8 bytes
 
 /*
     header - preprocessor macros
