@@ -44,7 +44,7 @@
         }
 
         /* Check configuration reading */
-        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S " %" _LE_SIZE_S " %" _LE_ENUM_S " %" _LE_ENUM_S, & ( le_system.sm_sdisc ), & ( le_system.sm_tdisc ), & ( le_system.sm_smode ), & ( le_system.sm_imode ), & ( le_system.sm_qmode ) ) != 5 ) {
+        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S " %" _LE_SIZE_S " %" _LE_ENUM_S, & ( le_system.sm_sdisc ), & ( le_system.sm_tdisc ), & ( le_system.sm_sformat ), & ( le_system.sm_tformat ) ) != 4 ) {
 
             /* Close configuration stream */
             fclose( le_stream );
@@ -76,7 +76,7 @@
         }
 
         /* Check consistency */
-        if ( le_system.sm_smode != _LE_USE_OFFSET ) {
+        if ( le_system.sm_sformat != _LE_USE_OFFSET ) {
 
             /* Send message */
             le_system._status = LE_ERROR_FORMAT; return( le_system );
@@ -84,15 +84,7 @@
         }
 
         /* Check consistency */
-        if ( le_system.sm_imode != LE_ARRAY_64S ) {
-
-            /* Send message */
-            le_system._status = LE_ERROR_FORMAT; return( le_system );
-
-        }
-
-        /* Check consistency */
-        if ( ( le_system.sm_qmode < LE_ARRAY_MIN ) || ( le_system.sm_qmode > LE_ARRAY_MAX ) ) {
+        if ( ( le_system.sm_tformat < LE_ARRAY_MIN ) || ( le_system.sm_tformat > LE_ARRAY_MAX ) ) {
 
             /* Send message */
             le_system._status = LE_ERROR_FORMAT; return( le_system );
@@ -160,7 +152,7 @@
                     case ( LE_ARRAY_64S ) : {
 
                         /* Change transmission mode */
-                        le_system->sm_imode = LE_ARRAY_64S;
+                        le_system->sm_tformat = LE_ARRAY_64S;
 
                         /* Return autorisation */
                         return( LE_NETWORK_MODE_IATH );
@@ -181,7 +173,18 @@
                     case ( LE_ARRAY_64S ) : {
 
                         /* Change transmission mode */
-                        le_system->sm_imode = LE_ARRAY_64S;
+                        le_system->sm_tformat = LE_ARRAY_64S;
+
+                        /* Return authorisation */
+                        return( LE_NETWORK_MODE_QATH );
+
+                    } break;
+
+                    /* Transmission format */
+                    case ( LE_ARRAY_64R ) : {
+
+                        /* Change transmission mode */
+                        le_system->sm_tformat = LE_ARRAY_64R;
 
                         /* Return authorisation */
                         return( LE_NETWORK_MODE_QATH );
@@ -263,7 +266,7 @@
             } else {
 
                 /* Initialise class with element */
-                le_class = le_class_create( le_data, le_system->sm_smode );
+                le_class = le_class_create( le_data, le_system->sm_sformat );
 
             }
 
@@ -406,7 +409,7 @@
             le_address_get_pose( le_addr, le_pose );
 
             /* Inject gathered element in array */
-            le_array_set_push( le_array, LE_ARRAY_64S, le_pose, le_address_get_time( le_addr ), le_class_get_data( le_class ) );
+            le_array_set_push( le_array, le_system->sm_tformat, le_pose, le_address_get_time( le_addr ), le_class_get_data( le_class ) );
 
         }
 
