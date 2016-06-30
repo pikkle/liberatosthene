@@ -103,7 +103,7 @@
      *  \return Query mode descriptor on success, LE_NETWORK_MODE_NULL on error
      */
 
-    le_enum_t le_server_handshake_mode( le_sock_t const le_socket );
+    le_hand_t le_server_handshake( le_sock_t const le_socket );
 
     /*! \brief handshake methods
      *
@@ -116,7 +116,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
      */
 
-    le_enum_t le_server_handshake_auth( le_sock_t const le_socket, le_enum_t const le_auth );
+    le_enum_t le_server_authorise( le_sock_t const le_socket, le_enum_t const le_auth );
 
     /*! \brief server methods
      *

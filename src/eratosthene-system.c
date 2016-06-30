@@ -142,6 +142,80 @@
     }
 
 /*
+    source - mutator methods
+ */
+
+    le_hand_t le_system_set_format( le_system_t * const le_system, le_hand_t const le_hand ) {
+
+        /* Switch on authorisation mode */
+        switch ( le_hand & 0xff ) {
+
+            /* Injection authorisation */
+            case ( LE_NETWORK_MODE_IMOD ) : {
+
+                /* Switch on format */
+                switch ( le_hand >> 8 ) {
+
+                    /* Transmission format */
+                    case ( LE_ARRAY_64S ) : {
+
+                        /* Change transmission mode */
+                        le_system->sm_imode = LE_ARRAY_64S;
+
+                        /* Return autorisation */
+                        return( LE_NETWORK_MODE_IATH );
+
+                    } break;
+
+                };
+
+            } break;
+
+            /* Query authorisation */
+            case ( LE_NETWORK_MODE_QMOD ) : {
+
+                /* Switch on format */
+                switch ( le_hand >> 8 ) {
+
+                    /* Transmission format */
+                    case ( LE_ARRAY_64S ) : {
+
+                        /* Change transmission mode */
+                        le_system->sm_imode = LE_ARRAY_64S;
+
+                        /* Return authorisation */
+                        return( LE_NETWORK_MODE_QATH );
+
+                    } break;
+
+                };
+
+            } break;
+
+            /* Spatial parameter query */
+            case ( LE_NETWORK_MODE_SMOD ) : {
+
+                /* Return authorisation */
+                return( LE_NETWORK_MODE_SATH );
+
+            } break;
+
+            /* Temporal parameter query */
+            case ( LE_NETWORK_MODE_TMOD ) : {
+
+                /* Return authorisation */
+                return( LE_NETWORK_MODE_TATH );
+
+            } break;
+
+        };
+
+        /* Authorisation failure */
+        return( _LE_HAND_NULL );
+
+    }
+
+/*
     source - injection methods
  */
 

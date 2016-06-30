@@ -154,6 +154,8 @@
 
     le_time_t le_system_get_tdisc( le_system_t const * const le_system );
 
+    le_hand_t le_system_set_format( le_system_t * const le_system, le_hand_t const le_hand );
+
     /*! \brief injection methods
      *
      *  This function injects the element provided as parameter in the server

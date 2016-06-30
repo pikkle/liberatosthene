@@ -106,7 +106,8 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode );
+    le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode, le_enum_t le_format );
+    //le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode );
 
     /*! \brief connection methods
      *

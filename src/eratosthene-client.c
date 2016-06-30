@@ -83,10 +83,10 @@
     source - handshake methods
  */
 
-    le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode ) {
+    le_enum_t le_client_handshake_mode( le_sock_t const le_socket, le_enum_t le_mode, le_enum_t le_format ) {
 
         /* Handshake buffer variables */
-        le_byte_t le_buffer = ( le_byte_t ) le_mode;
+        le_hand_t le_buffer = ( le_hand_t ) le_mode | ( le_hand_t ) le_format << 8;
 
         /* Check consistency */
         if ( le_socket == _LE_SOCK_NULL ) {
@@ -97,7 +97,7 @@
         }
 
         /* Write handshake */
-        if ( write( le_socket, & le_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
+        if ( write( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) {
 
             /* Send message */
             return( LE_ERROR_IO_WRITE );
@@ -105,7 +105,7 @@
         }
 
         /* Wait handshake authorisation */
-        if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
+        if ( read( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) {
 
             /* Send message */
             return( LE_ERROR_IO_READ );
@@ -113,7 +113,7 @@
         }
 
         /* Check authorisation */
-        if ( ( le_buffer & 0x7F ) != le_mode ) {
+        if ( ( le_buffer & 0x7f ) != le_mode ) {
 
             /* Send message */
             return( LE_ERROR_AUTH );

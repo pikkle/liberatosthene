@@ -140,6 +140,7 @@
     # define _LE_TIME           int64_t
     # define _LE_DATA           uint8_t
     # define _LE_SOCK           int
+    # define _LE_HAND           uint16_t
 
     /* Define boundaries */
     # define _LE_BYTE_MIN       0
@@ -157,6 +158,7 @@
     # define _LE_SIZE_NULL      _LE_SIZE_MAX
     # define _LE_TIME_NULL      _LE_TIME_MIN
     # define _LE_SOCK_NULL      -1
+    # define _LE_HAND_NULL      0xffff
     # define _LE_OFFS_NULL      ( ( ( uint64_t ) 1 << ( _LE_USE_OFFSET * 8 ) ) - 1 )
 
     /* Define input specifiers */
@@ -223,6 +225,7 @@
     typedef _LE_TIME le_time_t;
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;
+    typedef _LE_HAND le_hand_t;
 
 /*
     header - structures
