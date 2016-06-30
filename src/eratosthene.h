@@ -109,11 +109,6 @@
     /* Features configuration */
     # define _LE_USE_SIZE_T     ( 64 )
     # define _LE_USE_OFFSET     ( 5 )
-    # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
-    # error "offset out of range"
-    # elif ( _LE_USE_SIZE_T != 64 ) && ( _LE_USE_OFFSET > 4 )
-    # error "offset and size incompatibility"
-    # endif
     # define _LE_USE_DEPTH      ( 64 )
     # define _LE_USE_QUERY      ( _LE_USE_DEPTH + 24 )
     # define _LE_USE_MTU        ( 1280 )
@@ -136,7 +131,6 @@
     # define _LE_DIFF           int64_t
     # endif
     # define _LE_REAL           double
-    # define _LE_REAR           float
     # define _LE_TIME           int64_t
     # define _LE_DATA           uint8_t
     # define _LE_SOCK           int
@@ -203,6 +197,18 @@
     # define LE_2P              ( LE_PI * 2.0L )
 
 /*
+    header - configuration validation
+ */
+
+    # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
+    # error "configuration : offset value unhandled"
+    # endif
+
+    # if ( _LE_USE_SIZE_T != 64 ) && ( _LE_USE_OFFSET > 4 )
+    # error "configuration : cannot handle greater than 4-bytes offset using 32 bits sizes"
+    # endif
+
+/*
     header - preprocessor macros
  */
 
@@ -221,7 +227,6 @@
     typedef _LE_SIZE le_size_t;
     typedef _LE_DIFF le_diff_t;
     typedef _LE_REAL le_real_t;
-    typedef _LE_REAR le_rear_t;
     typedef _LE_TIME le_time_t;
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;
