@@ -54,13 +54,8 @@
         /* Offset base variables */
         le_size_t le_base = _LE_USE_BASE;
 
-        /* Check consistency */
-        if ( le_offset >= le_address->as_size ) {
-
-            /* Send message */
-            return( LE_ERROR_DEPTH );
-
-        }
+        /* Check consistency - send message */
+        if ( le_offset >= le_address->as_size ) return( LE_ERROR_DEPTH );
 
         /* Clear address digits */
         for ( le_size_t le_parse = le_offset + 1; le_parse < le_address->as_size; le_parse ++ ) le_address->as_addr[le_parse] = 0;
@@ -107,13 +102,8 @@
         /* Offset base variables */
         le_size_t le_base = _LE_USE_BASE;
 
-        /* Check consistency */
-        if ( le_addr1->as_size != le_addr2->as_size ) {
-
-            /* Send message */
-            return( LE_ERROR_DEPTH );
-
-        }
+        /* Check consistency - send message */
+        if ( le_addr1->as_size != le_addr2->as_size ) return( LE_ERROR_DEPTH );
 
         /* Initialise result structure */
         * le_addr = * le_addr1;
@@ -163,13 +153,8 @@
         /* Offset base variables */
         le_size_t le_base = _LE_USE_BASE;
 
-        /* Check consistency */
-        if ( le_addr1->as_size != le_addr2->as_size ) {
-
-            /* Send message */
-            return( LE_ERROR_DEPTH );
-
-        }
+        /* Check consistency - send message */
+        if ( le_addr1->as_size != le_addr2->as_size ) return( LE_ERROR_DEPTH );
 
         /* Initialise result structure */
         * le_addr = * le_addr1;
