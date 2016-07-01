@@ -89,7 +89,7 @@
         le_system_t le_return = LE_SYSTEM_C;
 
         /* Delete streams stack */
-        le_system_close( le_system );
+        le_system_io_close( le_system );
 
         /* Return deleted structure */
         return( le_return );
@@ -222,7 +222,7 @@
         le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sparam - 1 );
 
         /* System scale stream management - send message */
-        if ( ( le_return = le_system_open( le_system, le_time ) ) != LE_ERROR_SUCCESS ) return( le_return );
+        if ( ( le_return = le_system_io_open( le_system, le_time ) ) != LE_ERROR_SUCCESS ) return( le_return );
 
         /* Compute address */
         le_address_set_pose( & le_addr, le_pose );
@@ -296,7 +296,7 @@
         if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sparam ) return( le_return );
 
         /* System scale stream management - send array */
-        if ( le_system_open( le_system, le_address_get_time( le_addr ) ) != LE_ERROR_SUCCESS ) return( le_return );
+        if ( le_system_io_open( le_system, le_address_get_time( le_addr ) ) != LE_ERROR_SUCCESS ) return( le_return );
 
         /* Query class search */
         do {
@@ -321,7 +321,7 @@
         if ( ( -- le_depth ) == le_address_get_size( le_addr ) ) {
 
             /* Gathering process */
-            le_system_gather( le_system, & le_return, le_addr, & le_class, le_depth, le_depth + le_address_get_depth( le_addr ) );
+            le_system_query_gather( le_system, & le_return, le_addr, & le_class, le_depth, le_depth + le_address_get_depth( le_addr ) );
 
         }
 
@@ -330,7 +330,7 @@
            
     }
 
-    le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
+    le_void_t le_system_query_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -363,7 +363,7 @@
                     le_class_io_read( & le_clnex, le_offset, le_system->sm_scale[le_head+1] );
 
                     /* Recursive gathering process */
-                    le_system_gather( le_system, le_array, le_addr, & le_clnex, le_head + 1, le_target );
+                    le_system_query_gather( le_system, le_array, le_addr, & le_clnex, le_head + 1, le_target );
 
                 }
 
@@ -430,7 +430,7 @@
     source - i/o methods
  */
 
-    le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time ) {
+    le_enum_t le_system_io_open( le_system_t * const le_system, le_time_t const le_time ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -511,7 +511,7 @@
 
     }
 
-    le_void_t le_system_flush( le_system_t * const le_system ) {
+    le_void_t le_system_io_flush( le_system_t * const le_system ) {
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -531,7 +531,7 @@
 
     }
 
-    le_void_t le_system_close( le_system_t * const le_system ) {
+    le_void_t le_system_io_close( le_system_t * const le_system ) {
 
         /* Parser variables */
         le_size_t le_parse = 0;

@@ -202,7 +202,7 @@
      *  \param le_target Scale index of the target daughter classes
      */
 
-    le_void_t le_system_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
+    le_void_t le_system_query_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
 
     le_array_t le_system_times( le_system_t const * const le_system );
 
@@ -217,7 +217,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_system_open( le_system_t * const le_system, le_time_t const le_time );
+    le_enum_t le_system_io_open( le_system_t * const le_system, le_time_t const le_time );
 
     /*! \brief i/o methods
      *
@@ -227,7 +227,7 @@
      *  \param le_system Server system descriptor
      */
 
-    le_void_t le_system_flush( le_system_t * const le_system );
+    le_void_t le_system_io_flush( le_system_t * const le_system );
 
     /*! \brief i/o methods
      *
@@ -237,7 +237,7 @@
      *  \param le_system Server system descriptor
      */
 
-    le_void_t le_system_close( le_system_t * const le_system );
+    le_void_t le_system_io_close( le_system_t * const le_system );
 
 /*
     header - C/C++ compatibility

@@ -73,7 +73,7 @@
     }
 
 /*
-    source - handshake methods
+    source - handshake and authorisation methods
  */
 
     le_hand_t le_server_handshake( le_sock_t const le_socket ) {
@@ -211,7 +211,7 @@
     }
 
 /*
-    source - connection methods
+    source - system methods
  */
 
     le_void_t le_server_system_inject( le_sock_t const le_socket, le_system_t * const le_system ) {
