@@ -149,15 +149,10 @@
     # define _LE_TIME_MIN       INT64_MIN
     # define _LE_TIME_MAX       INT64_MAX
 
-    /* Define type nulls */
-    # define _LE_BYTE_NULL      0xff
-    # define _LE_SIZE_NULL      _LE_SIZE_MAX
-    # define _LE_TIME_NULL      _LE_TIME_MIN
-    # define _LE_SOCK_NULL      -1
-    # define _LE_HAND_NULL      0xffff
-    # define _LE_OFFS_NULL      ( ( ( uint64_t ) 1 << ( _LE_USE_OFFSET * 8 ) ) - 1 )
+    /* Define litteral suffix */
+    # define _LE_REAL_L(t)      ( t )
 
-    /* Define input specifiers */
+    /* Define i/o specifiers */
     # define _LE_BYTE_P         PRIu8
     # define _LE_BYTE_S         SCNu8
     # define _LE_CHAR_P         "u"
@@ -178,6 +173,14 @@
     # define _LE_DATA_P         PRIu8
     # define _LE_DATA_S         SCNu8
 
+    /* Define type nulls */
+    # define _LE_BYTE_NULL      0xff
+    # define _LE_SIZE_NULL      _LE_SIZE_MAX
+    # define _LE_TIME_NULL      _LE_TIME_MIN
+    # define _LE_SOCK_NULL      -1
+    # define _LE_HAND_NULL      0xffff
+    # define _LE_OFFS_NULL      ( ( ( uint64_t ) 1 << ( _LE_USE_OFFSET * 8 ) ) - 1 )
+
     /* Define errors */
     # define LE_ERROR_SUCCESS   0x0000
     # define LE_ERROR_IO_ACCESS 0x0001
@@ -194,9 +197,9 @@
     # define LE_ERROR_FORMAT    0x000c
 
     /* Define constants */
-    # define LE_PI              ( 3.1415926535897932384626433832795029L )
-    # define LE_P2              ( LE_PI / 2.0L )
-    # define LE_2P              ( LE_PI * 2.0L )
+    # define LE_PI              ( _LE_REAL_L ( 3.1415926535897932384626433832795029 ) )
+    # define LE_P2              ( LE_PI / _LE_REAL_L( 2.0L ) )
+    # define LE_2P              ( LE_PI * _LE_REAL_L( 2.0L ) )
 
 /*
     header - consistency checks
