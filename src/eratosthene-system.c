@@ -178,10 +178,15 @@
                 switch ( le_hand >> 8 ) {
 
                     /* Transmission format */
-                    le_system->sm_format = LE_ARRAY_64T;
+                    case ( LE_ARRAY_64T ) : {
 
-                    /* Return authorisation */
-                    return( LE_NETWORK_MODE_AATH );
+                        /* Transmission format */
+                        le_system->sm_format = LE_ARRAY_64T;
+
+                        /* Return authorisation */
+                        return( LE_NETWORK_MODE_AATH );
+
+                    } break;
 
                 };
 
