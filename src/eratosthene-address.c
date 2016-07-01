@@ -231,7 +231,7 @@
     source - conversion methods
  */
 
-    le_void_t le_address_cvas( le_address_t const * const le_address, le_char_t * const le_string ) {
+    le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string ) {
 
         /* Conversion buffer variables */
         le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
@@ -244,7 +244,7 @@
 
     }
 
-    le_void_t le_address_cvsa( le_address_t * const le_address, le_char_t const * const le_string ) {
+    le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string ) {
 
         /* Conversion buffer variables */
         le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
@@ -273,7 +273,7 @@
         if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
 
         /* Decompose address string */
-        le_address_cvsa( le_address, le_buffer );
+        le_address_cf_string( le_address, le_buffer );
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
@@ -286,7 +286,7 @@
         le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Compose address string */
-        le_address_cvas( le_address, le_buffer );
+        le_address_ct_string( le_address, le_buffer );
 
         /* Write query address - send message */
         if ( write( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_WRITE );

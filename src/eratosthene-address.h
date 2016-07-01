@@ -290,7 +290,7 @@
      *  \param le_string  String receiving the converted address structure
      */
 
-    le_void_t le_address_cvas( le_address_t const * const le_address, le_char_t * const le_string );
+    le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string );
 
     /*! \brief conversion methods
      *
@@ -302,7 +302,7 @@
      *  \param le_string  String containing the converted address structure
      */
 
-    le_void_t le_address_cvsa( le_address_t * const le_address, le_char_t const * const le_string );
+    le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string );
 
     /*! \brief i/o methods
      *
