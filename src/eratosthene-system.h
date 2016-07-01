@@ -53,7 +53,6 @@
  */
 
     /* Define pseudo-constructor */
-    //# define LE_SYSTEM_C { { 0 }, 0, 0, LE_ARRAY_64S, NULL, LE_ERROR_SUCCESS }
     # define LE_SYSTEM_C { { 0 }, 0, 0, LE_ARRAY_64S, { NULL }, LE_ERROR_SUCCESS }
 
 /*
@@ -100,8 +99,6 @@
         le_time_t sm_tparam;
         le_enum_t sm_format;
         FILE *    sm_scale[_LE_USE_DEPTH];
-
-        //FILE **   sm_scale;
 
     le_enum_t _status; } le_system_t;
 
