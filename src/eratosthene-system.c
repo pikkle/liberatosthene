@@ -176,6 +176,22 @@
 
             } break;
 
+            /* System times array mode */
+            case ( LE_NETWORK_MODE_AMOD ) : {
+
+                /* Switch on format */
+                switch ( le_hand >> 8 ) {
+
+                    /* Transmission format */
+                    le_system->sm_format = LE_ARRAY_64T;
+
+                    /* Return authorisation */
+                    return( LE_NETWORK_MODE_AATH );
+
+                };
+
+            } break;
+
             /* Spatial parameter query */
             case ( LE_NETWORK_MODE_SMOD ) : {
 
