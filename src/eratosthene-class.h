@@ -50,9 +50,21 @@
     header - preprocessor definitions
  */
 
+    /* Define initialiser */
+    # define LE_CLASS_I_OFFSET {\
+    _LE_OFFS_NULL, \
+    _LE_OFFS_NULL, \
+    _LE_OFFS_NULL, \
+    _LE_OFFS_NULL, \
+    _LE_OFFS_NULL, \
+    _LE_OFFS_NULL, \
+    _LE_OFFS_NULL, \
+    _LE_OFFS_NULL, \
+    }
+
     /* Define pseudo-constructor */
-    # define LE_CLASS_C             { { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }, { 0 } }
-    # define LE_CLASS_C_DATA(r,g,b) { { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }, { r, g, b, 0 } }
+    # define LE_CLASS_C             { LE_CLASS_I_OFFSET, { 0 } }
+    # define LE_CLASS_C_DATA(r,g,b) { LE_CLASS_I_OFFSET, { r, g, b, 0 } }
 
     /* Define class buffer size */
     # define LE_CLASS_BUFFER_SIZE   ( _LE_USE_OFFSET * 8 + 4 )

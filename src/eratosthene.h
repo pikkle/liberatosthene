@@ -140,13 +140,14 @@
     /* Define boundaries */
     # define _LE_BYTE_MIN       0
     # define _LE_BYTE_MAX       UINT8_MAX
+    # define _LE_SIZE_MIN       0
     # if   ( _LE_USE_SIZE_T == 32 )
     # define _LE_SIZE_MAX       UINT32_MAX
     # elif ( _LE_USE_SIZE_T == 64 )
     # define _LE_SIZE_MAX       UINT64_MAX
     # endif
-    # define _LE_TIME_MAX       INT64_MAX
     # define _LE_TIME_MIN       INT64_MIN
+    # define _LE_TIME_MAX       INT64_MAX
 
     /* Define type nulls */
     # define _LE_BYTE_NULL      0xff
@@ -198,7 +199,7 @@
     # define LE_2P              ( LE_PI * 2.0L )
 
 /*
-    header - configuration validation
+    header - consistency checks
  */
 
     # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
