@@ -260,3 +260,39 @@
 
     }
 
+/*
+    source - i/o methods
+ */
+
+    le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket ) {
+
+        /* Socket i/o buffer variables */
+        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+
+        /* Read query address - send message */
+        if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
+
+        /* Decompose address string */
+        le_address_cvsa( le_address, le_buffer );
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
+    le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket ) {
+
+        /* Socket i/o buffer variables */
+        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+
+        /* Compose address string */
+        le_address_cvas( le_address, le_buffer );
+
+        /* Write query address - send message */
+        if ( write( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_WRITE );
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+

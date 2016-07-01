@@ -283,14 +283,8 @@
         /* Address variables */
         le_address_t le_address = LE_ADDRESS_C;
 
-        /* Socket i/o buffer variables */
-        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
-
-        /* Read query address - send message */
-        if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
-
-        /* Decompose address string */
-        le_address_cvsa( & le_address, le_buffer );
+        /* Read and decompose query */
+        le_address_io_read( & le_address, le_socket );
 
         /* Send system query */
         le_array = le_system_query( le_system, & le_address );

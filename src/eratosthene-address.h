@@ -304,6 +304,18 @@
 
     le_void_t le_address_cvsa( le_address_t * const le_address, le_char_t const * const le_string );
 
+    /*! \brief i/o methods
+     *
+     */
+
+    le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket );
+
+    /*! \brief i/o methods
+     *
+     */
+
+    le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket );
+
 /*
     header - C/C++ compatibility
  */
