@@ -26,17 +26,14 @@
 
     le_system_t le_system_create( le_char_t const * const le_root ) {
 
+        /* Returned structure variables */
+        le_system_t le_system = LE_SYSTEM_C;
+
         /* Stream variables */
         FILE * le_stream = NULL;
 
-        /* Construct structure */
-        le_system_t le_system = LE_SYSTEM_C;
-
-        /* Copy provided root path */
-        strcpy( ( char * ) le_system.sm_root, ( char * ) le_root );
-
         /* Open configuration stream */
-        if ( ( le_stream = fopen( strcat( ( char * ) le_system.sm_root, "/system" ), "r" ) ) == NULL ) {
+        if ( ( le_stream = fopen( strcat( strcat( ( char * ) le_system.sm_root, ( char * ) le_root ), "/system" ), "r" ) ) == NULL ) {
 
             /* Send message */
             le_system._status = LE_ERROR_IO_ACCESS; return( le_system );
@@ -51,11 +48,6 @@
 
             /* Send message */
             le_system._status = LE_ERROR_IO_READ; return( le_system );
-
-        } else {
-
-            /* Close configuration stream */
-            fclose( le_stream );
 
         }
 
@@ -77,6 +69,9 @@
 
         /* Assign provided root path */
         strcpy( ( char * ) le_system.sm_root, ( char * ) le_root );
+
+        /* Close configuration stream */
+        fclose( le_stream );
 
         /* Return created structure */
         return( le_system );
@@ -448,14 +443,11 @@
 
     le_enum_t le_system_io_open( le_system_t * const le_system, le_time_t const le_time ) {
 
-        /* Parsing variables */
-        le_size_t le_parse = 0;
+        /* Persistent time variables */
+        static le_time_t le_flag = _LE_TIME_MIN;
 
         /* Path variables */
         le_char_t le_path[256] = { 0 };
-
-        /* Persistent time variables */
-        static le_time_t le_flag = _LE_TIME_MIN;
 
         /* Check necessities - send message */
         if ( ( ( le_time / le_system->sm_tparam ) == le_flag ) && ( le_system->sm_scale != NULL ) ) return( LE_ERROR_SUCCESS );
@@ -472,7 +464,7 @@
             }
 
             /* Initialise stack */
-            for ( le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
+            for ( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
                 /* Invalidate pointer */
                 le_system->sm_scale[le_parse] = NULL;
@@ -491,7 +483,7 @@
         mkdir( ( char * ) le_path, 0777 );
 
         /* Create scales streams */
-        for( le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
+        for( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
             /* Check scale stream */
             if ( le_system->sm_scale[le_parse] != NULL ) {
@@ -528,12 +520,9 @@
     }
 
     le_void_t le_system_io_flush( le_system_t * const le_system ) {
-
-        /* Parsing variables */
-        le_size_t le_parse = 0;
-
-        /* Parsing stream */
-        for ( ; le_parse < le_system->sm_sparam; le_parse ++ ) {
+        
+        /* Parsing streams */
+        for ( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
             /* Check stream state */
             if ( le_system->sm_scale[le_parse] != NULL ) {
@@ -549,14 +538,11 @@
 
     le_void_t le_system_io_close( le_system_t * const le_system ) {
 
-        /* Parser variables */
-        le_size_t le_parse = 0;
-
         /* Check structure */
         if ( le_system->sm_scale != NULL ) {
 
             /* Parsing scales streams */
-            for( ; le_parse < le_system->sm_sparam; le_parse ++ ) {
+            for( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
                 /* Check stream */
                 if ( le_system->sm_scale[le_parse] != NULL ) {
