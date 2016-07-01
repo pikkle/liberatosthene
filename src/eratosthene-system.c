@@ -448,74 +448,40 @@
 
     le_enum_t le_system_io_open( le_system_t * const le_system, le_time_t const le_time ) {
 
-        /* Persistent time variables */
-        static le_time_t le_flag = _LE_TIME_MIN;
+        /* Temporal class variables */
+        static le_time_t le_flag = _LE_TIME_NULL;
 
         /* Path variables */
-        le_char_t le_path[256] = { 0 };
+        le_char_t le_path[_LE_USE_STRING] = { 0 };
 
         /* Check necessities - send message */
-        if ( ( ( le_time / le_system->sm_tparam ) == le_flag ) && ( le_system->sm_scale != NULL ) ) return( LE_ERROR_SUCCESS );
+        if ( ( le_time / le_system->sm_tparam ) == le_flag ) return( LE_ERROR_SUCCESS );
 
-        /* Check stream stack */
-        if ( le_system->sm_scale == NULL ) {
-
-            /* Allocate stack memory */
-            if ( ( le_system->sm_scale = malloc( sizeof( FILE * ) * le_system->sm_sparam ) ) == NULL ) {
-
-                /* Send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* Initialise stack */
-            for ( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
-
-                /* Invalidate pointer */
-                le_system->sm_scale[le_parse] = NULL;
-
-            }
-
-        }
-
-        /* Update presistent time */
+        /* Update temporal class */
         le_flag = le_time / le_system->sm_tparam;
 
-        /* Create time directory path */
+        /* Compose temporal class directoy */
         sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_system->sm_root, le_flag );
 
-        /* Create time directory */
+        /* Create directory */
         mkdir( ( char * ) le_path, 0777 );
 
-        /* Create scales streams */
-        for( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
+        /* Create scale streams */
+        for ( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
-            /* Check scale stream */
-            if ( le_system->sm_scale[le_parse] != NULL ) {
-
-                /* Delete scale stream */
-                fclose( le_system->sm_scale[le_parse] );
-
-            }
+            /* Check stream state */
+            if ( le_system->sm_scale[le_parse] != NULL ) fclose( le_system->sm_scale[le_parse] );
 
             /* Create scale path */
             sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_system->sm_root, le_flag, le_parse );
 
-            /* Create scale stream - r+ read/write */
+            /* Create scale stream (r+) */
             if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
 
-                /* Create scale stream - w+ read/write */
-                if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) {
-
-                    /* Send message */
-                    return( LE_ERROR_IO_ACCESS );
-
-                }
+                /* Create scale stream (w+) - send message */
+                if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) return( LE_ERROR_IO_ACCESS );
 
             }
-
-            /* Handle file/directory permission */
-            chmod( ( char * ) le_path, 0777 );
 
         }
 
@@ -529,13 +495,8 @@
         /* Parsing streams */
         for ( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
-            /* Check stream state */
-            if ( le_system->sm_scale[le_parse] != NULL ) {
-
-                /* Flush stream */
-                fflush( le_system->sm_scale[le_parse] );
-
-            }
+            /* Check stream state - flush stream */
+            if ( le_system->sm_scale[le_parse] != NULL ) fflush( le_system->sm_scale[le_parse] );
 
         }
 
@@ -543,30 +504,19 @@
 
     le_void_t le_system_io_close( le_system_t * const le_system ) {
 
-        /* Check structure */
-        if ( le_system->sm_scale != NULL ) {
+        /* Parsing scales streams */
+        for( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
 
-            /* Parsing scales streams */
-            for( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
+            /* Check stream */
+            if ( le_system->sm_scale[le_parse] != NULL ) {
 
-                /* Check stream */
-                if ( le_system->sm_scale[le_parse] != NULL ) {
+                /* Close scale stream */
+                fclose( le_system->sm_scale[le_parse] );
 
-                    /* Close scale stream */
-                    fclose( le_system->sm_scale[le_parse] );
-
-                    /* Invalidate pointer */
-                    le_system->sm_scale[le_parse] = NULL;
-
-                }
+                /* Invalidate pointer */
+                le_system->sm_scale[le_parse] = NULL;
 
             }
-
-            /* Unallocate stream stack */
-            free( le_system->sm_scale );
-
-            /* Invalidate pointer */
-            le_system->sm_scale = NULL;
 
         }
 

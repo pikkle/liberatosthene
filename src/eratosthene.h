@@ -109,14 +109,15 @@
 
     /* Features configuration */
     # define _LE_USE_SIZE_T     ( 64 )
+    # define _LE_USE_BASE       ( 8 )
     # define _LE_USE_OFFSET     ( 5 )
     # define _LE_USE_DEPTH      ( 64 )
     # define _LE_USE_QUERY      ( _LE_USE_DEPTH + 24 )
     # define _LE_USE_MTU        ( 1280 )
-    # define _LE_USE_RETRY      ( 3 )
-    # define _LE_USE_BASE       ( 8 )
     # define _LE_USE_PORT       ( 555 )
     # define _LE_USE_PENDING    ( 5 )
+    # define _LE_USE_RETRY      ( 3 )
+    # define _LE_USE_STRING     ( 256 )
     # define _LE_USE_ASCII_ITOA ( 48 )
 
     /* Define types */
