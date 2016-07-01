@@ -78,13 +78,16 @@
         le_byte_t * le_swap = NULL;
 
         /* Check memory reallocation necessities */
-        if ( ( le_array->ar_size + le_length ) >= le_array->ar_vsze ) {
+        if ( ( le_array->ar_size += le_length ) >= le_array->ar_vsze ) {
 
             /* Update virtual size */
             le_array->ar_vsze += LE_ARRAY_STEP;
 
             /* Array memory allocation */
             if ( ( le_swap = ( le_byte_t * ) realloc( ( void * ) le_array->ar_byte, le_array->ar_vsze ) ) == NULL ) {
+
+                /* Cancel array size modification */
+                le_array->ar_size -= le_length;
 
                 /* Send message */
                 return( LE_ERROR_MEMORY );
@@ -95,9 +98,6 @@
             le_array->ar_byte = le_swap;
 
         }
-
-        /* Update array size */
-        le_array->ar_size += le_length;
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
