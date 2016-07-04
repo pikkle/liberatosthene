@@ -114,7 +114,7 @@
     # define _LE_USE_DEPTH      ( 64 )
     # define _LE_USE_QUERY      ( _LE_USE_DEPTH + 24 )
     # define _LE_USE_MTU        ( 1280 )
-    # define _LE_USE_PORT       ( 555 )
+    # define _LE_USE_PORT       ( 43427 )
     # define _LE_USE_PENDING    ( 5 )
     # define _LE_USE_RETRY      ( 3 )
     # define _LE_USE_STRING     ( 256 )
@@ -188,19 +188,18 @@
     # define LE_ERROR_IO_READ   0x0002
     # define LE_ERROR_IO_WRITE  0x0003
     # define LE_ERROR_IO_SEEK   0x0004
-    # define LE_ERROR_IO_STREAM 0x0005
-    # define LE_ERROR_IO_SOCKET 0x0006
-    # define LE_ERROR_MEMORY    0x0007
-    # define LE_ERROR_DEPTH     0x0008
-    # define LE_ERROR_TIME      0x0009
-    # define LE_ERROR_BASE      0x000a
-    # define LE_ERROR_AUTH      0x000b
-    # define LE_ERROR_FORMAT    0x000c
+    # define LE_ERROR_IO_SOCKET 0x0005
+    # define LE_ERROR_MEMORY    0x0006
+    # define LE_ERROR_DEPTH     0x0007
+    # define LE_ERROR_TIME      0x0008
+    # define LE_ERROR_BASE      0x0009
+    # define LE_ERROR_AUTH      0x000a
+    # define LE_ERROR_FORMAT    0x000b
 
     /* Define constants */
     # define LE_PI              ( _LE_REAL_L ( 3.1415926535897932384626433832795029 ) )
-    # define LE_P2              ( LE_PI / _LE_REAL_L( 2.0L ) )
-    # define LE_2P              ( LE_PI * _LE_REAL_L( 2.0L ) )
+    # define LE_P2              ( LE_PI / _LE_REAL_L( 2.0 ) )
+    # define LE_2P              ( LE_PI * _LE_REAL_L( 2.0 ) )
 
 /*
     header - consistency checks
