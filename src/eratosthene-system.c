@@ -35,26 +35,29 @@
         /* Open configuration stream */
         if ( ( le_stream = fopen( strcat( strcat( ( char * ) le_system.sm_root, ( char * ) le_root ), "/system" ), "r" ) ) == NULL ) {
 
-            /* Send message */
+            /* Send message - return created structure */
             le_system._status = LE_ERROR_IO_ACCESS; return( le_system );
 
         }
 
         /* Check configuration reading */
-        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & ( le_system.sm_sparam ), & ( le_system.sm_tparam ) ) != 2 ) {
+        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & le_system.sm_sparam, & le_system.sm_tparam ) != 2 ) {
 
             /* Close configuration stream */
             fclose( le_stream );
 
-            /* Send message */
+            /* Send message - return created structure */
             le_system._status = LE_ERROR_IO_READ; return( le_system );
 
         }
 
+        /* Close configuration stream */
+        fclose( le_stream );
+
         /* Check consistency */
         if ( ( le_system.sm_sparam <= 0 ) || ( le_system.sm_sparam >= _LE_USE_DEPTH ) ) {
 
-            /* Send message */
+            /* Send message - return created structure */
             le_system._status = LE_ERROR_DEPTH; return( le_system );
 
         }
@@ -62,16 +65,13 @@
         /* Check consistency */
         if ( le_system.sm_tparam <= 0 ) {
 
-            /* Send message */
+            /* Send message - return created structure */
             le_system._status = LE_ERROR_TIME; return( le_system );
 
         }
 
         /* Assign provided root path */
         strcpy( ( char * ) le_system.sm_root, ( char * ) le_root );
-
-        /* Close configuration stream */
-        fclose( le_stream );
 
         /* Return created structure */
         return( le_system );
@@ -115,100 +115,54 @@
 
     le_hand_t le_system_set_format( le_system_t * const le_system, le_hand_t const le_hand ) {
 
-        /* Switch on authorisation mode */
-        switch ( le_hand & 0xff ) {
+        /* Handshake decomposition variables */
+        le_hand_t le_mode = le_hand & 0xff;
 
-            /* Injection authorisation */
-            case ( LE_NETWORK_MODE_IMOD ) : {
+        /* Assign transmission mode */
+        le_system->sm_format = le_hand >> 8;
 
-                /* Switch on format */
-                switch ( le_hand >> 8 ) {
+        /* Check consistency */
+        if ( le_mode == LE_NETWORK_MODE_IMOD ) {
 
-                    /* Transmission format */
-                    case ( LE_ARRAY_64S ) : {
+            /* Check consistency */
+            if ( le_system->sm_format == LE_ARRAY_64S ) {
 
-                        /* Change transmission mode */
-                        le_system->sm_format = LE_ARRAY_64S;
+                /* Send authorisation */
+                return( LE_NETWORK_MODE_IATH );
 
-                        /* Return autorisation */
-                        return( LE_NETWORK_MODE_IATH );
+            }
 
-                    } break;
+        } else if ( le_mode == LE_NETWORK_MODE_QMOD ) {
 
-                };
+            /* Check consistency */
+            if ( ( le_system->sm_format == LE_ARRAY_64S ) || ( le_system->sm_format == LE_ARRAY_64R ) ) {
 
-            } break;
+                /* Send authorisation */
+                return( LE_NETWORK_MODE_QATH );
 
-            /* Query authorisation */
-            case ( LE_NETWORK_MODE_QMOD ) : {
+            }
 
-                /* Switch on format */
-                switch ( le_hand >> 8 ) {
+        } else if ( le_mode == LE_NETWORK_MODE_AMOD ) {
 
-                    /* Transmission format */
-                    case ( LE_ARRAY_64S ) : {
+            /* Check consistency */
+            if ( le_system->sm_format == LE_ARRAY_64T ) {
 
-                        /* Change transmission mode */
-                        le_system->sm_format = LE_ARRAY_64S;
+                /* Send authorisation */
+                return( LE_NETWORK_MODE_AATH );
 
-                        /* Return authorisation */
-                        return( LE_NETWORK_MODE_QATH );
+            }
 
-                    } break;
+        } else if ( le_mode == LE_NETWORK_MODE_SMOD ) {
 
-                    /* Transmission format */
-                    case ( LE_ARRAY_64R ) : {
+            /* Send authorisation */
+            return( LE_NETWORK_MODE_SATH );
 
-                        /* Change transmission mode */
-                        le_system->sm_format = LE_ARRAY_64R;
+        } else if ( le_mode == LE_NETWORK_MODE_TMOD ) {
 
-                        /* Return authorisation */
-                        return( LE_NETWORK_MODE_QATH );
+            /* Send authorisation */
+            return( LE_NETWORK_MODE_TATH );
 
-                    } break;
-
-                };
-
-            } break;
-
-            /* System times array mode */
-            case ( LE_NETWORK_MODE_AMOD ) : {
-
-                /* Switch on format */
-                switch ( le_hand >> 8 ) {
-
-                    /* Transmission format */
-                    case ( LE_ARRAY_64T ) : {
-
-                        /* Transmission format */
-                        le_system->sm_format = LE_ARRAY_64T;
-
-                        /* Return authorisation */
-                        return( LE_NETWORK_MODE_AATH );
-
-                    } break;
-
-                };
-
-            } break;
-
-            /* Spatial parameter query */
-            case ( LE_NETWORK_MODE_SMOD ) : {
-
-                /* Return authorisation */
-                return( LE_NETWORK_MODE_SATH );
-
-            } break;
-
-            /* Temporal parameter query */
-            case ( LE_NETWORK_MODE_TMOD ) : {
-
-                /* Return authorisation */
-                return( LE_NETWORK_MODE_TATH );
-
-            } break;
-
-        };
+        }
 
         /* Authorisation failure */
         return( _LE_HAND_NULL );
@@ -219,7 +173,70 @@
     source - injection methods
  */
 
-    le_enum_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
+    le_void_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
+
+        /* Address variables */
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sparam - 1 );
+
+        /* Class variables */
+        le_class_t le_class = LE_CLASS_C;
+
+        /* Depth variables */
+        le_size_t le_parse = 0;
+        le_size_t le_panex = 1;
+
+        /* Offset variables */
+        le_size_t le_offset = 0;
+        le_size_t le_offnex = 0;
+
+        /* System scale stream management - send message */
+        if ( le_system_io_open( le_system, le_time ) != LE_ERROR_SUCCESS ) return;
+
+        /* Compute address index */
+        le_address_set_pose( & le_addr, le_pose );
+
+        /* Injection process */
+        do {
+
+            /* Class importation */
+            if ( le_class_io_read( & le_class, le_offnex, le_system->sm_scale[le_parse] ) == LE_ERROR_SUCCESS ) {
+
+                /* Inject element in class */
+                le_class_set_push( & le_class, le_data );
+
+            } else {
+
+                /* Initialise class with element */
+                le_class = le_class_create( le_data );
+
+            }
+
+            /* Retrieve daughter offset */
+            le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_parse ) );
+
+            /* Check daughter state */
+            if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_system->sm_sparam ) ) {
+
+                /* Seek next scale eof */
+                fseek( le_system->sm_scale[le_panex], 0, SEEK_END );
+
+                /* Assign eof offset */
+                le_offset = ftell( le_system->sm_scale[le_panex] );
+
+                /* Insert offset in class */
+                le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
+
+            }
+
+            /* Class exportation */
+            le_class_io_write( & le_class, le_offnex, le_system->sm_scale[le_parse] );
+
+        /* Injection process condition */
+        } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_system->sm_sparam );
+
+    }
+
+    le_enum_t le_system_inject2( le_system_t * const le_system, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
 
         /* Returned status variables */
         le_enum_t le_return = LE_ERROR_SUCCESS;
@@ -293,6 +310,78 @@
 /*
     source - query methods
  */
+
+    le_void_t le_system_query2( le_system_t * const le_system, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset ) {
+
+        /* Class variables */
+        le_class_t le_class = LE_CLASS_C;
+
+        /* Position array variables */
+        le_real_t le_pose[3] = { 0.0 };
+
+        /* Query initialisation */
+        if ( le_parse == 0 ) {
+
+            /* Check consistency */
+            if ( ( le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) >= le_system->sm_sparam ) return;
+
+            /* System scale stream management */
+            if ( le_system_io_open( le_system, le_address_get_time( le_addr ) ) != LE_ERROR_SUCCESS ) return;
+
+        }
+
+        /* Read class */
+        if ( le_class_io_read( & le_class, le_offset, le_system->sm_scale[le_parse] ) == LE_ERROR_SUCCESS ) {
+
+            /* Query process mode */
+            if ( le_parse < le_address_get_size( le_addr ) ) {
+
+                /* Retreive daughter class offset */
+                if ( ( le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) ) ) != _LE_OFFS_NULL ) {
+
+                    /* Recursive query */
+                    le_system_query2( le_system, le_addr, le_array, le_parse + 1, le_offset );
+
+                }
+
+            } else {
+
+                /* Check query depth */
+                if ( le_parse == le_address_get_size( le_addr ) + le_address_get_depth( le_addr ) ) {
+
+                    /* Retreive class representative */
+                    le_address_get_pose( le_addr, le_pose );
+
+                    /* Inject gathered element in array */
+                    le_array_set_push( le_array, le_system->sm_format, le_pose, le_address_get_time( le_addr ), le_class_get_data( & le_class ) );
+
+
+                } else {
+
+                    /* Class daughters enumeration */
+                    for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
+
+                        /* Update address index size */
+                        le_address_set_size( le_addr, le_address_get_size( le_addr ) + 1 );
+
+                        /* Update address index digit */
+                        le_address_set_digit( le_addr, le_address_get_size( le_addr ) - 1, le_digit );
+
+                        /* Retreive daughter class offset */
+                        le_offset = le_class_get_offset( & le_class, le_digit );
+
+                        /* Recursive query */
+                        le_system_query2( le_system, le_addr, le_array, le_parse + 1, le_offset );
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
 
     le_array_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr ) {
 
