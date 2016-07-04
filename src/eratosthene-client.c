@@ -26,11 +26,11 @@
 
     le_sock_t le_client_create( le_char_t const * const le_ip, le_size_t const le_port ) {
 
-        /* Socket variables */
-        le_sock_t le_socket = _LE_SOCK_NULL;
-
         /* Address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
+
+        /* Returned value variables */
+        le_sock_t le_socket = _LE_SOCK_NULL;
 
         /* Convert address - send message */
         if ( inet_pton( AF_INET, ( char * ) le_ip, & le_addr.sin_addr ) <= 0 ) return( _LE_SOCK_NULL );
@@ -83,10 +83,7 @@
         if ( read( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) return( LE_ERROR_IO_READ );
 
         /* Check authorisation - send message */
-        if ( ( le_buffer & 0x7f ) != le_mode ) return( LE_ERROR_AUTH );
-
-        /* Send message */
-        return( LE_ERROR_SUCCESS );
+        return( ( ( le_buffer & 0x7f ) == le_mode ) ? LE_ERROR_SUCCESS : LE_ERROR_AUTH );
 
     }
 
