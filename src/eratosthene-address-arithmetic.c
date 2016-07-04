@@ -29,19 +29,14 @@
         /* Address size variables */
         le_size_t le_size = ( le_addr1->as_size < le_addr2->as_size ) ? le_addr1->as_size : le_addr2->as_size;
 
-        /* Returned value variables */
-        le_size_t le_return = le_size + 1;
+        /* Parsing address digits */
+        for ( le_size_t le_parse = 0; le_parse < le_size; le_parse ++ ) {
 
-        /* Computing address distance */
-        for ( le_size_t le_parse = le_size; le_parse >= 0; le_parse -- ) {
+            /* Compare digits - return digits scale */
+            if ( le_addr1->as_addr[le_parse] != le_addr2->as_addr[le_parse] ) return( le_parse );
 
-            /* Check digits */
-            if ( le_addr1->as_addr[le_parse] != le_addr2->as_addr[le_parse] ) le_return = le_parse;
-
-        }
-
-        /* Return computed distance */
-        return( le_return );
+        /* Return smallest size */
+        } return( le_size );
 
     }
 
@@ -51,41 +46,29 @@
 
     le_enum_t le_address_set_value( le_address_t * const le_address, le_size_t le_offset, le_size_t le_value ) {
 
-        /* Offset base variables */
-        le_size_t le_base = _LE_USE_BASE;
-
         /* Check consistency - send message */
         if ( le_offset >= le_address->as_size ) return( LE_ERROR_DEPTH );
 
-        /* Clear address digits */
-        for ( le_size_t le_parse = le_offset + 1; le_parse < le_address->as_size; le_parse ++ ) le_address->as_addr[le_parse] = 0;
+        /* Offset base variables */
+        le_size_t le_base = ( le_offset < LE_GEODESY_ASYA ) ? ( ( le_offset < LE_GEODESY_ASYP ) ? _LE_USE_BASE >> 0x02 : _LE_USE_BASE >> 0x01 ) : _LE_USE_BASE;
 
         /* Convert value into address index */
         while ( le_offset != _LE_SIZE_MAX ) {
 
-            /* Compute offset base */
-            if ( le_offset < LE_GEODESY_ASYP ) {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE >> 2;
-
-            } else if ( le_offset < LE_GEODESY_ASYA ) {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE >> 1;
-
-            } else {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE;
-
-            }
-
-            /* Assign digit and update offset */
-            le_address->as_addr[le_offset--] = le_value % le_base;
+            /* Assign digit */
+            le_address->as_addr[le_offset] = le_value % le_base;
 
             /* Compute remaining value */
             le_value /= le_base;
+
+            /* Asynchronous dimension management */
+            if ( le_offset == LE_GEODESY_ASYA ) le_base >>= 0x01;
+
+            /* Asynchronous dimension management */
+            if ( le_offset == LE_GEODESY_ASYP ) le_base >>= 0x01;
+
+            /* Update offset value */
+            le_offset --;
 
         }
 
@@ -96,38 +79,20 @@
 
     le_enum_t le_address_set_add( le_address_t * const le_addr, le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
 
-        /* Remainder variables */
-        le_byte_t le_remain = 0;
-
-        /* Offset base variables */
-        le_size_t le_base = _LE_USE_BASE;
-
         /* Check consistency - send message */
         if ( le_addr1->as_size != le_addr2->as_size ) return( LE_ERROR_DEPTH );
 
         /* Initialise result structure */
         * le_addr = * le_addr1;
 
+        /* Offset base variables */
+        le_size_t le_base = ( le_addr->as_size <= LE_GEODESY_ASYA ) ? ( ( le_addr->as_size <= LE_GEODESY_ASYP ) ? _LE_USE_BASE >> 0x02 : _LE_USE_BASE >> 0x01 ) : _LE_USE_BASE;
+
+        /* Remainder variables */
+        le_byte_t le_remain = 0;
+
         /* Address addition */
         for ( le_size_t le_offset = le_addr->as_size; le_offset != _LE_SIZE_MAX; le_offset -- ) {
-
-            /* Compute offset base */
-            if ( le_offset < LE_GEODESY_ASYP ) {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE >> 2;
-
-            } else if ( le_offset < LE_GEODESY_ASYA ) {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE >> 1;
-
-            } else {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE;
-
-            }
 
             /* Add current digits */
             le_addr->as_addr[le_offset] += le_addr2->as_addr[le_offset] + le_remain;
@@ -138,6 +103,12 @@
             /* Compute address digit */
             le_addr->as_addr[le_offset] %= le_base;
 
+            /* Asynchronous dimension management */
+            if ( le_offset == LE_GEODESY_ASYA ) le_base >>= 0x01;
+
+            /* Asynchronous dimension management */
+            if ( le_offset == LE_GEODESY_ASYP ) le_base >>= 0x01;
+
         }
 
         /* Send message */
@@ -147,38 +118,20 @@
 
     le_enum_t le_address_set_sub( le_address_t * const le_addr, le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
 
-        /* Remainder variables */
-        le_byte_t le_remain = 0;
-
-        /* Offset base variables */
-        le_size_t le_base = _LE_USE_BASE;
-
         /* Check consistency - send message */
         if ( le_addr1->as_size != le_addr2->as_size ) return( LE_ERROR_DEPTH );
 
         /* Initialise result structure */
         * le_addr = * le_addr1;
 
+        /* Offset base variables */
+        le_size_t le_base = ( le_addr->as_size <= LE_GEODESY_ASYA ) ? ( ( le_addr->as_size <= LE_GEODESY_ASYP ) ? _LE_USE_BASE >> 0x02 : _LE_USE_BASE >> 0x01 ) : _LE_USE_BASE;
+
+        /* Remainder variables */
+        le_byte_t le_remain = 0;
+
         /* Address substraction */
         for ( le_size_t le_offset = le_addr->as_size; le_offset != _LE_SIZE_MAX; le_offset -- ) {
-
-            /* Compute offset base */
-            if ( le_offset < LE_GEODESY_ASYP ) {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE >> 2;
-
-            } else if ( le_offset < LE_GEODESY_ASYA ) {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE >> 1;
-
-            } else {
-
-                /* Assign offset base */
-                le_base = _LE_USE_BASE;
-
-            }
 
             /* Substract current digits */
             le_addr->as_addr[le_offset] -= le_addr2->as_addr[le_offset] + le_remain;
@@ -188,6 +141,12 @@
 
             /* Compute address digit */
             le_addr->as_addr[le_offset] = ( le_addr->as_addr[le_offset] >= _LE_USE_BASE ) ? le_addr->as_addr[le_offset] + le_base : le_addr->as_addr[le_offset];
+
+            /* Asynchronous dimension management */
+            if ( le_offset == LE_GEODESY_ASYA ) le_base >>= 0x01;
+
+            /* Asynchronous dimension management */
+            if ( le_offset == LE_GEODESY_ASYP ) le_base >>= 0x01;
 
         }
 
