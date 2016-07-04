@@ -26,27 +26,24 @@
 
     le_array_t le_array_create( le_void_t ) {
 
-        /* Array variables */
+        /* Returned structure variables */
         le_array_t le_array = LE_ARRAY_C;
 
-        /* Return array */
+        /* Return created structure */
         return( le_array );
 
     }
 
-    le_void_t le_array_delete( le_array_t * const le_array ) {
+    le_array_t le_array_delete( le_array_t * const le_array ) {
 
-        /* Check array state */
-        if ( le_array->ar_vsze > 0 ) {
+        /* Returned structure variables */
+        le_array_t le_return = LE_ARRAY_C;
 
-            /* Unallocate array memory */
-            free( le_array->ar_byte );
+        /* Check array state - memory unallocation */
+        if ( le_array->ar_byte != NULL ) free( le_array->ar_byte );
 
-            /* Reset array descriptors */
-            le_array->ar_vsze = 0;
-            le_array->ar_size = 0;
-
-        }
+        /* Return deleted structure */
+        return( le_return );
 
     }
 
