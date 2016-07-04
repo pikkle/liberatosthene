@@ -67,11 +67,14 @@
     # define LE_CLASS_C_DATA(r,g,b) { LE_CLASS_I_OFFSET, { r, g, b, 0 } }
 
     /* Define class buffer size */
-    # define LE_CLASS_BUFFER_SIZE   ( _LE_USE_OFFSET * 8 + 4 )
+    # define LE_CLASS_BUFFER_SIZE   ( _LE_USE_OFFSET * _LE_USE_BASE + _LE_USE_DATA )
 
 /*
     header - preprocessor macros
  */
+
+    /* Define offset extraction */
+    # define LE_CLASS_OFFSET(b,n)   ( * ( ( le_size_t * ) ( b + _LE_USE_DATA + _LE_USE_OFFSET * n ) ) )
 
 /*
     header - type definition
@@ -107,8 +110,8 @@
 
     typedef struct le_class_struct {
 
-        le_size_t cs_addr[8];
-        le_data_t cs_data[4];
+        le_size_t cs_addr[_LE_USE_BASE];
+        le_data_t cs_data[LE_CLASS_BUFFER_SIZE + sizeof( le_size_t ) - _LE_USE_OFFSET];
 
     } le_class_t;
 
