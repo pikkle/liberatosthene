@@ -26,11 +26,11 @@
 
     le_sock_t le_server_create( le_size_t const le_port ) {
 
-        /* Socket variables */
-        le_sock_t le_socket = _LE_SOCK_NULL;
-
         /* Address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
+
+        /* Returned value variables */
+        le_sock_t le_socket = _LE_SOCK_NULL;
         
         /* Create socket - send message */
         if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) return( _LE_SOCK_NULL );
@@ -293,7 +293,7 @@
         le_message = le_array_io_write( & le_array, le_socket );
 
         /* Unallocate array memory */
-        le_array_delete( & le_array );
+        le_array = le_array_delete( & le_array );
 
         /* Send message */
         return( le_message );
@@ -315,7 +315,7 @@
         le_return = le_array_io_write( & le_array, le_socket );
 
         /* Delete array */
-        le_array_delete( & le_array );
+        le_array = le_array_delete( & le_array );
 
         /* Send message */
         return( le_return );

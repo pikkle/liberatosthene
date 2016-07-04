@@ -51,7 +51,7 @@
 
     /* Define WGS84 ellipsoid parameters */
     # define LE_GEODESY_WGS84_A ( _LE_REAL_L( 6378137.0 ) )
-    # define LE_GEODESY_WGS84_F ( _LE_REAL_L( 298.257223563L ) )
+    # define LE_GEODESY_WGS84_F ( _LE_REAL_L( 298.257223563 ) )
 
     /* Asynchronous dimension edges */
     # define LE_GEODESY_ASYP    (  1 )
