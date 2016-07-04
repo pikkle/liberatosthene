@@ -45,13 +45,6 @@
 
     }
 
-    le_byte_t * le_address_get_digits( le_address_t const * const le_address ) {
-
-        /* Return address digits pointer */
-        return( ( le_byte_t * ) le_address->as_addr );
-
-    }
-
     le_size_t le_address_get_depth( le_address_t const * const le_address ) {
 
         /* Return address depth */
@@ -90,9 +83,9 @@
         }
 
         /* Coordinates denormalisation */
-        le_pose[0] = LE_GEODESY_LMIN + le_pose[0] * ( LE_GEODESY_LMAX - LE_GEODESY_LMIN );
-        le_pose[1] = LE_GEODESY_AMIN + le_pose[1] * ( LE_GEODESY_AMAX - LE_GEODESY_AMIN );
-        le_pose[2] = LE_GEODESY_HMIN + le_pose[2] * ( LE_GEODESY_HMAX - LE_GEODESY_HMIN );
+        le_pose[0] = LE_GEODESY_LMIN + le_pose[0] * LE_GEODESY_LRAN;
+        le_pose[1] = LE_GEODESY_AMIN + le_pose[1] * LE_GEODESY_ARAN;
+        le_pose[2] = LE_GEODESY_HMIN + le_pose[2] * LE_GEODESY_HRAN;
 
     }
 
@@ -105,12 +98,12 @@
             if ( le_parse < LE_GEODESY_ASYP ) {
 
                 /* Check digit validity - send message */
-                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 2 ) ) return( _LE_FALSE );
+                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 0x02 ) ) return( _LE_FALSE );
 
             } else if ( le_parse < LE_GEODESY_ASYA ) {
 
                 /* Check digit validity - send message */
-                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 1 ) ) return( _LE_FALSE );
+                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 0x01 ) ) return( _LE_FALSE );
 
             } else {
 
@@ -153,7 +146,7 @@
         /* Check consistency - send message */
         if ( le_offset >= le_address->as_size ) return( LE_ERROR_DEPTH );
 
-        /* Check consistency - send message */
+        /* Check consistency (minimal) - send message */
         if ( le_digit >= _LE_USE_BASE ) return( LE_ERROR_BASE );
 
         /* Assign address digit */
@@ -166,7 +159,7 @@
 
     le_enum_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth ) {
 
-        /* Check consistency - send message */
+        /* Check consistency (minimal) - send message */
         if ( le_depth >= _LE_USE_DEPTH ) return( LE_ERROR_DEPTH );
 
         /* Assign address depth */
@@ -183,18 +176,15 @@
         le_byte_t le_buffer = 0;
 
         /* Coordinates normalisation on [0,1[ range */
-        le_pose[0] = ( le_pose[0] - LE_GEODESY_LMIN ) / ( LE_GEODESY_LMAX - LE_GEODESY_LMIN );
-        le_pose[1] = ( le_pose[1] - LE_GEODESY_AMIN ) / ( LE_GEODESY_AMAX - LE_GEODESY_AMIN );
-        le_pose[2] = ( le_pose[2] - LE_GEODESY_HMIN ) / ( LE_GEODESY_HMAX - LE_GEODESY_HMIN );
+        le_pose[0] = ( le_pose[0] - LE_GEODESY_LMIN ) / LE_GEODESY_LRAN;
+        le_pose[1] = ( le_pose[1] - LE_GEODESY_AMIN ) / LE_GEODESY_ARAN;
+        le_pose[2] = ( le_pose[2] - LE_GEODESY_HMIN ) / LE_GEODESY_HRAN;
 
         /* Composing address */
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
 
-            /* Normalised longitude processing */
-            if ( le_pose[0] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
-
             /* Assign address digit */
-            le_address->as_addr[le_parse] = le_buffer;
+            le_address->as_addr[le_parse] = ( le_buffer = ( le_pose[0] >= 0.5 ) ? 1 : 0 );
 
             /* Update normalised coordinate */
             le_pose[0] = ( le_pose[0] * 2.0 ) - le_buffer;
@@ -202,11 +192,8 @@
             /* Asynchronous dimension management */
             if ( le_parse < LE_GEODESY_ASYP ) continue;
 
-            /* Normalised latitude processing */
-            if ( le_pose[1] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
-
             /* Assign address digit */
-            le_address->as_addr[le_parse] |= le_buffer << 0x01;
+            le_address->as_addr[le_parse] |= ( le_buffer = ( le_pose[1] >= 0.5 ) ? 1 : 0 ) << 0x01;
 
             /* Update normalised coordinate */
             le_pose[1] = ( le_pose[1] * 2.0 ) - le_buffer;
@@ -214,11 +201,8 @@
             /* Asynchronous dimension management */
             if ( le_parse < LE_GEODESY_ASYA ) continue;
 
-            /* Normalised altitude processing */
-            if ( le_pose[2] >= 0.5 ) le_buffer = 1; else le_buffer = 0;
-
             /* Assign address digit */
-            le_address->as_addr[le_parse] |= le_buffer << 0x02;
+            le_address->as_addr[le_parse] |= ( le_buffer = ( le_pose[2] >= 0.5 ) ? 1 : 0 ) << 0x02;
 
             /* Update normalised coordinate */
             le_pose[2] = ( le_pose[2] * 2.0 ) - le_buffer;

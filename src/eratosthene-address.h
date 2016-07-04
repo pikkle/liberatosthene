@@ -161,18 +161,6 @@
 
     /*! \brief accessor methods
      *
-     *  Returns the pointer to the digit array of the class address stored in
-     *  the address structure.
-     *
-     *  \param le_address Address structure
-     *
-     *  \return Digits array pointer
-     */
-
-    le_byte_t * le_address_get_digits( le_address_t const * const le_address );
-
-    /*! \brief accessor methods
-     *
      *  Returns query depth of the class stored in the address structure.
      *
      *  \param le_address Address structure

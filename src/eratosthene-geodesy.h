@@ -65,6 +65,11 @@
     # define LE_GEODESY_HMIN    ( - ( LE_PI * LE_GEODESY_WGS84_A ) / _LE_REAL_L( 1024.0 ) )
     # define LE_GEODESY_HMAX    ( + ( LE_PI * LE_GEODESY_WGS84_A ) / _LE_REAL_L( 1024.0 ) )
 
+    /* Define ellipsoidal coordinates ranges */
+    # define LE_GEODESY_LRAN    ( LE_GEODESY_LMAX - LE_GEODESY_LMIN )
+    # define LE_GEODESY_ARAN    ( LE_GEODESY_AMAX - LE_GEODESY_AMIN )
+    # define LE_GEODESY_HRAN    ( LE_GEODESY_HMAX - LE_GEODESY_HMIN )
+
 /*
     header - preprocessor macros
  */
