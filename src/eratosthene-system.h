@@ -185,24 +185,7 @@
      *  \return Class representatives array
      */
 
-    le_array_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr );
-
-    /*! \brief query methods
-     *
-     *  This function gather the daughter class representatives of a provided
-     *  parent class based on the query depth and server system storage
-     *  structure. It appends the found class representatives in the array
-     *  provided as parameter.
-     *
-     *  \param le_system Server system descriptor
-     *  \param le_array  Array filled with class representatives
-     *  \param le_addr   Address structure of the parent class
-     *  \param le_class  Class structure of the parent class
-     *  \param le_head   Scale index of the parent class
-     *  \param le_target Scale index of the target daughter classes
-     */
-
-    le_void_t le_system_query_gather( le_system_t * const le_system, le_array_t * const le_array, le_address_t * const le_addr, le_class_t * const le_class, le_size_t const le_head, le_size_t const le_target );
+    le_void_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset );
 
     le_array_t le_system_times( le_system_t const * const le_system );
 

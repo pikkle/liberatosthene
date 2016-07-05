@@ -143,8 +143,8 @@
 
     le_enum_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
 
-        /* Check consistency - send message */
-        if ( le_offset >= le_address->as_size ) return( LE_ERROR_DEPTH );
+        /* Check consistency (minimal) - send message */
+        if ( le_offset >= _LE_USE_DEPTH ) return( LE_ERROR_DEPTH );
 
         /* Check consistency (minimal) - send message */
         if ( le_digit >= _LE_USE_BASE ) return( LE_ERROR_BASE );
