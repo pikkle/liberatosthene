@@ -339,7 +339,7 @@
         while ( ( le_entity = readdir( le_directory ) ) != NULL ) {
 
             /* Check entity type */
-            if ( le_entity->d_type == DT_DIR ) {
+            if ( ( le_entity->d_type == DT_DIR ) && ( le_entity->d_name[0] != '.' ) ) {
 
                 /* Convert directory name */
                 le_buffer = le_system->sm_tparam * strtoull( le_entity->d_name, NULL, 10 );
