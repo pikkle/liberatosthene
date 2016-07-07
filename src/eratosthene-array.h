@@ -137,7 +137,7 @@
      *  \return Returns uninitialised structure
      */
 
-    le_array_t le_array_delete( le_array_t * const le_array );
+    le_void_t le_array_delete( le_array_t * const le_array );
 
     /*! \brief accessor methods
      *

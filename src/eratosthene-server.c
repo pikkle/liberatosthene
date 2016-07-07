@@ -293,7 +293,7 @@
         le_message = le_array_io_write( & le_array, le_socket );
 
         /* Unallocate array memory */
-        le_array = le_array_delete( & le_array );
+        le_array_delete( & le_array );
 
         /* Send message */
         return( le_message );
@@ -315,7 +315,7 @@
         le_return = le_array_io_write( & le_array, le_socket );
 
         /* Delete array */
-        le_array = le_array_delete( & le_array );
+        le_array_delete( & le_array );
 
         /* Send message */
         return( le_return );

@@ -34,16 +34,16 @@
 
     }
 
-    le_array_t le_array_delete( le_array_t * const le_array ) {
+    le_void_t le_array_delete( le_array_t * const le_array ) {
 
         /* Returned structure variables */
-        le_array_t le_return = LE_ARRAY_C;
+        le_array_t le_delete = LE_ARRAY_C;
 
         /* Check array state - memory unallocation */
         if ( le_array->ar_byte != NULL ) free( le_array->ar_byte );
 
-        /* Return deleted structure */
-        return( le_return );
+        /* Delete structure */
+        * le_array = le_delete;
 
     }
 
