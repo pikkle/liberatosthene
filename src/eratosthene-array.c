@@ -58,6 +58,13 @@
 
     }
 
+    le_size_t le_array_get_record( le_array_t const * const le_array, le_size_t const le_reclen ) {
+
+        /* Return array record count */
+        return( le_array->ar_size / le_reclen );
+
+    }
+
     le_byte_t * le_array_get_byte( le_array_t const * const le_array ) {
 
         /* Return array bytes pointer */
