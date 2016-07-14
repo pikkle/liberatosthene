@@ -153,6 +153,8 @@
 
     /* Define litteral suffix */
     # define _LE_REAL_L(t)      ( t )
+    # define _LE_SIZE_L(t)      ( UINT64_C( t ) )
+    # define _LE_TIME_L(t)      ( INT64_C( t ) )
 
     /* Define i/o specifiers */
     # define _LE_BYTE_P         PRIu8
