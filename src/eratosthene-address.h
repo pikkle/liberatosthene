@@ -102,9 +102,9 @@
      *  Size of the address - number of digits of the address
      *  \var le_address_struct::as_time
      *  Time of the class pointed by the address
-     *  \var le_address_struct::as_addr
+     *  \var le_address_struct::as_digit
      *  Address digits array - contains whole number in [0,8[
-     *  \var le_address_struct::as_dept
+     *  \var le_address_struct::as_depth
      *  Address query depth
      */
 
@@ -112,8 +112,8 @@
 
         le_size_t as_size; /* Size, not last 0-based index */
         le_time_t as_time;
-        le_byte_t as_addr[_LE_USE_DEPTH];
-        le_size_t as_dept;
+        le_byte_t as_digit[_LE_USE_DEPTH];
+        le_size_t as_depth;
 
     } le_address_t;
 
@@ -183,19 +183,6 @@
      */
 
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose );
-
-    /*! \brief accessor methods
-     *
-     *  Checks if the digits array of the class address describe a correct class
-     *  index.
-     *
-     *  \param le_address Address structure
-     *
-     *  \return Returns _LE_TRUE if digits describe a valid address, _LE_FALSE
-     *  otherwise
-     */
-
-    le_enum_t le_address_get_valid( le_address_t const * const le_address );
 
     /*! \brief mutator methods
      *

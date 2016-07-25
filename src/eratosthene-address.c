@@ -41,14 +41,14 @@
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
 
         /* Check consistency - return address digit */
-        return( le_offset >= le_address->as_size ? _LE_BYTE_NULL : le_address->as_addr[le_offset] );
+        return( le_offset >= le_address->as_size ? _LE_BYTE_NULL : le_address->as_digit[le_offset] );
 
     }
 
     le_size_t le_address_get_depth( le_address_t const * const le_address ) {
 
         /* Return address depth */
-        return( le_address->as_dept );
+        return( le_address->as_depth );
 
     }
 
@@ -66,19 +66,19 @@
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* Analyse address digit and coordinates update */
-            le_pose[0] += ( ( le_real_t ) ( le_address->as_addr[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
+            le_pose[0] += ( ( le_real_t ) ( le_address->as_digit[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
 
             /* Asynchronous dimension management */
             if ( le_parse < LE_GEODESY_ASYP ) continue;
 
             /* Analyse address digit and coordinates update */
-            le_pose[1] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x02 ) >> 1 ) ) * ( le_scale[1] /= 2.0 );
+            le_pose[1] += ( ( le_real_t ) ( ( le_address->as_digit[le_parse] & 0x02 ) >> 1 ) ) * ( le_scale[1] /= 2.0 );
 
             /* Asynchronous dimension management */
             if ( le_parse < LE_GEODESY_ASYA ) continue;
 
             /* Analyse address digit and coordinates update */
-            le_pose[2] += ( ( le_real_t ) ( ( le_address->as_addr[le_parse] & 0x04 ) >> 2 ) ) * ( le_scale[2] /= 2.0 );
+            le_pose[2] += ( ( le_real_t ) ( ( le_address->as_digit[le_parse] & 0x04 ) >> 2 ) ) * ( le_scale[2] /= 2.0 );
 
         }
 
@@ -86,34 +86,6 @@
         le_pose[0] = LE_GEODESY_LMIN + le_pose[0] * LE_GEODESY_LRAN;
         le_pose[1] = LE_GEODESY_AMIN + le_pose[1] * LE_GEODESY_ARAN;
         le_pose[2] = LE_GEODESY_HMIN + le_pose[2] * LE_GEODESY_HRAN;
-
-    }
-
-    le_enum_t le_address_get_valid( le_address_t const * const le_address ) {
-
-        /* Check address integrity */
-        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
-
-            /* Asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASYP ) {
-
-                /* Check digit validity - send message */
-                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 0x02 ) ) return( _LE_FALSE );
-
-            } else if ( le_parse < LE_GEODESY_ASYA ) {
-
-                /* Check digit validity - send message */
-                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE >> 0x01 ) ) return( _LE_FALSE );
-
-            } else {
-
-                /* Check digit validity - send message */
-                if ( le_address->as_addr[le_parse] >= ( _LE_USE_BASE ) ) return( _LE_FALSE );
-
-            }
-
-        /* Return positive answer */
-        } return( _LE_TRUE );
 
     }
 
@@ -150,7 +122,7 @@
         if ( le_digit >= _LE_USE_BASE ) return( LE_ERROR_BASE );
 
         /* Assign address digit */
-        le_address->as_addr[le_offset] = le_digit;
+        le_address->as_digit[le_offset] = le_digit;
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
@@ -163,7 +135,7 @@
         if ( le_depth >= _LE_USE_DEPTH ) return( LE_ERROR_DEPTH );
 
         /* Assign address depth */
-        le_address->as_dept = le_depth;
+        le_address->as_depth = le_depth;
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
@@ -184,7 +156,7 @@
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* Assign address digit */
-            le_address->as_addr[le_parse] = ( le_buffer = ( le_pose[0] >= 0.5 ) ? 1 : 0 );
+            le_address->as_digit[le_parse] = ( le_buffer = ( le_pose[0] >= 0.5 ) ? 1 : 0 );
 
             /* Update normalised coordinate */
             le_pose[0] = ( le_pose[0] * 2.0 ) - le_buffer;
@@ -193,7 +165,7 @@
             if ( le_parse < LE_GEODESY_ASYP ) continue;
 
             /* Assign address digit */
-            le_address->as_addr[le_parse] |= ( le_buffer = ( le_pose[1] >= 0.5 ) ? 1 : 0 ) << 0x01;
+            le_address->as_digit[le_parse] |= ( le_buffer = ( le_pose[1] >= 0.5 ) ? 1 : 0 ) << 0x01;
 
             /* Update normalised coordinate */
             le_pose[1] = ( le_pose[1] * 2.0 ) - le_buffer;
@@ -202,7 +174,7 @@
             if ( le_parse < LE_GEODESY_ASYA ) continue;
 
             /* Assign address digit */
-            le_address->as_addr[le_parse] |= ( le_buffer = ( le_pose[2] >= 0.5 ) ? 1 : 0 ) << 0x02;
+            le_address->as_digit[le_parse] |= ( le_buffer = ( le_pose[2] >= 0.5 ) ? 1 : 0 ) << 0x02;
 
             /* Update normalised coordinate */
             le_pose[2] = ( le_pose[2] * 2.0 ) - le_buffer;
@@ -221,10 +193,10 @@
         le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Convert geodetic address */
-        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_buffer[le_parse] = le_address->as_addr[le_parse] + _LE_USE_ASCII_ITOA;
+        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_buffer[le_parse] = le_address->as_digit[le_parse] + _LE_USE_ASCII_ITOA;
 
         /* Composing address string */
-        sprintf( ( char * ) le_string, "/%" _LE_TIME_P "/%s/%" _LE_SIZE_P, le_address->as_time, le_buffer, le_address->as_dept );
+        sprintf( ( char * ) le_string, "/%" _LE_TIME_P "/%s/%" _LE_SIZE_P, le_address->as_time, le_buffer, le_address->as_depth );
 
     }
 
@@ -234,13 +206,13 @@
         le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Decompose address string */
-        sscanf( ( char * ) le_string, "/%" _LE_TIME_S "/%[^/]/%" _LE_SIZE_S, & le_address->as_time, le_buffer, & le_address->as_dept );
+        sscanf( ( char * ) le_string, "/%" _LE_TIME_S "/%[^/]/%" _LE_SIZE_S, & le_address->as_time, le_buffer, & le_address->as_depth );
 
         /* Compute geodetic address size */
         le_address->as_size = strlen( ( char * ) le_buffer );
 
         /* Convert geodetic address */
-        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_address->as_addr[le_parse] = le_buffer[le_parse] - _LE_USE_ASCII_ITOA;
+        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_address->as_digit[le_parse] = le_buffer[le_parse] - _LE_USE_ASCII_ITOA;
 
     }
 

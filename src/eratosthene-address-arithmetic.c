@@ -33,7 +33,7 @@
         for ( le_size_t le_parse = 0; le_parse < le_size; le_parse ++ ) {
 
             /* Compare digits - return digits scale */
-            if ( le_addr1->as_addr[le_parse] != le_addr2->as_addr[le_parse] ) return( le_parse );
+            if ( le_addr1->as_digit[le_parse] != le_addr2->as_digit[le_parse] ) return( le_parse );
 
         /* Return smallest size */
         } return( le_size );
@@ -56,7 +56,7 @@
         while ( le_offset != _LE_SIZE_MAX ) {
 
             /* Assign digit */
-            le_address->as_addr[le_offset] = le_value % le_base;
+            le_address->as_digit[le_offset] = le_value % le_base;
 
             /* Compute remaining value */
             le_value /= le_base;
@@ -95,13 +95,13 @@
         for ( le_size_t le_offset = le_addr->as_size; le_offset != _LE_SIZE_MAX; le_offset -- ) {
 
             /* Add current digits */
-            le_addr->as_addr[le_offset] += le_addr2->as_addr[le_offset] + le_remain;
+            le_addr->as_digit[le_offset] += le_addr2->as_digit[le_offset] + le_remain;
 
             /* Compute remainder */
-            le_remain = le_addr->as_addr[le_offset] / le_base;
+            le_remain = le_addr->as_digit[le_offset] / le_base;
 
             /* Compute address digit */
-            le_addr->as_addr[le_offset] %= le_base;
+            le_addr->as_digit[le_offset] %= le_base;
 
             /* Asynchronous dimension management */
             if ( le_offset == LE_GEODESY_ASYA ) le_base >>= 0x01;
@@ -134,13 +134,13 @@
         for ( le_size_t le_offset = le_addr->as_size; le_offset != _LE_SIZE_MAX; le_offset -- ) {
 
             /* Substract current digits */
-            le_addr->as_addr[le_offset] -= le_addr2->as_addr[le_offset] + le_remain;
+            le_addr->as_digit[le_offset] -= le_addr2->as_digit[le_offset] + le_remain;
 
             /* Compute remainder */
-            le_remain = ( le_addr->as_addr[le_offset] >= _LE_USE_BASE ) ? 1 : 0;
+            le_remain = ( le_addr->as_digit[le_offset] >= _LE_USE_BASE ) ? 1 : 0;
 
             /* Compute address digit */
-            le_addr->as_addr[le_offset] = ( le_addr->as_addr[le_offset] >= _LE_USE_BASE ) ? le_addr->as_addr[le_offset] + le_base : le_addr->as_addr[le_offset];
+            le_addr->as_digit[le_offset] = ( le_addr->as_digit[le_offset] >= _LE_USE_BASE ) ? le_addr->as_digit[le_offset] + le_base : le_addr->as_digit[le_offset];
 
             /* Asynchronous dimension management */
             if ( le_offset == LE_GEODESY_ASYA ) le_base >>= 0x01;
