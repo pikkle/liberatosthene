@@ -97,7 +97,7 @@
      *  stored in the array, the structure holds an asynchronous size used to
      *  reduce the amount of memory dynamic reallocation.
      *
-     *  \var le_array_struct::ar_vsze
+     *  \var le_array_struct::as_virt
      *  Array asynchronous size, in number of points
      *  \var le_array_struct::ar_size
      *  Array size, in number of points
@@ -107,7 +107,7 @@
 
     typedef struct le_array_struct {
 
-        le_size_t   ar_vsze;
+        le_size_t   as_virt;
         le_size_t   ar_size;
         le_byte_t * ar_byte;
 
