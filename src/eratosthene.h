@@ -56,20 +56,18 @@
     # define __LE_ERATOSTHENE__
 
     # if ( __STDC_VERSION__ < 199901L )
-    # error "this program requires C99 standard"
+    # error "C99 standard required"
     # endif
-
     # include <limits.h>
     # if ( CHAR_BIT != 8 )
-    # error "this program expects 8 bits byte"
+    # error "8 bits bytes required"
     # endif
-
     # if defined ( __BYTE_ORDER__ )
     # if ( __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ )
-    # error "this program expects little-endian architecture"
+    # error "little-endian architecture required"
     # endif
     # else
-    # error "this program expects endianness detection availability"
+    # error "endianness detection required"
     # endif
 
 /*
@@ -108,9 +106,11 @@
     # define _LE_TRUE           ( 1 )
 
     /* Features configuration */
-    # define _LE_USE_SIZE_T     ( 64 )
     # define _LE_USE_BASE       ( 8 )
     # define _LE_USE_OFFSET     ( 5 )
+    # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
+    # error "offset range is [4,8]"
+    # endif
     # define _LE_USE_DEPTH      ( 64 )
     # define _LE_USE_QUERY      ( _LE_USE_DEPTH + 24 )
     # define _LE_USE_DATA       ( 4 )
@@ -126,13 +126,8 @@
     # define _LE_BYTE           uint8_t
     # define _LE_CHAR           unsigned char
     # define _LE_ENUM           int
-    # if   ( _LE_USE_SIZE_T == 32 )
-    # define _LE_SIZE           uint32_t
-    # define _LE_DIFF           int32_t
-    # elif ( _LE_USE_SIZE_T == 64 )
     # define _LE_SIZE           uint64_t
     # define _LE_DIFF           int64_t
-    # endif
     # define _LE_REAL           double
     # define _LE_TIME           int64_t
     # define _LE_DATA           uint8_t
@@ -143,11 +138,7 @@
     # define _LE_BYTE_MIN       0
     # define _LE_BYTE_MAX       UINT8_MAX
     # define _LE_SIZE_MIN       0
-    # if   ( _LE_USE_SIZE_T == 32 )
-    # define _LE_SIZE_MAX       UINT32_MAX
-    # elif ( _LE_USE_SIZE_T == 64 )
     # define _LE_SIZE_MAX       UINT64_MAX
-    # endif
     # define _LE_TIME_MIN       INT64_MIN
     # define _LE_TIME_MAX       INT64_MAX
 
@@ -163,13 +154,8 @@
     # define _LE_CHAR_S         "hhu"
     # define _LE_ENUM_P         "i"
     # define _LE_ENUM_S         "i"
-    # if   ( _LE_USE_SIZE_T == 32 )
-    # define _LE_SIZE_P         PRIu32
-    # define _LE_SIZE_S         SCNu32
-    # elif ( _LE_USE_SIZE_T == 64 )
     # define _LE_SIZE_P         PRIu64
     # define _LE_SIZE_S         SCNu64
-    # endif
     # define _LE_REAL_P         ".14e"
     # define _LE_REAL_S         "lf"
     # define _LE_TIME_P         PRIi64
@@ -203,18 +189,6 @@
     # define LE_PI              ( _LE_REAL_L ( 3.1415926535897932384626433832795029 ) )
     # define LE_P2              ( LE_PI / _LE_REAL_L( 2.0 ) )
     # define LE_2P              ( LE_PI * _LE_REAL_L( 2.0 ) )
-
-/*
-    header - consistency checks
- */
-
-    # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
-    # error "configuration : offset value unhandled"
-    # endif
-
-    # if ( _LE_USE_SIZE_T != 64 ) && ( _LE_USE_OFFSET > 4 )
-    # error "configuration : cannot handle greater than 4-bytes offset using 32 bits sizes"
-    # endif
 
 /*
     header - preprocessor macros
