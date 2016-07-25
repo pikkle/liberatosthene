@@ -33,7 +33,7 @@
         FILE * le_stream = NULL;
 
         /* Open configuration stream */
-        if ( ( le_stream = fopen( strcat( strcat( ( char * ) le_system.sm_root, ( char * ) le_root ), "/system" ), "r" ) ) == NULL ) {
+        if ( ( le_stream = fopen( strcat( strcat( ( char * ) le_system.sm_path, ( char * ) le_root ), "/system" ), "r" ) ) == NULL ) {
 
             /* Send message - return created structure */
             le_system._status = LE_ERROR_IO_ACCESS; return( le_system );
@@ -41,7 +41,7 @@
         }
 
         /* Check configuration reading */
-        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & le_system.sm_sparam, & le_system.sm_tparam ) != 2 ) {
+        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & le_system.sm_area, & le_system.sm_time ) != 2 ) {
 
             /* Close configuration stream */
             fclose( le_stream );
@@ -55,7 +55,7 @@
         fclose( le_stream );
 
         /* Check consistency */
-        if ( ( le_system.sm_sparam <= 0 ) || ( le_system.sm_sparam >= _LE_USE_DEPTH ) ) {
+        if ( ( le_system.sm_area <= 0 ) || ( le_system.sm_area >= _LE_USE_DEPTH ) ) {
 
             /* Send message - return created structure */
             le_system._status = LE_ERROR_DEPTH; return( le_system );
@@ -63,7 +63,7 @@
         }
 
         /* Check consistency */
-        if ( le_system.sm_tparam <= 0 ) {
+        if ( le_system.sm_time <= 0 ) {
 
             /* Send message - return created structure */
             le_system._status = LE_ERROR_TIME; return( le_system );
@@ -71,7 +71,7 @@
         }
 
         /* Assign provided root path */
-        strcpy( ( char * ) le_system.sm_root, ( char * ) le_root );
+        strcpy( ( char * ) le_system.sm_path, ( char * ) le_root );
 
         /* Return created structure */
         return( le_system );
@@ -98,14 +98,14 @@
     le_size_t le_system_get_sparam( le_system_t const * const le_system ) {
 
         /* Return system space discretisation */
-        return( le_system->sm_sparam );
+        return( le_system->sm_area );
 
     }
 
     le_time_t le_system_get_tparam( le_system_t const * const le_system ) {
 
         /* Return system time discretisation */
-        return( le_system->sm_tparam );
+        return( le_system->sm_time );
 
     }
 
@@ -176,7 +176,7 @@
     le_void_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
 
         /* Address variables */
-        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_sparam - 1 );
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_area - 1 );
 
         /* Class variables */
         le_class_t le_class = LE_CLASS_C;
@@ -199,7 +199,7 @@
         do {
 
             /* Class importation */
-            if ( le_class_io_read( & le_class, le_offnex, le_system->sm_scale[le_parse] ) == LE_ERROR_SUCCESS ) {
+            if ( le_class_io_read( & le_class, le_offnex, le_system->sm_stream[le_parse] ) == LE_ERROR_SUCCESS ) {
 
                 /* Inject element in class */
                 le_class_set_push( & le_class, le_data );
@@ -215,13 +215,13 @@
             le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_parse ) );
 
             /* Check daughter state */
-            if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_system->sm_sparam ) ) {
+            if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_system->sm_area ) ) {
 
                 /* Seek next scale eof */
-                fseek( le_system->sm_scale[le_panex], 0, SEEK_END );
+                fseek( le_system->sm_stream[le_panex], 0, SEEK_END );
 
                 /* Assign eof offset */
-                le_offset = ftell( le_system->sm_scale[le_panex] );
+                le_offset = ftell( le_system->sm_stream[le_panex] );
 
                 /* Insert offset in class */
                 le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
@@ -229,10 +229,10 @@
             }
 
             /* Class exportation */
-            le_class_io_write( & le_class, le_offnex, le_system->sm_scale[le_parse] );
+            le_class_io_write( & le_class, le_offnex, le_system->sm_stream[le_parse] );
 
         /* Injection process condition */
-        } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_system->sm_sparam );
+        } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_system->sm_area );
 
     }
 
@@ -252,7 +252,7 @@
         if ( le_parse == 0 ) {
 
             /* Check consistency */
-            if ( ( le_size + le_address_get_depth( le_addr ) ) >= le_system->sm_sparam ) return;
+            if ( ( le_size + le_address_get_depth( le_addr ) ) >= le_system->sm_area ) return;
 
             /* System scale stream management */
             if ( le_system_io_open( le_system, le_address_get_time( le_addr ) ) != LE_ERROR_SUCCESS ) return;
@@ -260,7 +260,7 @@
         }
 
         /* Read class */
-        if ( le_class_io_read( & le_class, le_offset, le_system->sm_scale[le_parse] ) == LE_ERROR_SUCCESS ) {
+        if ( le_class_io_read( & le_class, le_offset, le_system->sm_stream[le_parse] ) == LE_ERROR_SUCCESS ) {
 
             /* Query process mode */
             if ( le_parse < le_size ) {
@@ -333,7 +333,7 @@
         struct dirent * le_entity = NULL;
 
         /* Create directory handle - send message */
-        if ( ( le_directory = opendir( ( char * ) le_system->sm_root ) ) == NULL ) return( le_array );
+        if ( ( le_directory = opendir( ( char * ) le_system->sm_path ) ) == NULL ) return( le_array );
 
         /* Directory entity enumeration */
         while ( ( le_entity = readdir( le_directory ) ) != NULL ) {
@@ -342,7 +342,7 @@
             if ( ( le_entity->d_type == DT_DIR ) && ( le_entity->d_name[0] != '.' ) ) {
 
                 /* Convert directory name */
-                le_buffer = le_system->sm_tparam * strtoull( le_entity->d_name, NULL, 10 );
+                le_buffer = le_system->sm_time * strtoull( le_entity->d_name, NULL, 10 );
 
                 /* Push buffer in array */
                 le_array_set_push( & le_array, LE_ARRAY_64T, NULL, le_buffer, NULL );
@@ -372,31 +372,31 @@
         le_char_t le_path[_LE_USE_STRING] = { 0 };
 
         /* Check necessities - send message */
-        if ( ( le_time / le_system->sm_tparam ) == le_flag ) return( LE_ERROR_SUCCESS );
+        if ( ( le_time / le_system->sm_time ) == le_flag ) return( LE_ERROR_SUCCESS );
 
         /* Update temporal class */
-        le_flag = le_time / le_system->sm_tparam;
+        le_flag = le_time / le_system->sm_time;
 
         /* Compose temporal class directoy */
-        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_system->sm_root, le_flag );
+        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_system->sm_path, le_flag );
 
         /* Create directory */
         mkdir( ( char * ) le_path, 0777 );
 
         /* Create scale streams */
-        for ( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
+        for ( le_size_t le_parse = 0; le_parse < le_system->sm_area; le_parse ++ ) {
 
             /* Check stream state */
-            if ( le_system->sm_scale[le_parse] != NULL ) fclose( le_system->sm_scale[le_parse] );
+            if ( le_system->sm_stream[le_parse] != NULL ) fclose( le_system->sm_stream[le_parse] );
 
             /* Create scale path */
-            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_system->sm_root, le_flag, le_parse );
+            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_system->sm_path, le_flag, le_parse );
 
             /* Create scale stream (r+) */
-            if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
+            if ( ( le_system->sm_stream[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
 
                 /* Create scale stream (w+) - send message */
-                if ( ( le_system->sm_scale[le_parse] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) return( LE_ERROR_IO_ACCESS );
+                if ( ( le_system->sm_stream[le_parse] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) return( LE_ERROR_IO_ACCESS );
 
             }
 
@@ -410,10 +410,10 @@
     le_void_t le_system_io_flush( le_system_t * const le_system ) {
         
         /* Parsing streams */
-        for ( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
+        for ( le_size_t le_parse = 0; le_parse < le_system->sm_area; le_parse ++ ) {
 
             /* Check stream state - flush stream */
-            if ( le_system->sm_scale[le_parse] != NULL ) fflush( le_system->sm_scale[le_parse] );
+            if ( le_system->sm_stream[le_parse] != NULL ) fflush( le_system->sm_stream[le_parse] );
 
         }
 
@@ -422,16 +422,16 @@
     le_void_t le_system_io_close( le_system_t * const le_system ) {
 
         /* Parsing scales streams */
-        for( le_size_t le_parse = 0; le_parse < le_system->sm_sparam; le_parse ++ ) {
+        for( le_size_t le_parse = 0; le_parse < le_system->sm_area; le_parse ++ ) {
 
             /* Check stream */
-            if ( le_system->sm_scale[le_parse] != NULL ) {
+            if ( le_system->sm_stream[le_parse] != NULL ) {
 
                 /* Close scale stream */
-                fclose( le_system->sm_scale[le_parse] );
+                fclose( le_system->sm_stream[le_parse] );
 
                 /* Invalidate pointer */
-                le_system->sm_scale[le_parse] = NULL;
+                le_system->sm_stream[le_parse] = NULL;
 
             }
 
