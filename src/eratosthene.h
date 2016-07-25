@@ -197,6 +197,9 @@
     /* Define modulo */
     # define le_mod(i,j)        ( (i) < 0 ? ( (j) + ( (i) % (j) ) ) % (j) : (i) % (j) )
 
+    /* Define absolute values */
+    # define le_time_abs(x)     ( llabs( x ) )
+
 /*
     header - type definition
  */
