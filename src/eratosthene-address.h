@@ -59,6 +59,9 @@
     header - preprocessor macros
  */
 
+    /* Base according to scale */
+    # define LE_ADDRESS_BASE( s )   ( s < LE_GEODESY_ASYA ? ( _LE_USE_BASE >> 1 ) : ( s < LE_GEODESY_ASYP ) ? ( _LE_USE_BASE >> 2 ) : _LE_USE_BASE ) )
+
 /*
     header - type definition
  */
