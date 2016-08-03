@@ -256,6 +256,8 @@
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
 
+    le_enum_t le_address_cmp( le_address_t const * const le_addr1, le_address_t const * const le_addr2 );
+
     /*! \brief i/o methods
      *
      */
