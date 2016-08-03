@@ -55,6 +55,12 @@
     # define LE_ADDRESS_C           { 0, 0, { 0 }, 0 }
     # define LE_ADDRESS_C_SIZE( s ) { s, 0, { 0 }, 0 }
 
+    /* Define i/o buffer mapping */
+    # define LE_ADDRESS_MAP_SIZE    ( 0 )
+    # define LE_ADDRESS_MAP_TIME    ( sizeof( le_size_t ) )
+    # define LE_ADDRESS_MAP_DIGIT   ( sizeof( le_time_t ) + sizeof( le_size_t ) * 2 )
+    # define LE_ADDRESS_MAP_DEPTH   ( sizeof( le_time_t ) + sizeof( le_size_t ) )
+
 /*
     header - preprocessor macros
  */

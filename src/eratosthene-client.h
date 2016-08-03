@@ -108,8 +108,6 @@
 
     le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t le_mode, le_enum_t le_format );
 
-    le_enum_t le_client_system_query_array( le_sock_t const le_socket, le_array_t * const le_array, le_char_t const * const le_query );
-
     /*! \brief connection methods
      *
      *  This function performs a spatial indexation parameter query to the

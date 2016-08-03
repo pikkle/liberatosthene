@@ -209,10 +209,10 @@
         static le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Static buffer mapping variables */
-        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer      );
-        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer +  8 );
-        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + 24 );
-        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + 16 );
+        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP_SIZE  );
+        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP_TIME  );
+        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP_DIGIT );
+        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP_DEPTH );
 
         /* Read buffer from socket - send message */
         if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
@@ -221,9 +221,9 @@
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_DEPTH; le_parse ++ ) le_address->as_digit[le_parse] = le_digit[le_parse];
 
         /* Read socket buffer */
-        le_address->as_size  = * le_size;
-        le_address->as_time  = * le_time;
-        le_address->as_depth = * le_depth;
+        le_address->as_size  = le_size [0];
+        le_address->as_time  = le_time [0];
+        le_address->as_depth = le_depth[0];
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
@@ -236,15 +236,15 @@
         static le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Static buffer mapping variables */
-        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer      );
-        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer +  8 );
-        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + 24 );
-        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + 16 );
+        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP_SIZE  );
+        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP_TIME  );
+        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP_DIGIT );
+        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP_DEPTH );
 
         /* Write socket buffer */
-        * le_size  = le_address->as_size;
-        * le_time  = le_address->as_time;
-        * le_depth = le_address->as_depth;
+        le_size [0] = le_address->as_size;
+        le_time [0] = le_address->as_time;
+        le_depth[0] = le_address->as_depth;
 
         /* Write socket buffer */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_DEPTH; le_parse ++ ) le_digit[le_parse] = le_address->as_digit[le_parse];

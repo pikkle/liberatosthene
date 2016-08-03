@@ -57,7 +57,7 @@
     # define LE_NETWORK_C               { 0 }
 
     /* Define network standard buffers */
-    # define LE_NETWORK_SB_ADDR         ( _LE_USE_QUERY )
+    # define LE_NETWORK_SB_ADDR         ( _LE_USE_DEPTH + sizeof( le_size_t ) * 2 + sizeof( le_time_t ) )
     # define LE_NETWORK_SB_SYNC         ( _LE_USE_MTU )
     # define LE_NETWORK_SB_STRM         ( _LE_USE_MTU * 2 )
 
