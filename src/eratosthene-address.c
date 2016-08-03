@@ -222,14 +222,25 @@
 
     le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket ) {
 
-        /* Socket i/o buffer variables */
-        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        /* Static socket i/o buffer variables */
+        static le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
-        /* Read query address - send message */
+        /* Static buffer mapping variables */
+        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer      );
+        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer +  8 );
+        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + 24 );
+        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + 16 );
+
+        /* Read buffer from socket - send message */
         if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
 
-        /* Decompose address string */
-        le_address_cf_string( le_address, le_buffer );
+        /* Read socket buffer */
+        for ( le_size_t le_parse = 0; le_parse < _LE_USE_DEPTH; le_parse ++ ) le_address->as_digit[le_parse] = le_digit[le_parse];
+
+        /* Read socket buffer */
+        le_address->as_size  = * le_size;
+        le_address->as_time  = * le_time;
+        le_address->as_depth = * le_depth;
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
@@ -238,13 +249,24 @@
 
     le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket ) {
 
-        /* Socket i/o buffer variables */
-        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        /* Static socket i/o buffer variables */
+        static le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
-        /* Compose address string */
-        le_address_ct_string( le_address, le_buffer );
+        /* Static buffer mapping variables */
+        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer      );
+        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer +  8 );
+        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + 24 );
+        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + 16 );
 
-        /* Write query address - send message */
+        /* Write socket buffer */
+        * le_size  = le_address->as_size;
+        * le_time  = le_address->as_time;
+        * le_depth = le_address->as_depth;
+
+        /* Write socket buffer */
+        for ( le_size_t le_parse = 0; le_parse < _LE_USE_DEPTH; le_parse ++ ) le_digit[le_parse] = le_address->as_digit[le_parse];
+
+        /* Write buffer on socket - send message */
         if ( write( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_WRITE );
 
         /* Send message */

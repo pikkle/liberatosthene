@@ -258,11 +258,8 @@
                 /* Array size management */
                 le_array->ar_size += le_size;
 
-                /* Clear reading value */
-                le_read = 0;
-
             /* Update reading value */
-            } else { le_read ++; }
+            le_read = 0; } else { le_read ++; }
 
         }
 
