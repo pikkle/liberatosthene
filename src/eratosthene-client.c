@@ -91,25 +91,6 @@
     source - system methods
  */
 
-    le_enum_t le_client_system_query_array( le_sock_t const le_socket, le_array_t * const le_array, le_char_t const * const le_query ) {
-
-        /* Query buffer variables */
-        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
-
-        /* Check consistency - send message */
-        if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
-
-        /* Copy query string to i/o buffer */
-        strcpy( ( char * ) le_buffer, ( char * ) le_query );
-
-        /* Send query to socket - send message */
-        if ( write( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_WRITE );
-
-        /* Read array from socket */
-        return( le_array_io_read( le_array, le_socket ) );
-
-    }
-
     le_size_t le_client_system_sparam( le_sock_t const le_socket ) {
 
         /* Space discretisation i/o variables */
