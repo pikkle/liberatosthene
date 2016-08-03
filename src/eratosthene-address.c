@@ -184,35 +184,18 @@
     }
 
 /*
-    source - conversion methods
+    source - comparison methods
  */
 
-    le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string ) {
+    le_enum_t le_address_cmp( le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
 
-        /* Conversion buffer variables */
-        le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        /* Field comparison - send message */
+        if ( le_addr1->as_size  != le_addr2->as_size  ) return( _LE_FALSE );
+        if ( le_addr1->as_time  != le_addr2->as_time  ) return( _LE_FALSE );
+        if ( le_addr2->as_depth != le_addr2->as_depth ) return( _LE_FALSE );
 
-        /* Convert geodetic address */
-        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_buffer[le_parse] = le_address->as_digit[le_parse] + _LE_USE_ASCII_ITOA;
-
-        /* Composing address string */
-        sprintf( ( char * ) le_string, "/%" _LE_TIME_P "/%s/%" _LE_SIZE_P, le_address->as_time, le_buffer, le_address->as_depth );
-
-    }
-
-    le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string ) {
-
-        /* Conversion buffer variables */
-        le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
-
-        /* Decompose address string */
-        sscanf( ( char * ) le_string, "/%" _LE_TIME_S "/%[^/]/%" _LE_SIZE_S, & le_address->as_time, le_buffer, & le_address->as_depth );
-
-        /* Compute geodetic address size */
-        le_address->as_size = strlen( ( char * ) le_buffer );
-
-        /* Convert geodetic address */
-        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_address->as_digit[le_parse] = le_buffer[le_parse] - _LE_USE_ASCII_ITOA;
+        /* Digit comparison - send message */
+        return( memcmp( le_addr1->as_digit, le_addr2->as_digit, le_addr1->as_size ) == 0 ? _LE_TRUE : _LE_FALSE );
 
     }
 
@@ -271,6 +254,39 @@
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
+
+    }
+
+/*
+    source - conversion methods
+ */
+
+    le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string ) {
+
+        /* Conversion buffer variables */
+        le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+
+        /* Convert geodetic address */
+        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_buffer[le_parse] = le_address->as_digit[le_parse] + _LE_USE_ASCII_ITOA;
+
+        /* Composing address string */
+        sprintf( ( char * ) le_string, "/%" _LE_TIME_P "/%s/%" _LE_SIZE_P, le_address->as_time, le_buffer, le_address->as_depth );
+
+    }
+
+    le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string ) {
+
+        /* Conversion buffer variables */
+        le_char_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+
+        /* Decompose address string */
+        sscanf( ( char * ) le_string, "/%" _LE_TIME_S "/%[^/]/%" _LE_SIZE_S, & le_address->as_time, le_buffer, & le_address->as_depth );
+
+        /* Compute geodetic address size */
+        le_address->as_size = strlen( ( char * ) le_buffer );
+
+        /* Convert geodetic address */
+        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) le_address->as_digit[le_parse] = le_buffer[le_parse] - _LE_USE_ASCII_ITOA;
 
     }
 

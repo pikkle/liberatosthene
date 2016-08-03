@@ -256,6 +256,18 @@
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
 
+    /*! \brief i/o methods
+     *
+     */
+
+    le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket );
+
+    /*! \brief i/o methods
+     *
+     */
+
+    le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket );
+
     /*! \brief conversion methods
      *
      *  This function translate the address structure into a query string used
@@ -281,18 +293,6 @@
      */
 
     le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string );
-
-    /*! \brief i/o methods
-     *
-     */
-
-    le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket );
-
-    /*! \brief i/o methods
-     *
-     */
-
-    le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility
