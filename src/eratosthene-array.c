@@ -117,7 +117,7 @@
         if ( le_array_set_memory( le_array, LE_ARRAY_SFL ) != LE_ERROR_SUCCESS ) return;
 
         /* Array mapping computation */
-        le_array_sf( le_array, le_array->ar_size - LE_ARRAY_SFL, le_map );
+        le_array_sf( le_array->ar_byte, le_array->ar_size - LE_ARRAY_SFL, le_map );
 
         /* Assign elements to array */
         le_map.as_pose[0] = le_pose[0];
@@ -139,7 +139,7 @@
         if ( le_array_set_memory( le_array, LE_ARRAY_RFL ) != LE_ERROR_SUCCESS ) return;
 
         /* Array mapping computation */
-        le_array_rf( le_array, le_array->ar_size - LE_ARRAY_RFL, le_map );
+        le_array_rf( le_array->ar_byte, le_array->ar_size - LE_ARRAY_RFL, le_map );
 
         /* Assign elements to array */
         le_map.as_pose[0] = le_pose[0];
@@ -160,7 +160,7 @@
         if ( le_array_set_memory( le_array, LE_ARRAY_TFL ) != LE_ERROR_SUCCESS ) return;
 
         /* Array mapping computation */
-        le_array_tf( le_array, le_array->ar_size - LE_ARRAY_TFL, le_map );
+        le_array_tf( le_array->ar_byte, le_array->ar_size - LE_ARRAY_TFL, le_map );
 
         /* Assign elements to array */
         le_map.as_time[0] = le_time;
@@ -176,7 +176,7 @@
         if ( le_array_set_memory( le_array, LE_ARRAY_CFL ) != LE_ERROR_SUCCESS ) return;
 
         /* Array mapping computation */
-        le_array_cf( le_array, le_array->ar_size - LE_ARRAY_CFL, le_map );
+        le_array_cf( le_array->ar_byte, le_array->ar_size - LE_ARRAY_CFL, le_map );
 
         /* Assign elements to array */
         le_map.as_size[0] = le_size;
