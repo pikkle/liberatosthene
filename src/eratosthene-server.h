@@ -103,7 +103,7 @@
      *  \return Query mode descriptor on success, LE_NETWORK_MODE_NULL on error
      */
 
-    le_hand_t le_server_handshake( le_sock_t const le_socket );
+    le_enum_t le_server_handshake( le_sock_t const le_socket );
 
     /*! \brief handshake methods
      *

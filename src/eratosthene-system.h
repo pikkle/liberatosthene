@@ -53,7 +53,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_SYSTEM_C { { 0 }, 0, 0, LE_ARRAY_SFD, { NULL }, LE_ERROR_SUCCESS }
+    # define LE_SYSTEM_C { { 0 }, 0, 0, { NULL }, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -97,7 +97,6 @@
         le_char_t sm_path[_LE_USE_STRING];
         le_size_t sm_area;
         le_time_t sm_time;
-        le_enum_t sm_format;
         FILE *    sm_stream[_LE_USE_DEPTH];
 
     le_enum_t _status; } le_system_t;
@@ -129,30 +128,6 @@
      */
 
     le_system_t le_system_delete( le_system_t * const le_system );
-
-    /*! \brief accessor methods
-     *
-     *  This function returns the server system spatial indexation parameter.
-     *
-     *  \param le_system Server system descriptor
-     *
-     *  \return Server system spatial indexation parameter
-     */
-
-    le_size_t le_system_get_sparam( le_system_t const * const le_system );
-
-    /*! \brief accessor methods
-     *
-     *  This function returns the server system time indexation parameter.
-     *
-     *  \param le_system Server system descriptor
-     *
-     *  \return Server system time indexation parameter
-     */
-
-    le_time_t le_system_get_tparam( le_system_t const * const le_system );
-
-    le_hand_t le_system_set_format( le_system_t * const le_system, le_hand_t const le_hand );
 
     /*! \brief injection methods
      *

@@ -68,22 +68,22 @@
     source - handshake and authorisation methods
  */
 
-    le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t le_mode, le_enum_t le_format ) {
+    le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t const le_mode ) {
 
-        /* Handshake buffer variables */
-        le_hand_t le_buffer = ( le_hand_t ) le_mode | ( le_hand_t ) le_format << 8;
+        /* Socket i/o buffer */
+        le_enum_t er_buffer = le_mode;
 
         /* Check consistency - send message */
         if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
 
         /* Write handshake - send message */
-        if ( write( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) return( LE_ERROR_IO_WRITE );
+        if ( write( le_socket, & er_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_WRITE );
 
-        /* Wait handshake authorisation - send message */
-        if ( read( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) return( LE_ERROR_IO_READ );
+        /* Read handshake - send message */
+        if ( read( le_socket, & er_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_READ );
 
-        /* Check authorisation - send message */
-        return( ( ( le_buffer & 0x7f ) == le_mode ) ? LE_ERROR_SUCCESS : LE_ERROR_AUTH );
+        /* Check server authorisation - send message */
+        return( ( er_buffer & 0x7f ) == le_mode ? LE_ERROR_SUCCESS : LE_ERROR_AUTH );
 
     }
 

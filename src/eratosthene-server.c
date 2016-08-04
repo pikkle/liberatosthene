@@ -76,13 +76,16 @@
     source - handshake and authorisation methods
  */
 
-    le_hand_t le_server_handshake( le_sock_t const le_socket ) {
+    le_enum_t le_server_handshake( le_sock_t const le_socket ) {
 
-        /* Handshake buffer variables */
-        le_hand_t le_buffer = _LE_HAND_NULL;
+        /* Socket i/o buffer variables */
+        le_enum_t le_buffer = LE_NETWORK_MODE_NULL;
+
+        /* Check consistency */
+        if ( le_socket == _LE_SOCK_NULL ) return( LE_NETWORK_MODE_NULL );
 
         /* Read handshake - send message */
-        if ( read( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) return( _LE_HAND_NULL );
+        if ( read( le_socket, & le_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_NETWORK_MODE_NULL );
 
         /* Return received handshake */
         return( le_buffer );
@@ -91,14 +94,14 @@
 
     le_enum_t le_server_authorise( le_sock_t const le_socket, le_enum_t const le_auth ) {
 
-        /* Handshake buffer variables */
-        le_hand_t le_buffer = le_auth;
+        /* Check consistency - send message */
+        if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
 
-        /* Write authorisation on socket - send message */
-        if ( write( le_socket, & le_buffer, sizeof( le_hand_t ) ) != sizeof( le_hand_t ) ) return( LE_ERROR_IO_WRITE );
+        /* Write authorisation - send message */
+        if ( write( le_socket, & le_auth, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_WRITE );
 
-        /* Send authorisation */
-        return( le_auth == _LE_HAND_NULL ? LE_ERROR_AUTH : LE_ERROR_SUCCESS );
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 
@@ -112,7 +115,7 @@
         le_sock_t le_client = _LE_SOCK_NULL;
 
         /* Client handshake variables */
-        le_hand_t le_hand = _LE_HAND_NULL;
+        //le_hand_t le_hand = _LE_HAND_NULL;
 
         /* Client address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C;
@@ -130,13 +133,13 @@
                 if ( ( le_client = accept( le_socket, ( struct sockaddr * ) & le_addr, & le_len ) ) != _LE_SOCK_NULL ) {
 
                     /* Switch on handshake */
-                    switch ( ( le_hand = le_server_handshake( le_client ) ) & 0xff ) {
+                    switch ( le_server_handshake( le_client ) ) {
 
                         /* System injection */
                         case ( LE_NETWORK_MODE_IMOD ) : {
 
                             /* Send authorisation */
-                            if ( le_server_authorise( le_client, le_system_set_format( le_system, le_hand ) ) == LE_ERROR_SUCCESS ) {
+                            if ( le_server_authorise( le_client, LE_NETWORK_MODE_IATH ) == LE_ERROR_SUCCESS ) {
 
                                 /* Connection to system injection */
                                 le_server_system_inject( le_client, le_system );
@@ -149,7 +152,7 @@
                         case ( LE_NETWORK_MODE_QMOD ) : {
 
                             /* Send authorisation */
-                            if ( le_server_authorise( le_client, le_system_set_format( le_system, le_hand ) ) == LE_ERROR_SUCCESS ) {
+                            if ( le_server_authorise( le_client, LE_NETWORK_MODE_QATH ) == LE_ERROR_SUCCESS ) {
 
                                 /* Connection to system query */
                                 le_server_system_query( le_client, le_system );
@@ -162,7 +165,7 @@
                         case ( LE_NETWORK_MODE_AMOD ) : {
 
                             /* Send authorisation */
-                            if ( le_server_authorise( le_client, le_system_set_format( le_system, le_hand ) ) == LE_ERROR_SUCCESS ) {
+                            if ( le_server_authorise( le_client, LE_NETWORK_MODE_AATH ) == LE_ERROR_SUCCESS ) {
 
                                 /* Connection to system times */
                                 le_server_system_times( le_client, le_system );
@@ -175,7 +178,7 @@
                         case ( LE_NETWORK_MODE_CMOD ) : {
 
                             /* Send authorisation */
-                            if ( le_server_authorise( le_client, le_system_set_format( le_system, le_hand ) ) == LE_ERROR_SUCCESS ) {
+                            if ( le_server_authorise( le_client, LE_NETWORK_MODE_CATH ) == LE_ERROR_SUCCESS ) {
 
                                 /* Connection to system */
                                 le_server_system_config( le_client, le_system );
