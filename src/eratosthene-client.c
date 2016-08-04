@@ -65,7 +65,7 @@
     }
 
 /*
-    source - handshake and authorisation methods
+    source - handshake methods
  */
 
     le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t const le_mode ) {
@@ -84,6 +84,49 @@
 
         /* Check server authorisation - send message */
         return( ( er_buffer & 0x7f ) == le_mode ? LE_ERROR_SUCCESS : LE_ERROR_AUTH );
+
+    }
+
+/*
+    source - common methods
+ */
+
+    le_enum_t le_client_array( le_char_t const * const le_ip, le_sock_t const le_port, le_enum_t const le_mode, le_array_t * const le_array ) {
+
+        /* Returned value variables */
+        le_enum_t le_return = LE_ERROR_SUCCESS;
+
+        /* Socket variables */
+        le_sock_t le_socket = _LE_SOCK_NULL;
+
+        /* Create connection to server */
+        if ( le_client_create( le_ip, le_port ) == _LE_SOCK_NULL ) { 
+
+            /* Send message */
+            return( LE_ERROR_IO_SOCKET );
+
+        } else {
+
+            /* Server/client handshake */
+            if ( ( le_return = le_client_handshake( le_socket, le_mode ) ) != LE_ERROR_SUCCESS ) {
+
+                /* Send message */
+                return( le_return );
+
+            } else {
+
+                /* Read array from server */
+                le_return = le_array_io_read( le_array, le_socket );
+
+            }
+
+            /* Delete connection to server */
+            le_client_delete( le_socket );
+
+        }
+
+        /* Send message */
+        return( le_return );
 
     }
 

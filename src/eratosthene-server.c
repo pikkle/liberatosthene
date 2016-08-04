@@ -73,7 +73,7 @@
     }
 
 /*
-    source - handshake and authorisation methods
+    source - handshake methods
  */
 
     le_enum_t le_server_handshake( le_sock_t const le_socket ) {
