@@ -152,6 +152,11 @@
 
             }
 
+        } else if ( le_mode == LE_NETWORK_MODE_CMOD ) {
+
+            /* Send authorisation */
+            return( LE_NETWORK_MODE_CATH );
+
         } else if ( le_mode == LE_NETWORK_MODE_SMOD ) {
 
             /* Send authorisation */
