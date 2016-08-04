@@ -133,12 +133,12 @@
     # define _LE_SOCK           int
 
     /* Define boundaries */
-    # define _LE_BYTE_MIN       0
-    # define _LE_BYTE_MAX       UINT8_MAX
-    # define _LE_SIZE_MIN       0
-    # define _LE_SIZE_MAX       UINT64_MAX
-    # define _LE_TIME_MIN       INT64_MIN
-    # define _LE_TIME_MAX       INT64_MAX
+    # define _LE_BYTE_MIN       ( 0 )
+    # define _LE_BYTE_MAX       ( UINT8_MAX )
+    # define _LE_SIZE_MIN       ( 0 )
+    # define _LE_SIZE_MAX       ( UINT64_MAX )
+    # define _LE_TIME_MIN       ( INT64_MIN )
+    # define _LE_TIME_MAX       ( INT64_MAX )
 
     /* Define litteral suffix */
     # define _LE_REAL_L(t)      ( t )
@@ -162,25 +162,25 @@
     # define _LE_DATA_S         SCNu8
 
     /* Define type nulls */
-    # define _LE_BYTE_NULL      0xff
-    # define _LE_SIZE_NULL      _LE_SIZE_MAX
-    # define _LE_TIME_NULL      _LE_TIME_MIN
-    # define _LE_SOCK_NULL      -1
+    # define _LE_BYTE_NULL      ( 0xff )
+    # define _LE_SIZE_NULL      ( _LE_SIZE_MAX )
+    # define _LE_TIME_NULL      ( _LE_TIME_MIN )
+    # define _LE_SOCK_NULL      ( -1 )
     # define _LE_OFFS_NULL      ( ( ( uint64_t ) 1 << ( _LE_USE_OFFSET * 8 ) ) - 1 )
 
     /* Define errors */
-    # define LE_ERROR_SUCCESS   0x0000
-    # define LE_ERROR_IO_ACCESS 0x0001
-    # define LE_ERROR_IO_READ   0x0002
-    # define LE_ERROR_IO_WRITE  0x0003
-    # define LE_ERROR_IO_SEEK   0x0004
-    # define LE_ERROR_IO_SOCKET 0x0005
-    # define LE_ERROR_MEMORY    0x0006
-    # define LE_ERROR_DEPTH     0x0007
-    # define LE_ERROR_TIME      0x0008
-    # define LE_ERROR_BASE      0x0009
-    # define LE_ERROR_AUTH      0x000a
-    # define LE_ERROR_FORMAT    0x000b
+    # define LE_ERROR_SUCCESS   ( 0x0000 )
+    # define LE_ERROR_IO_ACCESS ( 0x0001 )
+    # define LE_ERROR_IO_READ   ( 0x0002 )
+    # define LE_ERROR_IO_WRITE  ( 0x0003 )
+    # define LE_ERROR_IO_SEEK   ( 0x0004 )
+    # define LE_ERROR_IO_SOCKET ( 0x0005 )
+    # define LE_ERROR_MEMORY    ( 0x0006 )
+    # define LE_ERROR_DEPTH     ( 0x0007 )
+    # define LE_ERROR_TIME      ( 0x0008 )
+    # define LE_ERROR_BASE      ( 0x0009 )
+    # define LE_ERROR_AUTH      ( 0x000a )
+    # define LE_ERROR_FORMAT    ( 0x000b )
 
     /* Define constants */
     # define LE_PI              ( _LE_REAL_L ( 3.1415926535897932384626433832795029 ) )
@@ -190,9 +190,6 @@
 /*
     header - preprocessor macros
  */
-
-    /* Define modulo */
-    # define le_mod(i,j)        ( (i) < 0 ? ( (j) + ( (i) % (j) ) ) % (j) : (i) % (j) )
 
     /* Define absolute values */
     # define le_time_abs(x)     ( llabs( x ) )

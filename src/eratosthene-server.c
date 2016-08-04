@@ -114,9 +114,6 @@
         /* Client socket variables */
         le_sock_t le_client = _LE_SOCK_NULL;
 
-        /* Client handshake variables */
-        //le_hand_t le_hand = _LE_HAND_NULL;
-
         /* Client address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C;
 

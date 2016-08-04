@@ -204,8 +204,6 @@
 
     le_size_t le_array_get_size( le_array_t const * const le_array );
 
-    le_size_t le_array_get_record( le_array_t const * const le_array, le_size_t const le_reclen );
-
     /*! \brief accessor methods
      *
      *  Returns the pointer to bytes of the array contained in the array
