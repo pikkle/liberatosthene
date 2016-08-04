@@ -77,23 +77,23 @@
  */
 
     # define le_array_sf( a, o, s ) { \
-        s.as_pose = ( le_real_t * ) ( a + o ); \
-        s.as_time = ( le_time_t * ) ( s.as_pose + 3 ); \
-        s.as_data = ( le_data_t * ) ( s.as_time + 1 ); \
+        ( s ).as_pose = ( le_real_t * ) ( ( a ) + ( o ) ); \
+        ( s ).as_time = ( le_time_t * ) ( ( s ).as_pose + 3 ); \
+        ( s ).as_data = ( le_data_t * ) ( ( s ).as_time + 1 ); \
     }
 
     # define le_array_rf( a, o, s ) { \
-        s.as_pose = ( le_real_t * ) ( a + o ); \
-        s.as_data = ( le_data_t * ) ( s.as_pose + 3 ); \
+        ( s ).as_pose = ( le_real_t * ) ( ( a ) + ( o ) ); \
+        ( s ).as_data = ( le_data_t * ) ( ( s ).as_pose + 3 ); \
     }
 
     # define le_array_tf( a, o, s ) { \
-        s.as_time = ( le_time_t * ) ( a + o ); \
+        ( s ).as_time = ( le_time_t * ) ( ( a ) + ( o ) ); \
     }
 
     # define le_array_cf( a, o, s ) { \
-        s.as_size = ( le_size_t * ) ( a + o ); \
-        s.as_time = ( le_time_t * ) ( s.as_size + 1 ); \
+        ( s ).as_size = ( le_size_t * ) ( ( a ) + ( o ) ); \
+        ( s ).as_time = ( le_time_t * ) ( ( s ).as_size + 1 ); \
     }
 
 /*
