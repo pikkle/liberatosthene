@@ -100,7 +100,7 @@
         le_sock_t le_socket = _LE_SOCK_NULL;
 
         /* Create connection to server */
-        if ( le_client_create( le_ip, le_port ) == _LE_SOCK_NULL ) { 
+        if ( ( le_socket = le_client_create( le_ip, le_port ) ) == _LE_SOCK_NULL ) { 
 
             /* Send message */
             return( LE_ERROR_IO_SOCKET );
