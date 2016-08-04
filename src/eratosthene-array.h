@@ -51,29 +51,126 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_ARRAY_C       { 0, 0, NULL }
+    # define LE_ARRAY_C    { 0, 0, NULL }
+    # define LE_ARRAY_SF_C { NULL, NULL, NULL }
+    # define LE_ARRAY_RF_C { NULL, NULL }
+    # define LE_ARRAY_TF_C { NULL }
+    # define LE_ARRAY_CF_C { NULL, NULL }
 
     /* Define array step (bytes) */
-    # define LE_ARRAY_STEP    ( 65356 )
+    # define LE_ARRAY_STEP ( 65356 )
 
     /* Define array formats */
-    # define LE_ARRAY_NULL    ( 0x00 )
-    # define LE_ARRAY_64S     ( 0x01 )
-    # define LE_ARRAY_64R     ( 0x02 )
-    # define LE_ARRAY_64T     ( 0x03 )
+    # define LE_ARRAY_SFD  ( 0x01 )
+    # define LE_ARRAY_RFD  ( 0x02 )
+    # define LE_ARRAY_TFD  ( 0x03 )
+    # define LE_ARRAY_CFD  ( 0x04 )
 
     /* Define array formats records length */
-    # define LE_ARRAY_64S_LEN ( 8 + 8 + 8 + 8 + 3 ) // 34 bytes
-    # define LE_ARRAY_64R_LEN ( 8 + 8 + 8 + 3 )     // 26 bytes
-    # define LE_ARRAY_64T_LEN ( 8 )                 //  8 bytes
+    # define LE_ARRAY_SFL  ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 + sizeof( le_time_t ) )
+    # define LE_ARRAY_RFL  ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 )
+    # define LE_ARRAY_TFL  ( sizeof( le_time_t ) )
+    # define LE_ARRAY_CFL  ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
 /*
     header - preprocessor macros
  */
 
+    # define le_array_sf( a, o, s ) { \
+        s.as_pose = ( le_real_t * ) ( a + o ); \
+        s.as_time = ( le_time_t * ) ( s.as_pose + 3 ); \
+        s.as_data = ( le_data_t * ) ( s.as_time + 1 ); \
+    }
+
+    # define le_array_rf( a, o, s ) { \
+        s.as_pose = ( le_real_t * ) ( a + o ); \
+        s.as_data = ( le_data_t * ) ( s.as_pose + 3 ); \
+    }
+
+    # define le_array_tf( a, o, s ) { \
+        s.as_time = ( le_time_t * ) ( a + o ); \
+    }
+
+    # define le_array_cf( a, o, s ) { \
+        s.as_size = ( le_size_t * ) ( a + o ); \
+        s.as_time = ( le_time_t * ) ( s.as_size + 1 ) \
+    }
+
+    # define le_array_push_sf( a, p, t, d ) { \
+        if ( le_array_set_memory( a, LE_ARRAY_SFL ) == LE_ERROR_SUCCESS ) { \
+            le_array_sf_t access = LE_ARRAY_SF_C; \
+            le_array_sf( a->ar_byte, a->ar_size - LE_ARRAY_SFL, access ); \
+            access.as_pose[0] = p[0]; \
+            access.as_pose[1] = p[1]; \
+            access.as_pose[2] = p[2]; \
+            access.as_time[0] = t; \
+            access.as_data[0] = d[0]; \
+            access.as_data[1] = d[1]; \
+            access.as_data[2] = d[2]; \
+        } \
+    }
+
+    # define le_array_push_rf( a, p, d ) { \
+        if ( le_array_set_memory( a, LE_ARRAY_RFL ) == LE_ERROR_SUCCESS ) { \
+            le_array_rf_t access = LE_ARRAY_RF_C; \
+            le_array_rf( a->ar_byte, a->ar_size - LE_ARRAY_RFL, access ); \
+            access.as_pose[0] = p[0]; \
+            access.as_pose[1] = p[1]; \
+            access.as_pose[2] = p[2]; \
+            access.as_data[0] = d[0]; \
+            access.as_data[1] = d[1]; \
+            access.as_data[2] = d[2]; \
+        } \
+    }
+
+    # define le_array_push_tf( a, t ) { \
+        if ( le_array_set_memory( a, LE_ARRAY_TFL ) == LE_ERROR_SUCCESS ) { \
+            le_array_tf_t access = LE_ARRAY_TF_C; \
+            le_array_tf( a->ar_byte, a->ar_size - LE_ARRAY_TFL, access ); \
+            access.as_time[0] = t; \
+        } \
+    }
+
+    # define le_array_push_cf( a, s, t ) { \
+        if ( le_array_set_memory( a, LE_ARRAY_CFL ) == LE_ERROR_SUCCESS ) { \
+            le_array_cf_t access = LE_ARRAY_CF_C; \
+            le_array_cf( a->ar_byte, a->ar_size - LE_ARRAY_CFL, access ); \
+            access.as_size[0] = s; \
+            access.as_time[0] = t; \
+        } \
+    }
+
 /*
     header - type definition
  */
+
+    typedef struct le_array_sf_struct {
+
+        le_real_t * as_pose;
+        le_time_t * as_time;
+        le_data_t * as_data;
+
+    } le_array_sf_t;
+
+    typedef struct le_array_rf_struct {
+
+        le_real_t * as_pose;
+        le_data_t * as_data;
+
+    } le_array_rf_t;
+
+    typedef struct le_array_tf_struct {
+
+        le_time_t * as_time;
+
+    } le_array_tf_t;
+
+    typedef struct le_array_cf_struct {
+
+        le_size_t * as_size;
+        le_time_t * as_time;
+
+    } le_array_cf_t;
 
 /*
     header - structures
@@ -166,22 +263,6 @@
     le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
     le_enum_t le_array_set_memory( le_array_t * const le_array, le_size_t const le_length );
-
-    /*! \brief mutator methods
-     *
-     *  This function allows to push a new point in the array contained in the
-     *  array structure.
-     *
-     *  \param le_array Array structure
-     *  \param le_pose  3-Array containing the point position
-     *  \param le_time  Time of the point
-     *  \param le_data  3-Array containing the point color
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_MEMORY on memory
-     *  allocation failure
-     */
-
-    le_enum_t le_array_set_push( le_array_t * const le_array, le_enum_t const le_format, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
 

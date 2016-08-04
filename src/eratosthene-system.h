@@ -53,7 +53,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_SYSTEM_C { { 0 }, 0, 0, LE_ARRAY_64S, { NULL }, LE_ERROR_SUCCESS }
+    # define LE_SYSTEM_C { { 0 }, 0, 0, LE_ARRAY_SFD, { NULL }, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -170,7 +170,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_void_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+    le_void_t le_system_inject( le_system_t * const le_system, le_array_sf_t const * const le_access );
 
     /*! \brief query methods
      *

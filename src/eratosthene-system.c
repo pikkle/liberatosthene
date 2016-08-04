@@ -125,7 +125,7 @@
         if ( le_mode == LE_NETWORK_MODE_IMOD ) {
 
             /* Check consistency */
-            if ( le_system->sm_format == LE_ARRAY_64S ) {
+            if ( le_system->sm_format == LE_ARRAY_SFD ) {
 
                 /* Send authorisation */
                 return( LE_NETWORK_MODE_IATH );
@@ -135,7 +135,7 @@
         } else if ( le_mode == LE_NETWORK_MODE_QMOD ) {
 
             /* Check consistency */
-            if ( ( le_system->sm_format == LE_ARRAY_64S ) || ( le_system->sm_format == LE_ARRAY_64R ) ) {
+            if ( ( le_system->sm_format == LE_ARRAY_SFD ) || ( le_system->sm_format == LE_ARRAY_RFD ) ) {
 
                 /* Send authorisation */
                 return( LE_NETWORK_MODE_QATH );
@@ -145,7 +145,7 @@
         } else if ( le_mode == LE_NETWORK_MODE_AMOD ) {
 
             /* Check consistency */
-            if ( le_system->sm_format == LE_ARRAY_64T ) {
+            if ( le_system->sm_format == LE_ARRAY_TFD ) {
 
                 /* Send authorisation */
                 return( LE_NETWORK_MODE_AATH );
@@ -173,7 +173,7 @@
     source - injection methods
  */
 
-    le_void_t le_system_inject( le_system_t * const le_system, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
+    le_void_t le_system_inject( le_system_t * const le_system, le_array_sf_t const * const le_access ) {
 
         /* Address variables */
         le_address_t le_addr = LE_ADDRESS_C_SIZE( le_system->sm_area - 1 );
@@ -190,10 +190,10 @@
         le_size_t le_offnex = 0;
 
         /* System scale stream management - send message */
-        if ( le_system_io_open( le_system, le_time ) != LE_ERROR_SUCCESS ) return;
+        if ( le_system_io_open( le_system, le_access->as_time[0] ) != LE_ERROR_SUCCESS ) return;
 
         /* Compute address index */
-        le_address_set_pose( & le_addr, le_pose );
+        le_address_set_pose( & le_addr, le_access->as_pose );
 
         /* Injection process */
         do {
@@ -202,12 +202,12 @@
             if ( le_class_io_read( & le_class, le_offnex, le_system->sm_stream[le_parse] ) == LE_ERROR_SUCCESS ) {
 
                 /* Inject element in class */
-                le_class_set_push( & le_class, le_data );
+                le_class_set_push( & le_class, le_access->as_data );
 
             } else {
 
                 /* Initialise class with element */
-                le_class = le_class_create( le_data );
+                le_class = le_class_create( le_access->as_data );
 
             }
 
@@ -288,7 +288,8 @@
                 le_address_set_size( le_addr, le_size );
 
                 /* Inject gathered element in array */
-                le_array_set_push( le_array, le_system->sm_format, le_pose, le_address_get_time( le_addr ), le_class_get_data( & le_class ) );
+                //le_array_set_push( le_array, le_system->sm_format, le_pose, le_address_get_time( le_addr ), le_class_get_data( & le_class ) );
+                le_array_push_rf( le_array, le_pose, le_class_get_data( & le_class ) );
 
             } else {
 
@@ -345,7 +346,8 @@
                 le_buffer = le_system->sm_time * strtoull( le_entity->d_name, NULL, 10 );
 
                 /* Push buffer in array */
-                le_array_set_push( & le_array, LE_ARRAY_64T, NULL, le_buffer, NULL );
+                //le_array_set_push( & le_array, LE_ARRAY_64T, NULL, le_buffer, NULL );
+                le_array_push_tf( ( & le_array ), le_buffer );
 
             }
 

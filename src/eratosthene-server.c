@@ -216,6 +216,9 @@
 
     le_void_t le_server_system_inject( le_sock_t const le_socket, le_system_t * const le_system ) {
 
+        /* Array access variables */
+        le_array_sf_t le_access = LE_ARRAY_SF_C;
+
         /* Parsing variables */
         le_size_t le_parse = 0;
 
@@ -230,35 +233,28 @@
         /* Socket i/o circular buffer variables */
         le_byte_t le_buffer[LE_NETWORK_SB_STRM] = LE_NETWORK_C;
 
-        /* Buffer array variables */
-        le_real_t * le_sp = NULL;
-        le_time_t * le_tp = NULL;
-        le_data_t * le_dp = NULL;
-
         /* Injection streaming loop */
         while ( le_retry < _LE_USE_RETRY ) {
 
             /* Read streaming bloc */
-            if ( ( le_count = read( le_socket, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) >= LE_ARRAY_64S_LEN ) {
+            if ( ( le_count = read( le_socket, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) >= LE_ARRAY_SFL ) {
 
                 /* Compute available records */
-                le_round = le_count - ( le_count % LE_ARRAY_64S_LEN );
+                le_round = le_count - ( le_count % LE_ARRAY_SFL );
 
                 /* Parsing received streaming bloc */
-                for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_64S_LEN ) {
+                for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_SFL ) {
 
-                    /* Compute buffer pointers */
-                    le_sp = ( le_real_t * ) ( le_buffer + le_parse );
-                    le_tp = ( le_time_t * ) ( le_sp + 3 );
-                    le_dp = ( le_data_t * ) ( le_tp + 1 );
+                    /* Compute array access */
+                    le_array_sf( le_buffer, le_parse, le_access );
 
                     /* Inject received element */
-                    le_system_inject( le_system, le_sp, * le_tp, le_dp );
+                    le_system_inject( le_system, & le_access );
 
                 }
 
                 /* Compute bridge value */
-                if ( ( le_bridge = le_count % LE_ARRAY_64S_LEN ) != 0 ) {
+                if ( ( le_bridge = le_count % LE_ARRAY_SFL ) != 0 ) {
 
                     /* Apply circular condition */
                     memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
