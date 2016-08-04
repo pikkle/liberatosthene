@@ -288,8 +288,7 @@
                 le_address_set_size( le_addr, le_size );
 
                 /* Inject gathered element in array */
-                //le_array_set_push( le_array, le_system->sm_format, le_pose, le_address_get_time( le_addr ), le_class_get_data( & le_class ) );
-                le_array_push_rf( le_array, le_pose, le_class_get_data( & le_class ) );
+                le_array_set_pushrf( le_array, le_pose, le_class_get_data( & le_class ) );
 
             } else {
 
@@ -346,8 +345,7 @@
                 le_buffer = le_system->sm_time * strtoull( le_entity->d_name, NULL, 10 );
 
                 /* Push buffer in array */
-                //le_array_set_push( & le_array, LE_ARRAY_64T, NULL, le_buffer, NULL );
-                le_array_push_tf( ( & le_array ), le_buffer );
+                le_array_set_pushtf( ( & le_array ), le_buffer );
 
             }
 

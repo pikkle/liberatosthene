@@ -79,7 +79,7 @@
     le_enum_t le_array_set_memory( le_array_t * const le_array, le_size_t const le_length ) {
 
         /* Memory swapping variables */
-        le_byte_t * le_swap = NULL;
+        static le_byte_t * le_swap = NULL;
 
         /* Check memory reallocation necessities */
         if ( ( le_array->ar_size += le_length ) >= le_array->as_virt ) {
@@ -105,6 +105,82 @@
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
+
+    }
+
+    le_void_t le_array_set_pushsf( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
+
+        /* Array mapping variables */
+        static le_array_sf_t le_map = LE_ARRAY_SF_C;
+
+        /* Array memory management - abort */
+        if ( le_array_set_memory( le_array, LE_ARRAY_SFL ) != LE_ERROR_SUCCESS ) return;
+
+        /* Array mapping computation */
+        le_array_sf( le_array, le_array->ar_size - LE_ARRAY_SFL, le_map );
+
+        /* Assign elements to array */
+        le_map.as_pose[0] = le_pose[0];
+        le_map.as_pose[1] = le_pose[1];
+        le_map.as_pose[2] = le_pose[2];
+        le_map.as_time[0] = le_time;
+        le_map.as_data[0] = le_data[0];
+        le_map.as_data[1] = le_data[1];
+        le_map.as_data[2] = le_data[2];
+
+    }
+
+    le_void_t le_array_set_pushrf( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data ) {
+
+        /* Array mapping variables */
+        static le_array_rf_t le_map = LE_ARRAY_RF_C;
+
+        /* Array memory management - abort */
+        if ( le_array_set_memory( le_array, LE_ARRAY_RFL ) != LE_ERROR_SUCCESS ) return;
+
+        /* Array mapping computation */
+        le_array_rf( le_array, le_array->ar_size - LE_ARRAY_RFL, le_map );
+
+        /* Assign elements to array */
+        le_map.as_pose[0] = le_pose[0];
+        le_map.as_pose[1] = le_pose[1];
+        le_map.as_pose[2] = le_pose[2];
+        le_map.as_data[0] = le_data[0];
+        le_map.as_data[1] = le_data[1];
+        le_map.as_data[2] = le_data[2];
+
+    }
+
+    le_void_t le_array_set_pushtf( le_array_t * const le_array, le_time_t const le_time ) {
+
+        /* Array mapping variables */
+        static le_array_tf_t le_map = LE_ARRAY_TF_C;
+
+        /* Array memory management - abort */
+        if ( le_array_set_memory( le_array, LE_ARRAY_TFL ) != LE_ERROR_SUCCESS ) return;
+
+        /* Array mapping computation */
+        le_array_tf( le_array, le_array->ar_size - LE_ARRAY_TFL, le_map );
+
+        /* Assign elements to array */
+        le_map.as_time[0] = le_time;
+
+    }
+
+    le_void_t le_array_set_pushcf( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time ) {
+
+        /* Array mapping variables */
+        static le_array_cf_t le_map = LE_ARRAY_CF_C;
+
+        /* Array memory management - abort */
+        if ( le_array_set_memory( le_array, LE_ARRAY_CFL ) != LE_ERROR_SUCCESS ) return;
+
+        /* Array mapping computation */
+        le_array_cf( le_array, le_array->ar_size - LE_ARRAY_CFL, le_map );
+
+        /* Assign elements to array */
+        le_map.as_size[0] = le_size;
+        le_map.as_time[0] = le_time;
 
     }
 

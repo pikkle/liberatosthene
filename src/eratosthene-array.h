@@ -93,58 +93,14 @@
 
     # define le_array_cf( a, o, s ) { \
         s.as_size = ( le_size_t * ) ( a + o ); \
-        s.as_time = ( le_time_t * ) ( s.as_size + 1 ) \
-    }
-
-    # define le_array_push_sf( a, p, t, d ) { \
-        if ( le_array_set_memory( a, LE_ARRAY_SFL ) == LE_ERROR_SUCCESS ) { \
-            le_array_sf_t access = LE_ARRAY_SF_C; \
-            le_array_sf( a->ar_byte, a->ar_size - LE_ARRAY_SFL, access ); \
-            access.as_pose[0] = p[0]; \
-            access.as_pose[1] = p[1]; \
-            access.as_pose[2] = p[2]; \
-            access.as_time[0] = t; \
-            access.as_data[0] = d[0]; \
-            access.as_data[1] = d[1]; \
-            access.as_data[2] = d[2]; \
-        } \
-    }
-
-    # define le_array_push_rf( a, p, d ) { \
-        if ( le_array_set_memory( a, LE_ARRAY_RFL ) == LE_ERROR_SUCCESS ) { \
-            le_array_rf_t access = LE_ARRAY_RF_C; \
-            le_array_rf( a->ar_byte, a->ar_size - LE_ARRAY_RFL, access ); \
-            access.as_pose[0] = p[0]; \
-            access.as_pose[1] = p[1]; \
-            access.as_pose[2] = p[2]; \
-            access.as_data[0] = d[0]; \
-            access.as_data[1] = d[1]; \
-            access.as_data[2] = d[2]; \
-        } \
-    }
-
-    # define le_array_push_tf( a, t ) { \
-        if ( le_array_set_memory( a, LE_ARRAY_TFL ) == LE_ERROR_SUCCESS ) { \
-            le_array_tf_t access = LE_ARRAY_TF_C; \
-            le_array_tf( a->ar_byte, a->ar_size - LE_ARRAY_TFL, access ); \
-            access.as_time[0] = t; \
-        } \
-    }
-
-    # define le_array_push_cf( a, s, t ) { \
-        if ( le_array_set_memory( a, LE_ARRAY_CFL ) == LE_ERROR_SUCCESS ) { \
-            le_array_cf_t access = LE_ARRAY_CF_C; \
-            le_array_cf( a->ar_byte, a->ar_size - LE_ARRAY_CFL, access ); \
-            access.as_size[0] = s; \
-            access.as_time[0] = t; \
-        } \
+        s.as_time = ( le_time_t * ) ( s.as_size + 1 ); \
     }
 
 /*
     header - type definition
  */
 
-    typedef struct le_array_sf_struct {
+    typedef struct {
 
         le_real_t * as_pose;
         le_time_t * as_time;
@@ -152,20 +108,20 @@
 
     } le_array_sf_t;
 
-    typedef struct le_array_rf_struct {
+    typedef struct {
 
         le_real_t * as_pose;
         le_data_t * as_data;
 
     } le_array_rf_t;
 
-    typedef struct le_array_tf_struct {
+    typedef struct {
 
         le_time_t * as_time;
 
     } le_array_tf_t;
 
-    typedef struct le_array_cf_struct {
+    typedef struct {
 
         le_size_t * as_size;
         le_time_t * as_time;
@@ -263,6 +219,14 @@
     le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
     le_enum_t le_array_set_memory( le_array_t * const le_array, le_size_t const le_length );
+
+    le_void_t le_array_set_pushsf( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+
+    le_void_t le_array_set_pushrf( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
+
+    le_void_t le_array_set_pushtf( le_array_t * const le_array, le_time_t const le_time );
+
+    le_void_t le_array_set_pushcf( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time );
 
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
 
