@@ -318,6 +318,28 @@
 
     }
 
+    le_enum_t le_server_system_config( le_sock_t const le_socket, le_system_t const * const le_system ) {
+
+        /* Returned value variables */
+        le_enum_t le_return = LE_ERROR_SUCCESS;
+
+        /* Array variables */
+        le_array_t le_array = LE_ARRAY_C;
+
+        /* Gather system configuration */
+        le_array = le_system_config( le_system );
+
+        /* Write array on socket */
+        le_return = le_array_io_write( & le_array, le_socket );
+
+        /* Delete array */
+        le_array_delete( & le_array );
+
+        /* Send message */
+        return( le_return );
+
+    }
+
     le_enum_t le_server_system_sparam( le_sock_t const le_socket, le_system_t const * const le_system ) {
 
         /* Space discretisation i/o variables */

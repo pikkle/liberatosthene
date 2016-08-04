@@ -345,7 +345,7 @@
                 le_buffer = le_system->sm_time * strtoull( le_entity->d_name, NULL, 10 );
 
                 /* Push buffer in array */
-                le_array_set_pushtf( ( & le_array ), le_buffer );
+                le_array_set_pushtf( & le_array, le_buffer );
 
             }
 
@@ -353,6 +353,23 @@
 
         /* Delete directory handle */
         closedir( le_directory );
+
+        /* Return structure */
+        return( le_array );
+
+    }
+
+/*
+    source - configuration methods
+ */
+
+    le_array_t le_system_config( le_system_t const * const le_system ) {
+
+        /* Returned structure variables */
+        le_array_t le_array = LE_ARRAY_C;
+
+        /* Compose configuration array */
+        le_array_set_pushcf( & le_array, le_system->sm_area, le_system->sm_time );
 
         /* Return structure */
         return( le_array );

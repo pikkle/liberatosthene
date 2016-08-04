@@ -189,6 +189,8 @@
 
     le_array_t le_system_times( le_system_t const * const le_system );
 
+    le_array_t le_system_config( le_system_t const * const le_system );
+
     /*! \brief i/o methods
      *
      *  This function creates the file streams to the server system storage
