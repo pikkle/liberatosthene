@@ -65,14 +65,20 @@
     # define LE_NETWORK_MODE_NULL       ( 0x00 )
     # define LE_NETWORK_MODE_IMOD       ( 0x01 )
     # define LE_NETWORK_MODE_QMOD       ( 0x02 )
+    /* /// REMOVAL NOTICE /// */
     # define LE_NETWORK_MODE_SMOD       ( 0x03 )
     # define LE_NETWORK_MODE_TMOD       ( 0x04 )
+    /* /// REMOVAL NOTICE /// */
     # define LE_NETWORK_MODE_AMOD       ( 0x05 )
+    # define LE_NETWORK_MODE_CMOD       ( 0x06 )
     # define LE_NETWORK_MODE_IATH       ( 0x81 )
     # define LE_NETWORK_MODE_QATH       ( 0x82 )
+    /* /// REMOVAL NOTICE /// */
     # define LE_NETWORK_MODE_SATH       ( 0x83 )
     # define LE_NETWORK_MODE_TATH       ( 0x84 )
+    /* /// REMOVAL NOTICE /// */
     # define LE_NETWORK_MODE_AATH       ( 0x85 )
+    # define LE_NETWORK_MODE_CATH       ( 0x86 )
 
 /*
     header - preprocessor macros

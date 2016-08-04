@@ -132,7 +132,7 @@
                     /* Switch on handshake */
                     switch ( ( le_hand = le_server_handshake( le_client ) ) & 0xff ) {
 
-                        /* Injection mode */
+                        /* System injection */
                         case ( LE_NETWORK_MODE_IMOD ) : {
 
                             /* Send authorisation */
@@ -145,7 +145,7 @@
 
                         } break;
 
-                        /* Query mode */
+                        /* System query */
                         case ( LE_NETWORK_MODE_QMOD ) : {
 
                             /* Send authorisation */
@@ -158,7 +158,7 @@
 
                         } break;
 
-                        /* System times array mode */
+                        /* System times */
                         case ( LE_NETWORK_MODE_AMOD ) : {
 
                             /* Send authorisation */
@@ -192,6 +192,19 @@
 
                                 /* Connection to system configuration */
                                 le_server_system_tparam( le_client, le_system );
+
+                            }
+
+                        } break;
+
+                        /* System configuration */
+                        case ( LE_NETWORK_MODE_CMOD ) : {
+
+                            /* Send authorisation */
+                            if ( le_server_authorise( le_client, le_system_set_format( le_system, le_hand ) ) == LE_ERROR_SUCCESS ) {
+
+                                /* Connection to system */
+                                le_server_system_config( le_client, le_system );
 
                             }
 
