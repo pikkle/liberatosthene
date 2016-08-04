@@ -87,33 +87,3 @@
 
     }
 
-/*
-    source - system methods
- */
-
-    le_size_t le_client_system_sparam( le_sock_t const le_socket ) {
-
-        /* Space discretisation i/o variables */
-        le_size_t le_sparam = _LE_SIZE_NULL;
-
-        /* Read configuration - send message */
-        if ( read( le_socket, & le_sparam, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) return( _LE_SIZE_NULL );
-
-        /* Return configuration */
-        return( le_sparam );
-
-    }
-
-    le_time_t le_client_system_tparam( le_sock_t const le_socket ) {
-
-        /* Time discretisation i/o variables */
-        le_time_t le_tparam = _LE_TIME_NULL;
-
-        /* Read configuration - send message */
-        if ( read( le_socket, & le_tparam, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) return( _LE_TIME_NULL );
-
-        /* Return configuration */
-        return( le_tparam );
-
-    }
-

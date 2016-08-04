@@ -171,32 +171,6 @@
 
                         } break;
 
-                        /* System spatial configuration mode */
-                        case ( LE_NETWORK_MODE_SMOD ) : {
-
-                            /* Send authorisation */
-                            if ( le_server_authorise( le_client, le_system_set_format( le_system, le_hand ) ) == LE_ERROR_SUCCESS ) {
-
-                                /* Connection to system configuration */
-                                le_server_system_sparam( le_client, le_system );
-
-                            }
-
-                        } break;
-
-                        /* System temporal configuration mode */
-                        case ( LE_NETWORK_MODE_TMOD ) : {
-
-                            /* Send authorisation */
-                            if ( le_server_authorise( le_client, le_system_set_format( le_system, le_hand ) ) == LE_ERROR_SUCCESS ) {
-
-                                /* Connection to system configuration */
-                                le_server_system_tparam( le_client, le_system );
-
-                            }
-
-                        } break;
-
                         /* System configuration */
                         case ( LE_NETWORK_MODE_CMOD ) : {
 
@@ -350,32 +324,6 @@
 
         /* Send message */
         return( le_return );
-
-    }
-
-    le_enum_t le_server_system_sparam( le_sock_t const le_socket, le_system_t const * const le_system ) {
-
-        /* Space discretisation i/o variables */
-        le_size_t le_sparam = le_system_get_sparam( le_system );
-
-        /* Write configuration - send messasge */
-        if ( write( le_socket, & le_sparam, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) return( LE_ERROR_IO_WRITE );
-
-        /* Send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_enum_t le_server_system_tparam( le_sock_t const le_socket, le_system_t const * const le_system ) {
-
-        /* Time discretisation i/o variables */
-        le_time_t le_tparam = le_system_get_tparam( le_system );
-
-        /* Write configuration - send message */
-        if ( write( le_socket, & le_tparam, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) return( LE_ERROR_IO_WRITE );
-
-        /* Send messsage */
-        return( LE_ERROR_SUCCESS );
 
     }
 

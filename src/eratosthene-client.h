@@ -108,30 +108,6 @@
 
     le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t le_mode, le_enum_t le_format );
 
-    /*! \brief connection methods
-     *
-     *  This function performs a spatial indexation parameter query to the
-     *  server connected through the socket descriptor.
-     *
-     *  \param le_socket Socket descriptor
-     *
-     *  \return Spatial indexation parameter on success, _LE_SIZE_NULL on error
-     */
-
-    le_size_t le_client_system_sparam( le_sock_t const le_socket );
-
-    /*! \brief connection methods
-     *
-     *  This function performs a time indexation parameter query to the server
-     *  connected through the socket descriptor.
-     *
-     *  \param le_socket Socket descriptor
-     *
-     *  \return Time indexation parameter on success, _LE_TIME_NULL on error
-     */
-
-    le_time_t le_client_system_tparam( le_sock_t const le_socket );
-
 /*
     header - C/C++ compatibility
  */

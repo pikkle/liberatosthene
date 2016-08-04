@@ -157,16 +157,6 @@
             /* Send authorisation */
             return( LE_NETWORK_MODE_CATH );
 
-        } else if ( le_mode == LE_NETWORK_MODE_SMOD ) {
-
-            /* Send authorisation */
-            return( LE_NETWORK_MODE_SATH );
-
-        } else if ( le_mode == LE_NETWORK_MODE_TMOD ) {
-
-            /* Send authorisation */
-            return( LE_NETWORK_MODE_TATH );
-
         }
 
         /* Authorisation failure */

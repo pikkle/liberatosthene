@@ -160,30 +160,6 @@
 
     le_enum_t le_server_system_config( le_sock_t const le_socket, le_system_t const * const le_system );
 
-    /*! \brief connection methods
-     *
-     *  This function answer to client spatial indexation parameter query.
-     *
-     *  \param le_socket Socket descriptor
-     *  \param le_system Server system descriptor
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
-     */
-
-    le_enum_t le_server_system_sparam( le_sock_t const le_socket, le_system_t const * const le_system );
-
-    /*! \brief connection methods
-     *
-     *  This function answer to client time indexation parameter query.
-     *
-     *  \param le_socket Socket descriptor
-     *  \param le_system Server system descriptor
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
-     */
-
-    le_enum_t le_server_system_tparam( le_sock_t const le_socket, le_system_t const * const le_system );
-
 /*
     header - C/C++ compatibility
  */
