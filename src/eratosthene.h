@@ -162,11 +162,11 @@
     # define _LE_DATA_S         SCNu8
 
     /* Define type nulls */
-    # define _LE_BYTE_NULL      ( 0xff )
+    # define _LE_BYTE_NULL      ( _LE_BYTE_MAX )
     # define _LE_SIZE_NULL      ( _LE_SIZE_MAX )
     # define _LE_TIME_NULL      ( _LE_TIME_MIN )
     # define _LE_SOCK_NULL      ( -1 )
-    # define _LE_OFFS_NULL      ( ( ( uint64_t ) 1 << ( _LE_USE_OFFSET * 8 ) ) - 1 )
+    # define _LE_OFFS_NULL      ( ( _LE_SIZE_L( 1 ) << ( _LE_SIZE_L( 8 ) * _LE_USE_OFFSET ) ) - _LE_SIZE_L( 1 ) )
 
     /* Define errors */
     # define LE_ERROR_SUCCESS   ( 0x0000 )

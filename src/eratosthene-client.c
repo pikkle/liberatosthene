@@ -99,31 +99,19 @@
         /* Socket variables */
         le_sock_t le_socket = _LE_SOCK_NULL;
 
-        /* Create connection to server */
-        if ( ( le_socket = le_client_create( le_ip, le_port ) ) == _LE_SOCK_NULL ) { 
+        /* Create connection to server - send message */
+        if ( ( le_socket = le_client_create( le_ip, le_port ) ) == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
 
-            /* Send message */
-            return( LE_ERROR_IO_SOCKET );
+        /* Server/client handshake */
+        if ( ( le_return = le_client_handshake( le_socket, le_mode ) ) == LE_ERROR_SUCCESS ) {
 
-        } else {
-
-            /* Server/client handshake */
-            if ( ( le_return = le_client_handshake( le_socket, le_mode ) ) != LE_ERROR_SUCCESS ) {
-
-                /* Send message */
-                return( le_return );
-
-            } else {
-
-                /* Read array from server */
-                le_return = le_array_io_read( le_array, le_socket );
-
-            }
-
-            /* Delete connection to server */
-            le_client_delete( le_socket );
+            /* Read array from server */
+            le_return = le_array_io_read( le_array, le_socket );
 
         }
+
+        /* Delete connection to server */
+        le_client_delete( le_socket );
 
         /* Send message */
         return( le_return );

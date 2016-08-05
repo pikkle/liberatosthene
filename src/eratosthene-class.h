@@ -51,16 +51,7 @@
  */
 
     /* Define initialiser */
-    # define LE_CLASS_I_OFFSET {\
-    _LE_OFFS_NULL, \
-    _LE_OFFS_NULL, \
-    _LE_OFFS_NULL, \
-    _LE_OFFS_NULL, \
-    _LE_OFFS_NULL, \
-    _LE_OFFS_NULL, \
-    _LE_OFFS_NULL, \
-    _LE_OFFS_NULL, \
-    }
+    # define LE_CLASS_I_OFFSET      { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }
 
     /* Define pseudo-constructor */
     # define LE_CLASS_C             { LE_CLASS_I_OFFSET, { 0 } }

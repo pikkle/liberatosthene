@@ -56,10 +56,9 @@
     # define LE_ADDRESS_C_SIZE( s ) { s, 0, { 0 }, 0 }
 
     /* Define i/o buffer mapping */
-    # define LE_ADDRESS_MAP_SIZE    ( 0 )
-    # define LE_ADDRESS_MAP_TIME    ( sizeof( le_size_t ) )
-    # define LE_ADDRESS_MAP_DIGIT   ( sizeof( le_time_t ) + sizeof( le_size_t ) * 2 )
-    # define LE_ADDRESS_MAP_DEPTH   ( sizeof( le_time_t ) + sizeof( le_size_t ) )
+    # define LE_ADDRESS_MAP0        ( sizeof( le_size_t ) )
+    # define LE_ADDRESS_MAP1        ( sizeof( le_time_t ) + LE_ADDRESS_MAP0 )
+    # define LE_ADDRESS_MAP2        ( sizeof( le_size_t ) + LE_ADDRESS_MAP1 )
 
 /*
     header - preprocessor macros
@@ -179,6 +178,8 @@
 
     le_size_t le_address_get_depth( le_address_t const * const le_address );
 
+    le_enum_t le_address_get_equal( le_address_t const * const le_addr1, le_address_t const * const le_addr2 );
+
     /*! \brief accessor methods
      *
      *  This function converts the indexation address of the class stored in
@@ -261,8 +262,6 @@
      */
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
-
-    le_enum_t le_address_cmp( le_address_t const * const le_addr1, le_address_t const * const le_addr2 );
 
     /*! \brief i/o methods
      *

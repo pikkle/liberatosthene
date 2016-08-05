@@ -52,6 +52,18 @@
 
     }
 
+    le_enum_t le_address_get_equal( le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
+
+        /* Field comparison - send message */
+        if ( le_addr1->as_size  != le_addr2->as_size  ) return( _LE_FALSE );
+        if ( le_addr1->as_time  != le_addr2->as_time  ) return( _LE_FALSE );
+        if ( le_addr2->as_depth != le_addr2->as_depth ) return( _LE_FALSE );
+
+        /* Digit comparison - send message */
+        return( memcmp( le_addr1->as_digit, le_addr2->as_digit, le_addr1->as_size ) == 0 ? _LE_TRUE : _LE_FALSE );
+
+    }
+
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose ) {
        
         /* Scales variables */
@@ -184,22 +196,6 @@
     }
 
 /*
-    source - comparison methods
- */
-
-    le_enum_t le_address_cmp( le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
-
-        /* Field comparison - send message */
-        if ( le_addr1->as_size  != le_addr2->as_size  ) return( _LE_FALSE );
-        if ( le_addr1->as_time  != le_addr2->as_time  ) return( _LE_FALSE );
-        if ( le_addr2->as_depth != le_addr2->as_depth ) return( _LE_FALSE );
-
-        /* Digit comparison - send message */
-        return( memcmp( le_addr1->as_digit, le_addr2->as_digit, le_addr1->as_size ) == 0 ? _LE_TRUE : _LE_FALSE );
-
-    }
-
-/*
     source - i/o methods
  */
 
@@ -209,16 +205,16 @@
         static le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Static buffer mapping variables */
-        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP_SIZE  );
-        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP_TIME  );
-        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP_DIGIT );
-        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP_DEPTH );
+        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer );
+        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP0 );
+        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP1 );
+        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP2 );
 
         /* Read buffer from socket - send message */
         if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
 
         /* Read socket buffer */
-        for ( le_size_t le_parse = 0; le_parse < _LE_USE_DEPTH; le_parse ++ ) le_address->as_digit[le_parse] = le_digit[le_parse];
+        memcpy( le_address->as_digit, le_digit, _LE_USE_DEPTH );
 
         /* Read socket buffer */
         le_address->as_size  = le_size [0];
@@ -236,10 +232,10 @@
         static le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Static buffer mapping variables */
-        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP_SIZE  );
-        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP_TIME  );
-        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP_DIGIT );
-        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP_DEPTH );
+        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer );
+        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP0 );
+        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP1 );
+        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP2 );
 
         /* Write socket buffer */
         le_size [0] = le_address->as_size;
@@ -247,7 +243,7 @@
         le_depth[0] = le_address->as_depth;
 
         /* Write socket buffer */
-        for ( le_size_t le_parse = 0; le_parse < _LE_USE_DEPTH; le_parse ++ ) le_digit[le_parse] = le_address->as_digit[le_parse];
+        memcpy( le_digit, le_address->as_digit, _LE_USE_DEPTH );
 
         /* Write buffer on socket - send message */
         if ( write( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_WRITE );
