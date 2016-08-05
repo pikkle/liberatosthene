@@ -160,7 +160,7 @@
      *  \return Class representatives array
      */
 
-    le_void_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset );
+    le_void_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_sock_t const le_socket );
 
     le_array_t le_system_times( le_system_t const * const le_system );
 

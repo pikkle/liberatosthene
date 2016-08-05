@@ -270,10 +270,10 @@
         le_address_io_read( & le_address, le_socket );
 
         /* Send system query */
-        le_system_query( le_system, & le_address, & le_array, 0, 0 );
+        le_system_query( le_system, & le_address, & le_array, 0, 0, le_socket );
 
-        /* Write array to socket */
-        le_message = le_array_io_write( & le_array, le_socket );
+        /* Purge array to socket */
+        le_message = le_array_io_stream( & le_array, le_socket, 1 );
 
         /* Unallocate array memory */
         le_array_delete( & le_array );

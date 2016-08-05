@@ -228,6 +228,8 @@
 
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
 
+    le_enum_t le_array_io_stream( le_array_t * const le_array, le_sock_t const le_socket, le_enum_t const le_mode );
+
     le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
 
 /*

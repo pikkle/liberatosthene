@@ -214,6 +214,39 @@
 
     }
 
+    le_enum_t le_array_io_stream( le_array_t * const le_array, le_sock_t const le_socket, le_enum_t const le_mode ) {
+
+        /* Array base variables */
+        le_byte_t * le_base = le_array->ar_byte;
+
+        /* Check mode */
+        if ( le_mode == 0 ) {
+
+            /* Streaming loop */
+            while ( ( le_size_t ) ( le_base - le_array->ar_byte ) + _LE_USE_MTU < le_array->ar_size ) {
+
+                /* Write block to socket */
+                if ( write( le_socket, le_base, _LE_USE_MTU ) != _LE_USE_MTU ) return( LE_ERROR_IO_WRITE );
+
+                /* Update base pointer */
+                le_base += _LE_USE_MTU;
+
+            }
+
+            /* Compute remaining size */
+            le_array->ar_size = le_array->ar_size - ( le_size_t ) ( le_base - le_array->ar_byte );
+
+            /* Rebase array memory */
+            memmove( le_array->ar_byte, le_base, le_array->ar_size );
+
+        /* Send array remaining segment */
+        } else { return( le_array_io_write( le_array, le_socket ) ); }
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
     le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
 
         /* Returned value variables */

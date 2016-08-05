@@ -162,7 +162,7 @@
     source - query methods
  */
 
-    le_void_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset ) {
+    le_void_t le_system_query( le_system_t * const le_system, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_sock_t const le_socket ) {
 
         /* Class variables */
         le_class_t le_class = LE_CLASS_C;
@@ -191,7 +191,7 @@
                 if ( ( le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) ) ) != _LE_OFFS_NULL ) {
 
                     /* Recursive query */
-                    le_system_query( le_system, le_addr, le_array, le_parse + 1, le_offset );
+                    le_system_query( le_system, le_addr, le_array, le_parse + 1, le_offset, le_socket );
 
                 }
 
@@ -212,6 +212,9 @@
                 /* Inject gathered element in array */
                 le_array_set_pushrf( le_array, le_pose, le_class_get_data( & le_class ) );
 
+                /* Query array streaming */
+                le_array_io_stream( le_array, le_socket, 0 );
+
             } else {
 
                 /* Class daughters enumeration */
@@ -224,7 +227,7 @@
                     if ( ( le_offset = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
 
                         /* Recursive query */
-                        le_system_query( le_system, le_addr, le_array, le_parse + 1, le_offset );
+                        le_system_query( le_system, le_addr, le_array, le_parse + 1, le_offset, le_socket );
 
                     }
 
