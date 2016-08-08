@@ -52,6 +52,9 @@
     header - preprocessor definitions
  */
 
+    /* Define pseudo-constructor */
+    # define LE_SERVER_C { _LE_SOCK_NULL, { 0 }, 0, 0, { NULL }, LE_ERROR_SUCCESS }
+
 /*
     header - preprocessor macros
  */
@@ -63,6 +66,16 @@
 /*
     header - structures
  */
+
+    typedef struct le_server_struct {
+    
+        le_sock_t sv_sock;
+        le_char_t sv_path[_LE_USE_STRING];
+        le_size_t sv_area;
+        le_time_t sv_time;
+        FILE *    sv_stream[_LE_USE_DEPTH];        
+
+    } le_server_t;
 
 /*
     header - function prototypes
