@@ -80,7 +80,7 @@
         if ( write( le_socket, & er_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_WRITE );
 
         /* Read handshake - send message */
-        if ( read( le_socket, & er_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_READ );
+        if ( read ( le_socket, & er_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_READ );
 
         /* Check server authorisation - send message */
         return( ( er_buffer & 0x7f ) == le_mode ? LE_ERROR_SUCCESS : LE_ERROR_AUTH );

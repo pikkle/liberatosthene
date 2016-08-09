@@ -26,14 +26,14 @@
 
     le_server_t le_server_create( le_size_t const le_port, le_char_t const * const le_path ) {
 
-        /* Address variables */
-        struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
+        /* Created structure variables */
+        le_server_t le_server = LE_SERVER_C;
 
         /* Stream variables */
         FILE * le_stream = NULL;
 
-        /* Created structure variables */
-        le_server_t le_server = LE_SERVER_C;
+        /* Address variables */
+        struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
 
         /* Open configuration stream */
         if ( ( le_stream = fopen( strcat( strcat( ( char * ) le_server.sv_path, ( char * ) le_path ), "/system" ), "r" ) ) == NULL ) {
@@ -41,40 +41,42 @@
             /* Send message */
             return( le_server._status = LE_ERROR_IO_ACCESS, le_server );
 
-        }
+        } else {
 
-        /* Check configuration reading */
-        if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & le_server.sv_area, & le_server.sv_time ) != 2 ) {
+            /* Remove server path configuration suffix */
+            le_server.sv_path[strlen( ( char * ) le_path )] = '\0';
+
+            /* Check configuration reading */
+            if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & le_server.sv_area, & le_server.sv_time ) != 2 ) {
+
+                /* Close configuration stream */
+                fclose( le_stream );
+
+                /* Send message */
+                return( le_server._status = LE_ERROR_IO_READ, le_server );
+
+            }
 
             /* Close configuration stream */
             fclose( le_stream );
 
-            /* Send message */
-            return( le_server._status = LE_ERROR_IO_READ, le_server );
+            /* Check consistency */
+            if ( ( le_server.sv_area <= 0 ) || ( le_server.sv_area >= _LE_USE_DEPTH ) ) {
+
+                /* Send message */
+                return( le_server._status = LE_ERROR_DEPTH, le_server );
+
+            }
+
+            /* Check consistency */
+            if ( le_server.sv_time <= 0 ) {
+
+                /* Send message */
+                return( le_server._status = LE_ERROR_TIME, le_server );
+
+            }
 
         }
-
-        /* Close configuration stream */
-        fclose( le_stream );
-
-        /* Check consistency */
-        if ( ( le_server.sv_area <= 0 ) || ( le_server.sv_area >= _LE_USE_DEPTH ) ) {
-
-            /* Send message */
-            return( le_server._status = LE_ERROR_DEPTH, le_server );
-
-        }
-
-        /* Check consistency */
-        if ( le_server.sv_time <= 0 ) {
-
-            /* Send message */
-            return( le_server._status = LE_ERROR_TIME, le_server );
-
-        }
-
-        /* Assign provided root path */
-        strcpy( ( char * ) le_server.sv_path, ( char * ) le_path );
 
         /* Create socket */
         if ( ( le_server.sv_sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) {
@@ -82,27 +84,29 @@
             /* Send message */
             return( le_server._status = LE_ERROR_IO_SOCKET, le_server );
 
-        }
+        } else {
 
-        /* Bind address to socket */
-        if ( bind( le_server.sv_sock, ( struct sockaddr * ) ( & le_addr ), sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
+            /* Bind address to socket */
+            if ( bind( le_server.sv_sock, ( struct sockaddr * ) ( & le_addr ), sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
 
-            /* Close socket */
-            close( le_server.sv_sock );
+                /* Close socket */
+                close( le_server.sv_sock );
 
-            /* Send message */
-            return( le_server._status = LE_ERROR_IO_BIND, le_server );
+                /* Send message */
+                return( le_server._status = LE_ERROR_IO_BIND, le_server );
 
-        }
+            }
 
-        /* Enable socket listening */
-        if ( listen( le_server.sv_sock, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
+            /* Enable socket listening */
+            if ( listen( le_server.sv_sock, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
 
-            /* Close socket */
-            close( le_server.sv_sock );
+                /* Close socket */
+                close( le_server.sv_sock );
 
-            /* Send message */
-            return( le_server._status = LE_ERROR_IO_LISTEN, le_server );
+                /* Send message */
+                return( le_server._status = LE_ERROR_IO_LISTEN, le_server );
+
+            }
 
         }
 
