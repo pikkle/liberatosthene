@@ -75,7 +75,7 @@
         le_time_t sv_time;
         FILE *    sv_stream[_LE_USE_DEPTH];        
 
-    } le_server_t;
+    le_enum_t _status; } le_server_t;
 
 /*
     header - function prototypes
@@ -106,6 +106,29 @@
 
     le_sock_t le_server_delete( le_sock_t const le_socket );
 
+    /*! \brief server methods
+     *
+     *  This function is the server main idle function. It starts a infinite
+     *  loop waiting for client incoming connections. It then receives the
+     *  clients queries handshakes and answer them. The proper queries answers
+     *  are then sent by this function.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_system Server system descriptor
+     */
+
+    le_void_t le_server( le_sock_t const le_socket, le_system_t * const le_system );
+
+    /*! \brief connection methods
+     *
+     *  This function answer to client injection queries. It receives the
+     *  injected data coming from the client and ask the server system to insert
+     *  them into the storage structure.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_system Server system descriptor
+     */
+
     /*! \brief handshake methods
      *
      *  This function reads and returns the client query mode sent through the
@@ -131,30 +154,11 @@
 
     le_enum_t le_server_authorise( le_sock_t const le_socket, le_enum_t const le_auth );
 
-    /*! \brief server methods
-     *
-     *  This function is the server main idle function. It starts a infinite
-     *  loop waiting for client incoming connections. It then receives the
-     *  clients queries handshakes and answer them. The proper queries answers
-     *  are then sent by this function.
-     *
-     *  \param le_socket Socket descriptor
-     *  \param le_system Server system descriptor
-     */
-
-    le_void_t le_server( le_sock_t const le_socket, le_system_t * const le_system );
-
-    /*! \brief connection methods
-     *
-     *  This function answer to client injection queries. It receives the
-     *  injected data coming from the client and ask the server system to insert
-     *  them into the storage structure.
-     *
-     *  \param le_socket Socket descriptor
-     *  \param le_system Server system descriptor
-     */
-
     le_void_t le_server_system_inject( le_sock_t const le_socket, le_system_t * const le_system );
+
+    le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
+
+    le_void_t le_server_inject( le_server_t * const le_server, le_array_sf_t const * const le_access );
 
     /*! \brief connection methods
      *
@@ -169,9 +173,27 @@
 
     le_enum_t le_server_system_query( le_sock_t const le_socket, le_system_t * const le_system );
 
+    le_enum_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
+
+    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_sock_t const le_client );
+
     le_enum_t le_server_system_times( le_sock_t const le_socket, le_system_t const * const le_system );
 
+    le_enum_t le_server_times_client( le_server_t const * const le_server, le_sock_t const le_client );
+
+    le_array_t le_server_times( le_server_t const * const le_server );
+
     le_enum_t le_server_system_config( le_sock_t const le_socket, le_system_t const * const le_system );
+
+    le_enum_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client );
+
+    le_array_t le_server_config( le_server_t const * const le_server );
+
+    le_enum_t le_server_io_open( le_server_t * const le_server, le_time_t const le_time );
+
+    le_void_t le_server_io_flush( le_server_t * const le_server );
+
+    le_void_t le_server_io_close( le_server_t * const le_server );
 
 /*
     header - C/C++ compatibility
