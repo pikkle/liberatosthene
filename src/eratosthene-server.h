@@ -44,9 +44,10 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-address.h"
     # include "eratosthene-array.h"
+    # include "eratosthene-class.h"
     # include "eratosthene-network.h"
-    # include "eratosthene-system.h"
 
 /*
     header - preprocessor definitions
@@ -91,7 +92,7 @@
      *  \return Created socket descriptor on success, _LE_SOCK_NULL otherwise
      */
 
-    le_sock_t le_server_create( le_size_t const le_port );
+    le_server_t le_server_create( le_size_t const le_port, le_char_t const * const le_path );
 
     /*! \brief constructor/destructor methods
      *
@@ -104,7 +105,7 @@
      *  \return Always _LE_SOCK_NULL socket descriptor
      */
 
-    le_sock_t le_server_delete( le_sock_t const le_socket );
+    le_void_t le_server_delete( le_server_t * const le_server );
 
     /*! \brief server methods
      *
@@ -117,7 +118,7 @@
      *  \param le_system Server system descriptor
      */
 
-    le_void_t le_server( le_sock_t const le_socket, le_system_t * const le_system );
+    le_void_t le_server( le_server_t * const le_server );
 
     /*! \brief connection methods
      *
@@ -154,8 +155,6 @@
 
     le_enum_t le_server_authorise( le_sock_t const le_socket, le_enum_t const le_auth );
 
-    le_void_t le_server_system_inject( le_sock_t const le_socket, le_system_t * const le_system );
-
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
 
     le_void_t le_server_inject( le_server_t * const le_server, le_array_sf_t const * const le_access );
@@ -171,19 +170,13 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_server_system_query( le_sock_t const le_socket, le_system_t * const le_system );
-
     le_enum_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
 
     le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_sock_t const le_client );
 
-    le_enum_t le_server_system_times( le_sock_t const le_socket, le_system_t const * const le_system );
-
     le_enum_t le_server_times_client( le_server_t const * const le_server, le_sock_t const le_client );
 
     le_array_t le_server_times( le_server_t const * const le_server );
-
-    le_enum_t le_server_system_config( le_sock_t const le_socket, le_system_t const * const le_system );
 
     le_enum_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client );
 
