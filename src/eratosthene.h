@@ -119,7 +119,7 @@
     # define _LE_USE_RETRY      ( 3 )
     # define _LE_USE_STRING     ( 256 )
     # define _LE_USE_ASCII_ITOA ( 48 )
-    # define _LE_USE_STREAM     ( 16 )
+    # define _LE_USE_STREAM     ( 8 )
 
     /* Define types */
     # define _LE_VOID           void
