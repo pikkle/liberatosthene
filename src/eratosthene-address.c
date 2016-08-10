@@ -202,13 +202,13 @@
     le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket ) {
 
         /* Static socket i/o buffer variables */
-        static le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Static buffer mapping variables */
-        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer );
-        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP0 );
-        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP1 );
-        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP2 );
+        le_size_t * le_size  = ( le_size_t * ) ( le_buffer );
+        le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP0 );
+        le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP1 );
+        le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP2 );
 
         /* Read buffer from socket - send message */
         if ( read( le_socket, le_buffer, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
@@ -229,13 +229,13 @@
     le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket ) {
 
         /* Static socket i/o buffer variables */
-        static le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        le_byte_t le_buffer[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
 
         /* Static buffer mapping variables */
-        static le_size_t * le_size  = ( le_size_t * ) ( le_buffer );
-        static le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP0 );
-        static le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP1 );
-        static le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP2 );
+        le_size_t * le_size  = ( le_size_t * ) ( le_buffer );
+        le_time_t * le_time  = ( le_time_t * ) ( le_buffer + LE_ADDRESS_MAP0 );
+        le_size_t * le_depth = ( le_size_t * ) ( le_buffer + LE_ADDRESS_MAP1 );
+        le_byte_t * le_digit = ( le_byte_t * ) ( le_buffer + LE_ADDRESS_MAP2 );
 
         /* Write socket buffer */
         le_size [0] = le_address->as_size;

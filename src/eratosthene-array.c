@@ -72,7 +72,7 @@
     le_enum_t le_array_set_memory( le_array_t * const le_array, le_size_t const le_length ) {
 
         /* Memory swapping variables */
-        static le_byte_t * le_swap = NULL;
+        le_byte_t * le_swap = NULL;
 
         /* Check memory reallocation necessities */
         if ( ( le_array->ar_size += le_length ) >= le_array->as_virt ) {
@@ -104,7 +104,7 @@
     le_void_t le_array_set_pushsf( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
 
         /* Array mapping variables */
-        static le_array_sf_t le_map = LE_ARRAY_SF_C;
+        le_array_sf_t le_map = LE_ARRAY_SF_C;
 
         /* Array memory management - abort */
         if ( le_array_set_memory( le_array, LE_ARRAY_SFL ) != LE_ERROR_SUCCESS ) return;
@@ -126,7 +126,7 @@
     le_void_t le_array_set_pushrf( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data ) {
 
         /* Array mapping variables */
-        static le_array_rf_t le_map = LE_ARRAY_RF_C;
+        le_array_rf_t le_map = LE_ARRAY_RF_C;
 
         /* Array memory management - abort */
         if ( le_array_set_memory( le_array, LE_ARRAY_RFL ) != LE_ERROR_SUCCESS ) return;
@@ -147,7 +147,7 @@
     le_void_t le_array_set_pushtf( le_array_t * const le_array, le_time_t const le_time ) {
 
         /* Array mapping variables */
-        static le_array_tf_t le_map = LE_ARRAY_TF_C;
+        le_array_tf_t le_map = LE_ARRAY_TF_C;
 
         /* Array memory management - abort */
         if ( le_array_set_memory( le_array, LE_ARRAY_TFL ) != LE_ERROR_SUCCESS ) return;
@@ -163,7 +163,7 @@
     le_void_t le_array_set_pushcf( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time ) {
 
         /* Array mapping variables */
-        static le_array_cf_t le_map = LE_ARRAY_CF_C;
+        le_array_cf_t le_map = LE_ARRAY_CF_C;
 
         /* Array memory management - abort */
         if ( le_array_set_memory( le_array, LE_ARRAY_CFL ) != LE_ERROR_SUCCESS ) return;
