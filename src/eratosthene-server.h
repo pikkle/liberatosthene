@@ -176,7 +176,7 @@
 
     le_enum_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
 
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream, le_sock_t const le_client );
+    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream );
 
     le_enum_t le_server_times_client( le_server_t const * const le_server, le_sock_t const le_client );
 

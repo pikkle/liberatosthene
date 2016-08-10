@@ -51,26 +51,30 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_ARRAY_C    { 0, 0, NULL }
-    # define LE_ARRAY_SF_C { NULL, NULL, NULL }
-    # define LE_ARRAY_RF_C { NULL, NULL }
-    # define LE_ARRAY_TF_C { NULL }
-    # define LE_ARRAY_CF_C { NULL, NULL }
+    # define LE_ARRAY_C      { 0, 0, NULL }
+    # define LE_ARRAY_SF_C   { NULL, NULL, NULL }
+    # define LE_ARRAY_RF_C   { NULL, NULL }
+    # define LE_ARRAY_TF_C   { NULL }
+    # define LE_ARRAY_CF_C   { NULL, NULL }
 
     /* Define array step (bytes) */
-    # define LE_ARRAY_STEP ( 65356 )
+    # define LE_ARRAY_STEP   ( 65356 )
+
+    /* Define array streaming mode */
+    # define LE_ARRAY_PURGE  ( 0 )
+    # define LE_ARRAY_STREAM ( 1 )
 
     /* Define array formats */
-    # define LE_ARRAY_SFD  ( 0x01 )
-    # define LE_ARRAY_RFD  ( 0x02 )
-    # define LE_ARRAY_TFD  ( 0x03 )
-    # define LE_ARRAY_CFD  ( 0x04 )
+    # define LE_ARRAY_SFD    ( 0x01 )
+    # define LE_ARRAY_RFD    ( 0x02 )
+    # define LE_ARRAY_TFD    ( 0x03 )
+    # define LE_ARRAY_CFD    ( 0x04 )
 
     /* Define array formats records length */
-    # define LE_ARRAY_SFL  ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 + sizeof( le_time_t ) )
-    # define LE_ARRAY_RFL  ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 )
-    # define LE_ARRAY_TFL  ( sizeof( le_time_t ) )
-    # define LE_ARRAY_CFL  ( sizeof( le_size_t ) + sizeof( le_time_t ) )
+    # define LE_ARRAY_SFL    ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 + sizeof( le_time_t ) )
+    # define LE_ARRAY_RFL    ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 )
+    # define LE_ARRAY_TFL    ( sizeof( le_time_t ) )
+    # define LE_ARRAY_CFL    ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
 /*
     header - preprocessor macros
@@ -227,8 +231,6 @@
     le_void_t le_array_set_pushcf( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time );
 
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
-
-    le_enum_t le_array_io_stream( le_array_t * const le_array, le_sock_t const le_socket, le_enum_t const le_mode );
 
     le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
 

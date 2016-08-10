@@ -427,10 +427,10 @@
         le_address_io_read( & le_address, le_client );
 
         /* Send system query */
-        le_server_query( le_server, & le_address, & le_array, 0, 0, le_server_io_stream( le_server, le_address_get_time( & le_address ) ), le_client );
+        le_server_query( le_server, & le_address, & le_array, 0, 0, le_server_io_stream( le_server, le_address_get_time( & le_address ) ) );
 
         /* Purge array to socket */
-        le_message = le_array_io_stream( & le_array, le_client, 1 );
+        le_message = le_array_io_write( & le_array, le_client );
 
         /* Unallocate array memory */
         le_array_delete( & le_array );
@@ -440,7 +440,7 @@
 
     }
 
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream, le_sock_t const le_client ) {
+    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream ) {
 
         /* Class variables */
         le_class_t le_class = LE_CLASS_C;
@@ -469,7 +469,7 @@
                 if ( ( le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) ) ) != _LE_OFFS_NULL ) {
 
                     /* Recursive query */
-                    le_server_query( le_server, le_addr, le_array, le_parse + 1, le_offset, le_stream, le_client );
+                    le_server_query( le_server, le_addr, le_array, le_parse + 1, le_offset, le_stream );
 
                 }
 
@@ -491,7 +491,7 @@
                 le_array_set_pushrf( le_array, le_pose, le_class_get_data( & le_class ) );
 
                 /* Query array streaming */
-                le_array_io_stream( le_array, le_client, 0 );
+                //le_array_io_stream( le_array, le_client, 0 );
 
             } else {
 
@@ -505,7 +505,7 @@
                     if ( ( le_offset = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
 
                         /* Recursive query */
-                        le_server_query( le_server, le_addr, le_array, le_parse + 1, le_offset, le_stream, le_client );
+                        le_server_query( le_server, le_addr, le_array, le_parse + 1, le_offset, le_stream );
 
                     }
 
