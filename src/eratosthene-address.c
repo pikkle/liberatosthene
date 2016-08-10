@@ -88,7 +88,7 @@
         le_pose[2] = 0.0;
 
         /* Decomposing address */
-        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
+        for ( le_size_t le_parse = 0; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* Analyse address digit and coordinates update */
             le_pose[0] += ( ( le_real_t ) ( le_address->as_digit[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
@@ -125,45 +125,24 @@
 
     }
 
-    le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
-
-        /* Check consistency - send message */
-        if ( le_size >= _LE_USE_DEPTH ) return( LE_ERROR_DEPTH );
+    le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
 
         /* Assign address size */
         le_address->as_size = le_size;
 
-        /* Send message */
-        return( LE_ERROR_SUCCESS );
-
     }
 
-    le_enum_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
-
-        /* Check consistency (minimal) - send message */
-        if ( le_offset >= _LE_USE_DEPTH ) return( LE_ERROR_DEPTH );
-
-        /* Check consistency (minimal) - send message */
-        if ( le_digit >= _LE_USE_BASE ) return( LE_ERROR_BASE );
+    le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
 
         /* Assign address digit */
         le_address->as_digit[le_offset] = le_digit;
 
-        /* Send message */
-        return( LE_ERROR_SUCCESS );
-
     }
 
-    le_enum_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth ) {
-
-        /* Check consistency (minimal) - send message */
-        if ( le_depth >= _LE_USE_DEPTH ) return( LE_ERROR_DEPTH );
+    le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth ) {
 
         /* Assign address depth */
         le_address->as_depth = le_depth;
-
-        /* Send message */
-        return( LE_ERROR_SUCCESS );
 
     }
 

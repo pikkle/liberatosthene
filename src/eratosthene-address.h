@@ -216,7 +216,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH otherwise
      */
 
-    le_enum_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
+    le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
 
     /*! \brief mutator methods
      *
@@ -231,7 +231,7 @@
      *  inconsistent and LE_ERROR_BASE if digit is inconsistent
      */
 
-    le_enum_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
+    le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
 
     /*! \brief mutator methods
      *
@@ -243,7 +243,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH otherwise
      */
 
-    le_enum_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
+    le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
 
     /*! \brief mutator methods
      *
