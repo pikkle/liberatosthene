@@ -54,7 +54,7 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_SERVER_C { _LE_SOCK_NULL, { 0 }, 0, 0, { NULL }, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C { _LE_SOCK_NULL, { 0 }, 0, 0, 0, { 0 }, { { 0 } }, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -71,10 +71,14 @@
     typedef struct le_server_struct {
     
         le_sock_t sv_sock;
+
         le_char_t sv_path[_LE_USE_STRING];
-        le_size_t sv_area;
-        le_time_t sv_time;
-        FILE *    sv_stream[_LE_USE_DEPTH];        
+        le_size_t sv_scfg;
+        le_time_t sv_tcfg;
+
+        le_size_t sv_push;
+        le_time_t sv_time[_LE_USE_STREAM];
+        le_file_t sv_file[_LE_USE_STREAM][_LE_USE_DEPTH];
 
     le_enum_t _status; } le_server_t;
 
@@ -172,7 +176,7 @@
 
     le_enum_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
 
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_sock_t const le_client );
+    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream, le_sock_t const le_client );
 
     le_enum_t le_server_times_client( le_server_t const * const le_server, le_sock_t const le_client );
 
@@ -182,11 +186,7 @@
 
     le_array_t le_server_config( le_server_t const * const le_server );
 
-    le_enum_t le_server_io_open( le_server_t * const le_server, le_time_t const le_time );
-
-    le_void_t le_server_io_flush( le_server_t * const le_server );
-
-    le_void_t le_server_io_close( le_server_t * const le_server );
+    le_size_t le_server_io_stream( le_server_t * const le_server, le_time_t const le_time );
 
 /*
     header - C/C++ compatibility

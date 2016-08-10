@@ -119,6 +119,7 @@
     # define _LE_USE_RETRY      ( 3 )
     # define _LE_USE_STRING     ( 256 )
     # define _LE_USE_ASCII_ITOA ( 48 )
+    # define _LE_USE_STREAM     ( 16 )
 
     /* Define types */
     # define _LE_VOID           void
@@ -131,6 +132,7 @@
     # define _LE_TIME           int64_t
     # define _LE_DATA           uint8_t
     # define _LE_SOCK           int
+    # define _LE_FILE           FILE *
 
     /* Define boundaries */
     # define _LE_BYTE_MIN       ( 0 )
@@ -200,7 +202,7 @@
     header - type definition
  */
 
-    /* Implement types */
+    /* Internal types */
     typedef _LE_VOID le_void_t;
     typedef _LE_BYTE le_byte_t;
     typedef _LE_CHAR le_char_t;
@@ -211,6 +213,7 @@
     typedef _LE_TIME le_time_t;
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;
+    typedef _LE_FILE le_file_t;
 
 /*
     header - structures
