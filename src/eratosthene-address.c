@@ -54,13 +54,26 @@
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
 
-        /* Field comparison - send message */
+        /* Fields comparison - send message */
         if ( le_addr1->as_size  != le_addr2->as_size  ) return( _LE_FALSE );
         if ( le_addr1->as_time  != le_addr2->as_time  ) return( _LE_FALSE );
         if ( le_addr2->as_depth != le_addr2->as_depth ) return( _LE_FALSE );
 
-        /* Digit comparison - send message */
-        return( memcmp( le_addr1->as_digit, le_addr2->as_digit, le_addr1->as_size ) == 0 ? _LE_TRUE : _LE_FALSE );
+        /* Digits comparison */
+        for ( le_size_t le_parse = 0; le_parse < le_addr1->as_size; le_parse ++ ) {
+
+            /* Compare digits */
+            if ( le_addr1->as_digit[le_parse] != le_addr2->as_digit[le_parse] ) {
+
+                /* Send message */
+                return( _LE_FALSE );
+
+            }
+
+        }
+
+        /* Send message */
+        return( _LE_TRUE );
 
     }
 

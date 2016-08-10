@@ -118,7 +118,7 @@
 
     typedef struct le_address_struct {
 
-        le_size_t as_size; /* Size, not last 0-based index */
+        le_size_t as_size;
         le_time_t as_time;
         le_byte_t as_digit[_LE_USE_DEPTH];
         le_size_t as_depth;
