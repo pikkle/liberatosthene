@@ -70,7 +70,7 @@
 
     le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t const le_mode ) {
 
-        /* Socket i/o buffer */
+        /* Socket i/o buffer variables */
         le_enum_t er_buffer = le_mode;
 
         /* Check consistency - send message */
@@ -111,7 +111,7 @@
         }
 
         /* Delete connection to server */
-        le_client_delete( le_socket );
+        le_socket = le_client_delete( le_socket );
 
         /* Send message */
         return( le_return );
