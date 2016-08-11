@@ -51,14 +51,14 @@
     source - accessor methods
  */
 
-    le_size_t le_array_get_size( le_array_t const * const le_array ) {
+    inline le_size_t le_array_get_size( le_array_t const * const le_array ) {
 
         /* Return array size */
         return( le_array->ar_size );
 
     }
 
-    le_byte_t * le_array_get_byte( le_array_t const * const le_array ) {
+    inline le_byte_t * le_array_get_byte( le_array_t const * const le_array ) {
 
         /* Return array bytes pointer */
         return( ( le_byte_t * ) le_array->ar_byte );

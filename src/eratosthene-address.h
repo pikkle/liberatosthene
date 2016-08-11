@@ -135,7 +135,7 @@
      *  \return Address time
      */
 
-    le_time_t le_address_get_time( le_address_t const * const le_address );
+    extern le_time_t le_address_get_time( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -147,7 +147,7 @@
      *  \return Address size
      */
 
-    le_size_t le_address_get_size( le_address_t const * const le_address );
+    extern le_size_t le_address_get_size( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -160,7 +160,7 @@
      *  \return Returns digit found at queried offset, _LE_BYTE_NULL otherwise
      */
 
-    le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
+    extern le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
      *
@@ -171,7 +171,7 @@
      *  \return Query depth
      */
 
-    le_size_t le_address_get_depth( le_address_t const * const le_address );
+    extern le_size_t le_address_get_depth( le_address_t const * const le_address );
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addr1, le_address_t const * const le_addr2 );
 
@@ -199,7 +199,7 @@
      *  \param le_time    Address time
      */
 
-    le_void_t le_address_set_time( le_address_t * const le_address, le_time_t const le_time );
+    extern le_void_t le_address_set_time( le_address_t * const le_address, le_time_t const le_time );
 
     /*! \brief mutator methods
      *
@@ -211,7 +211,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH otherwise
      */
 
-    le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
+    extern le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
 
     /*! \brief mutator methods
      *
@@ -226,7 +226,7 @@
      *  inconsistent and LE_ERROR_BASE if digit is inconsistent
      */
 
-    le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
+    extern le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
 
     /*! \brief mutator methods
      *
@@ -238,7 +238,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH otherwise
      */
 
-    le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
+    extern le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
 
     /*! \brief mutator methods
      *

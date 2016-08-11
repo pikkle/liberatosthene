@@ -206,7 +206,7 @@
      *  \return Array elements count
      */
 
-    le_size_t le_array_get_size( le_array_t const * const le_array );
+    extern le_size_t le_array_get_size( le_array_t const * const le_array );
 
     /*! \brief accessor methods
      *
@@ -218,7 +218,7 @@
      *  \return Returns pointer to array memory first byte
      */
 
-    le_byte_t * le_array_get_byte( le_array_t const * const le_array );
+    extern le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
     le_enum_t le_array_set_memory( le_array_t * const le_array, le_size_t const le_length );
 

@@ -24,28 +24,28 @@
     source - accessor methods
  */
 
-    le_time_t le_address_get_time( le_address_t const * const le_address ) {
+    inline le_time_t le_address_get_time( le_address_t const * const le_address ) {
 
         /* Return address time */
         return( le_address->as_time );
 
     }
 
-    le_size_t le_address_get_size( le_address_t const * const le_address ) {
+    inline le_size_t le_address_get_size( le_address_t const * const le_address ) {
 
         /* Return address size */
         return( le_address->as_size );
 
     }
 
-    le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
+    inline le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
 
         /* Check consistency - return address digit */
-        return( le_offset >= le_address->as_size ? _LE_BYTE_NULL : le_address->as_digit[le_offset] );
+        return( le_address->as_digit[le_offset] );
 
     }
 
-    le_size_t le_address_get_depth( le_address_t const * const le_address ) {
+    inline le_size_t le_address_get_depth( le_address_t const * const le_address ) {
 
         /* Return address depth */
         return( le_address->as_depth );
@@ -118,28 +118,28 @@
     source - mutator methods
  */
 
-    le_void_t le_address_set_time( le_address_t * const le_address, le_time_t const le_time ) {
+    inline le_void_t le_address_set_time( le_address_t * const le_address, le_time_t const le_time ) {
 
         /* Assign address time */
         le_address->as_time = le_time;
 
     }
 
-    le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
+    inline le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
 
         /* Assign address size */
         le_address->as_size = le_size;
 
     }
 
-    le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
+    inline le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
 
         /* Assign address digit */
         le_address->as_digit[le_offset] = le_digit;
 
     }
 
-    le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth ) {
+    inline le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth ) {
 
         /* Assign address depth */
         le_address->as_depth = le_depth;
