@@ -59,9 +59,6 @@
 
         } else {
 
-            /* Remove server path configuration suffix */
-            le_server.sv_path[strlen( ( char * ) le_path )] = '\0';
-
             /* Check configuration reading */
             if ( fscanf( le_stream, "%" _LE_SIZE_S " %" _LE_TIME_S, & le_server.sv_scfg, & le_server.sv_tcfg ) != 2 ) {
 
@@ -75,6 +72,9 @@
 
             /* Close configuration stream */
             fclose( le_stream );
+
+            /* Remove server path configuration suffix */
+            le_server.sv_path[strlen( ( char * ) le_path )] = '\0';
 
             /* Check consistency */
             if ( ( le_server.sv_scfg <= 0 ) || ( le_server.sv_scfg >= _LE_USE_DEPTH ) ) {
@@ -136,6 +136,9 @@
         /* Deleted structure variables */
         le_server_t le_delete = LE_SERVER_C;
 
+        /* Check socket - close socket */
+        if ( le_server->sv_sock != _LE_SOCK_NULL ) close( le_server->sv_sock );
+
         /* Parsing stream stack */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_STREAM; le_parse ++ ) {
 
@@ -153,9 +156,6 @@
             }
 
         }
-
-        /* Check socket - close socket */
-        if ( le_server->sv_sock != _LE_SOCK_NULL ) close( le_server->sv_sock );
 
         /* Delete structure */
         * le_server = le_delete;
@@ -187,13 +187,13 @@
             if ( ( le_client = accept( le_server->sv_sock, ( struct sockaddr * ) & le_addr, & le_len ) ) != _LE_SOCK_NULL ) {
 
                 /* Switch on handshake */
-                switch ( le_server_handshake( le_client ) ) {
+                switch ( le_client_switch( le_client ) ) {
 
                     /* System injection */
                     case ( LE_NETWORK_MODE_IMOD ) : {
 
                         /* Send authorisation */
-                        if ( le_server_authorise( le_client, LE_NETWORK_MODE_IATH ) == LE_ERROR_SUCCESS ) {
+                        if ( le_client_authorise( le_client, LE_NETWORK_MODE_IATH ) == LE_ERROR_SUCCESS ) {
 
                             /* Connection to system injection */
                             le_server_inject_client( le_server, le_client );
@@ -206,7 +206,7 @@
                     case ( LE_NETWORK_MODE_QMOD ) : {
 
                         /* Send authorisation */
-                        if ( le_server_authorise( le_client, LE_NETWORK_MODE_QATH ) == LE_ERROR_SUCCESS ) {
+                        if ( le_client_authorise( le_client, LE_NETWORK_MODE_QATH ) == LE_ERROR_SUCCESS ) {
 
                             /* Connection to system query */
                             le_server_query_client( le_server, le_client );
@@ -219,7 +219,7 @@
                     case ( LE_NETWORK_MODE_AMOD ) : {
 
                         /* Send authorisation */
-                        if ( le_server_authorise( le_client, LE_NETWORK_MODE_AATH ) == LE_ERROR_SUCCESS ) {
+                        if ( le_client_authorise( le_client, LE_NETWORK_MODE_AATH ) == LE_ERROR_SUCCESS ) {
 
                             /* Connection to system times */
                             le_server_times_client( le_server, le_client );
@@ -232,7 +232,7 @@
                     case ( LE_NETWORK_MODE_CMOD ) : {
 
                         /* Send authorisation */
-                        if ( le_server_authorise( le_client, LE_NETWORK_MODE_CATH ) == LE_ERROR_SUCCESS ) {
+                        if ( le_client_authorise( le_client, LE_NETWORK_MODE_CATH ) == LE_ERROR_SUCCESS ) {
 
                             /* Connection to system */
                             le_server_config_client( le_server, le_client );
@@ -249,39 +249,6 @@
             close( le_client );
 
         }
-
-    }
-
-/*
-    source - client methods - handshake & authorisation
- */
-
-    le_enum_t le_server_handshake( le_sock_t const le_socket ) {
-
-        /* Socket i/o buffer variables */
-        le_enum_t le_buffer = LE_NETWORK_MODE_NULL;
-
-        /* Check consistency */
-        if ( le_socket == _LE_SOCK_NULL ) return( LE_NETWORK_MODE_NULL );
-
-        /* Read handshake - send message */
-        if ( read( le_socket, & le_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_NETWORK_MODE_NULL );
-
-        /* Return received handshake */
-        return( le_buffer );
-
-    }
-
-    le_enum_t le_server_authorise( le_sock_t const le_socket, le_enum_t const le_auth ) {
-
-        /* Check consistency - send message */
-        if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
-
-        /* Write authorisation - send message */
-        if ( write( le_socket, & le_auth, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_WRITE );
-
-        /* Send message */
-        return( LE_ERROR_SUCCESS );
 
     }
 
@@ -406,6 +373,9 @@
 
         /* Injection process condition */
         } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_server->sv_scfg );
+
+        /* Flush injection stream */
+        le_server_io_flush( le_server, le_stream );
 
     }
 /*

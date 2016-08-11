@@ -47,6 +47,7 @@
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
     # include "eratosthene-class.h"
+    # include "eratosthene-client.h"
     # include "eratosthene-network.h"
 
 /*
@@ -133,31 +134,6 @@
      *  \param le_socket Socket descriptor
      *  \param le_system Server system descriptor
      */
-
-    /*! \brief handshake methods
-     *
-     *  This function reads and returns the client query mode sent through the
-     *  handshake procedure.
-     *
-     *  \param le_socket Socket descriptor
-     *
-     *  \return Query mode descriptor on success, LE_NETWORK_MODE_NULL on error
-     */
-
-    le_enum_t le_server_handshake( le_sock_t const le_socket );
-
-    /*! \brief handshake methods
-     *
-     *  This function sends the query authorisation to the client through the
-     *  server handshake answer.
-     *
-     *  \param le_socket Socket descriptor
-     *  \param le_auth   Server authorisation
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
-     */
-
-    le_enum_t le_server_authorise( le_sock_t const le_socket, le_enum_t const le_auth );
 
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
 

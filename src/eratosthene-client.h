@@ -108,6 +108,21 @@
 
     le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t const le_mode );
 
+    le_enum_t le_client_switch( le_sock_t const le_socket );
+
+    /*! \brief handshake methods
+     *
+     *  This function sends the query authorisation to the client through the
+     *  server handshake answer.
+     *
+     *  \param le_socket Socket descriptor
+     *  \param le_auth   Server authorisation
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
+     */
+
+    le_enum_t le_client_authorise( le_sock_t const le_socket, le_enum_t const le_auth );
+
     le_enum_t le_client_array( le_char_t const * const le_ip, le_sock_t const le_port, le_enum_t const le_mode, le_array_t * const le_array );
 
 /*

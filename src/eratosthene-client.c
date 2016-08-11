@@ -87,6 +87,35 @@
 
     }
 
+    le_enum_t le_client_switch( le_sock_t const le_socket ) {
+
+        /* Socket i/o buffer variables */
+        le_enum_t le_buffer = LE_NETWORK_MODE_NULL;
+
+        /* Check consistency */
+        if ( le_socket == _LE_SOCK_NULL ) return( LE_NETWORK_MODE_NULL );
+
+        /* Read handshake - send message */
+        if ( read( le_socket, & le_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_NETWORK_MODE_NULL );
+
+        /* Return received handshake */
+        return( le_buffer );
+
+    }
+
+    le_enum_t le_client_authorise( le_sock_t const le_socket, le_enum_t const le_auth ) {
+
+        /* Check consistency - send message */
+        if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
+
+        /* Write authorisation - send message */
+        if ( write( le_socket, & le_auth, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_WRITE );
+
+        /* Send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
 /*
     source - common methods
  */
