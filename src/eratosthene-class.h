@@ -50,22 +50,19 @@
     header - preprocessor definitions
  */
 
-    /* Define initialiser */
-    # define LE_CLASS_I_OFFSET      { _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL, _LE_OFFS_NULL }
-
     /* Define pseudo-constructor */
-    # define LE_CLASS_C             { LE_CLASS_I_OFFSET, { 0 } }
-    # define LE_CLASS_C_DATA(r,g,b) { LE_CLASS_I_OFFSET, { r, g, b, 0 } }
+    # define LE_CLASS_C             { { 0, 0, 0, 0 } }
+    # define LE_CLASS_C_DATA(r,g,b) { { 0, 0, 0, 0 } }
 
     /* Define class buffer size */
-    # define LE_CLASS_BUFFER_SIZE   ( _LE_USE_OFFSET * _LE_USE_BASE + _LE_USE_DATA )
+    # define LE_CLASS_BUFFER        ( _LE_USE_OFFSET * _LE_USE_BASE + _LE_USE_DATA )
+
+    /* Define class memory size */
+    # define LE_CLASS_MEMORY        ( LE_CLASS_BUFFER + sizeof( le_size_t ) - _LE_USE_OFFSET )
 
 /*
     header - preprocessor macros
  */
-
-    /* Define offset extraction */
-    # define LE_CLASS_OFFSET(b,n)   ( * ( ( le_size_t * ) ( b + _LE_USE_DATA + _LE_USE_OFFSET * n ) ) )
 
 /*
     header - type definition
@@ -101,8 +98,7 @@
 
     typedef struct le_class_struct {
 
-        le_size_t cs_addr[_LE_USE_BASE];
-        le_data_t cs_data[LE_CLASS_BUFFER_SIZE + sizeof( le_size_t ) - _LE_USE_OFFSET];
+        le_data_t cs_data[LE_CLASS_MEMORY];
 
     } le_class_t;
 
@@ -120,7 +116,7 @@
      *
      */
 
-    le_class_t le_class_delete( le_void_t );
+    le_void_t le_class_delete( le_class_t * const le_class );
 
     /*! \brief accessor methods
      *
@@ -134,17 +130,6 @@
      */
 
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr );
-
-    /*! \brief accessor methods
-     *
-     *  Returns pointer to daughter class storage offset array.
-     *
-     *  \param le_class Class structure
-     *
-     *  \return Daughter class storage offset array
-     */
-
-    le_size_t * le_class_get_addr( le_class_t const * const le_class );
 
     /*! \brief accessor methods
      *
@@ -169,7 +154,7 @@
      *  inconsistent index
      */
 
-    le_enum_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
+    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
 
     /*! \brief mutator methods
      *

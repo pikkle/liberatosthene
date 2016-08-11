@@ -26,7 +26,7 @@
 
     le_class_t le_class_create( le_data_t const * const le_data ) {
 
-        /* Returned structure variables */
+        /* Created structure variables */
         le_class_t le_class = LE_CLASS_C_DATA( le_data[0], le_data[1], le_data[2] );
 
         /* Return constructed structure */
@@ -34,13 +34,13 @@
 
     }
 
-    le_class_t le_class_delete( le_void_t ) {
+    le_void_t le_class_delete( le_class_t * const le_class ) {
 
-        /* Returned structure variables */
-        le_class_t le_class = LE_CLASS_C;
+        /* Deleted structure variables */
+        le_class_t le_delete = LE_CLASS_C;
 
-        /* Return deleted structure */
-        return( le_class );
+        /* Delete structure */
+        * le_class = le_delete;
 
     }
 
@@ -50,15 +50,11 @@
 
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr ) {
 
-        /* Check consistency - return offset */
-        return( le_addr >= _LE_USE_BASE ? _LE_OFFS_NULL : le_class->cs_addr[le_addr] );
+        /* Offset memory pointer variables */
+        register le_size_t * le_vptr = ( le_size_t * ) ( ( le_byte_t * ) le_class->cs_data + _LE_USE_DATA + _LE_USE_OFFSET * le_addr );
 
-    }
-
-    le_size_t * le_class_get_addr( le_class_t const * const le_class ) {
-
-        /* Return class pointer */
-        return( ( le_size_t * ) le_class->cs_addr );
+        /* Return offset */
+        return( * le_vptr & _LE_OFFS_NULL );
 
     }
 
@@ -73,28 +69,25 @@
     source - mutator methods
  */
 
-    le_enum_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
+    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
 
-        /* Check consistency - send message */
-        if ( le_addr >= _LE_USE_BASE ) return( LE_ERROR_BASE );
+        /* Offset memory pointer variables */
+        register le_size_t * le_vptr = ( le_size_t * ) ( ( le_byte_t * ) le_class->cs_data + _LE_USE_DATA + _LE_USE_OFFSET * le_addr );
 
-        /* Update daughter offset */
-        le_class->cs_addr[le_addr] = le_offset;
-
-        /* Send message */
-        return( LE_ERROR_SUCCESS );
+        /* Assign offset */
+        ( * le_vptr ) &= ~ ( ( le_size_t ) _LE_OFFS_NULL ), ( * le_vptr ) |= le_offset;
 
     }
 
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
 
         /* Corrected heap variables */
-        le_real_t le_heap = le_class->cs_data[_LE_USE_DATA - 1] + 1;
+        float le_heap = le_class->cs_data[_LE_USE_DATA - 1] + 1;
 
-        /* Class data injection */
-        le_class->cs_data[0] = ( ( le_heap * ( le_real_t ) le_class->cs_data[0] ) + ( le_real_t ) le_data[0] ) / ( le_heap + 1 );
-        le_class->cs_data[1] = ( ( le_heap * ( le_real_t ) le_class->cs_data[1] ) + ( le_real_t ) le_data[1] ) / ( le_heap + 1 );
-        le_class->cs_data[2] = ( ( le_heap * ( le_real_t ) le_class->cs_data[2] ) + ( le_real_t ) le_data[2] ) / ( le_heap + 1 );
+        /* Data pseudo-accumulation */
+        le_class->cs_data[0] = ( ( le_heap * ( float ) le_class->cs_data[0] ) + ( float ) le_data[0] ) / ( le_heap + 1 );
+        le_class->cs_data[1] = ( ( le_heap * ( float ) le_class->cs_data[1] ) + ( float ) le_data[1] ) / ( le_heap + 1 );
+        le_class->cs_data[2] = ( ( le_heap * ( float ) le_class->cs_data[2] ) + ( float ) le_data[2] ) / ( le_heap + 1 );
 
         /* Check heap value */
         if ( le_class->cs_data[_LE_USE_DATA - 1] < _LE_BYTE_MAX ) le_class->cs_data[_LE_USE_DATA - 1] ++;
@@ -111,20 +104,7 @@
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) return( LE_ERROR_IO_SEEK );
 
         /* Read class buffer - send message */
-        if ( fread( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_BUFFER_SIZE, le_stream ) != LE_CLASS_BUFFER_SIZE ) return( LE_ERROR_IO_WRITE );
-
-        /* Strict-aliasing management variables */
-        le_byte_t * le_base = ( le_byte_t * ) le_class->cs_data;
-
-        /* Extract offsets from storage buffer */
-        le_class->cs_addr[0] = LE_CLASS_OFFSET( le_base, 0 ) & _LE_OFFS_NULL;
-        le_class->cs_addr[1] = LE_CLASS_OFFSET( le_base, 1 ) & _LE_OFFS_NULL;
-        le_class->cs_addr[2] = LE_CLASS_OFFSET( le_base, 2 ) & _LE_OFFS_NULL;
-        le_class->cs_addr[3] = LE_CLASS_OFFSET( le_base, 3 ) & _LE_OFFS_NULL;
-        le_class->cs_addr[4] = LE_CLASS_OFFSET( le_base, 4 ) & _LE_OFFS_NULL;
-        le_class->cs_addr[5] = LE_CLASS_OFFSET( le_base, 5 ) & _LE_OFFS_NULL;
-        le_class->cs_addr[6] = LE_CLASS_OFFSET( le_base, 6 ) & _LE_OFFS_NULL;
-        le_class->cs_addr[7] = LE_CLASS_OFFSET( le_base, 7 ) & _LE_OFFS_NULL;
+        if ( fread( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_BUFFER, le_stream ) != LE_CLASS_BUFFER ) return( LE_ERROR_IO_WRITE );
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
@@ -136,21 +116,8 @@
         /* Move head to class offset - send message */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) return( LE_ERROR_IO_SEEK );
 
-        /* Strict-aliasing management variables */
-        le_byte_t * le_base = ( le_byte_t * ) le_class->cs_data;
-
-        /* Compact offsets in storage buffer */
-        LE_CLASS_OFFSET( le_base, 0 ) = le_class->cs_addr[0];
-        LE_CLASS_OFFSET( le_base, 1 ) = le_class->cs_addr[1];
-        LE_CLASS_OFFSET( le_base, 2 ) = le_class->cs_addr[2];
-        LE_CLASS_OFFSET( le_base, 3 ) = le_class->cs_addr[3];
-        LE_CLASS_OFFSET( le_base, 4 ) = le_class->cs_addr[4];
-        LE_CLASS_OFFSET( le_base, 5 ) = le_class->cs_addr[5];
-        LE_CLASS_OFFSET( le_base, 6 ) = le_class->cs_addr[6];
-        LE_CLASS_OFFSET( le_base, 7 ) = le_class->cs_addr[7];
-
         /* Write class buffer - send message */
-        if ( fwrite( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_BUFFER_SIZE, le_stream ) != LE_CLASS_BUFFER_SIZE ) return( LE_ERROR_IO_WRITE );
+        if ( fwrite( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_BUFFER, le_stream ) != LE_CLASS_BUFFER ) return( LE_ERROR_IO_WRITE );
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
