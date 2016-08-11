@@ -29,11 +29,11 @@
         /* Created structure variables */
         le_server_t le_server = LE_SERVER_C;
 
-        /* Stream variables */
-        FILE * le_stream = NULL;
-
         /* Address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
+
+        /* Stream variables */
+        FILE * le_stream = NULL;
 
         /* Parsing stream stack */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_STREAM; le_parse ++ ) {
@@ -689,6 +689,23 @@
 
         /* Send stream index */
         return( le_return );
+
+    }
+
+    le_void_t le_server_io_flush( le_server_t const * const le_server, le_size_t const le_stream ) {
+
+        /* Parsing stream handles */
+        for ( le_size_t le_index = 0; le_index < le_server->sv_scfg; le_index ++ ) {
+
+            /* Check stream handle */
+            if ( le_server->sv_file[le_stream][le_index] != NULL ) {
+
+                /* Flush handle output buffer */
+                fflush( le_server->sv_file[le_stream][le_index] );
+
+            }
+
+        }
 
     }
 

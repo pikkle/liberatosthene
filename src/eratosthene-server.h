@@ -188,6 +188,8 @@
 
     le_size_t le_server_io_stream( le_server_t * const le_server, le_time_t const le_time );
 
+    le_void_t le_server_io_flush( le_server_t const * const le_server, le_size_t const le_stream );
+
 /*
     header - C/C++ compatibility
  */
