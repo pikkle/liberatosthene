@@ -196,7 +196,10 @@
  */
 
     /* Define absolute values */
-    # define le_time_abs(x)     ( llabs( x ) )
+    # define le_time_abs(x)     ( ( le_time_t ) llabs( x ) )
+
+    /* Define string conversion */
+    # define le_time_str(x)     ( ( le_time_t ) strtoimax( x, NULL, 10 ) )
 
 /*
     header - type definition

@@ -180,68 +180,63 @@
         /* Check consistency */
         if ( le_server->sv_sock == _LE_SOCK_NULL ) return;
 
-        /* Server connections management */
-        for ( ; ; ) {
+        /* Accept incoming connection */
+        for (;;) if ( ( le_client = accept( le_server->sv_sock, ( struct sockaddr * ) & le_addr, & le_len ) ) != _LE_SOCK_NULL ) {
 
-            /* Accept incoming connection */
-            if ( ( le_client = accept( le_server->sv_sock, ( struct sockaddr * ) & le_addr, & le_len ) ) != _LE_SOCK_NULL ) {
+            /* Switch on handshake */
+            switch ( le_client_switch( le_client ) ) {
 
-                /* Switch on handshake */
-                switch ( le_client_switch( le_client ) ) {
+                /* System injection */
+                case ( LE_NETWORK_MODE_IMOD ) : {
 
-                    /* System injection */
-                    case ( LE_NETWORK_MODE_IMOD ) : {
+                    /* Send authorisation */
+                    if ( le_client_authorise( le_client, LE_NETWORK_MODE_IATH ) == LE_ERROR_SUCCESS ) {
 
-                        /* Send authorisation */
-                        if ( le_client_authorise( le_client, LE_NETWORK_MODE_IATH ) == LE_ERROR_SUCCESS ) {
+                        /* Connection to system injection */
+                        le_server_inject_client( le_server, le_client );
 
-                            /* Connection to system injection */
-                            le_server_inject_client( le_server, le_client );
+                    }
 
-                        }
+                } break;
 
-                    } break;
+                /* System query */
+                case ( LE_NETWORK_MODE_QMOD ) : {
 
-                    /* System query */
-                    case ( LE_NETWORK_MODE_QMOD ) : {
+                    /* Send authorisation */
+                    if ( le_client_authorise( le_client, LE_NETWORK_MODE_QATH ) == LE_ERROR_SUCCESS ) {
 
-                        /* Send authorisation */
-                        if ( le_client_authorise( le_client, LE_NETWORK_MODE_QATH ) == LE_ERROR_SUCCESS ) {
+                        /* Connection to system query */
+                        le_server_query_client( le_server, le_client );
 
-                            /* Connection to system query */
-                            le_server_query_client( le_server, le_client );
+                    }
 
-                        }
+                } break;
 
-                    } break;
+                /* System times */
+                case ( LE_NETWORK_MODE_AMOD ) : {
 
-                    /* System times */
-                    case ( LE_NETWORK_MODE_AMOD ) : {
+                    /* Send authorisation */
+                    if ( le_client_authorise( le_client, LE_NETWORK_MODE_AATH ) == LE_ERROR_SUCCESS ) {
 
-                        /* Send authorisation */
-                        if ( le_client_authorise( le_client, LE_NETWORK_MODE_AATH ) == LE_ERROR_SUCCESS ) {
+                        /* Connection to system times */
+                        le_server_times_client( le_server, le_client );
 
-                            /* Connection to system times */
-                            le_server_times_client( le_server, le_client );
+                    }
 
-                        }
+                } break;
 
-                    } break;
+                /* System configuration */
+                case ( LE_NETWORK_MODE_CMOD ) : {
 
-                    /* System configuration */
-                    case ( LE_NETWORK_MODE_CMOD ) : {
+                    /* Send authorisation */
+                    if ( le_client_authorise( le_client, LE_NETWORK_MODE_CATH ) == LE_ERROR_SUCCESS ) {
 
-                        /* Send authorisation */
-                        if ( le_client_authorise( le_client, LE_NETWORK_MODE_CATH ) == LE_ERROR_SUCCESS ) {
+                        /* Connection to system */
+                        le_server_config_client( le_server, le_client );
 
-                            /* Connection to system */
-                            le_server_config_client( le_server, le_client );
+                    }
 
-                        }
-
-                    } break;
-
-                }
+                } break;
 
             }
 
@@ -279,29 +274,32 @@
         while ( le_retry < _LE_USE_RETRY ) {
 
             /* Read streaming bloc */
-            if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) >= LE_ARRAY_SFL ) {
+            if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) >= 0 ) {
 
                 /* Compute available records */
-                le_round = le_count - ( le_count % LE_ARRAY_SFL );
+                if ( ( le_round = le_count - ( le_count % LE_ARRAY_SFL ) ) != 0 ) {
 
-                /* Parsing received streaming bloc */
-                for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_SFL ) {
+                    /* Parsing received streaming bloc */
+                    for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_SFL ) {
 
-                    /* Compute array access */
-                    le_array_sf( le_buffer, le_parse, le_access );
+                        /* Compute array access */
+                        le_array_sf( le_buffer, le_parse, le_access );
 
-                    /* Inject received element */
-                    le_server_inject( le_server, & le_access );
+                        /* Inject received element */
+                        le_server_inject( le_server, & le_access );
 
-                }
+                    }
 
-                /* Compute bridge value */
-                if ( ( le_bridge = le_count % LE_ARRAY_SFL ) != 0 ) {
+                    /* Compute bridge value */
+                    if ( ( le_bridge = le_count % LE_ARRAY_SFL ) != 0 ) {
 
-                    /* Apply circular condition */
-                    memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
+                        /* Apply circular condition */
+                        memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
 
-                }                
+                    }
+
+                /* Update bridge value */
+                } else { le_bridge = le_count; }
 
             /* Update retry flag */
             le_retry = 0; } else { le_retry ++; }
@@ -312,14 +310,14 @@
 
     le_void_t le_server_inject( le_server_t * const le_server, le_array_sf_t const * const le_access ) {
 
+        /* Class variables */
+        le_class_t le_class = LE_CLASS_C;
+
         /* Address variables */
         le_address_t le_addr = LE_ADDRESS_C_SIZE( le_server->sv_scfg - 1 );
 
         /* Stream variables */
         le_size_t le_stream = _LE_USE_STREAM;
-
-        /* Class variables */
-        le_class_t le_class = LE_CLASS_C;
 
         /* Depth variables */
         le_size_t le_parse = 0;
@@ -329,8 +327,13 @@
         le_size_t le_offset = 0;
         le_size_t le_offnex = 0;
 
-        /* System scale stream management - send message */
-        if ( ( le_stream = le_server_io_stream( le_server, le_access->as_time[0] ) ) == _LE_USE_STREAM ) return;
+        /* System scale stream management */
+        if ( ( le_stream = le_server_io_stream( le_server, le_access->as_time[0] ) ) == _LE_USE_STREAM ) {
+
+            /* Abort injection */
+            return;
+
+        }
 
         /* Compute address index */
         le_address_set_pose( & le_addr, le_access->as_pose );
@@ -384,29 +387,35 @@
 
     le_enum_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client ) {
 
-        /* Message variables */
-        le_enum_t le_message = LE_ERROR_SUCCESS;
+        /* Returned value variables */
+        le_enum_t le_return = LE_ERROR_SUCCESS;
 
         /* Array variables */
         le_array_t le_array = LE_ARRAY_C;
 
         /* Address variables */
-        le_address_t le_address = LE_ADDRESS_C;
+        le_address_t le_addr = LE_ADDRESS_C;
+
+        /* Stream variables */
+        le_size_t le_stream = _LE_USE_STREAM;
 
         /* Read and decompose query */
-        le_address_io_read( & le_address, le_client );
+        le_address_io_read( & le_addr, le_client );
+
+        /* Create stream */
+        le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr ) );
 
         /* Send system query */
-        le_server_query( le_server, & le_address, & le_array, 0, 0, le_server_io_stream( le_server, le_address_get_time( & le_address ) ) );
+        le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
 
         /* Purge array to socket */
-        le_message = le_array_io_write( & le_array, le_client );
+        le_return = le_array_io_write( & le_array, le_client );
 
         /* Unallocate array memory */
         le_array_delete( & le_array );
 
         /* Send message */
-        return( le_message );
+        return( le_return );
 
     }
 
@@ -415,8 +424,9 @@
         /* Class variables */
         le_class_t le_class = LE_CLASS_C;
 
-        /* Address size variables */
-        le_size_t le_size = le_address_get_size( le_addr );
+        /* Address variables */
+        le_size_t le_size  = le_address_get_size ( le_addr );
+        le_size_t le_depth = le_address_get_depth( le_addr );
 
         /* Query initialisation */
         if ( le_parse == 0 ) {
@@ -425,7 +435,7 @@
             if ( le_stream == _LE_USE_STREAM ) return;
 
             /* Check consistency */
-            if ( ( le_size + le_address_get_depth( le_addr ) ) >= le_server->sv_scfg ) return;
+            if ( le_size + le_depth >= le_server->sv_scfg ) return;
 
         }
 
@@ -443,7 +453,7 @@
 
                 }
 
-            } else if ( le_parse == le_size + le_address_get_depth( le_addr ) ) {
+            } else if ( le_parse == le_size + le_depth ) {
 
                 /* Position array variables */
                 le_real_t le_pose[3] = { 0.0 };
@@ -459,9 +469,6 @@
 
                 /* Inject gathered element in array */
                 le_array_set_pushrf( le_array, le_pose, le_class_get_data( & le_class ) );
-
-                /* Query array streaming */
-                //le_array_io_stream( le_array, le_client, 0 );
 
             } else {
 
@@ -496,11 +503,8 @@
         /* Returned value variables */
         le_enum_t le_return = LE_ERROR_SUCCESS;
 
-        /* Array variables */
-        le_array_t le_array = LE_ARRAY_C;
-
-        /* Gather system time equivalences classes */
-        le_array = le_server_times( le_server );
+        /* Server time atlas array variables */
+        le_array_t le_array = le_server_times( le_server );
 
         /* Write array on socket */
         le_return = le_array_io_write( & le_array, le_client );
@@ -515,41 +519,33 @@
 
     le_array_t le_server_times( le_server_t const * const le_server ) {
 
-        /* Time buffer variables */
-        le_time_t le_buffer = _LE_TIME_NULL;
-
         /* Returned structure variables */
         le_array_t le_array = LE_ARRAY_C;
 
-        /* Directory variables */
-        DIR * le_directory = NULL;
-
         /* Directory entity variables */
-        struct dirent * le_entity = NULL;
+        struct dirent * le_time = NULL;
+
+        /* Directory variables */
+        DIR * le_atlas = NULL;
 
         /* Create directory handle - send message */
-        if ( ( le_directory = opendir( ( char * ) le_server->sv_path ) ) == NULL ) return( le_array );
+        if ( ( le_atlas = opendir( ( char * ) le_server->sv_path ) ) == NULL ) return( le_array );
 
         /* Directory entity enumeration */
-        while ( ( le_entity = readdir( le_directory ) ) != NULL ) {
+        while ( ( le_time = readdir( le_atlas ) ) != NULL ) {
 
             /* Check entity type */
-            if ( ( le_entity->d_type == DT_DIR ) && ( le_entity->d_name[0] != '.' ) ) {
+            if ( ( le_time->d_type != DT_DIR ) || ( le_time->d_name[0] == '.' ) ) continue;
 
-                /* Convert directory name */
-                le_buffer = le_server->sv_tcfg * strtoull( le_entity->d_name, NULL, 10 );
-
-                /* Push buffer in array */
-                le_array_set_pushtf( & le_array, le_buffer );
-
-            }
+            /* Push buffer in array */
+            le_array_set_pushtf( & le_array, le_server->sv_tcfg * le_time_str( le_time->d_name ) );
 
         }
 
         /* Delete directory handle */
-        closedir( le_directory );
+        closedir( le_atlas );
 
-        /* Return structure */
+        /* Send array */
         return( le_array );
 
     }
@@ -563,11 +559,8 @@
         /* Returned value variables */
         le_enum_t le_return = LE_ERROR_SUCCESS;
 
-        /* Array variables */
-        le_array_t le_array = LE_ARRAY_C;
-
-        /* Gather system configuration */
-        le_array = le_server_config( le_server );
+        /* Server configuration array variables */
+        le_array_t le_array = le_server_config( le_server );
 
         /* Write array on socket */
         le_return = le_array_io_write( & le_array, le_client );
@@ -613,14 +606,14 @@
 
         }
 
+        /* Clear stream time */
+        le_server->sv_time[le_return] = _LE_TIME_NULL;
+
         /* Compose path string */
         sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_server->sv_path, le_time / le_server->sv_tcfg );
 
         /* Create stream directory */
         mkdir( ( char * ) le_path, 0777 );
-
-        /* Clear stream time */
-        le_server->sv_time[le_return] = _LE_TIME_NULL;
 
         /* Parsing stream handles */
         for ( le_size_t le_index = 0; le_index < le_server->sv_scfg; le_index ++ ) {
@@ -651,7 +644,7 @@
 
         }
 
-        /* Assign stream time */
+        /* Set stream time */
         le_server->sv_time[le_return] = le_time;
 
         /* Update stream push value */
