@@ -254,7 +254,10 @@
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client ) {
 
         /* Array access variables */
-        le_array_sf_t le_access = LE_ARRAY_SF_C;
+        le_array_rf_t le_access = LE_ARRAY_RF_C;
+
+        /* Time variables */
+        le_time_t le_time = _LE_TIME_NULL;
 
         /* Parsing variables */
         le_size_t le_parse = 0;
@@ -270,6 +273,9 @@
         /* Socket i/o circular buffer variables */
         le_byte_t le_buffer[LE_NETWORK_SB_STRM] = LE_NETWORK_C;
 
+        /* Read injection time - abort injection */
+        if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) return;
+
         /* Injection streaming loop */
         while ( le_retry < _LE_USE_RETRY ) {
 
@@ -277,21 +283,21 @@
             if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) >= 0 ) {
 
                 /* Compute available records */
-                if ( ( le_round = le_count - ( le_count % LE_ARRAY_SFL ) ) != 0 ) {
+                if ( ( le_round = le_count - ( le_count % LE_ARRAY_RFL ) ) != 0 ) {
 
                     /* Parsing received streaming bloc */
-                    for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_SFL ) {
+                    for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_RFL ) {
 
                         /* Compute array access */
-                        le_array_sf( le_buffer, le_parse, le_access );
+                        le_array_rf( le_buffer, le_parse, le_access );
 
                         /* Inject received element */
-                        le_server_inject( le_server, & le_access );
+                        le_server_inject( le_server, & le_access, le_time );
 
                     }
 
                     /* Compute bridge value */
-                    if ( ( le_bridge = le_count % LE_ARRAY_SFL ) != 0 ) {
+                    if ( ( le_bridge = le_count % LE_ARRAY_RFL ) != 0 ) {
 
                         /* Apply circular condition */
                         memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
@@ -308,7 +314,7 @@
 
     }
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_array_sf_t const * const le_access ) {
+    le_void_t le_server_inject( le_server_t * const le_server, le_array_rf_t const * const le_access, le_time_t const le_time ) {
 
         /* Class variables */
         le_class_t le_class = LE_CLASS_C;
@@ -328,7 +334,7 @@
         le_size_t le_offnex = 0;
 
         /* System scale stream management */
-        if ( ( le_stream = le_server_io_stream( le_server, le_access->as_time[0] ) ) == _LE_USE_STREAM ) {
+        if ( ( le_stream = le_server_io_stream( le_server, le_time ) ) == _LE_USE_STREAM ) {
 
             /* Abort injection */
             return;

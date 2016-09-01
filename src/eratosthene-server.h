@@ -137,7 +137,7 @@
 
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_array_sf_t const * const le_access );
+    le_void_t le_server_inject( le_server_t * const le_server, le_array_rf_t const * const le_access, le_time_t const le_time );
 
     /*! \brief connection methods
      *
