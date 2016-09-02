@@ -24,7 +24,7 @@
     source - constructor/destructor methods
  */
 
-    le_sock_t le_client_create( le_char_t const * const le_ip, le_size_t const le_port ) {
+    le_sock_t le_client_create( le_char_t const * const le_ip, le_sock_t const le_port ) {
 
         /* Address variables */
         struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );

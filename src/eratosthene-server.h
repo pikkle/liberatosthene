@@ -97,7 +97,7 @@
      *  \return Created socket descriptor on success, _LE_SOCK_NULL otherwise
      */
 
-    le_server_t le_server_create( le_size_t const le_port, le_char_t const * const le_path );
+    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path );
 
     /*! \brief constructor/destructor methods
      *

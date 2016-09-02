@@ -24,7 +24,7 @@
     source - constructor/destructor methods
  */
 
-    le_server_t le_server_create( le_size_t const le_port, le_char_t const * const le_path ) {
+    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path ) {
 
         /* Created structure variables */
         le_server_t le_server = LE_SERVER_C;
