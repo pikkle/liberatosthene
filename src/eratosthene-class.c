@@ -29,6 +29,9 @@
         /* Created structure variables */
         le_class_t le_class = LE_CLASS_C_DATA( le_data[0], le_data[1], le_data[2] );
 
+        /* Initialise offsets */
+        memset( le_class.cs_data + _LE_USE_DATA, 0xff, _LE_USE_OFFSET * 8 );
+
         /* Return constructed structure */
         return( le_class );
 
@@ -82,12 +85,12 @@
     inline le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
 
         /* Corrected heap variables */
-        float le_heap = le_class->cs_data[_LE_USE_DATA - 1] + 1;
+        le_real_t le_heap = le_class->cs_data[_LE_USE_DATA - 1] + 1;
 
         /* Data pseudo-accumulation */
-        le_class->cs_data[0] = ( ( le_heap * ( float ) le_class->cs_data[0] ) + ( float ) le_data[0] ) / ( le_heap + 1 );
-        le_class->cs_data[1] = ( ( le_heap * ( float ) le_class->cs_data[1] ) + ( float ) le_data[1] ) / ( le_heap + 1 );
-        le_class->cs_data[2] = ( ( le_heap * ( float ) le_class->cs_data[2] ) + ( float ) le_data[2] ) / ( le_heap + 1 );
+        le_class->cs_data[0] = ( ( le_heap * ( le_real_t ) le_class->cs_data[0] ) + ( le_real_t ) le_data[0] ) / ( le_heap + 1.0 );
+        le_class->cs_data[1] = ( ( le_heap * ( le_real_t ) le_class->cs_data[1] ) + ( le_real_t ) le_data[1] ) / ( le_heap + 1.0 );
+        le_class->cs_data[2] = ( ( le_heap * ( le_real_t ) le_class->cs_data[2] ) + ( le_real_t ) le_data[2] ) / ( le_heap + 1.0 );
 
         /* Check heap value */
         if ( le_class->cs_data[_LE_USE_DATA - 1] < _LE_BYTE_MAX ) le_class->cs_data[_LE_USE_DATA - 1] ++;

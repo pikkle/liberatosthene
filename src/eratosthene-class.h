@@ -52,7 +52,7 @@
 
     /* Define pseudo-constructor */
     # define LE_CLASS_C             { { 0, 0, 0, 0 } }
-    # define LE_CLASS_C_DATA(r,g,b) { { 0, 0, 0, 0 } }
+    # define LE_CLASS_C_DATA(r,g,b) { { r, g, b, 0 } }
 
     /* Define class buffer size */
     # define LE_CLASS_BUFFER        ( _LE_USE_OFFSET * _LE_USE_BASE + _LE_USE_DATA )
