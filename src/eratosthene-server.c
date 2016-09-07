@@ -280,7 +280,7 @@
         while ( le_retry < _LE_USE_RETRY ) {
 
             /* Read streaming bloc */
-            if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) >= 0 ) {
+            if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) > 0 ) {
 
                 /* Compute available records */
                 if ( ( le_round = le_count - ( le_count % LE_ARRAY_RFL ) ) != 0 ) {
