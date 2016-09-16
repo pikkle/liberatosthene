@@ -70,18 +70,8 @@
         if ( le_addr1->as_times[0] != le_addr2->as_times[0] ) return( _LE_FALSE );
         if ( le_addr1->as_times[1] != le_addr2->as_times[1] ) return( _LE_FALSE );
 
-        /* Digits comparison */
-        for ( le_size_t le_parse = 0; le_parse < le_addr1->as_size; le_parse ++ ) {
-
-            /* Compare digits */
-            if ( le_addr1->as_digit[le_parse] != le_addr2->as_digit[le_parse] ) {
-
-                /* Send message */
-                return( _LE_FALSE );
-
-            }
-
-        }
+        /* Digits comparison - send message */
+        if ( memcmp( le_addr1->as_digit, le_addr2->as_digit, le_addr1->as_size ) != 0 ) return( _LE_FALSE );
 
         /* Send message */
         return( _LE_TRUE );
@@ -224,16 +214,17 @@
         /* Read buffer from socket - send message */
         if ( read( le_socket, le_data, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
 
-        /* Read socket bubffer */
-        memcpy( le_address->as_times, le_tmap, _LE_USE_TIMES * sizeof( le_time_t ) );
-
-        /* Read socket buffer */
-        memcpy( le_address->as_digit, le_gmap, _LE_USE_DEPTH );
-
         /* Read socket buffer */
         le_address->as_size  = le_smap[0];
         le_address->as_mode  = le_mmap[0];
         le_address->as_depth = le_dmap[0];
+
+        /* Read socket buffer */
+        le_address->as_times[0] = le_tmap[0];
+        le_address->as_times[1] = le_tmap[1];
+
+        /* Read socket buffer */
+        memcpy( le_address->as_digit, le_gmap, _LE_USE_DEPTH );
 
         /* Send message */
         return( LE_ERROR_SUCCESS );
@@ -258,10 +249,11 @@
         le_dmap[0] = le_address->as_depth;
 
         /* Write socket buffer */
-        memcpy( le_gmap, le_address->as_digit, _LE_USE_DEPTH );
+        le_tmap[0] = le_address->as_times[0];
+        le_tmap[1] = le_address->as_times[1];
 
         /* Write socket buffer */
-        memcpy( le_tmap, le_address->as_times, _LE_USE_TIMES * sizeof( le_time_t ) );
+        memcpy( le_gmap, le_address->as_digit, _LE_USE_DEPTH );
 
         /* Write buffer on socket - send message */
         if ( write( le_socket, le_data, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_WRITE );
