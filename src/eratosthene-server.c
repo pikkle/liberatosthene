@@ -405,14 +405,33 @@
         /* Stream variables */
         le_size_t le_stream = _LE_USE_STREAM;
 
+        /* Time variables */
+        le_time_t le_time = _LE_TIME_NULL;
+
         /* Read and decompose query */
         le_address_io_read( & le_addr, le_client );
 
-        /* Create stream */
-        le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr, 0 ) );
+        /* Check address time */
+        if ( ( le_time = le_address_get_time( & le_addr, 0 ) ) != _LE_TIME_NULL ) {
 
-        /* Send system query */
-        le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
+            /* Create stream */
+            le_stream = le_server_io_stream( le_server, le_time );
+
+            /* Send system query */
+            le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
+
+        }
+
+        /* Check address time */
+        if ( ( le_time = le_address_get_time( & le_addr, 1 ) ) != _LE_TIME_NULL ) {
+
+            /* Create stream */
+            le_stream = le_server_io_stream( le_server, le_time );
+
+            /* Send system query */
+            le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
+
+        }
 
         /* Purge array to socket */
         le_return = le_array_io_write( & le_array, le_client );
