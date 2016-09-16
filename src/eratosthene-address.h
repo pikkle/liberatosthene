@@ -103,7 +103,7 @@
      *
      *  \var le_address_struct::as_size
      *  Size of the address - number of digits of the address
-     *  \var le_address_struct::as_time
+     *  \var le_address_struct::as_times
      *  Time of the class pointed by the address
      *  \var le_address_struct::as_digit
      *  Address digits array - contains whole number in [0,8[
@@ -115,7 +115,7 @@
 
         le_size_t as_size;
         le_byte_t as_mode;
-        le_time_t as_time[_LE_USE_TIME];
+        le_time_t as_times[_LE_USE_TIMES];
         le_byte_t as_digit[_LE_USE_DEPTH];
         le_size_t as_depth;
 
@@ -124,6 +124,8 @@
 /*
     header - function prototypes
  */
+
+    extern le_byte_t le_address_get_mode( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -189,6 +191,8 @@
      */
 
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose );
+
+    extern le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode );
 
     /*! \brief mutator methods
      *

@@ -112,7 +112,7 @@
     # error "offset range is [4,8]"
     # endif
     # define _LE_USE_DEPTH      ( 64 )
-    # define _LE_USE_TIME       ( 2 )
+    # define _LE_USE_TIMES      ( 2 )
     # define _LE_USE_DATA       ( 4 )
     # define _LE_USE_MTU        ( 1280 )
     # define _LE_USE_PORT       ( 43427 )
