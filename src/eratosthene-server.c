@@ -409,7 +409,7 @@
         le_address_io_read( & le_addr, le_client );
 
         /* Create stream */
-        le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr ) );
+        le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr, 0 ) );
 
         /* Send system query */
         le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );

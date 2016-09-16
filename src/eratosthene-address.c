@@ -24,10 +24,10 @@
     source - accessor methods
  */
 
-    inline le_time_t le_address_get_time( le_address_t const * const le_address ) {
+    inline le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset ) {
 
         /* Return address time */
-        return( le_address->as_time );
+        return( le_address->as_time[le_offset] );
 
     }
 
@@ -56,8 +56,21 @@
 
         /* Fields comparison - send message */
         if ( le_addr1->as_size  != le_addr2->as_size  ) return( _LE_FALSE );
-        if ( le_addr1->as_time  != le_addr2->as_time  ) return( _LE_FALSE );
-        if ( le_addr2->as_depth != le_addr2->as_depth ) return( _LE_FALSE );
+        if ( le_addr1->as_mode  != le_addr2->as_mode  ) return( _LE_FALSE );
+        if ( le_addr1->as_depth != le_addr2->as_depth ) return( _LE_FALSE );
+
+        /* Time comparison */
+        for ( le_size_t le_parse = 0; le_parse < _LE_USE_TIME; le_parse ++ ) {
+
+            /* Compare time */
+            if ( le_addr1->as_time[le_parse] != le_addr2->as_time[le_parse] ) {
+
+                /* Send message */
+                return( _LE_FALSE );
+
+            }
+
+        }
 
         /* Digits comparison */
         for ( le_size_t le_parse = 0; le_parse < le_addr1->as_size; le_parse ++ ) {
@@ -118,10 +131,10 @@
     source - mutator methods
  */
 
-    inline le_void_t le_address_set_time( le_address_t * const le_address, le_time_t const le_time ) {
+    inline le_void_t le_address_set_time( le_address_t * const le_address, le_size_t const le_offset, le_time_t const le_time ) {
 
         /* Assign address time */
-        le_address->as_time = le_time;
+        le_address->as_time[le_offset] = le_time;
 
     }
 
@@ -198,19 +211,23 @@
 
         /* Buffer mapping variables */
         le_size_t * le_smap = ( le_size_t * ) ( le_data     );
-        le_time_t * le_tmap = ( le_time_t * ) ( le_smap + 1 );
-        le_size_t * le_dmap = ( le_size_t * ) ( le_tmap + 1 );
+        le_byte_t * le_mmap = ( le_byte_t * ) ( le_smap + 1 );
+        le_time_t * le_tmap = ( le_time_t * ) ( le_mmap + 1 );
+        le_size_t * le_dmap = ( le_size_t * ) ( le_tmap + 2 );
         le_byte_t * le_gmap = ( le_byte_t * ) ( le_dmap + 1 );
 
         /* Read buffer from socket - send message */
         if ( read( le_socket, le_data, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
+
+        /* Read socket bubffer */
+        memcpy( le_address->as_time, le_tmap, _LE_USE_TIME * sizeof( le_time_t ) );
 
         /* Read socket buffer */
         memcpy( le_address->as_digit, le_gmap, _LE_USE_DEPTH );
 
         /* Read socket buffer */
         le_address->as_size  = le_smap[0];
-        le_address->as_time  = le_tmap[0];
+        le_address->as_mode  = le_mmap[0];
         le_address->as_depth = le_dmap[0];
 
         /* Send message */
@@ -225,17 +242,21 @@
 
         /* Buffer mapping variables */
         le_size_t * le_smap = ( le_size_t * ) ( le_data     );
-        le_time_t * le_tmap = ( le_time_t * ) ( le_smap + 1 );
-        le_size_t * le_dmap = ( le_size_t * ) ( le_tmap + 1 );
+        le_byte_t * le_mmap = ( le_byte_t * ) ( le_smap + 1 );
+        le_time_t * le_tmap = ( le_time_t * ) ( le_mmap + 1 );
+        le_size_t * le_dmap = ( le_size_t * ) ( le_tmap + 2 );
         le_byte_t * le_gmap = ( le_byte_t * ) ( le_dmap + 1 );
 
         /* Write socket buffer */
         le_smap[0] = le_address->as_size;
-        le_tmap[0] = le_address->as_time;
+        le_mmap[0] = le_address->as_mode;
         le_dmap[0] = le_address->as_depth;
 
         /* Write socket buffer */
         memcpy( le_gmap, le_address->as_digit, _LE_USE_DEPTH );
+
+        /* Write socket buffer */
+        memcpy( le_tmap, le_address->as_time, _LE_USE_TIME * sizeof( le_time_t ) );
 
         /* Write buffer on socket - send message */
         if ( write( le_socket, le_data, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_WRITE );
@@ -252,7 +273,7 @@
     le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string ) {
 
         /* Conversion buffer variables */
-        le_char_t le_data[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        le_char_t le_data[_LE_USE_DEPTH] = LE_NETWORK_C;
 
         /* Convert geodetic address */
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
@@ -263,17 +284,17 @@
         }
 
         /* Composing address string */
-        sprintf( ( char * ) le_string, "/%" _LE_TIME_P "/%s/%" _LE_SIZE_P, le_address->as_time, le_data, le_address->as_depth );
+        sprintf( ( char * ) le_string, "/%" _LE_BYTE_P "/%" _LE_TIME_P ",%" _LE_TIME_P "/%s/%" _LE_SIZE_P, le_address->as_mode, le_address->as_time[0], le_address->as_time[1], le_data, le_address->as_depth );
 
     }
 
     le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string ) {
 
         /* Conversion buffer variables */
-        le_char_t le_data[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        le_char_t le_data[_LE_USE_DEPTH] = LE_NETWORK_C;
 
         /* Decompose address string */
-        sscanf( ( char * ) le_string, "/%" _LE_TIME_S "/%[^/]/%" _LE_SIZE_S, & le_address->as_time, le_data, & le_address->as_depth );
+        sscanf( ( char * ) le_string, "/%" _LE_BYTE_S "/%" _LE_TIME_S ",%" _LE_TIME_S "/%[^/]/%" _LE_SIZE_S, & le_address->as_mode, le_address->as_time, le_address->as_time + 1, le_data, & le_address->as_depth );
 
         /* Compute geodetic address size */
         le_address->as_size = strlen( ( char * ) le_data );

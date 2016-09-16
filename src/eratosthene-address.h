@@ -52,8 +52,8 @@
  */
 
     /* Define pseudo-constructor */
-    # define LE_ADDRESS_C           { 0, 0, { 0 }, 0 }
-    # define LE_ADDRESS_C_SIZE( s ) { s, 0, { 0 }, 0 }
+    # define LE_ADDRESS_C           { 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 }, 0 }
+    # define LE_ADDRESS_C_SIZE( s ) { s, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 }, 0 }
 
 /*
     header - preprocessor macros
@@ -114,7 +114,8 @@
     typedef struct le_address_struct {
 
         le_size_t as_size;
-        le_time_t as_time;
+        le_byte_t as_mode;
+        le_time_t as_time[_LE_USE_TIME];
         le_byte_t as_digit[_LE_USE_DEPTH];
         le_size_t as_depth;
 
@@ -135,7 +136,7 @@
      *  \return Address time
      */
 
-    extern le_time_t le_address_get_time( le_address_t const * const le_address );
+    extern le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
      *
@@ -199,7 +200,7 @@
      *  \param le_time    Address time
      */
 
-    extern le_void_t le_address_set_time( le_address_t * const le_address, le_time_t const le_time );
+    extern le_void_t le_address_set_time( le_address_t * const le_address, le_size_t const le_offset, le_time_t const le_time );
 
     /*! \brief mutator methods
      *
