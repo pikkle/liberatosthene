@@ -74,41 +74,45 @@
      *  \brief address structure
      *
      *  This structure holds the address of an equivalence class defined on the
-     *  geodetic parameters space. It consists in a sequence of digits going
-     *  from zero to seven stored in the structure array. The number of digit
-     *  engeged in the class addressing is stored in the size field of the
-     *  structure. Digits are understood as the parent-daughter classes 
-     *  relationship explaining which daughter to consider when considering a 
-     *  given parent class.
+     *  geodetic parameters space. These addresses are used to store and query
+     *  data link to spatiotemporal data.
      *
-     *  In addition to the class address, the structure also contains the time
-     *  at which the class as to be searched. In this way, this structure is
-     *  able to address four dimensional equivalence classes.
+     *  The structure contains two different times used for handling the data
+     *  and to compare to situation. A \b mode parameter is used to define how
+     *  the time has to be treated and compared.
      *
-     *  Finally, the structure offers the possibility to store an additional
-     *  depth considered when performing queries on the daughters of the class
-     *  pointed by the address.
+     *  The proper spatial addresse of the pointed equivalence class is stored
+     *  in an array holding the digits of the address. The amount of digits is
+     *  provided by the size field.
      *
-     *  The geodetic parameters space is understood as a three dimensional
-     *  sub-space of R3 for longitude, latitude and normalised altitude, in 
-     *  this order and expressed in radians and metres. The first dimension 
-     *  range is then ]-pi,pi], ]-pi/2,pi/2[ for the second and [hmin, hmax] 
-     *  for the thrid dimension.
+     *  In the last place, the structure holds an depth parameter that gives,
+     *  usually in case of data query, the additionnal scale depth where the
+     *  desired data are.
      *
-     *  Times are given by signed whole numbers giving the number of seconds
-     *  since EPOCH (UTC). Time are assumed to follow TAI more than UTC.
+     *  Times are understood under the TAI in the way they give the amount of
+     *  seconds ellapsed since EPOCH (UTC) without consideration on leap
+     *  seconds.
      *
-     *  See eratosthene-geodesy header for more information on parametric
-     *  ranges.
+     *  As an example, the following address, written in its text form :
+     *
+     *      /0/950486422,-7258032000/122010001340232/7
+     *
+     *  represents the data located in Venice in 2000 and in 1740. The first
+     *  number correspond to the times comparison mode, zero indicating simple
+     *  superposition. The two times are given next followed by the digits of
+     *  the space address. The last number gives the additionnal depth, from
+     *  the scale point of view, where the desired data have to be found.
      *
      *  \var le_address_struct::as_size
-     *  Size of the address - number of digits of the address
+     *  Number of digits enegaged in the address
+     *  \var le_address_struct::as_mode
+     *  Time comparison mode
      *  \var le_address_struct::as_times
-     *  Time of the class pointed by the address
+     *  Array containing the times to compare
      *  \var le_address_struct::as_digit
-     *  Address digits array - contains whole number in [0,8[
+     *  Address digits array
      *  \var le_address_struct::as_depth
-     *  Address query depth
+     *  Address query additional depth
      */
 
     typedef struct le_address_struct {
@@ -125,15 +129,24 @@
     header - function prototypes
  */
 
+    /*! \brief accessor methods
+     *
+     *  Returns the address times comparison mode
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Address times comparison mode
+     */
+
     extern le_byte_t le_address_get_mode( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
-     *  Returns time of the class stored in the address structure.
-     *
-     *  See \b le_address_struct documentation for more information on frames.
+     *  Returns the desired time of the equivalence class stored in the address
+     *  structure.
      *
      *  \param le_address Address structure
+     *  \param le_offset  Offset of time - zero based
      *
      *  \return Address time
      */
@@ -142,8 +155,8 @@
 
     /*! \brief accessor methods
      *
-     *  Returns the size, i. e. the number of digits, of the class address 
-     *  stored in the address structure.
+     *  Returns the size, ie. the number of digits, of the class address stored
+     *  in the address structure.
      *
      *  \param le_address Address structure
      *
@@ -160,47 +173,64 @@
      *  \param le_address Address structure
      *  \param le_offset  Offset of the digit - zero based
      *
-     *  \return Returns digit found at queried offset, _LE_BYTE_NULL otherwise
+     *  \return Returns digit found at queried offset
      */
 
     extern le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
      *
-     *  Returns query depth of the class stored in the address structure.
+     *  Returns query additional depth parameter of the class stored in the
+     *  address structure.
      *
      *  \param le_address Address structure
      *
-     *  \return Query depth
+     *  \return Query additional depth
      */
 
     extern le_size_t le_address_get_depth( le_address_t const * const le_address );
+
+    /*! \brief accessor methods
+     *
+     *  This function compare the two provided address structures and returns
+     *  boolean value to indicate identity of the addresses.
+     *
+     *  \param le_addr1 First address structure
+     *  \param le_addr2 Second address structure
+     *
+     *  \return Returns _LE_TRUE on identity, _LE_FALSE otherwise
+     */
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addr1, le_address_t const * const le_addr2 );
 
     /*! \brief accessor methods
      *
      *  This function converts the indexation address of the class stored in
-     *  the address structure into a geodetic coordinates vector. The position
-     *  is expressed in the spatial ranges on which indexation is defined.
-     *
-     *  See \b le_address_struct documentation for more information on frames.
+     *  the structure into geodetic coordinates 3-vector. The position is
+     *  expressed in the spatial ranges on which indexation is defined.
      *
      *  \param le_address Address structure
-     *  \param le_pose    Array receiving the position coordinates
+     *  \param le_pose    Array receiving the geodetic 3-vector
      */
 
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose );
+
+    /*! \brief mutator methods
+     *
+     *  Set the address times comparison mode
+     *
+     *  \param le_address Address structure
+     *  \param le_mode    Address times comparison mode
+     */
 
     extern le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode );
 
     /*! \brief mutator methods
      *
-     *  Set the time of the class stored in the address structure.
-     *
-     *  See \b le_address_struct documentation for more information on frames.
+     *  Set the times of the class stored in the address structure.
      *
      *  \param le_address Address structure
+     *  \param le_offset  Offset of time - zero based
      *  \param le_time    Address time
      */
 
@@ -211,9 +241,7 @@
      *  Set the size of the class address stored in the address structure.
      *
      *  \param le_address Address structure
-     *  \param le_size    Address sizs
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH otherwise
+     *  \param le_size    Address size
      */
 
     extern le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
@@ -224,38 +252,31 @@
      *  address structure.
      *
      *  \param le_address Address structure
-     *  \param le_offset  Offset of the digit to set
+     *  \param le_offset  Offset of the digit - zero based
      *  \param le_digit   Digit value
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH if offset is
-     *  inconsistent and LE_ERROR_BASE if digit is inconsistent
      */
 
     extern le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
 
     /*! \brief mutator methods
      *
-     *  Set the query depth of the class stored in the address structure.
+     *  Set the query additional depth of the class stored in the address
+     *  structure.
      *
      *  \param le_address Address structure
-     *  \param le_depth   Query depth
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_DEPTH otherwise
+     *  \param le_depth   Address query additional depth
      */
 
     extern le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
 
     /*! \brief mutator methods
      *
-     *  This function convert a geodetic coordinate vector into a class address
-     *  following the defined spatial indexation. The size of the computed
-     *  address is read in the structure size field that as to contain the
-     *  desired value before calling this function.
+     *  This function convert a geodetic 3-vector into a class address according
+     *  to the defined spatial indexation. The size of the computed address is
+     *  read in the structure size field.
      *
-     *  The position vector has to be expressed in the geodetic coordinate
-     *  ranges on which spatial indexation is defined.
-     *
-     *  See \b le_address_struct documentation for more information on frames.
+     *  The 3-vector has to be expressed in the geodetic coordinates ranges on
+     *  which spatial indexation is defined.
      *
      *  \param le_address Address structure
      *  \param le_pose    Array containing the position coordinates
@@ -265,23 +286,44 @@
 
     /*! \brief i/o methods
      *
+     *  This function reads the content of the provided address structure from
+     *  a bytes array recieved through the provided opened socket.
+     *
+     *  The incoming bytes array has to be constructed following the conversion
+     *  performed by the \b le_address_io_write() function.
+     *
+     *  \param le_address Address structure
+     *  \param le_socket  Opened socket
+     *
+     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
+     *  This function writes the content of the address structure in an opened
+     *  socket. It converts the memory structure into a compact bytes array that
+     *  is sent on the provided socket.
+     *
+     *  \param le_address Address structure
+     *  \param le_socket  Opened socket
+     *
+     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket );
 
     /*! \brief conversion methods
      *
-     *  This function translate the address structure into a query string used
-     *  for client/server communication. Considering the class time t, address
-     *  digits dd...d and query depth q, the string is composed as follows : 
+     *  This function translate the address structure content in human readable
+     *  text string.
      *
-     *      /t/dd..d/q
+     *  Considering m the times comparison mode, t1 and t2 the times, d the
+     *  digits of the spatial address and q the query additionnal depth, the
+     *  function provides a string structure as follow :
+     *
+     *      /m/t1,t2/ddd...d/q
      *
      *  \param le_address Address structure
      *  \param le_string  String receiving the converted address structure
@@ -291,9 +333,9 @@
 
     /*! \brief conversion methods
      *
-     *  This function performs the invert operation done by \b le_address_cvas
-     *  function. The string has to follow the expected standard in order to
-     *  compute a correct class address structure.
+     *  This function inverts the conversion made by \b le_address_ct_string()
+     *  function. It expects address in human readable text string structured
+     *  as defined by the last function.
      *
      *  \param le_address Address structure
      *  \param le_string  String containing the converted address structure
