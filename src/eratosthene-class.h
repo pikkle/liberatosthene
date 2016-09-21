@@ -75,25 +75,28 @@
     /*! \struct le_class_struct
      *  \brief class structure
      *
-     *  This structure holds the representative of an equivalence class defined
-     *  on three dimensional colorimetric points.
+     *  This structure holds the representation of an equivalence class as it
+     *  is considered in the server storage structure.
      *
-     *  The representative stored by the structure has a color stored in the
-     *  \b cs_data field. The \b cs_mean field gives the number of points
-     *  considered to compute the representative color.
+     *  Formally, it simply consist in a bytes array storing the colorimetric
+     *  information of the class representative and the offsets of the daughter
+     *  class that are considered in the storage structure.
      *
-     *  The spatial information of the equivalence class is stored through the
-     *  \b cs_addr array giving the file storage offset of the daughter
-     *  structures in the next scale. In other words, the proper spatial
-     *  information of the equivalence class can only be accessed following
-     *  the offsets chains along the storage structure scales.
+     *  Depending on the \b _LE_USE_OFFSET value, the structure of the bytes
+     *  array of the class can be summarised as follow :
      *
-     *  \var le_class_struct::cs_addr
-     *  Offset, in bytes, of the class daughter in the next scale storage file
+     *      [m][r][g][b][  off0  ][  off1  ]...[  off7  ]
+     *
+     *  where m, r, g and b are stored using one byte and where the offsets are
+     *  whole numbers coded on _LE_USE_OFFSET bytes long integers.
+     *
+     *  The color components gives the class representative color, the m value
+     *  being used as a pseudo-mean variable. The offsets i gives the position,
+     *  in the next scale storage file, of the daughter class i. Usually,
+     *  address digits are used to access the offset 8-array.
+     *
      *  \var le_class_struct::cs_data
-     *  Class representative color
-     *  \var le_class_struct::cs_mean
-     *  Number of points considered to compute the representative color
+     *  Bytes array containing the equivalence class storage data
      */
 
     typedef struct le_class_struct {
@@ -108,12 +111,22 @@
 
     /*! \brief constructor/destructor methods
      *
+     *  This function creates and returns and class structure using the default
+     *  first color provided as parameter. In addition, it initialises the
+     *  daughter class offset array.
+     *
+     *  \param le_data Colors 3-vector of the first point
+     *
+     *  \return Returns created class structure
      */
 
     le_class_t le_class_create( le_data_t const * const le_data );
 
     /*! \brief constructor/destructor methods
      *
+     *  This function deletes the class hold by the provided class structure.
+     *
+     *  \param le_class Class structure
      */
 
     le_void_t le_class_delete( le_class_t * const le_class );
@@ -133,7 +146,7 @@
 
     /*! \brief accessor methods
      *
-     *  Returns pointer to class representative color array.
+     *  Returns pointer to the class representative color 3-vector.
      *
      *  \param le_class Class structure
      *
@@ -149,9 +162,6 @@
      *  \param le_class  Class structure
      *  \param le_addr   Daughter class index
      *  \param le_offset Daughter class storage offset
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success and LE_ERROR_BASE on
-     *  inconsistent index
      */
 
     extern le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
@@ -163,7 +173,7 @@
      *  color.
      *
      *  \param le_class Class structure
-     *  \param le_data  Injected element color array
+     *  \param le_data  Injected element color 3-vector
      */
 
     extern le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data );
