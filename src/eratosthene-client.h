@@ -70,13 +70,13 @@
     /*! \brief constructor/destructor methods
      *
      *  This function creates a client socket descriptor. It establish the
-     *  connection to the provided server ip address and return the initialised 
+     *  connection to the provided server ip address and returns the initialised 
      *  socket descriptor.
      *
      *  \param le_ip   Server ip address
      *  \param le_port Server service port
      *
-     *  \return Created socket descriptor on success, _LE_SOCK_NULL on error
+     *  \return Created socket descriptor on success, _LE_SOCK_NULL otherwise
      */
 
     le_sock_t le_client_create( le_char_t const * const le_ip, le_sock_t const le_port );
@@ -84,8 +84,8 @@
     /*! \brief constructor/destructor methods
      *
      *  This function uninitialise a socket descriptor created by the function
-     *  \b le_client_create. It close the connection with the server and returns
-     *  a null socket descriptor.
+     *  \b le_client_create(). It closes the connection with the server and
+     *  returns a null socket descriptor.
      *
      *  \param le_socket Socket descriptor
      *
@@ -101,27 +101,53 @@
      *  server allows the client to continue the query.
      *
      *  \param le_socket Socket descriptor
-     *  \param le_mode   Query mode descriptor
+     *  \param le_mode   Query mode
      *
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t const le_mode );
 
+    /*! \brief handshake methods
+     *
+     *  This function reads the expected client query handshake sent by the
+     *  \b le_client_handshake() function. On success, it simply returns the
+     *  query mode packet in the client query handshake.
+     *
+     *  \param le_socket Socket descriptor
+     *
+     *  \return Returns query mode on success, LE_NETWORK_MODE_NULL otherwise
+     */
+
     le_enum_t le_client_switch( le_sock_t const le_socket );
 
     /*! \brief handshake methods
      *
-     *  This function sends the query authorisation to the client through the
-     *  server handshake answer.
+     *  This function sends the sever answer to a client query handshake. It is
+     *  used by the server to authorise the client to continue the query it
+     *  initiate through a handshake.
      *
      *  \param le_socket Socket descriptor
      *  \param le_auth   Server authorisation
      *
-     *  \return Returns LE_ERROR_SUCCESS on success, LE_ERROR_IO_WRITE otherwise
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_client_authorise( le_sock_t const le_socket, le_enum_t const le_auth );
+
+    /*! \brief common methods
+     *
+     *  This function allows for a client to read an array from the server as
+     *  an answer to a specific query. This function is used by client to easily
+     *  retrieve time and configuration array from the server.
+     *
+     *  \param le_ip    Server ip address
+     *  \param le_port  Server service port
+     *  \param le_mode  Query mode
+     *  \param le_array Array structure
+     *
+     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_client_array( le_char_t const * const le_ip, le_sock_t const le_port, le_enum_t const le_mode, le_array_t * const le_array );
 
