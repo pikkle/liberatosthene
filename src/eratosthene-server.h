@@ -72,12 +72,19 @@
     /*! \struct le_server_struct
      *  \brief server structure
      *
-     *  This structure holds the required server configuration and dynamic
-     *  structure. In addition to the server stream descriptor, it also holds
-     *  the path of the storage structure on the host and the spatial and
-     *  temporal paramters driving the storage structure.
+     *  This structure is the principale structure of the library as it holds
+     *  the description of the server. The "erathosthene" system is designed
+     *  to offers a worldwide 4D tile server of 3D structure. This library holds
+     *  the main elements allowing such server to exist.
      *
-     *  
+     *  As every server, the "eratosthene" server expects client requests about
+     *  4D information. According to the request time and spatial definition, it
+     *  searches the data into its storage structure and send them back to the
+     *  clients.
+     *
+     *  It also allow client to inject 4D information in the storage structure
+     *  using internet protocol. The server reads the client 4D information and
+     *  injects them in the storage structure.
      *
      *  \var le_server_struct::sv_sock
      *  Server socket descriptor
