@@ -69,6 +69,32 @@
     header - structures
  */
 
+    /*! \struct le_server_struct
+     *  \brief server structure
+     *
+     *  This structure holds the required server configuration and dynamic
+     *  structure. In addition to the server stream descriptor, it also holds
+     *  the path of the storage structure on the host and the spatial and
+     *  temporal paramters driving the storage structure.
+     *
+     *  
+     *
+     *  \var le_server_struct::sv_sock
+     *  Server socket descriptor
+     *  \var le_server_struct::sv_path
+     *  Server storage structure local path
+     *  \var le_server_struct::sv_scfg
+     *  Server number of spatial scales in the storage structure
+     *  \var le_server_struct::sv_tcfg
+     *  Server time discretisation parameter in the storage structure
+     *  \var le_server_struct::sv_push
+     *  Number of active streams in the stream stack
+     *  \var le_server_struct::sv_time
+     *  Stack of Times of the active streams
+     *  \var le_server_struct::sv_file
+     *  Stack of files descriptors of the active streams
+     */
+
     typedef struct le_server_struct {
     
         le_sock_t sv_sock;
@@ -89,80 +115,203 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function creates a server socket descriptor. The service is created
-     *  on the local machine using the provided port as service port.
+     *  This function creates a server structure and initialises it contents
+     *  according to the provided parameters. It initialise the streams stack
+     *  and reads the server configuration file hold in the storage structure.
+     *
+     *  It also create the socket descriptor used by the server to listen to
+     *  client queries.
      *
      *  \param le_port Server service port
+     *  \param le_path Server storage structure local path
      *
-     *  \return Created socket descriptor on success, _LE_SOCK_NULL otherwise
+     *  \return Returns created server structure
      */
 
     le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path );
 
     /*! \brief constructor/destructor methods
      *
-     *  This function deletes the server socket descriptor created through the
-     *  \b le_server_create function. It closes the service port and returns a
-     *  null socket descriptor.
+     *  This function deletes the server structure provided as parameter by
+     *  closing the socket descriptor and by closing every openned file
+     *  descriptor present in the streams stack.
      *
-     *  \param le_socket Socket descriptor
-     *
-     *  \return Always _LE_SOCK_NULL socket descriptor
+     *  \param le_server Server structure
      */
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
     /*! \brief server methods
      *
-     *  This function is the server main idle function. It starts a infinite
-     *  loop waiting for client incoming connections. It then receives the
-     *  clients queries handshakes and answer them. The proper queries answers
-     *  are then sent by this function.
+     *  This function is the server main function. It holds the server loop
+     *  listening for incomming client queries. As a query is revieved, this
+     *  function handle the server-side handshake procedure and answer the
+     *  client by calling the specific server sub-process.
      *
-     *  \param le_socket Socket descriptor
-     *  \param le_system Server system descriptor
+     *  \param le_server Server structure
      */
 
     le_void_t le_server( le_server_t * const le_server );
 
-    /*! \brief connection methods
+    /*! \brief client methods - injection
      *
-     *  This function answer to client injection queries. It receives the
-     *  injected data coming from the client and ask the server system to insert
-     *  them into the storage structure.
+     *  This function is a specific server sub-process.
      *
-     *  \param le_socket Socket descriptor
-     *  \param le_system Server system descriptor
+     *  Its role is to provides points injection service. It expects the client
+     *  to send colorimetric points stream (RF format). As points are streamed,
+     *  this function sends them to its specific sub-process responsible of the
+     *  insertion of the incoming points in the storage structure.
+     *
+     *  \param le_server Server structure
+     *  \param le_client Server-side client socket descriptor
      */
 
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
 
+    /*! \brief client methods - injection
+     *
+     *  This function is a specific server sub-process of second order.
+     *
+     *  This function is called byte its first order version. It expects a
+     *  mapping structure (RF format) that points the coordinates and color of
+     *  the point being injected in the storage structure. According to the
+     *  point coordinates and time value, the function injects the point into
+     *  to server storage structure.
+     *
+     *  \param le_server Server structure
+     *  \param le_access Bytes array mapping structure (RF format)
+     *  \param le_time   Time value
+     */
+
     le_void_t le_server_inject( le_server_t * const le_server, le_array_rf_t const * const le_access, le_time_t const le_time );
 
-    /*! \brief connection methods
+    /*! \brief client methods - query
      *
-     *  This function answer to client queries on classes. It ask the server
-     *  system to gather the queried classes and sends them to the client.
+     *  This function is a specific server sub-process.
      *
-     *  \param le_socket Socket descriptor
-     *  \param le_system Server system descriptor
+     *  Its role is to answer to points queries. It expects the client to send
+     *  an address structure that points the equvalence class (or its daughters)
+     *  containing the points requested by the client. It then gathers the
+     *  points in a simple array structure and sends it back to the client.
+     *
+     *  \param le_server Server structure
+     *  \param le_client Server-side client socket descriptor
      *
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
 
+    /*! \brief client methods - query
+     *
+     *  This function is a specific server sub-process of second order.
+     *
+     *  This function is called byte its first order version. It starts to
+     *  browse the storage structure to collect the points requested through
+     *  the query address structure.
+     *
+     *  The \b le_parse and \b le_offset parameters are always zero on the first
+     *  call. These parameters are updated as the function calls itself.
+     *
+     *  \param le_server Server structure
+     *  \param le_addr   Query address structure
+     *  \param le_array  Array structure recieving the points
+     *  \param le_parse  Current scale (recursive variables, always 0)
+     *  \param le_offset Current offset (recursive variables, always 0)
+     *  \param le_stream Index to the opened streams
+     */
+
     le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream );
+
+    /*! \brief client methods - times array
+     *
+     *  This function is a specific server sub-process.
+     *
+     *  Its role is to answer to times array query. As the server is storing
+     *  data associated with time, this function allows clients to request an
+     *  array containing all the time that olds accessible data.
+     *
+     *  \param le_server Server structure
+     *  \param le_client Server-side client socket descriptor
+     *
+     *  \return Return LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_server_times_client( le_server_t const * const le_server, le_sock_t const le_client );
 
+    /*! \brief client methods - times array
+     *
+     *  This function is a specific server sub-process of second order.
+     *
+     *  This function is called byte its first order version. It starts to
+     *  parse the storage structure to gather all time values to correspond to
+     *  accessible data. It stores the time values in an array that is returned
+     *  to the parent function.
+     *
+     *  \param le_server Server structure
+     *
+     *  \return Returns an array of time values, empty on error
+     */
+
     le_array_t le_server_times( le_server_t const * const le_server );
+
+    /*! \brief client methods - server configuration
+     *
+     *  This function is a specific server sub-process.
+     *
+     *  Its role is to allow clients to retrieve the server configuration values
+     *  use to drive and manage the storage structure.
+     *
+     *  \param le_server Server structure
+     *  \param le_client Server-side client socket descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client );
 
+    /*! \brief client methods - server configuration
+     *
+     *  This function is a specific server sub-process of second order.
+     *
+     *  This function is called byte its first order version. It packs the
+     *  two configuration parameters of the server in a bytes array that is
+     *  returned to the parent function.
+     *
+     *  \param le_server Server structure
+     *
+     *  \return Returns an array filled with configuration values, empty on error
+     */
+
     le_array_t le_server_config( le_server_t const * const le_server );
 
+    /*! \brief i/o methods
+     *
+     *  This function is used to create the files descriptors (random binary) to
+     *  the storage structure. It uses the provided time value to search in the
+     *  storage structure the data associated to the given time. It checks in
+     *  the stream stack if the provided time has already opened streams and
+     *  create them otherwise. It then returns the streams stack index of the
+     *  created/found streams associated to the time value.
+     *
+     *  \param le_server Server structure
+     *  \param le_time   Time value
+     *
+     *  \return Returns the stack index of the created streams
+     */
+
     le_size_t le_server_io_stream( le_server_t * const le_server, le_time_t const le_time );
+
+    /*! \brief i/o methods
+     *
+     *  Considering a provided index to the streams stack, the function flush
+     *  the file descriptors associated with to pointed stream. It is mainly
+     *  used during data injection to ensure proper writing of the incoming
+     *  data in the storage structure.
+     *
+     *  \param le_server Server structure
+     *  \param le_stream Streams stack index of the stream to flush
+     */
 
     le_void_t le_server_io_flush( le_server_t const * const le_server, le_size_t const le_stream );
 
