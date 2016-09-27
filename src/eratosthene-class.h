@@ -80,7 +80,7 @@
      *
      *  Formally, it simply consist in a bytes array storing the colorimetric
      *  information of the class representative and the offsets of the daughter
-     *  class that are considered in the storage structure.
+     *  classes that are considered in the storage structure.
      *
      *  Depending on the \b _LE_USE_OFFSET value, the structure of the bytes
      *  array of the class can be summarised as follow :
@@ -93,7 +93,7 @@
      *  The color components gives the class representative color, the m value
      *  being used as a pseudo-mean variable. The offsets i gives the position,
      *  in the next scale storage file, of the daughter class i. Usually,
-     *  address digits are used to access the offset 8-array.
+     *  address digits are used to access the offsets 8-array.
      *
      *  \var le_class_struct::cs_data
      *  Bytes array containing the equivalence class storage data

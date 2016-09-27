@@ -75,10 +75,10 @@
      *
      *  This structure holds the address of an equivalence class defined on the
      *  geodetic parameters space. These addresses are used to store and query
-     *  data link to spatiotemporal data.
+     *  data linked to spatiotemporal references.
      *
      *  The structure contains two different times used for handling the data
-     *  and to compare to situation. A \b mode parameter is used to define how
+     *  and to compare situations. A \b mode parameter is used to define how
      *  the time has to be treated and compared.
      *
      *  The proper spatial addresse of the pointed equivalence class is stored
@@ -100,7 +100,7 @@
      *  represents the data located in Venice in 2000 and in 1740. The first
      *  number correspond to the times comparison mode, zero indicating simple
      *  superposition. The two times are given next followed by the digits of
-     *  the space address. The last number gives the additionnal depth, from
+     *  the spatial address. The last number gives the additionnal depth, from
      *  the scale point of view, where the desired data have to be found.
      *
      *  \var le_address_struct::as_size

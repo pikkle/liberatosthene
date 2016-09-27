@@ -140,10 +140,10 @@
      *  \brief array structure
      *
      *  This structure holds the definition and content of a bytes array. These
-     *  arrays are commonly used to transmit data through sockets.
+     *  arrays are commonly used to transmit data through TCP/IP sockets.
      *
-     *  Being a simple bytes succession, array are interpreted as more complexe
-     *  arrays of structure using memory mapper depending on the actual data
+     *  Being a simple bytes succession, arrays are interpreted as more complexe
+     *  arrays of structures using memory mapper depending on the actual data
      *  stored in the array.
      *
      *  The structures comes with methods allowing array size management and
