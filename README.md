@@ -1,6 +1,6 @@
 ## liberatosthene
 
-The "erathosthene" system is designed to offers a worldwide 4D tile server of 3D structures. Theoretically, its data storage and management allows to take advantage of any kind of georeferenced data associated with a time through the usage of hierarchical equivalence classes. Currently, colorimetric points are considered in order to provide a worldwide 4D geographic information system on structures.
+The "erathosthene" system is designed to offers a worldwide 4D tile server of informations coming with a three-dimensional georeference and a time coordinates. Using hierarchical equivalence classes to drive its storage structure, it allows high-performance queries on the refereneced data it stores. Currently, the eratosthene system is developed to manage colorimetric points as referenced data to provide an historical geographic information system of the 3D history of earth.
 
 ## Dependencies
 
