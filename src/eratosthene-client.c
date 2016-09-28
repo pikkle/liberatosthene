@@ -32,6 +32,9 @@
         /* Returned value variables */
         le_sock_t le_socket = _LE_SOCK_NULL;
 
+        /* Check consistency - send message */
+        if ( le_ip == NULL ) return( _LE_SOCK_NULL );
+
         /* Convert address - send message */
         if ( inet_pton( AF_INET, ( char * ) le_ip, & le_addr.sin_addr ) <= 0 ) return( _LE_SOCK_NULL );
 
