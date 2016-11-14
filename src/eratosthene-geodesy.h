@@ -40,24 +40,28 @@
     # endif
 
 /*
-    header - includes
+    header - internal includes
  */
 
     # include "eratosthene.h"
 
 /*
+    header - external includes
+ */
+
+/*
     header - preprocessor definitions
  */
 
-    /* Define WGS84 ellipsoid parameters */
+    /* define WGS84 ellipsoid parameters */
     # define LE_GEODESY_WGS84_A ( _LE_REAL_L( 6378137.0 ) )
     # define LE_GEODESY_WGS84_F ( _LE_REAL_L( 298.257223563 ) )
 
-    /* Asynchronous dimension edges */
+    /* asynchronous dimension edges */
     # define LE_GEODESY_ASYP    (  1 )
     # define LE_GEODESY_ASYA    ( 10 )
 
-    /* Define ellispoidal coordinates boundaries */
+    /* define ellispoidal coordinates boundaries */
     # define LE_GEODESY_LMIN    ( - LE_PI )
     # define LE_GEODESY_LMAX    ( + LE_PI )
     # define LE_GEODESY_AMIN    ( - LE_P2 )
@@ -65,7 +69,7 @@
     # define LE_GEODESY_HMIN    ( - ( LE_PI * LE_GEODESY_WGS84_A ) / _LE_REAL_L( 1024.0 ) )
     # define LE_GEODESY_HMAX    ( + ( LE_PI * LE_GEODESY_WGS84_A ) / _LE_REAL_L( 1024.0 ) )
 
-    /* Define ellipsoidal coordinates ranges */
+    /* define ellipsoidal coordinates ranges */
     # define LE_GEODESY_LRAN    ( LE_GEODESY_LMAX - LE_GEODESY_LMIN )
     # define LE_GEODESY_ARAN    ( LE_GEODESY_AMAX - LE_GEODESY_AMIN )
     # define LE_GEODESY_HRAN    ( LE_GEODESY_HMAX - LE_GEODESY_HMIN )

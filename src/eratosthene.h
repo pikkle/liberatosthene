@@ -75,7 +75,11 @@
     # endif
 
 /*
-    header - includes
+    header - internal includes
+ */
+
+/*
+    header - external includes
  */
 
     # include <stdio.h>
@@ -97,11 +101,11 @@
     header - preprocessor definitions
  */
 
-    /* Boolean values */
+    /* boolean values */
     # define _LE_FALSE          ( 0 )
     # define _LE_TRUE           ( 1 )
 
-    /* Features configuration */
+    /* features configuration */
     # define _LE_USE_BASE       ( 8 )
     # define _LE_USE_OFFSET     ( 5 )
     # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
@@ -118,7 +122,7 @@
     # define _LE_USE_ASCII_ITOA ( 48 )
     # define _LE_USE_STREAM     ( 8 )
 
-    /* Define types */
+    /* define types */
     # define _LE_VOID           void
     # define _LE_BYTE           uint8_t
     # define _LE_CHAR           unsigned char
@@ -131,7 +135,7 @@
     # define _LE_SOCK           int
     # define _LE_FILE           FILE *
 
-    /* Define boundaries */
+    /* define boundaries */
     # define _LE_BYTE_MIN       ( 0 )
     # define _LE_BYTE_MAX       ( UINT8_MAX )
     # define _LE_SIZE_MIN       ( 0 )
@@ -139,12 +143,12 @@
     # define _LE_TIME_MIN       ( INT64_MIN )
     # define _LE_TIME_MAX       ( INT64_MAX )
 
-    /* Define litteral suffix */
+    /* define litteral suffix */
     # define _LE_REAL_L(t)      ( t )
     # define _LE_SIZE_L(t)      ( UINT64_C( t ) )
     # define _LE_TIME_L(t)      ( INT64_C( t ) )
 
-    /* Define i/o specifiers */
+    /* define i/o specifiers */
     # define _LE_BYTE_P         PRIu8
     # define _LE_BYTE_S         SCNu8
     # define _LE_CHAR_P         "u"
@@ -160,14 +164,14 @@
     # define _LE_DATA_P         PRIu8
     # define _LE_DATA_S         SCNu8
 
-    /* Define type nulls */
+    /* define type nulls */
     # define _LE_BYTE_NULL      ( _LE_BYTE_MAX )
     # define _LE_SIZE_NULL      ( _LE_SIZE_MAX )
     # define _LE_TIME_NULL      ( _LE_TIME_MIN )
     # define _LE_SOCK_NULL      ( -1 )
     # define _LE_OFFS_NULL      ( ( _LE_SIZE_L( 1 ) << ( _LE_SIZE_L( 8 ) * _LE_USE_OFFSET ) ) - _LE_SIZE_L( 1 ) )
 
-    /* Define errors */
+    /* define errors */
     # define LE_ERROR_SUCCESS   ( 0x0000 )
     # define LE_ERROR_IO_ACCESS ( 0x0001 )
     # define LE_ERROR_IO_READ   ( 0x0002 )
@@ -192,17 +196,17 @@
     header - preprocessor macros
  */
 
-    /* Define absolute values */
+    /* define absolute values */
     # define le_time_abs(x)     ( ( le_time_t ) llabs( x ) )
 
-    /* Define string conversion */
+    /* define string conversion */
     # define le_time_str(x)     ( ( le_time_t ) strtoimax( x, NULL, 10 ) )
 
 /*
     header - type definition
  */
 
-    /* Internal types */
+    /* internal types */
     typedef _LE_VOID le_void_t;
     typedef _LE_BYTE le_byte_t;
     typedef _LE_CHAR le_char_t;

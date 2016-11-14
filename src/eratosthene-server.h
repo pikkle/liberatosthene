@@ -40,7 +40,7 @@
     # endif
 
 /*
-    header - includes
+    header - internal includes
  */
 
     # include "eratosthene.h"
@@ -51,10 +51,14 @@
     # include "eratosthene-network.h"
 
 /*
+    header - external includes
+ */
+
+/*
     header - preprocessor definitions
  */
 
-    /* Define pseudo-constructor */
+    /* define pseudo-constructor */
     # define LE_SERVER_C { _LE_SOCK_NULL, { 0 }, 0, 0, 0, { 0 }, { { 0 } }, LE_ERROR_SUCCESS }
 
 /*

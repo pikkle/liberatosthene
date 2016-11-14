@@ -40,28 +40,32 @@
     # endif
 
 /*
-    header - includes
+    header - internal includes
  */
 
     # include "eratosthene.h"
 
 /*
+    header - external includes
+ */
+
+/*
     header - preprocessor definitions
  */
 
-    /* Define pseudo-constructor - external */
+    /* define pseudo-constructor - external */
     # define LE_SOCKADDR_IN_C           { AF_INET, 0         , { INADDR_ANY }, { 0 } }
     # define LE_SOCKADDR_IN_C_PORT( p ) { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
 
-    /* Define pseudo-constructor */
+    /* define pseudo-constructor */
     # define LE_NETWORK_C               { 0 }
 
-    /* Define network standard buffers */
+    /* define network standard buffers */
     # define LE_NETWORK_SB_ADDR         ( _LE_USE_DEPTH + sizeof( le_size_t ) * 2 + sizeof( le_byte_t ) + sizeof( le_time_t ) * 2 )
     # define LE_NETWORK_SB_SYNC         ( _LE_USE_MTU )
     # define LE_NETWORK_SB_STRM         ( _LE_USE_MTU * 2 )
 
-    /* Define network modes */
+    /* define network modes */
     # define LE_NETWORK_MODE_NULL       ( 0x00 )
     # define LE_NETWORK_MODE_IMOD       ( 0x01 )
     # define LE_NETWORK_MODE_QMOD       ( 0x02 )

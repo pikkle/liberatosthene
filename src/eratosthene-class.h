@@ -40,24 +40,28 @@
     # endif
 
 /*
-    header - includes
+    header - internal includes
  */
 
     # include "eratosthene.h"
     # include "eratosthene-address.h"
 
 /*
+    header - external includes
+ */
+
+/*
     header - preprocessor definitions
  */
 
-    /* Define pseudo-constructor */
+    /* define pseudo-constructor */
     # define LE_CLASS_C             { { 0, 0, 0, 0 } }
     # define LE_CLASS_C_DATA(r,g,b) { { r, g, b, 0 } }
 
-    /* Define class buffer size */
+    /* define class buffer size */
     # define LE_CLASS_BUFFER        ( _LE_USE_OFFSET * _LE_USE_BASE + _LE_USE_DATA )
 
-    /* Define class memory size */
+    /* define class memory size */
     # define LE_CLASS_MEMORY        ( LE_CLASS_BUFFER + sizeof( le_size_t ) - _LE_USE_OFFSET )
 
 /*

@@ -26,23 +26,23 @@
 
     le_class_t le_class_create( le_data_t const * const le_data ) {
 
-        /* Created structure variables */
+        /* created structure variables */
         le_class_t le_class = LE_CLASS_C_DATA( le_data[0], le_data[1], le_data[2] );
 
-        /* Initialise offsets */
+        /* initialise offsets */
         memset( le_class.cs_data + _LE_USE_DATA, 0xff, _LE_USE_OFFSET * 8 );
 
-        /* Return constructed structure */
+        /* return constructed structure */
         return( le_class );
 
     }
 
     le_void_t le_class_delete( le_class_t * const le_class ) {
 
-        /* Deleted structure variables */
+        /* deleted structure variables */
         le_class_t le_delete = LE_CLASS_C;
 
-        /* Delete structure */
+        /* delete structure */
         * le_class = le_delete;
 
     }
@@ -53,17 +53,17 @@
 
     inline le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr ) {
 
-        /* Offset memory pointer variables */
+        /* offset memory pointer variables */
         register le_size_t * le_vptr = ( le_size_t * ) ( ( le_byte_t * ) le_class->cs_data + _LE_USE_DATA + _LE_USE_OFFSET * le_addr );
 
-        /* Return offset */
+        /* return offset */
         return( * le_vptr & _LE_OFFS_NULL );
 
     }
 
     inline le_data_t * le_class_get_data( le_class_t const * const le_class ) {
 
-        /* Return class pointer */
+        /* return class pointer */
         return( ( le_data_t * ) le_class->cs_data );
 
     }
@@ -74,17 +74,17 @@
 
     inline le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
 
-        /* Offset memory pointer variables */
+        /* offset memory pointer variables */
         register le_size_t * le_vptr = ( le_size_t * ) ( ( le_byte_t * ) le_class->cs_data + _LE_USE_DATA + _LE_USE_OFFSET * le_addr );
 
-        /* Assign offset */
+        /* assign offset */
         ( * le_vptr ) &= ~ ( ( le_size_t ) _LE_OFFS_NULL ), ( * le_vptr ) |= le_offset;
 
     }
 
     inline le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
 
-        /* Corrected heap variables */
+        /* corrected heap variables */
         le_real_t le_heap = le_class->cs_data[_LE_USE_DATA - 1] + 1;
 
         /* Data pseudo-accumulation */
@@ -92,7 +92,7 @@
         le_class->cs_data[1] = ( ( le_heap * ( le_real_t ) le_class->cs_data[1] ) + ( le_real_t ) le_data[1] ) / ( le_heap + 1.0 );
         le_class->cs_data[2] = ( ( le_heap * ( le_real_t ) le_class->cs_data[2] ) + ( le_real_t ) le_data[2] ) / ( le_heap + 1.0 );
 
-        /* Check heap value */
+        /* check heap value */
         if ( le_class->cs_data[_LE_USE_DATA - 1] < _LE_BYTE_MAX ) le_class->cs_data[_LE_USE_DATA - 1] ++;
 
     }
@@ -103,26 +103,26 @@
 
     inline le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
-        /* Move head to class offset - send message */
+        /* move head to class offset - send message */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) return( LE_ERROR_IO_SEEK );
 
-        /* Read class buffer - send message */
+        /* read class buffer - send message */
         if ( fread( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_BUFFER, le_stream ) != LE_CLASS_BUFFER ) return( LE_ERROR_IO_WRITE );
 
-        /* Send message */
+        /* send message */
         return( LE_ERROR_SUCCESS );
 
     }
 
     inline le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
-        /* Move head to class offset - send message */
+        /* move head to class offset - send message */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) return( LE_ERROR_IO_SEEK );
 
-        /* Write class buffer - send message */
+        /* write class buffer - send message */
         if ( fwrite( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_BUFFER, le_stream ) != LE_CLASS_BUFFER ) return( LE_ERROR_IO_WRITE );
 
-        /* Send message */
+        /* send message */
         return( LE_ERROR_SUCCESS );
 
     }

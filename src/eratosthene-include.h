@@ -40,7 +40,7 @@
     # endif
 
 /*
-    header - includes
+    header - internal includes
  */
 
     # include "eratosthene.h"
@@ -51,6 +51,10 @@
     # include "eratosthene-geodesy.h"
     # include "eratosthene-network.h"
     # include "eratosthene-server.h"
+
+/*
+    header - external includes
+ */
 
 /*
     header - preprocessor definitions

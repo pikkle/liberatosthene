@@ -40,7 +40,7 @@
     # endif
 
 /*
-    header - includes
+    header - internal includes
  */
 
     # include "eratosthene.h"
@@ -48,10 +48,14 @@
     # include "eratosthene-network.h"
 
 /*
+    header - external includes
+ */
+
+/*
     header - preprocessor definitions
  */
 
-    /* Define pseudo-constructor */
+    /* define pseudo-constructor */
     # define LE_ADDRESS_C           { 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 }, 0 }
     # define LE_ADDRESS_C_SIZE( s ) { s, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 }, 0 }
 
@@ -59,7 +63,7 @@
     header - preprocessor macros
  */
 
-    /* Base according to scale */
+    /* base according to scale */
     # define LE_ADDRESS_BASE( s )   ( ( ( s ) < LE_GEODESY_ASYA ) ? ( _LE_USE_BASE >> 1 ) : ( ( ( s ) < LE_GEODESY_ASYP ) ? ( _LE_USE_BASE >> 2 ) : _LE_USE_BASE ) )
 
 /*

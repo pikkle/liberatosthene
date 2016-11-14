@@ -40,12 +40,16 @@
     # endif
 
 /*
-    header - includes
+    header - internal includes
  */
 
     # include "eratosthene.h"
     # include "eratosthene-network.h"
     # include "eratosthene-array.h"
+
+/*
+    header - external includes
+ */
 
 /*
     header - preprocessor definitions
