@@ -414,6 +414,65 @@
         /* check address time */
         if ( ( le_time = le_address_get_time( & le_addr, 0 ) ) != _LE_TIME_NULL ) {
 
+            /* search proximity time */
+            le_time = le_server_io__( le_server, le_address_get_time( & le_addr, 0 ) );
+
+            /* create stream */
+            le_stream = le_server_io_stream( le_server, le_time );
+
+            /* send system query */
+            le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
+
+        }
+
+        /* check address time */
+        if ( ( le_time = le_address_get_time( & le_addr, 1 ) ) != _LE_TIME_NULL ) {
+
+            /* search proximity time */
+            le_time = le_server_io__( le_server, le_address_get_time( & le_addr, 1 ) );
+
+            /* create stream */
+            le_stream = le_server_io_stream( le_server, le_time );
+
+            /* send system query */
+            le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
+
+        }
+
+        /* purge array to socket */
+        le_return = le_array_io_write( & le_array, le_client );
+
+        /* unallocate array memory */
+        le_array_delete( & le_array );
+
+        /* send message */
+        return( le_return );
+
+    }
+
+    le_enum_t le_server_query_client2( le_server_t * const le_server, le_sock_t const le_client ) {
+
+        /* returned value variables */
+        le_enum_t le_return = LE_ERROR_SUCCESS;
+
+        /* array variables */
+        le_array_t le_array = LE_ARRAY_C;
+
+        /* address variables */
+        le_address_t le_addr = LE_ADDRESS_C;
+
+        /* stream variables */
+        le_size_t le_stream = _LE_USE_STREAM;
+
+        /* time variables */
+        le_time_t le_time = _LE_TIME_NULL;
+
+        /* read and decompose query */
+        le_address_io_read( & le_addr, le_client );
+
+        /* check address time */
+        if ( ( le_time = le_address_get_time( & le_addr, 0 ) ) != _LE_TIME_NULL ) {
+
             /* create stream */
             le_stream = le_server_io_stream( le_server, le_time );
 
@@ -694,6 +753,52 @@
             }
 
         }
+
+    }
+
+    le_time_t le_server_io__( le_server_t const * const le_server, le_time_t const le_time ) {
+
+        /* directory structure variables */
+        DIR * le_dir = NULL;
+
+        /* directory entity variables */
+        struct dirent * le_ent = NULL;
+
+        /* time variables */
+        le_time_t le_return = _LE_TIME_NULL;
+        le_time_t le_diff = 0;
+
+        /* open directory */
+        le_dir = opendir( ( char * ) le_server->sv_path );
+
+        /* enumertate directory */
+        while ( ( le_ent = readdir( le_dir ) ) != NULL ) {
+
+            /* check for directoy */
+            if ( le_ent->d_type == DT_DIR ) {
+
+                /* avoid special directoy */
+                if ( le_ent->d_name[0] != '.' ) {
+
+                    /* check proximity */
+                    if ( le_time_abs( le_time_str( le_ent->d_name ) - le_time )  < le_diff ) {
+
+                        /* update difference */
+                        le_diff = le_time_abs( le_time_str( le_ent->d_name ) - le_time );
+
+                        /* update returned variables */
+                        le_return = le_time_str( le_ent->d_name );
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        /* return proximal time */
+        return( le_return );
 
     }
 
