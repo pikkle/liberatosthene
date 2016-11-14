@@ -756,7 +756,7 @@
 
     }
 
-    le_time_t le_server_io__( le_server_t const * const le_server, le_time_t const le_time ) {
+    le_time_t le_server_io__( le_server_t const * const le_server, le_time_t le_time ) {
 
         /* directory structure variables */
         DIR * le_dir = NULL;
@@ -764,9 +764,18 @@
         /* directory entity variables */
         struct dirent * le_ent = NULL;
 
-        /* time variables */
+        /* optimisation variables */
+        le_time_t le_convert = _LE_TIME_NULL;
+        le_time_t le_distance = _LE_TIME_NULL;
+
+        /* time proximity variables */
+        le_time_t le_diff = _LE_TIME_MAX;
+
+        /* returned value variables */
         le_time_t le_return = _LE_TIME_NULL;
-        le_time_t le_diff = 0;
+
+        /* compute time equivalence class */
+        le_time /= le_server->sv_tcfg;
 
         /* open directory */
         le_dir = opendir( ( char * ) le_server->sv_path );
@@ -780,14 +789,17 @@
                 /* avoid special directoy */
                 if ( le_ent->d_name[0] != '.' ) {
 
+                    /* convert directory name */
+                    le_convert = le_time_str( le_ent->d_name );
+
                     /* check proximity */
-                    if ( le_time_abs( le_time_str( le_ent->d_name ) - le_time )  < le_diff ) {
+                    if ( ( le_distance = le_time_abs( le_convert - le_time ) ) < le_diff ) {
 
                         /* update difference */
-                        le_diff = le_time_abs( le_time_str( le_ent->d_name ) - le_time );
+                        le_diff = le_distance;
 
                         /* update returned variables */
-                        le_return = le_time_str( le_ent->d_name );
+                        le_return = le_convert;
 
                     }
 
@@ -797,8 +809,11 @@
 
         }
 
+        /* close directory */
+        closedir( le_dir );
+
         /* return proximal time */
-        return( le_return );
+        return( le_return * le_server->sv_tcfg );
 
     }
 

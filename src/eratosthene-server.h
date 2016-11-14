@@ -366,7 +366,7 @@
 
     le_void_t le_server_io_flush( le_server_t const * const le_server, le_size_t const le_stream );
 
-    le_time_t le_server_io__( le_server_t const * const le_server, le_time_t const le_time );
+    le_time_t le_server_io__( le_server_t const * const le_server, le_time_t le_time );
 
 /*
     header - C/C++ compatibility
