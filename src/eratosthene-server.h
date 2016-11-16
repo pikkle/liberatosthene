@@ -274,38 +274,6 @@
 
     le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream );
 
-    /*! \brief client methods - times array
-     *
-     *  This function is a specific server sub-process.
-     *
-     *  Its role is to answer to times array query. As the server is storing
-     *  data associated with time, this function allows clients to request an
-     *  array containing all the time that olds accessible data.
-     *
-     *  \param le_server Server structure
-     *  \param le_client Server-side client socket descriptor
-     *
-     *  \return Return LE_ERROR_SUCCESS on success, an error code otherwise
-     */
-
-    le_enum_t le_server_times_client( le_server_t const * const le_server, le_sock_t const le_client );
-
-    /*! \brief client methods - times array
-     *
-     *  This function is a specific server sub-process of second order.
-     *
-     *  This function is called byte its first order version. It starts to
-     *  parse the storage structure to gather all time values to correspond to
-     *  accessible data. It stores the time values in an array that is returned
-     *  to the parent function.
-     *
-     *  \param le_server Server structure
-     *
-     *  \return Returns an array of time values, empty on error
-     */
-
-    le_array_t le_server_times( le_server_t const * const le_server );
-
     /*! \brief client methods - server configuration
      *
      *  This function is a specific server sub-process.

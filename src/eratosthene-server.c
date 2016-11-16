@@ -212,19 +212,6 @@
 
                 } break;
 
-                /* system times */
-                case ( LE_NETWORK_MODE_AMOD ) : {
-
-                    /* send authorisation */
-                    if ( le_client_authorise( le_client, LE_NETWORK_MODE_AATH ) == LE_ERROR_SUCCESS ) {
-
-                        /* connection to system times */
-                        le_server_times_client( le_server, le_client );
-
-                    }
-
-                } break;
-
                 /* system configuration */
                 case ( LE_NETWORK_MODE_CMOD ) : {
 
@@ -575,62 +562,6 @@
             }
 
         }
-
-    }
-
-/*
-    source - client methods - times array
- */
-
-    le_enum_t le_server_times_client( le_server_t const * const le_server, le_sock_t const le_client ) {
-
-        /* returned value variables */
-        le_enum_t le_return = LE_ERROR_SUCCESS;
-
-        /* server time atlas array variables */
-        le_array_t le_array = le_server_times( le_server );
-
-        /* write array on socket */
-        le_return = le_array_io_write( & le_array, le_client );
-
-        /* delete array */
-        le_array_delete( & le_array );
-
-        /* send message */
-        return( le_return );
-
-    }
-
-    le_array_t le_server_times( le_server_t const * const le_server ) {
-
-        /* returned structure variables */
-        le_array_t le_array = LE_ARRAY_C;
-
-        /* directory entity variables */
-        struct dirent * le_time = NULL;
-
-        /* directory variables */
-        DIR * le_atlas = NULL;
-
-        /* create directory handle - send message */
-        if ( ( le_atlas = opendir( ( char * ) le_server->sv_path ) ) == NULL ) return( le_array );
-
-        /* directory entity enumeration */
-        while ( ( le_time = readdir( le_atlas ) ) != NULL ) {
-
-            /* check entity type */
-            if ( ( le_time->d_type != DT_DIR ) || ( le_time->d_name[0] == '.' ) ) continue;
-
-            /* push buffer in array */
-            le_array_set_pushtf( & le_array, le_server->sv_tcfg * le_time_str( le_time->d_name ) );
-
-        }
-
-        /* delete directory handle */
-        closedir( le_atlas );
-
-        /* send array */
-        return( le_array );
 
     }
 
