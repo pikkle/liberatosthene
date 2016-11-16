@@ -411,8 +411,8 @@
         /* read and decompose query */
         le_address_io_read( & le_addr, le_client );
 
-        /* check address time */
-        if ( ( le_time = le_address_get_time( & le_addr, 0 ) ) != _LE_TIME_NULL ) {
+        /* check address mode */
+        if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
 
             /* search proximity time */
             le_time = le_server_io__( le_server, le_address_get_time( & le_addr, 0 ) );
@@ -425,8 +425,8 @@
 
         }
 
-        /* check address time */
-        if ( ( le_time = le_address_get_time( & le_addr, 1 ) ) != _LE_TIME_NULL ) {
+        /* check address mode */
+        if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
 
             /* search proximity time */
             le_time = le_server_io__( le_server, le_address_get_time( & le_addr, 1 ) );
