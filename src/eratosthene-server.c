@@ -437,59 +437,6 @@
 
     }
 
-    le_enum_t le_server_query_client2( le_server_t * const le_server, le_sock_t const le_client ) {
-
-        /* returned value variables */
-        le_enum_t le_return = LE_ERROR_SUCCESS;
-
-        /* array variables */
-        le_array_t le_array = LE_ARRAY_C;
-
-        /* address variables */
-        le_address_t le_addr = LE_ADDRESS_C;
-
-        /* stream variables */
-        le_size_t le_stream = _LE_USE_STREAM;
-
-        /* time variables */
-        le_time_t le_time = _LE_TIME_NULL;
-
-        /* read and decompose query */
-        le_address_io_read( & le_addr, le_client );
-
-        /* check address time */
-        if ( ( le_time = le_address_get_time( & le_addr, 0 ) ) != _LE_TIME_NULL ) {
-
-            /* create stream */
-            le_stream = le_server_io_stream( le_server, le_time );
-
-            /* send system query */
-            le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
-
-        }
-
-        /* check address time */
-        if ( ( le_time = le_address_get_time( & le_addr, 1 ) ) != _LE_TIME_NULL ) {
-
-            /* create stream */
-            le_stream = le_server_io_stream( le_server, le_time );
-
-            /* send system query */
-            le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
-
-        }
-
-        /* purge array to socket */
-        le_return = le_array_io_write( & le_array, le_client );
-
-        /* unallocate array memory */
-        le_array_delete( & le_array );
-
-        /* send message */
-        return( le_return );
-
-    }
-
     le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream ) {
 
         /* class variables */
