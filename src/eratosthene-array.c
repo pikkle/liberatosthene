@@ -144,22 +144,6 @@
 
     }
 
-    le_void_t le_array_set_pushtf( le_array_t * const le_array, le_time_t const le_time ) {
-
-        /* array mapping variables */
-        static le_array_tf_t le_map = LE_ARRAY_TF_C;
-
-        /* array memory management - abort */
-        if ( le_array_set_memory( le_array, LE_ARRAY_TFL ) != LE_ERROR_SUCCESS ) return;
-
-        /* array mapping computation */
-        le_array_tf( le_array->ar_byte, le_array->ar_size - LE_ARRAY_TFL, le_map );
-
-        /* assign elements to array */
-        le_map.as_time[0] = le_time;
-
-    }
-
     le_void_t le_array_set_pushcf( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time ) {
 
         /* array mapping variables */

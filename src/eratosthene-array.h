@@ -71,13 +71,11 @@
     /* define array formats */
     # define LE_ARRAY_SFD    ( 0x01 )
     # define LE_ARRAY_RFD    ( 0x02 )
-    # define LE_ARRAY_TFD    ( 0x03 )
     # define LE_ARRAY_CFD    ( 0x04 )
 
     /* define array formats records length */
     # define LE_ARRAY_SFL    ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 + sizeof( le_time_t ) )
     # define LE_ARRAY_RFL    ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 )
-    # define LE_ARRAY_TFL    ( sizeof( le_time_t ) )
     # define LE_ARRAY_CFL    ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
 /*
@@ -93,10 +91,6 @@
     # define le_array_rf( a, o, s ) { \
         ( s ).as_pose = ( le_real_t * ) ( ( a ) + ( o ) ); \
         ( s ).as_data = ( le_data_t * ) ( ( s ).as_pose + 3 ); \
-    }
-
-    # define le_array_tf( a, o, s ) { \
-        ( s ).as_time = ( le_time_t * ) ( ( a ) + ( o ) ); \
     }
 
     # define le_array_cf( a, o, s ) { \
@@ -122,12 +116,6 @@
         le_data_t * as_data;
 
     } le_array_rf_t;
-
-    typedef struct {
-
-        le_time_t * as_time;
-
-    } le_array_tf_t;
 
     typedef struct {
 
