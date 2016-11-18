@@ -59,7 +59,11 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C { _LE_SOCK_NULL, { 0 }, 0, 0, 0, { 0 }, { { 0 } }, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 0, { 0 }, { { 0 } }, LE_ERROR_SUCCESS }
+
+    /* define stream mode */
+    # define LE_SERVER_READ  ( 0 )
+    # define LE_SERVER_WRITE ( 1 )
 
 /*
     header - preprocessor macros
@@ -319,7 +323,7 @@
      *  \return Returns the stack index of the created streams
      */
 
-    le_size_t le_server_io_stream( le_server_t * const le_server, le_time_t const le_time );
+    le_size_t le_server_io_stream( le_server_t * const le_server, le_time_t le_time, le_enum_t const le_mode );
 
     /*! \brief i/o methods
      *

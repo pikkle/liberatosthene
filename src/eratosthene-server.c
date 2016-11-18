@@ -321,7 +321,7 @@
         le_size_t le_offnex = 0;
 
         /* system scale stream management */
-        if ( ( le_stream = le_server_io_stream( le_server, le_time ) ) == _LE_USE_STREAM ) {
+        if ( ( le_stream = le_server_io_stream( le_server, le_time, LE_SERVER_WRITE ) ) == _LE_USE_STREAM ) {
 
             /* abort injection */
             return;
@@ -399,7 +399,7 @@
         if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
 
             /* create stream */
-            le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr, 0 ) );
+            le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr, 0 ), LE_SERVER_READ );
 
             /* send system query */
             le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
@@ -410,7 +410,7 @@
         if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
 
             /* create stream */
-            le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr, 1 ) );
+            le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr, 1 ), LE_SERVER_READ );
 
             /* send system query */
             le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
@@ -543,53 +543,97 @@
     source - i/o methods
  */
 
-    le_size_t le_server_io_stream( le_server_t * const le_server, le_time_t const le_time ) {
+    le_size_t le_server_io_stream( le_server_t * const le_server, le_time_t le_time, le_enum_t const le_mode ) {
 
-        /* returned value variables */
-        le_size_t le_return = le_server->sv_push;
+        /* stream stack variables */
+        le_size_t le_head = le_server->sv_push;
 
-        /* string variables */
+        /* directory structure */
+        DIR * le_directory = NULL;
+
+        /* server storage path variables */
         le_char_t le_path[_LE_USE_STRING] = { 0 };
 
-        /* check streams */
-        for ( le_size_t le_parse = 0; le_parse < _LE_USE_STREAM; le_parse ++ ) {
+        /* check consistency */
+        if ( le_time == _LE_TIME_NULL ) {
 
-            /* check for matching times - send stream index */
-            if ( le_time == le_server->sv_time[le_parse] ) return( le_parse );
+            /* send message */
+            return( _LE_USE_STREAM );
 
         }
 
-        /* clear stream time */
-        le_server->sv_time[le_return] = _LE_TIME_NULL;
+        /* compute time equivalence class */
+        le_time /= le_server->sv_tcfg;
 
-        /* compose path string */
-        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_server->sv_path, le_time / le_server->sv_tcfg );
+        /* search stream stack for provided time */
+        for ( le_size_t le_parse = 0; le_parse < _LE_USE_STREAM; le_parse ++ ) {
 
-        /* create stream directory */
-        mkdir( ( char * ) le_path, 0777 );
+            /* check for matching time - return stream stack index */
+            if ( le_server->sv_time[le_parse] == le_time ) return( le_parse );
 
-        /* parsing stream handles */
-        for ( le_size_t le_index = 0; le_index < le_server->sv_scfg; le_index ++ ) {
+        }
 
-            /* check stream handle */
-            if ( le_server->sv_file[le_return][le_index] != NULL ) {
+        /* compose directory path */
+        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_server->sv_path, le_time );
 
-                /* close stream handle */
-                fclose( le_server->sv_file[le_return][le_index] );
+        /* check if directory exists */
+        if ( ( le_directory = opendir( ( char * ) le_path ) ) == NULL ) {
+
+            /* check stream mode */
+            if ( le_mode == LE_SERVER_READ ) {
+
+                /* send message */
+                return( _LE_USE_STREAM );
+
+            } else {
+
+                /* create directory */
+                mkdir( ( char * ) le_path, 0755 );
 
             }
 
-            /* compose path string */
-            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_server->sv_path, le_time / le_server->sv_tcfg, le_index );
+        } else {
 
-            /* create stream handle */
-            if ( ( le_server->sv_file[le_return][le_index] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
+            /* close directory */
+            closedir( le_directory );
 
-                /* create stream handle */
-                if ( ( le_server->sv_file[le_return][le_index] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) {
+        }
+
+        /* invalidate stream time */
+        le_server->sv_time[le_head] = _LE_TIME_NULL;
+
+        /* create stream */
+        for ( le_size_t le_parse = 0; le_parse < le_server->sv_scfg; le_parse ++ ) {
+
+            /* check previous file descriptor */
+            if ( le_server->sv_file[le_head][le_parse] != NULL ) {
+
+                /* close previous file descriptor */
+                fclose( le_server->sv_file[le_head][le_parse] );
+
+            }
+
+            /* compose file path */
+            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_server->sv_path, le_time, le_parse );
+
+            /* create read/write access descriptor - nice */
+            if ( ( le_server->sv_file[le_head][le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
+
+                /* check stream mode */
+                if ( le_mode == LE_SERVER_READ ) {
 
                     /* send message */
                     return( _LE_USE_STREAM );
+
+                } else {
+
+                    /* create read/write access descriptor - agressive */
+                    if ( ( le_server->sv_file[le_head][le_parse] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) {
+
+                        /* send message */
+                        return( _LE_USE_STREAM );
+
+                    }
 
                 }
 
@@ -597,14 +641,14 @@
 
         }
 
-        /* set stream time */
-        le_server->sv_time[le_return] = le_time;
+        /* update stream time */
+        le_server->sv_time[le_head] = le_time;
 
-        /* update stream push value */
+        /* update stream stack head */
         le_server->sv_push = ( le_server->sv_push + 1 ) % _LE_USE_STREAM;
 
-        /* send stream index */
-        return( le_return );
+        /* return created stream stack index */
+        return( le_head );
 
     }
 
