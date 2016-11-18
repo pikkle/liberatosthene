@@ -378,10 +378,7 @@
     source - client methods - query
  */
 
-    le_enum_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client ) {
-
-        /* returned value variables */
-        le_enum_t le_return = LE_ERROR_SUCCESS;
+    le_void_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client ) {
 
         /* array variables */
         le_array_t le_array = LE_ARRAY_C;
@@ -392,20 +389,17 @@
         /* stream variables */
         le_size_t le_stream = _LE_USE_STREAM;
 
-        /* time variables */
-        le_time_t le_time = _LE_TIME_NULL;
-
         /* read and decompose query */
         le_address_io_read( & le_addr, le_client );
+
+        /* address time reduction */
+        le_server_io_reduce( le_server, & le_addr );
 
         /* check address mode */
         if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
 
-            /* search proximity time */
-            le_time = le_server_io__( le_server, le_address_get_time( & le_addr, 0 ) );
-
             /* create stream */
-            le_stream = le_server_io_stream( le_server, le_time );
+            le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr, 0 ) );
 
             /* send system query */
             le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
@@ -415,25 +409,22 @@
         /* check address mode */
         if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
 
-            /* search proximity time */
-            le_time = le_server_io__( le_server, le_address_get_time( & le_addr, 1 ) );
-
             /* create stream */
-            le_stream = le_server_io_stream( le_server, le_time );
+            le_stream = le_server_io_stream( le_server, le_address_get_time( & le_addr, 1 ) );
 
             /* send system query */
             le_server_query( le_server, & le_addr, & le_array, 0, 0, le_stream );
 
         }
 
+        /* write query address on socket */
+        le_address_io_write( & le_addr, le_client );
+
         /* purge array to socket */
-        le_return = le_array_io_write( & le_array, le_client );
+        le_array_io_write( & le_array, le_client );
 
         /* unallocate array memory */
         le_array_delete( & le_array );
-
-        /* send message */
-        return( le_return );
 
     }
 
@@ -634,52 +625,61 @@
 
     }
 
-    le_time_t le_server_io__( le_server_t const * const le_server, le_time_t le_time ) {
+    le_void_t le_server_io_reduce( le_server_t const * const le_server, le_address_t * const le_addr ) {
 
         /* directory structure variables */
         DIR * le_dir = NULL;
 
-        /* directory entity variables */
+        /* entity structure variables */
         struct dirent * le_ent = NULL;
 
-        /* optimisation variables */
-        le_time_t le_convert = _LE_TIME_NULL;
-        le_time_t le_distance = _LE_TIME_NULL;
+        /* address times variables */
+        le_time_t le_timea = le_address_get_time( le_addr, 0 );
+        le_time_t le_timeb = le_address_get_time( le_addr, 1 );
 
-        /* time proximity variables */
-        le_time_t le_diff = _LE_TIME_MAX;
+        /* nearest time variables */
+        le_time_t le_neara = _LE_TIME_NULL;
+        le_time_t le_nearb = _LE_TIME_NULL;
 
-        /* returned value variables */
-        le_time_t le_return = _LE_TIME_NULL;
+        /* time distance variables */
+        le_time_t le_diffa = _LE_TIME_MAX;
+        le_time_t le_diffb = _LE_TIME_MAX;
 
-        /* compute time equivalence class */
-        le_time /= le_server->sv_tcfg;
+        /* time reduction variables */
+        le_time_t le_times = _LE_TIME_NULL;
+        le_time_t le_timed = _LE_TIME_NULL;
 
         /* open directory */
         le_dir = opendir( ( char * ) le_server->sv_path );
 
-        /* enumertate directory */
+        /* enumerate entities */
         while ( ( le_ent = readdir( le_dir ) ) != NULL ) {
 
-            /* check for directoy */
-            if ( le_ent->d_type == DT_DIR ) {
+            /* regular directory required */
+            if ( ( le_ent->d_type == DT_DIR ) && ( le_ent->d_name[0] != '.' ) ) {
 
-                /* avoid special directoy */
-                if ( le_ent->d_name[0] != '.' ) {
+                /* retreive allocation time */
+                le_times = le_time_str( le_ent->d_name ) * le_server->sv_tcfg;
 
-                    /* convert directory name */
-                    le_convert = le_time_str( le_ent->d_name );
+                /* compare differences */
+                if ( ( le_timed = le_time_abs( le_timea - le_times ) ) < le_diffa ) {
 
-                    /* check proximity */
-                    if ( ( le_distance = le_time_abs( le_convert - le_time ) ) < le_diff ) {
+                    /* update nearest time */
+                    le_neara = le_times;
 
-                        /* update difference */
-                        le_diff = le_distance;
+                    /* update nearest distance */
+                    le_diffa = le_timed;
 
-                        /* update returned variables */
-                        le_return = le_convert;
+                }
 
-                    }
+                /* compare differences */
+                if ( ( le_timed = le_time_abs( le_timeb - le_times ) ) < le_diffb ) {
+
+                    /* update nearest time */
+                    le_nearb = le_times;
+
+                    /* update nearest distance */
+                    le_diffb = le_timed;
 
                 }
 
@@ -687,11 +687,12 @@
 
         }
 
+        /* update address structure */
+        le_address_set_time( le_addr, 0, le_neara  );
+        le_address_set_time( le_addr, 1, le_nearb );
+
         /* close directory */
         closedir( le_dir );
-
-        /* return proximal time */
-        return( le_return * le_server->sv_tcfg );
 
     }
 

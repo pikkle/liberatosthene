@@ -251,7 +251,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
+    le_void_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
 
     /*! \brief client methods - query
      *
@@ -334,7 +334,7 @@
 
     le_void_t le_server_io_flush( le_server_t const * const le_server, le_size_t const le_stream );
 
-    le_time_t le_server_io__( le_server_t const * const le_server, le_time_t le_time );
+    le_void_t le_server_io_reduce( le_server_t const * const le_server, le_address_t * const le_addr );
 
 /*
     header - C/C++ compatibility
