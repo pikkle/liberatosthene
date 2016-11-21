@@ -51,7 +51,7 @@
     source - accessor methods
  */
 
-    inline le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr ) {
+    le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr ) {
 
         /* offset memory pointer variables */
         register le_size_t * le_vptr = ( le_size_t * ) ( ( le_byte_t * ) le_class->cs_data + _LE_USE_DATA + _LE_USE_OFFSET * le_addr );
@@ -61,7 +61,7 @@
 
     }
 
-    inline le_data_t * le_class_get_data( le_class_t const * const le_class ) {
+    le_data_t * le_class_get_data( le_class_t const * const le_class ) {
 
         /* return class pointer */
         return( ( le_data_t * ) le_class->cs_data );
@@ -72,7 +72,7 @@
     source - mutator methods
  */
 
-    inline le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
+    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
 
         /* offset memory pointer variables */
         register le_size_t * le_vptr = ( le_size_t * ) ( ( le_byte_t * ) le_class->cs_data + _LE_USE_DATA + _LE_USE_OFFSET * le_addr );
@@ -82,7 +82,7 @@
 
     }
 
-    inline le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
+    le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
 
         /* corrected heap variables */
         le_real_t le_heap = le_class->cs_data[_LE_USE_DATA - 1] + 1;
@@ -101,7 +101,7 @@
     source - i/o methods
  */
 
-    inline le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
+    le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* move head to class offset - send message */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) return( LE_ERROR_IO_SEEK );
@@ -114,7 +114,7 @@
 
     }
 
-    inline le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
+    le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream ) {
 
         /* move head to class offset - send message */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) return( LE_ERROR_IO_SEEK );

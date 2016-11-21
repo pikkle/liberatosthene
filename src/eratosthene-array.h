@@ -191,7 +191,7 @@
      *  \return Array data size, in bytes
      */
 
-    extern le_size_t le_array_get_size( le_array_t const * const le_array );
+    le_size_t le_array_get_size( le_array_t const * const le_array );
 
     /*! \brief accessor methods
      *
@@ -203,7 +203,7 @@
      *  \return Returns array memory base pointer
      */
 
-    extern le_byte_t * le_array_get_byte( le_array_t const * const le_array );
+    le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
     /*! \brief mutator methods
      *

@@ -36,7 +36,7 @@
  */
 
     # ifdef __cplusplus
-    extern "C" {
+    "C" {
     # endif
 
 /*
@@ -146,7 +146,7 @@
      *  \return Daughter class storage offset
      */
 
-    extern le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr );
+    le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr );
 
     /*! \brief accessor methods
      *
@@ -157,7 +157,7 @@
      *  \return Class representative color array
      */
 
-    extern le_data_t * le_class_get_data( le_class_t const * const le_class );
+    le_data_t * le_class_get_data( le_class_t const * const le_class );
 
     /*! \brief mutator methods
      *
@@ -168,7 +168,7 @@
      *  \param le_offset Daughter class storage offset
      */
 
-    extern le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
+    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
 
     /*! \brief mutator methods
      *
@@ -180,7 +180,7 @@
      *  \param le_data  Injected element color 3-vector
      */
 
-    extern le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data );
+    le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data );
 
     /*! \brief i/o methods
      *
@@ -195,7 +195,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    extern le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream );
+    le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream );
 
     /*! \brief i/o methods
      *
@@ -210,7 +210,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    extern le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream );
+    le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream );
 
 /*
     header - C/C++ compatibility

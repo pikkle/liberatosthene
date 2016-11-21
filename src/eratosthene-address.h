@@ -63,7 +63,7 @@
     # define LE_ADDRESS_WGSF        ( 298.257223563 )
 
     /* asynchronous dimension edges */
-    # define LE_ADDRESS_SYNP        (  1 )
+    # define LE_ADDRESS_SYNP        ( 1 )
     # define LE_ADDRESS_SYNA        ( 10 )
 
     /* define ellispoidal coordinates boundaries */
@@ -162,7 +162,7 @@
      *  \return Address times comparison mode
      */
 
-    extern le_byte_t le_address_get_mode( le_address_t const * const le_address );
+    le_byte_t le_address_get_mode( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -175,7 +175,7 @@
      *  \return Address time
      */
 
-    extern le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset );
+    le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
      *
@@ -187,7 +187,7 @@
      *  \return Address size
      */
 
-    extern le_size_t le_address_get_size( le_address_t const * const le_address );
+    le_size_t le_address_get_size( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -200,7 +200,7 @@
      *  \return Returns digit found at queried offset
      */
 
-    extern le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
+    le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
      *
@@ -212,7 +212,7 @@
      *  \return Query additional depth
      */
 
-    extern le_size_t le_address_get_depth( le_address_t const * const le_address );
+    le_size_t le_address_get_depth( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -247,7 +247,7 @@
      *  \param le_mode    Address times comparison mode
      */
 
-    extern le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode );
+    le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode );
 
     /*! \brief mutator methods
      *
@@ -258,7 +258,7 @@
      *  \param le_time    Address time
      */
 
-    extern le_void_t le_address_set_time( le_address_t * const le_address, le_size_t const le_offset, le_time_t const le_time );
+    le_void_t le_address_set_time( le_address_t * const le_address, le_size_t const le_offset, le_time_t const le_time );
 
     /*! \brief mutator methods
      *
@@ -268,7 +268,7 @@
      *  \param le_size    Address size
      */
 
-    extern le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
+    le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
 
     /*! \brief mutator methods
      *
@@ -280,7 +280,7 @@
      *  \param le_digit   Digit value
      */
 
-    extern le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
+    le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit );
 
     /*! \brief mutator methods
      *
@@ -291,7 +291,7 @@
      *  \param le_depth   Address query additional depth
      */
 
-    extern le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
+    le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
 
     /*! \brief mutator methods
      *

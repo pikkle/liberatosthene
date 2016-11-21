@@ -24,35 +24,35 @@
     source - accessor methods
  */
 
-    inline le_byte_t le_address_get_mode( le_address_t const * const le_address ) {
+    le_byte_t le_address_get_mode( le_address_t const * const le_address ) {
 
         /* return address mode */
         return( le_address->as_mode );
 
     }
 
-    inline le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset ) {
+    le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset ) {
 
         /* return address time */
         return( le_address->as_times[le_offset] );
 
     }
 
-    inline le_size_t le_address_get_size( le_address_t const * const le_address ) {
+    le_size_t le_address_get_size( le_address_t const * const le_address ) {
 
         /* return address size */
         return( le_address->as_size );
 
     }
 
-    inline le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
+    le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
 
         /* check consistency - return address digit */
         return( le_address->as_digit[le_offset] );
 
     }
 
-    inline le_size_t le_address_get_depth( le_address_t const * const le_address ) {
+    le_size_t le_address_get_depth( le_address_t const * const le_address ) {
 
         /* return address depth */
         return( le_address->as_depth );
@@ -119,35 +119,35 @@
     source - mutator methods
  */
 
-    inline le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode ) {
+    le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode ) {
 
         /* assign address mode */
         le_address->as_mode = le_mode;
 
     }
 
-    inline le_void_t le_address_set_time( le_address_t * const le_address, le_size_t const le_offset, le_time_t const le_time ) {
+    le_void_t le_address_set_time( le_address_t * const le_address, le_size_t const le_offset, le_time_t const le_time ) {
 
         /* assign address time */
         le_address->as_times[le_offset] = le_time;
 
     }
 
-    inline le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
+    le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size ) {
 
         /* assign address size */
         le_address->as_size = le_size;
 
     }
 
-    inline le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
+    le_void_t le_address_set_digit( le_address_t * const le_address, le_size_t const le_offset, le_byte_t const le_digit ) {
 
         /* assign address digit */
         le_address->as_digit[le_offset] = le_digit;
 
     }
 
-    inline le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth ) {
+    le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth ) {
 
         /* assign address depth */
         le_address->as_depth = le_depth;
