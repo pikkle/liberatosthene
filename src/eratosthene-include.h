@@ -48,7 +48,6 @@
     # include "eratosthene-array.h"
     # include "eratosthene-class.h"
     # include "eratosthene-client.h"
-    # include "eratosthene-geodesy.h"
     # include "eratosthene-network.h"
     # include "eratosthene-server.h"
 

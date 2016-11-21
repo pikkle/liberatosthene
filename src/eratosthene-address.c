@@ -95,13 +95,13 @@
             le_pose[0] += ( ( le_real_t ) ( le_address->as_digit[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
 
             /* asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASYP ) continue;
+            if ( le_parse < LE_ADDRESS_SYNP ) continue;
 
             /* analyse address digit and coordinates update */
             le_pose[1] += ( ( le_real_t ) ( ( le_address->as_digit[le_parse] & 0x02 ) >> 1 ) ) * ( le_scale[1] /= 2.0 );
 
             /* asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASYA ) continue;
+            if ( le_parse < LE_ADDRESS_SYNA ) continue;
 
             /* analyse address digit and coordinates update */
             le_pose[2] += ( ( le_real_t ) ( ( le_address->as_digit[le_parse] & 0x04 ) >> 2 ) ) * ( le_scale[2] /= 2.0 );
@@ -109,9 +109,9 @@
         }
 
         /* coordinates denormalisation */
-        le_pose[0] = LE_GEODESY_LMIN + le_pose[0] * LE_GEODESY_LRAN;
-        le_pose[1] = LE_GEODESY_AMIN + le_pose[1] * LE_GEODESY_ARAN;
-        le_pose[2] = LE_GEODESY_HMIN + le_pose[2] * LE_GEODESY_HRAN;
+        le_pose[0] = LE_ADDRESS_MINL + le_pose[0] * LE_ADDRESS_RNGL;
+        le_pose[1] = LE_ADDRESS_MINA + le_pose[1] * LE_ADDRESS_RNGA;
+        le_pose[2] = LE_ADDRESS_MINH + le_pose[2] * LE_ADDRESS_RNGH;
 
     }
 
@@ -160,9 +160,9 @@
         le_byte_t le_buffer = 0;
 
         /* coordinates normalisation on [0,1[ range */
-        le_pose[0] = ( le_pose[0] - LE_GEODESY_LMIN ) / LE_GEODESY_LRAN;
-        le_pose[1] = ( le_pose[1] - LE_GEODESY_AMIN ) / LE_GEODESY_ARAN;
-        le_pose[2] = ( le_pose[2] - LE_GEODESY_HMIN ) / LE_GEODESY_HRAN;
+        le_pose[0] = ( le_pose[0] - LE_ADDRESS_MINL ) / LE_ADDRESS_RNGL;
+        le_pose[1] = ( le_pose[1] - LE_ADDRESS_MINA ) / LE_ADDRESS_RNGA;
+        le_pose[2] = ( le_pose[2] - LE_ADDRESS_MINH ) / LE_ADDRESS_RNGH;
 
         /* composing address */
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
@@ -174,7 +174,7 @@
             le_pose[0] = ( le_pose[0] * 2.0 ) - le_buffer;
 
             /* asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASYP ) continue;
+            if ( le_parse < LE_ADDRESS_SYNP ) continue;
 
             /* assign address digit */
             le_address->as_digit[le_parse] |= ( le_buffer = ( le_pose[1] >= 0.5 ) ? 1 : 0 ) << 0x01;
@@ -183,7 +183,7 @@
             le_pose[1] = ( le_pose[1] * 2.0 ) - le_buffer;
 
             /* asynchronous dimension management */
-            if ( le_parse < LE_GEODESY_ASYA ) continue;
+            if ( le_parse < LE_ADDRESS_SYNA ) continue;
 
             /* assign address digit */
             le_address->as_digit[le_parse] |= ( le_buffer = ( le_pose[2] >= 0.5 ) ? 1 : 0 ) << 0x02;

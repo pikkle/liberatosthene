@@ -44,7 +44,6 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-geodesy.h"
     # include "eratosthene-network.h"
 
 /*
@@ -59,12 +58,33 @@
     # define LE_ADDRESS_C           { 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 }, 0 }
     # define LE_ADDRESS_C_SIZE( s ) { s, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 }, 0 }
 
+    /* define WGS84 ellipsoid parameters */
+    # define LE_ADDRESS_WGSA        ( 6378137.0 )
+    # define LE_ADDRESS_WGSF        ( 298.257223563 )
+
+    /* asynchronous dimension edges */
+    # define LE_ADDRESS_SYNP        (  1 )
+    # define LE_ADDRESS_SYNA        ( 10 )
+
+    /* define ellispoidal coordinates boundaries */
+    # define LE_ADDRESS_MINL        ( - LE_PI )
+    # define LE_ADDRESS_MAXL        ( + LE_PI )
+    # define LE_ADDRESS_MINA        ( - LE_P2 )
+    # define LE_ADDRESS_MAXA        ( + LE_P2 )
+    # define LE_ADDRESS_MINH        ( - ( LE_PI * LE_ADDRESS_WGSA ) / 1024.0 )
+    # define LE_ADDRESS_MAXH        ( + ( LE_PI * LE_ADDRESS_WGSA ) / 1024.0 )
+
+    /* define ellipsoidal coordinates ranges */
+    # define LE_ADDRESS_RNGL        ( LE_ADDRESS_MAXL - LE_ADDRESS_MINL )
+    # define LE_ADDRESS_RNGA        ( LE_ADDRESS_MAXA - LE_ADDRESS_MINA )
+    # define LE_ADDRESS_RNGH        ( LE_ADDRESS_MAXH - LE_ADDRESS_MINH )
+
 /*
     header - preprocessor macros
  */
 
     /* base according to scale */
-    # define LE_ADDRESS_BASE( s )   ( ( ( s ) < LE_GEODESY_ASYA ) ? ( _LE_USE_BASE >> 1 ) : ( ( ( s ) < LE_GEODESY_ASYP ) ? ( _LE_USE_BASE >> 2 ) : _LE_USE_BASE ) )
+    # define LE_ADDRESS_BASE( s )   ( ( ( s ) < LE_ADDRESS_SYNA ) ? ( _LE_USE_BASE >> 1 ) : ( ( ( s ) < LE_ADDRESS_SYNP ) ? ( _LE_USE_BASE >> 2 ) : _LE_USE_BASE ) )
 
 /*
     header - type definition
