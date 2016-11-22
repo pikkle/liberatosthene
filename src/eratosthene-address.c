@@ -95,20 +95,29 @@
         /* decomposing address */
         for ( le_size_t le_parse = 0; le_parse < le_address->as_size; le_parse ++ ) {
 
-            /* analyse address digit and coordinates update */
-            le_pose[0] += ( ( le_real_t ) ( le_address->as_digit[le_parse] & 0x01 ) ) * ( le_scale[0] /= 2.0 );
+            /* update dimension scale */
+            le_scale[0] *= 0.5;
+
+            /* analyse address digit and coordinates update */            
+            if ( ( le_address->as_digit[le_parse] & 0x01 ) != 0 ) le_pose[0] += le_scale[0];
 
             /* asynchronous dimension management */
             if ( le_parse < LE_ADDRESS_SYNP ) continue;
 
+            /* update dimension scale */
+            le_scale[1] *= 0.5;
+
             /* analyse address digit and coordinates update */
-            le_pose[1] += ( ( le_real_t ) ( ( le_address->as_digit[le_parse] & 0x02 ) >> 1 ) ) * ( le_scale[1] /= 2.0 );
+            if ( ( le_address->as_digit[le_parse] & 0x02 ) != 0 ) le_pose[1] += le_scale[1];
 
             /* asynchronous dimension management */
             if ( le_parse < LE_ADDRESS_SYNA ) continue;
 
+            /* update dimension scale */
+            le_scale[2] *= 0.5;
+
             /* analyse address digit and coordinates update */
-            le_pose[2] += ( ( le_real_t ) ( ( le_address->as_digit[le_parse] & 0x04 ) >> 2 ) ) * ( le_scale[2] /= 2.0 );
+            if ( ( le_address->as_digit[le_parse] & 0x04 ) != 0 ) le_pose[2] += le_scale[2];
 
         }
 
