@@ -47,7 +47,7 @@
 
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset ) {
 
-        /* check consistency - return address digit */
+        /* return address digit */
         return( le_address->as_digit[le_offset] );
 
     }
@@ -61,6 +61,10 @@
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addr1, le_address_t const * const le_addr2 ) {
 
+        /* digits array pointer variables */
+        le_byte_t * er_ptr1 = ( le_byte_t * ) ( le_addr1->as_digit + le_addr1->as_size );
+        le_byte_t * er_ptr2 = ( le_byte_t * ) ( le_addr2->as_digit + le_addr2->as_size );
+
         /* fields comparison - send message */
         if ( le_addr1->as_size  != le_addr2->as_size  ) return( _LE_FALSE );
         if ( le_addr1->as_mode  != le_addr2->as_mode  ) return( _LE_FALSE );
@@ -71,7 +75,7 @@
         if ( le_addr1->as_times[1] != le_addr2->as_times[1] ) return( _LE_FALSE );
 
         /* digits comparison - send message */
-        if ( memcmp( le_addr1->as_digit, le_addr2->as_digit, le_addr1->as_size ) != 0 ) return( _LE_FALSE );
+        while ( ( -- er_ptr2, -- er_ptr1 ) >= le_addr1->as_digit ) if ( ( * er_ptr1 ) != ( * er_ptr2 ) ) return( _LE_FALSE );
 
         /* send message */
         return( _LE_TRUE );
