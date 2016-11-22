@@ -169,9 +169,6 @@
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose ) {
 
-        /* digital buffer variables */
-        le_byte_t le_buffer = 0;
-
         /* coordinates normalisation on [0,1[ range */
         le_pose[0] = ( le_pose[0] - LE_ADDRESS_MINL ) / LE_ADDRESS_RNGL;
         le_pose[1] = ( le_pose[1] - LE_ADDRESS_MINA ) / LE_ADDRESS_RNGA;
@@ -180,29 +177,58 @@
         /* composing address */
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
 
-            /* assign address digit */
-            le_address->as_digit[le_parse] = ( le_buffer = ( le_pose[0] >= 0.5 ) ? 1 : 0 );
+            /* update dimension value */
+            le_pose[0] *= 2.0;
 
-            /* update normalised coordinate */
-            le_pose[0] = ( le_pose[0] * 2.0 ) - le_buffer;
+            /* check dimension value */
+            if ( le_pose[0] >= 1.0 ) {
+
+                /* assign address digit component */
+                le_address->as_digit[le_parse] = 1;
+
+                /* update dimension value */
+                le_pose[0] -= 1.0;
+
+            } else {
+
+                /* assign address digit component */
+                le_address->as_digit[le_parse] = 0;
+
+            }
 
             /* asynchronous dimension management */
             if ( le_parse < LE_ADDRESS_SYNP ) continue;
 
-            /* assign address digit */
-            le_address->as_digit[le_parse] |= ( le_buffer = ( le_pose[1] >= 0.5 ) ? 1 : 0 ) << 0x01;
+            /* update dimension value */
+            le_pose[1] *= 2.0;
 
-            /* update normalised coordinate */
-            le_pose[1] = ( le_pose[1] * 2.0 ) - le_buffer;
+            /* check dimension value */
+            if ( le_pose[1] >= 1.0 ) {
+
+                /* assign address digit component */
+                le_address->as_digit[le_parse] |= 0x2;
+
+                /* update dimension value */
+                le_pose[1] -= 1.0;
+
+            }
 
             /* asynchronous dimension management */
             if ( le_parse < LE_ADDRESS_SYNA ) continue;
 
-            /* assign address digit */
-            le_address->as_digit[le_parse] |= ( le_buffer = ( le_pose[2] >= 0.5 ) ? 1 : 0 ) << 0x02;
+            /* update dimension value */
+            le_pose[2] *= 2.0;
 
-            /* update normalised coordinate */
-            le_pose[2] = ( le_pose[2] * 2.0 ) - le_buffer;
+            /* check dimension value */
+            if ( le_pose[2] >= 1.0 ) {
+
+                /* assign address digit component */
+                le_address->as_digit[le_parse] |= 0x4;
+
+                /* update dimension value */
+                le_pose[2] -= 1.0;
+
+            }
 
         }
 
