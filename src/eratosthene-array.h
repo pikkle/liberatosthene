@@ -251,19 +251,6 @@
 
     le_void_t le_array_set_pushrf( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
 
-    /*! \brief mutator methods
-     *
-     *  This function is used as a complexe record insertion method in the bytes
-     *  array hold by the provided structure.
-     *
-     *  It expects a time value as parameter and pack them in a bytes sequence
-     *  that is inserted at the end of the provided array.
-     *
-     *  \param le_array Array structure
-     *  \param le_time  Time value
-     */
-
-    le_void_t le_array_set_pushtf( le_array_t * const le_array, le_time_t const le_time );
 
     /*! \brief mutator methods
      *
