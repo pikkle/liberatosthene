@@ -102,105 +102,126 @@
  */
 
     /* boolean values */
-    # define _LE_FALSE          ( 0 )
-    # define _LE_TRUE           ( 1 )
+    # define _LE_FALSE              ( 0 )
+    # define _LE_TRUE               ( 1 )
 
     /* features configuration */
-    # define _LE_USE_BASE       ( 8 )
-    # define _LE_USE_OFFSET     ( 5 )
+    # define _LE_USE_BASE           ( 8 )
+    # define _LE_USE_OFFSET         ( 5 )
     # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
-    # error "offset range is [4,8]"
+    # error "offset range is [4,8] inter N"
     # endif
-    # define _LE_USE_DEPTH      ( 64 )
-    # define _LE_USE_TIMES      ( 2 )
-    # define _LE_USE_DATA       ( 4 )
-    # define _LE_USE_MTU        ( 1280 )
-    # define _LE_USE_PORT       ( 43427 )
-    # define _LE_USE_PENDING    ( 5 )
-    # define _LE_USE_RETRY      ( 3 )
-    # define _LE_USE_STRING     ( 256 )
-    # define _LE_USE_ASCII_ITOA ( 48 )
-    # define _LE_USE_STREAM     ( 8 )
+    # define _LE_USE_DEPTH          ( 64 )
+    # define _LE_USE_TIMES          ( 2 )
+    # define _LE_USE_DATA           ( 4 )
+    # define _LE_USE_MTU            ( 1280 )
+    # define _LE_USE_PORT           ( 43427 )
+    # define _LE_USE_PENDING        ( 5 )
+    # define _LE_USE_RETRY          ( 3 )
+    # define _LE_USE_STRING         ( 256 )
+    # define _LE_USE_ASCII_ITOA     ( 48 )
+    # define _LE_USE_STREAM         ( 8 )
 
     /* define types */
-    # define _LE_VOID           void
-    # define _LE_BYTE           uint8_t
-    # define _LE_CHAR           unsigned char
-    # define _LE_ENUM           int
-    # define _LE_SIZE           uint64_t
-    # define _LE_DIFF           int64_t
-    # define _LE_REAL           double
-    # define _LE_TIME           int64_t
-    # define _LE_DATA           uint8_t
-    # define _LE_SOCK           int
-    # define _LE_FILE           FILE *
+    # define _LE_VOID               void
+    # define _LE_BYTE               uint8_t
+    # define _LE_CHAR               unsigned char
+    # define _LE_ENUM               int
+    # define _LE_SIZE               uint64_t
+    # define _LE_DIFF               int64_t
+    # define _LE_REAL               double
+    # define _LE_TIME               int64_t
+    # define _LE_DATA               uint8_t
+    # define _LE_SOCK               int
+    # define _LE_FILE               FILE *
 
     /* define boundaries */
-    # define _LE_BYTE_MIN       ( 0 )
-    # define _LE_BYTE_MAX       ( UINT8_MAX )
-    # define _LE_SIZE_MIN       ( 0 )
-    # define _LE_SIZE_MAX       ( UINT64_MAX )
-    # define _LE_TIME_MIN       ( INT64_MIN )
-    # define _LE_TIME_MAX       ( INT64_MAX )
+    # define _LE_BYTE_MIN           ( 0 )
+    # define _LE_BYTE_MAX           ( UINT8_MAX )
+    # define _LE_SIZE_MIN           ( 0 )
+    # define _LE_SIZE_MAX           ( UINT64_MAX )
+    # define _LE_TIME_MIN           ( INT64_MIN )
+    # define _LE_TIME_MAX           ( INT64_MAX )
 
     /* define litteral suffix */
-    # define _LE_REAL_L(t)      ( t )
-    # define _LE_SIZE_L(t)      ( UINT64_C( t ) )
-    # define _LE_TIME_L(t)      ( INT64_C( t ) )
+    # define _LE_REAL_L(t)          ( t )
+    # define _LE_SIZE_L(t)          ( UINT64_C( t ) )
+    # define _LE_TIME_L(t)          ( INT64_C( t ) )
 
     /* define i/o specifiers */
-    # define _LE_BYTE_P         PRIu8
-    # define _LE_BYTE_S         SCNu8
-    # define _LE_CHAR_P         "u"
-    # define _LE_CHAR_S         "hhu"
-    # define _LE_ENUM_P         "i"
-    # define _LE_ENUM_S         "i"
-    # define _LE_SIZE_P         PRIu64
-    # define _LE_SIZE_S         SCNu64
-    # define _LE_REAL_P         ".14e"
-    # define _LE_REAL_S         "lf"
-    # define _LE_TIME_P         PRIi64
-    # define _LE_TIME_S         SCNi64
-    # define _LE_DATA_P         PRIu8
-    # define _LE_DATA_S         SCNu8
+    # define _LE_BYTE_P             PRIu8
+    # define _LE_BYTE_S             SCNu8
+    # define _LE_CHAR_P             "u"
+    # define _LE_CHAR_S             "hhu"
+    # define _LE_ENUM_P             "i"
+    # define _LE_ENUM_S             "i"
+    # define _LE_SIZE_P             PRIu64
+    # define _LE_SIZE_S             SCNu64
+    # define _LE_REAL_P             ".14e"
+    # define _LE_REAL_S             "lf"
+    # define _LE_TIME_P             PRIi64
+    # define _LE_TIME_S             SCNi64
+    # define _LE_DATA_P             PRIu8
+    # define _LE_DATA_S             SCNu8
 
     /* define type nulls */
-    # define _LE_BYTE_NULL      ( _LE_BYTE_MAX )
-    # define _LE_SIZE_NULL      ( _LE_SIZE_MAX )
-    # define _LE_TIME_NULL      ( _LE_TIME_MIN )
-    # define _LE_SOCK_NULL      ( -1 )
-    # define _LE_OFFS_NULL      ( ( _LE_SIZE_L( 1 ) << ( _LE_SIZE_L( 8 ) * _LE_USE_OFFSET ) ) - _LE_SIZE_L( 1 ) )
+    # define _LE_BYTE_NULL          ( _LE_BYTE_MAX )
+    # define _LE_SIZE_NULL          ( _LE_SIZE_MAX )
+    # define _LE_TIME_NULL          ( _LE_TIME_MIN )
+    # define _LE_SOCK_NULL          ( -1 )
+    # define _LE_OFFS_NULL          ( ( _LE_SIZE_L( 1 ) << ( _LE_SIZE_L( 8 ) * _LE_USE_OFFSET ) ) - _LE_SIZE_L( 1 ) )
 
     /* define errors */
-    # define LE_ERROR_SUCCESS   ( 0x0000 )
-    # define LE_ERROR_IO_ACCESS ( 0x0001 )
-    # define LE_ERROR_IO_READ   ( 0x0002 )
-    # define LE_ERROR_IO_WRITE  ( 0x0003 )
-    # define LE_ERROR_IO_SEEK   ( 0x0004 )
-    # define LE_ERROR_IO_SOCKET ( 0x0005 )
-    # define LE_ERROR_IO_BIND   ( 0x0006 )
-    # define LE_ERROR_IO_LISTEN ( 0x0007 )
-    # define LE_ERROR_MEMORY    ( 0x0008 )
-    # define LE_ERROR_DEPTH     ( 0x0009 )
-    # define LE_ERROR_TIME      ( 0x000a )
-    # define LE_ERROR_BASE      ( 0x000b )
-    # define LE_ERROR_AUTH      ( 0x000c )
-    # define LE_ERROR_FORMAT    ( 0x000d )
+    # define LE_ERROR_SUCCESS       ( 0x0000 )
+    # define LE_ERROR_IO_ACCESS     ( 0x0001 )
+    # define LE_ERROR_IO_READ       ( 0x0002 )
+    # define LE_ERROR_IO_WRITE      ( 0x0003 )
+    # define LE_ERROR_IO_SEEK       ( 0x0004 )
+    # define LE_ERROR_IO_SOCKET     ( 0x0005 )
+    # define LE_ERROR_IO_BIND       ( 0x0006 )
+    # define LE_ERROR_IO_LISTEN     ( 0x0007 )
+    # define LE_ERROR_MEMORY        ( 0x0008 )
+    # define LE_ERROR_DEPTH         ( 0x0009 )
+    # define LE_ERROR_TIME          ( 0x000a )
+    # define LE_ERROR_BASE          ( 0x000b )
+    # define LE_ERROR_AUTH          ( 0x000c )
+    # define LE_ERROR_FORMAT        ( 0x000d )
 
-    /* Define constants */
-    # define LE_PI              ( _LE_REAL_L ( 3.1415926535897932384626433832795029 ) )
-    # define LE_P2              ( LE_PI / _LE_REAL_L( 2.0 ) )
-    # define LE_2P              ( LE_PI * _LE_REAL_L( 2.0 ) )
+    /* define pseudo-constructor */
+    # define LE_ADDRIN_C            { AF_INET, 0         , { INADDR_ANY }, { 0 } }
+    # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
+
+    /* define pseudo-constructor */
+    # define LE_BUFFER_C            { 0 }
+
+    /* define buffer sizes */
+    # define LE_BUFFER_ADDR         ( _LE_USE_DEPTH + sizeof( le_size_t ) * 2 + sizeof( le_byte_t ) + sizeof( le_time_t ) * 2 )
+    # define LE_BUFFER_SYNC         ( _LE_USE_MTU )
+    # define LE_BUFFER_STRM         ( _LE_USE_MTU * 2 )
+
+    /* define server/client modes */
+    # define LE_MODE_NULL           ( 0x00 )
+    # define LE_MODE_IMOD           ( 0x01 )
+    # define LE_MODE_QMOD           ( 0x02 )
+    # define LE_MODE_CMOD           ( 0x06 )
+    # define LE_MODE_IATH           ( 0x81 )
+    # define LE_MODE_QATH           ( 0x82 )
+    # define LE_MODE_CATH           ( 0x86 )
+
+    /* define mathematical constants */
+    # define LE_PI                  ( 3.1415926535897932384626433832795029 )
+    # define LE_P2                  ( LE_PI / 2.0 )
+    # define LE_2P                  ( LE_PI * 2.0 )
 
 /*
     header - preprocessor macros
  */
 
     /* define absolute values */
-    # define le_time_abs(x)     ( ( le_time_t ) llabs( x ) )
+    # define le_time_abs(x)         ( ( le_time_t ) llabs( x ) )
 
     /* define string conversion */
-    # define le_time_str(x)     ( ( le_time_t ) strtoimax( x, NULL, 10 ) )
+    # define le_time_str(x)         ( ( le_time_t ) strtoimax( x, NULL, 10 ) )
 
 /*
     header - type definition

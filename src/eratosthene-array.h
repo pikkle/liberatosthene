@@ -44,7 +44,6 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-network.h"
 
 /*
     header - external includes

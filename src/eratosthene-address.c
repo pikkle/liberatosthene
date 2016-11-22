@@ -202,7 +202,7 @@
     le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket ) {
 
         /* socket i/o buffer variables */
-        le_byte_t le_data[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        le_byte_t le_data[LE_BUFFER_ADDR] = LE_BUFFER_C;
 
         /* buffer mapping variables */
         le_size_t * le_smap = ( le_size_t * ) ( le_data     );
@@ -212,7 +212,7 @@
         le_byte_t * le_gmap = ( le_byte_t * ) ( le_dmap + 1 );
 
         /* read buffer from socket - send message */
-        if ( read( le_socket, le_data, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_READ );
+        if ( read( le_socket, le_data, LE_BUFFER_ADDR ) != LE_BUFFER_ADDR ) return( LE_ERROR_IO_READ );
 
         /* read socket buffer */
         le_address->as_size  = le_smap[0];
@@ -234,7 +234,7 @@
     le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket ) {
 
         /* socket i/o buffer variables */
-        le_byte_t le_data[LE_NETWORK_SB_ADDR] = LE_NETWORK_C;
+        le_byte_t le_data[LE_BUFFER_ADDR] = LE_BUFFER_C;
 
         /* buffer mapping variables */
         le_size_t * le_smap = ( le_size_t * ) ( le_data     );
@@ -256,7 +256,7 @@
         memcpy( le_gmap, le_address->as_digit, _LE_USE_DEPTH );
 
         /* write buffer on socket - send message */
-        if ( write( le_socket, le_data, LE_NETWORK_SB_ADDR ) != LE_NETWORK_SB_ADDR ) return( LE_ERROR_IO_WRITE );
+        if ( write( le_socket, le_data, LE_BUFFER_ADDR ) != LE_BUFFER_ADDR ) return( LE_ERROR_IO_WRITE );
 
         /* send message */
         return( LE_ERROR_SUCCESS );
@@ -270,7 +270,7 @@
     le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string ) {
 
         /* conversion buffer variables */
-        le_char_t le_data[_LE_USE_DEPTH] = LE_NETWORK_C;
+        le_char_t le_data[_LE_USE_DEPTH] = LE_BUFFER_C;
 
         /* convert geodetic address */
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
@@ -288,7 +288,7 @@
     le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string ) {
 
         /* conversion buffer variables */
-        le_char_t le_data[_LE_USE_DEPTH] = LE_NETWORK_C;
+        le_char_t le_data[_LE_USE_DEPTH] = LE_BUFFER_C;
 
         /* decompose address string */
         sscanf( ( char * ) le_string, "/%" _LE_BYTE_S "/%" _LE_TIME_S ",%" _LE_TIME_S "/%[^/]/%" _LE_SIZE_S, & le_address->as_mode, le_address->as_times, le_address->as_times + 1, le_data, & le_address->as_depth );

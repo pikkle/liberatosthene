@@ -27,7 +27,7 @@
     le_sock_t le_client_create( le_char_t const * const le_ip, le_sock_t const le_port ) {
 
         /* address variables */
-        struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
+        struct sockaddr_in le_addr = LE_ADDRIN_C_PORT( le_port );
 
         /* returned value variables */
         le_sock_t le_socket = _LE_SOCK_NULL;
@@ -93,13 +93,13 @@
     le_enum_t le_client_switch( le_sock_t const le_socket ) {
 
         /* socket i/o buffer variables */
-        le_enum_t le_buffer = LE_NETWORK_MODE_NULL;
+        le_enum_t le_buffer = LE_MODE_NULL;
 
         /* check consistency */
-        if ( le_socket == _LE_SOCK_NULL ) return( LE_NETWORK_MODE_NULL );
+        if ( le_socket == _LE_SOCK_NULL ) return( LE_MODE_NULL );
 
         /* read handshake - send message */
-        if ( read( le_socket, & le_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_NETWORK_MODE_NULL );
+        if ( read( le_socket, & le_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_MODE_NULL );
 
         /* return received handshake */
         return( le_buffer );

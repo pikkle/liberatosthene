@@ -30,7 +30,7 @@
         le_server_t le_server = LE_SERVER_C;
 
         /* address variables */
-        struct sockaddr_in le_addr = LE_SOCKADDR_IN_C_PORT( le_port );
+        struct sockaddr_in le_addr = LE_ADDRIN_C_PORT( le_port );
 
         /* stream variables */
         FILE * le_stream = NULL;
@@ -172,7 +172,7 @@
         le_sock_t le_client = _LE_SOCK_NULL;
 
         /* client address variables */
-        struct sockaddr_in le_addr = LE_SOCKADDR_IN_C;
+        struct sockaddr_in le_addr = LE_ADDRIN_C;
 
         /* client address length variables */
         socklen_t le_len = sizeof( struct sockaddr_in );
@@ -187,10 +187,10 @@
             switch ( le_client_switch( le_client ) ) {
 
                 /* system injection */
-                case ( LE_NETWORK_MODE_IMOD ) : {
+                case ( LE_MODE_IMOD ) : {
 
                     /* send authorisation */
-                    if ( le_client_authorise( le_client, LE_NETWORK_MODE_IATH ) == LE_ERROR_SUCCESS ) {
+                    if ( le_client_authorise( le_client, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
 
                         /* connection to system injection */
                         le_server_inject_client( le_server, le_client );
@@ -200,10 +200,10 @@
                 } break;
 
                 /* system query */
-                case ( LE_NETWORK_MODE_QMOD ) : {
+                case ( LE_MODE_QMOD ) : {
 
                     /* send authorisation */
-                    if ( le_client_authorise( le_client, LE_NETWORK_MODE_QATH ) == LE_ERROR_SUCCESS ) {
+                    if ( le_client_authorise( le_client, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
 
                         /* connection to system query */
                         le_server_query_client( le_server, le_client );
@@ -213,10 +213,10 @@
                 } break;
 
                 /* system configuration */
-                case ( LE_NETWORK_MODE_CMOD ) : {
+                case ( LE_MODE_CMOD ) : {
 
                     /* send authorisation */
-                    if ( le_client_authorise( le_client, LE_NETWORK_MODE_CATH ) == LE_ERROR_SUCCESS ) {
+                    if ( le_client_authorise( le_client, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
 
                         /* connection to system */
                         le_server_config_client( le_server, le_client );
@@ -258,7 +258,7 @@
         le_size_t le_bridge = 0;
 
         /* socket i/o circular buffer variables */
-        le_byte_t le_buffer[LE_NETWORK_SB_STRM] = LE_NETWORK_C;
+        le_byte_t le_buffer[LE_BUFFER_STRM] = LE_BUFFER_C;
 
         /* read injection time - abort injection */
         if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) return;
