@@ -154,6 +154,18 @@
 
     /*! \brief accessor methods
      *
+     *  Returns the size, ie. the number of digits, of the class address stored
+     *  in the address structure.
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Address size
+     */
+
+    le_byte_t le_address_get_size( le_address_t const * const le_address );
+
+    /*! \brief accessor methods
+     *
      *  Returns the address times comparison mode
      *
      *  \param le_address Address structure
@@ -175,18 +187,6 @@
      */
 
     le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset );
-
-    /*! \brief accessor methods
-     *
-     *  Returns the size, ie. the number of digits, of the class address stored
-     *  in the address structure.
-     *
-     *  \param le_address Address structure
-     *
-     *  \return Address size
-     */
-
-    le_byte_t le_address_get_size( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -240,6 +240,16 @@
 
     /*! \brief mutator methods
      *
+     *  Set the size of the class address stored in the address structure.
+     *
+     *  \param le_address Address structure
+     *  \param le_size    Address size
+     */
+
+    le_void_t le_address_set_size( le_address_t * const le_address, le_byte_t const le_size );
+
+    /*! \brief mutator methods
+     *
      *  Set the address times comparison mode
      *
      *  \param le_address Address structure
@@ -258,16 +268,6 @@
      */
 
     le_void_t le_address_set_time( le_address_t * const le_address, le_size_t const le_offset, le_time_t const le_time );
-
-    /*! \brief mutator methods
-     *
-     *  Set the size of the class address stored in the address structure.
-     *
-     *  \param le_address Address structure
-     *  \param le_size    Address size
-     */
-
-    le_void_t le_address_set_size( le_address_t * const le_address, le_byte_t const le_size );
 
     /*! \brief mutator methods
      *

@@ -24,6 +24,13 @@
     source - accessor methods
  */
 
+    le_byte_t le_address_get_size( le_address_t const * const le_address ) {
+
+        /* return address size */
+        return( le_address->as_size );
+
+    }
+
     le_byte_t le_address_get_mode( le_address_t const * const le_address ) {
 
         /* return address mode */
@@ -35,13 +42,6 @@
 
         /* return address time */
         return( le_address->as_times[le_offset] );
-
-    }
-
-    le_byte_t le_address_get_size( le_address_t const * const le_address ) {
-
-        /* return address size */
-        return( le_address->as_size );
 
     }
 
@@ -132,6 +132,13 @@
     source - mutator methods
  */
 
+    le_void_t le_address_set_size( le_address_t * const le_address, le_byte_t const le_size ) {
+
+        /* assign address size */
+        le_address->as_size = le_size;
+
+    }
+
     le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode ) {
 
         /* assign address mode */
@@ -143,13 +150,6 @@
 
         /* assign address time */
         le_address->as_times[le_offset] = le_time;
-
-    }
-
-    le_void_t le_address_set_size( le_address_t * const le_address, le_byte_t const le_size ) {
-
-        /* assign address size */
-        le_address->as_size = le_size;
 
     }
 
@@ -293,15 +293,15 @@
         /* conversion buffer variables */
         le_char_t le_data[_LE_USE_DEPTH] = LE_BUFFER_C;
 
-        /* convert geodetic address */
-        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
+        /* convert address */
+        for ( le_size_t le_parse = 0; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* digit/character conversion */
             le_data[le_parse] = le_address->as_digit[le_parse] + _LE_USE_ASCII_ITOA;
 
         }
 
-        /* composing address string */
+        /* compose address string */
         sprintf( ( char * ) le_string, "/%" _LE_BYTE_P "/%" _LE_TIME_P ",%" _LE_TIME_P "/%s/%" _LE_BYTE_P, le_address->as_mode, le_address->as_times[0], le_address->as_times[1], le_data, le_address->as_span );
 
     }
@@ -314,11 +314,11 @@
         /* decompose address string */
         sscanf( ( char * ) le_string, "/%" _LE_BYTE_S "/%" _LE_TIME_S ",%" _LE_TIME_S "/%[^/]/%" _LE_BYTE_S, & le_address->as_mode, le_address->as_times, le_address->as_times + 1, le_data, & le_address->as_span );
 
-        /* compute geodetic address size */
+        /* compute address size */
         le_address->as_size = strlen( ( char * ) le_data );
 
-        /* convert geodetic address */
-        for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
+        /* convert address */
+        for ( le_size_t le_parse = 0; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* digit/character conversion */
             le_address->as_digit[le_parse] = le_data[le_parse] - _LE_USE_ASCII_ITOA;
