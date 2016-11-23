@@ -60,68 +60,36 @@
     # define LE_ARRAY_TF_C   { NULL }
     # define LE_ARRAY_CF_C   { NULL, NULL }
 
-    /* define array step (bytes) */
+    /* define array step */
     # define LE_ARRAY_STEP   ( 65356 )
 
-    /* Define array streaming mode */
-    # define LE_ARRAY_PURGE  ( 0 )
-    # define LE_ARRAY_STREAM ( 1 )
-
-    /* define array formats */
-    # define LE_ARRAY_SFD    ( 0x01 )
-    # define LE_ARRAY_RFD    ( 0x02 )
-    # define LE_ARRAY_CFD    ( 0x04 )
-
-    /* define array formats records length */
-    # define LE_ARRAY_SFL    ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 + sizeof( le_time_t ) )
-    # define LE_ARRAY_RFL    ( sizeof( le_real_t ) * 3 + sizeof( le_byte_t ) * 3 )
-    # define LE_ARRAY_CFL    ( sizeof( le_size_t ) + sizeof( le_time_t ) )
+    /* define array mapping sizes */
+    # define LE_ARRAY_SD     ( sizeof( le_real_t ) * 3 + sizeof( le_data_t ) * 3 )
+    # define LE_ARRAY_DT     ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
 /*
     header - preprocessor macros
  */
 
-    # define le_array_sf( a, o, s ) { \
-        ( s ).as_pose = ( le_real_t * ) ( ( a ) + ( o ) ); \
-        ( s ).as_time = ( le_time_t * ) ( ( s ).as_pose + 3 ); \
-        ( s ).as_data = ( le_data_t * ) ( ( s ).as_time + 1 ); \
-    }
+    /* access macro for sd-records - buffer */
+    # define le_array_sd_pose_( a, o ) ( ( le_real_t * ) ( a + o ) )
+    # define le_array_sd_data_( a, o ) ( ( le_data_t * ) ( a + o + sizeof( le_real_t ) * 3 ) )
 
-    # define le_array_rf( a, o, s ) { \
-        ( s ).as_pose = ( le_real_t * ) ( ( a ) + ( o ) ); \
-        ( s ).as_data = ( le_data_t * ) ( ( s ).as_pose + 3 ); \
-    }
+    /* access macro for sd-records - array */
+    # define le_array_sd_pose( a, o ) ( ( le_real_t * ) ( ( a )->ar_byte + o ) )
+    # define le_array_sd_data( a, o ) ( ( le_data_t * ) ( ( a )->ar_byte + o + sizeof( le_real_t ) * 3 ) )
 
-    # define le_array_cf( a, o, s ) { \
-        ( s ).as_size = ( le_size_t * ) ( ( a ) + ( o ) ); \
-        ( s ).as_time = ( le_time_t * ) ( ( s ).as_size + 1 ); \
-    }
+    /* access macro for dt-records - buffer */
+    # define le_array_dt_size_( a, o ) ( ( le_size_t * ) ( a + o ) )
+    # define le_array_dt_time_( a, o ) ( ( le_time_t * ) ( a + o + sizeof( le_size_t ) ) )
+
+    /* access macro for dt-records - array */
+    # define le_array_dt_size( a, o ) ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
+    # define le_array_dt_time( a, o ) ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
 
 /*
     header - type definition
  */
-
-    typedef struct {
-
-        le_real_t * as_pose;
-        le_time_t * as_time;
-        le_data_t * as_data;
-
-    } le_array_sf_t;
-
-    typedef struct {
-
-        le_real_t * as_pose;
-        le_data_t * as_data;
-
-    } le_array_rf_t;
-
-    typedef struct {
-
-        le_size_t * as_size;
-        le_time_t * as_time;
-
-    } le_array_cf_t;
 
 /*
     header - structures
@@ -140,7 +108,7 @@
      *  The structures comes with methods allowing array size management and
      *  socket i/o along with memory mapper structure initiated using macros.
      *
-     *  \var le_array_struct::as_virt
+     *  \var le_array_struct::ar_virt
      *  Memory size of the bytes array, in bytes
      *  \var le_array_struct::ar_size
      *  Data size of the bytes array, in bytes
@@ -150,7 +118,7 @@
 
     typedef struct le_array_struct {
 
-        le_size_t   as_virt;
+        le_size_t   ar_virt;
         le_size_t   ar_size;
         le_byte_t * ar_byte;
 
@@ -216,57 +184,13 @@
      *  \return Return _LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_array_set_memory( le_array_t * const le_array, le_size_t const le_length );
+    le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length );
 
-    /*! \brief mutator methods
-     *
-     *  This function is used as a complexe record insertion method in the bytes
-     *  array hold by the provided structure.
-     *
-     *  It expects a position 3-vector, a time value and a data 3-vector as
-     *  parameters and pack them in a bytes sequence that is inserted at the end
-     *  of the provided array.
-     *
-     *  \param le_array Array structure
-     *  \param le_pose  Position 3-vector
-     *  \param le_time  Time value
-     *  \param le_data  Data 3-vector
-     */
+    le_void_t le_array_map_std( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
-    le_void_t le_array_set_pushsf( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+    le_void_t le_array_map_sd( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
 
-    /*! \brief mutator methods
-     *
-     *  This function is used as a complexe record insertion method in the bytes
-     *  array hold by the provided structure.
-     *
-     *  It expects a position 3-vector and a data 3-vector as parameters and
-     *  pack them in a bytes sequence that is inserted at the end of the
-     *  provided array.
-     *
-     *  \param le_array Array structure
-     *  \param le_pose  Position 3-vector
-     *  \param le_data  Data 3-vector
-     */
-
-    le_void_t le_array_set_pushrf( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
-
-
-    /*! \brief mutator methods
-     *
-     *  This function is used as a complexe record insertion method in the bytes
-     *  array hold by the provided structure.
-     *
-     *  It expects a configuration size and a configuration time as parameters
-     *  and pack them in a bytes sequence that is inserted at the end of the
-        provided array.
-     *
-     *  \param le_array Array structure
-     *  \param le_size  Configuration size
-     *  \param le_time  Configuration time
-     */
-
-    le_void_t le_array_set_pushcf( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time );
+    le_void_t le_array_map_dt( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time );
 
     /*! \brief i/o methods
      *

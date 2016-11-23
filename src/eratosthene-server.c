@@ -240,9 +240,6 @@
 
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client ) {
 
-        /* array access variables */
-        le_array_rf_t le_access = LE_ARRAY_RF_C;
-
         /* time variables */
         le_time_t le_time = _LE_TIME_NULL;
 
@@ -270,21 +267,18 @@
             if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) > 0 ) {
 
                 /* compute available records */
-                if ( ( le_round = le_count - ( le_count % LE_ARRAY_RFL ) ) != 0 ) {
+                if ( ( le_round = le_count - ( le_count % LE_ARRAY_SD ) ) != 0 ) {
 
                     /* parsing received streaming bloc */
-                    for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_RFL ) {
-
-                        /* compute array access */
-                        le_array_rf( le_buffer, le_parse, le_access );
+                    for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_SD ) {
 
                         /* inject received element */
-                        le_server_inject( le_server, & le_access, le_time );
+                        le_server_inject( le_server, le_array_sd_pose_( le_buffer, le_parse ), le_time, le_array_sd_data_( le_buffer, le_parse ) );
 
                     }
 
                     /* compute bridge value */
-                    if ( ( le_bridge = le_count % LE_ARRAY_RFL ) != 0 ) {
+                    if ( ( le_bridge = le_count % LE_ARRAY_SD ) != 0 ) {
 
                         /* apply circular condition */
                         memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
@@ -301,7 +295,7 @@
 
     }
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_array_rf_t const * const le_access, le_time_t const le_time ) {
+    le_void_t le_server_inject( le_server_t * const le_server, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
 
         /* class variables */
         le_class_t le_class = LE_CLASS_C;
@@ -329,7 +323,7 @@
         }
 
         /* compute address index */
-        le_address_set_pose( & le_addr, le_access->as_pose );
+        le_address_set_pose( & le_addr, le_pose );
 
         /* injection process */
         do {
@@ -338,12 +332,12 @@
             if ( le_class_io_read( & le_class, le_offnex, le_server->sv_file[le_stream][le_parse] ) == LE_ERROR_SUCCESS ) {
 
                 /* inject element in class */
-                le_class_set_push( & le_class, le_access->as_data );
+                le_class_set_push( & le_class, le_data );
 
             } else {
 
                 /* initialise class with element */
-                le_class = le_class_create( le_access->as_data );
+                le_class = le_class_create( le_data );
 
             }
 
@@ -477,7 +471,7 @@
                 le_address_set_size( le_addr, le_size );
 
                 /* inject gathered element in array */
-                le_array_set_pushrf( le_array, le_pose, le_class_get_data( & le_class ) );
+                le_array_map_sd( le_array, le_pose, le_class_get_data( & le_class ) );
 
             } else {
 
@@ -532,7 +526,7 @@
         le_array_t le_array = LE_ARRAY_C;
 
         /* compose configuration array */
-        le_array_set_pushcf( & le_array, le_server->sv_scfg, le_server->sv_tcfg );
+        le_array_map_dt( & le_array, le_server->sv_scfg, le_server->sv_tcfg );
 
         /* return structure */
         return( le_array );

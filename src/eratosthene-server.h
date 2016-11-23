@@ -237,7 +237,8 @@
      *  \param le_time   Time value
      */
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_array_rf_t const * const le_access, le_time_t const le_time );
+    le_void_t le_server_inject( le_server_t * const le_server, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
+//    le_void_t le_server_inject( le_server_t * const le_server, le_array_rf_t const * const le_access, le_time_t const le_time );
 
     /*! \brief client methods - query
      *

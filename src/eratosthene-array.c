@@ -26,7 +26,7 @@
 
     le_array_t le_array_create( le_void_t ) {
 
-        /* returned structure variables */
+        /* created structure variables */
         le_array_t le_array = LE_ARRAY_C;
 
         /* return created structure */
@@ -36,14 +36,14 @@
 
     le_void_t le_array_delete( le_array_t * const le_array ) {
 
-        /* returned structure variables */
+        /* deleted structure variables */
         le_array_t le_delete = LE_ARRAY_C;
 
         /* check array state - memory unallocation */
         if ( le_array->ar_byte != NULL ) free( le_array->ar_byte );
 
         /* delete structure */
-        * le_array = le_delete;
+        ( * le_array ) = le_delete;
 
     }
 
@@ -69,95 +69,81 @@
     source - mutator methods
  */
 
-    le_enum_t le_array_set_memory( le_array_t * const le_array, le_size_t const le_length ) {
+    le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length ) {
 
-        /* memory swapping variables */
-        static le_byte_t * le_swap = NULL;
+        /* persistent memory variables */
+        le_byte_t * le_swap = NULL;
 
-        /* check memory reallocation necessities */
-        if ( ( le_array->ar_size += le_length ) >= le_array->as_virt ) {
+        /* check requirements - update array size */
+        if ( ( le_array->ar_size += le_length ) >= le_array->ar_virt ) {
 
-            /* update virtual size */
-            le_array->as_virt += LE_ARRAY_STEP;
+            /* update memory size */
+            le_array->ar_virt += LE_ARRAY_STEP;
 
-            /* array memory allocation */
-            if ( ( le_swap = ( le_byte_t * ) realloc( ( void * ) le_array->ar_byte, le_array->as_virt ) ) == NULL ) {
+            /* array memory (re)allocation */
+            if ( ( le_swap = ( le_byte_t * ) realloc( ( void * ) le_array->ar_byte, le_array->ar_virt ) ) == NULL ) {
 
-                /* cancel array size modification */
+                /* cancel array size update */
                 le_array->ar_size -= le_length;
 
                 /* send message */
-                return( LE_ERROR_MEMORY );
+                return( _LE_FALSE );
 
             }
 
-            /* swap memory pointers */
+            /* assign (re)allocated memory */
             le_array->ar_byte = le_swap;
 
         }
 
         /* send message */
-        return( LE_ERROR_SUCCESS );
+        return( _LE_TRUE );
 
     }
 
-    le_void_t le_array_set_pushsf( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data ) {
+/*
+    source - mapping methods
+ */
 
-        /* array mapping variables */
-        static le_array_sf_t le_map = LE_ARRAY_SF_C;
+    le_void_t le_array_map_sd( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data ) {
 
-        /* array memory management - abort */
-        if ( le_array_set_memory( le_array, LE_ARRAY_SFL ) != LE_ERROR_SUCCESS ) return;
+        /* array memory management - abort mapping */
+        if ( le_array_set( le_array, LE_ARRAY_SD ) != _LE_TRUE ) return;
 
-        /* array mapping computation */
-        le_array_sf( le_array->ar_byte, le_array->ar_size - LE_ARRAY_SFL, le_map );
+        /* mapping offset variables */
+        le_byte_t * le_offset = le_array->ar_byte + le_array->ar_size - LE_ARRAY_SD;
 
-        /* assign elements to array */
-        le_map.as_pose[0] = le_pose[0];
-        le_map.as_pose[1] = le_pose[1];
-        le_map.as_pose[2] = le_pose[2];
-        le_map.as_time[0] = le_time;
-        le_map.as_data[0] = le_data[0];
-        le_map.as_data[1] = le_data[1];
-        le_map.as_data[2] = le_data[2];
+        /* mapping of spatial components */
+        ( ( le_real_t * ) le_offset )[0] = le_pose[0];
+        ( ( le_real_t * ) le_offset )[1] = le_pose[1];
+        ( ( le_real_t * ) le_offset )[2] = le_pose[2];
 
-    }
+        /* update mapping offset */
+        le_offset += sizeof( le_real_t ) * 3;
 
-    le_void_t le_array_set_pushrf( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data ) {
-
-        /* array mapping variables */
-        static le_array_rf_t le_map = LE_ARRAY_RF_C;
-
-        /* array memory management - abort */
-        if ( le_array_set_memory( le_array, LE_ARRAY_RFL ) != LE_ERROR_SUCCESS ) return;
-
-        /* array mapping computation */
-        le_array_rf( le_array->ar_byte, le_array->ar_size - LE_ARRAY_RFL, le_map );
-
-        /* assign elements to array */
-        le_map.as_pose[0] = le_pose[0];
-        le_map.as_pose[1] = le_pose[1];
-        le_map.as_pose[2] = le_pose[2];
-        le_map.as_data[0] = le_data[0];
-        le_map.as_data[1] = le_data[1];
-        le_map.as_data[2] = le_data[2];
+        /* mapping of data components */
+        ( ( le_data_t * ) le_offset )[0] = le_data[0];
+        ( ( le_data_t * ) le_offset )[1] = le_data[1];
+        ( ( le_data_t * ) le_offset )[2] = le_data[2];
 
     }
 
-    le_void_t le_array_set_pushcf( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time ) {
+    le_void_t le_array_map_dt( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time ) {
 
-        /* array mapping variables */
-        static le_array_cf_t le_map = LE_ARRAY_CF_C;
+        /* array memory management - abort mapping */
+        if ( le_array_set( le_array, LE_ARRAY_DT ) != _LE_TRUE ) return;
 
-        /* array memory management - abort */
-        if ( le_array_set_memory( le_array, LE_ARRAY_CFL ) != LE_ERROR_SUCCESS ) return;
+        /* mapping offset variables */
+        le_byte_t * le_offset = le_array->ar_byte + le_array->ar_size - LE_ARRAY_DT;
 
-        /* array mapping computation */
-        le_array_cf( le_array->ar_byte, le_array->ar_size - LE_ARRAY_CFL, le_map );
+        /* mapping of size parameter */
+        ( ( le_size_t * ) le_offset )[0] = le_size;
 
-        /* assign elements to array */
-        le_map.as_size[0] = le_size;
-        le_map.as_time[0] = le_time;
+        /* update mapping offset */
+        le_offset += sizeof( le_size_t );
+
+        /* mapping of time parameter */
+        ( ( le_time_t * ) le_offset )[0] = le_time;
 
     }
 
@@ -175,13 +161,13 @@
         le_byte_t * le_hblock = le_array->ar_byte + le_size;
         le_byte_t * le_sblock = le_array->ar_byte + le_array->ar_size;
 
-        /* sending array over TCP/IP */
+        /* socket writing */
         while ( le_lblock < le_sblock ) {
 
             /* check block size - compute block size */
             if ( le_hblock > le_sblock ) le_size = le_sblock - le_lblock;
 
-            /* send block to socket - Send message */
+            /* send block to socket - send message */
             if ( write( le_socket, le_lblock, le_size ) != le_size ) return( LE_ERROR_IO_WRITE );
 
             /* update block pointers */
@@ -201,11 +187,11 @@
         le_size_t le_size = 0;
         le_size_t le_read = 0;
 
-        /* receiving array over TCP/IP */
+        /* socket reeading */
         while ( le_read < _LE_USE_RETRY ) {
 
             /* array memory allocation - Send message */
-            if ( le_array_set_memory( le_array, _LE_USE_MTU ) != LE_ERROR_SUCCESS ) return( LE_ERROR_MEMORY );
+            if ( le_array_set( le_array, _LE_USE_MTU ) != _LE_TRUE ) return( LE_ERROR_MEMORY );
 
             /* array size management */
             le_array->ar_size -= _LE_USE_MTU;
