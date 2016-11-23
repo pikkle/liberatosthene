@@ -58,15 +58,11 @@
     # define LE_CLASS_C             { { 0, 0, 0, 0 } }
     # define LE_CLASS_C_DATA(r,g,b) { { r, g, b, 0 } }
 
-    /* define class buffer size */
-    # define LE_CLASS_BUFFER        ( _LE_USE_OFFSET * _LE_USE_BASE + _LE_USE_DATA )
-
-    /* define class memory size */
-    # define LE_CLASS_MEMORY        ( LE_CLASS_BUFFER + sizeof( le_size_t ) - _LE_USE_OFFSET )
-
 /*
     header - preprocessor macros
  */
+
+    # define le_class_offset( c )   ( ( ( le_byte_t * ) ( c )->cs_data ) + _LE_USE_DATA )
 
 /*
     header - type definition
@@ -105,7 +101,7 @@
 
     typedef struct le_class_struct {
 
-        le_data_t cs_data[LE_CLASS_MEMORY];
+        le_data_t cs_data[LE_BUFFER_CLASS + ( sizeof( le_size_t ) - _LE_USE_OFFSET )];
 
     } le_class_t;
 

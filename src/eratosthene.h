@@ -196,7 +196,7 @@
 
     /* define buffer sizes */
     # define LE_BUFFER_TIME         ( _LE_USE_TIMES )
-    //# define LE_BUFFER_ADDR         ( _LE_USE_DEPTH + sizeof( le_size_t ) * 2 + sizeof( le_byte_t ) + sizeof( le_time_t ) * 2 )
+    # define LE_BUFFER_CLASS        ( _LE_USE_DATA + _LE_USE_OFFSET * _LE_USE_BASE )
     # define LE_BUFFER_ADDR         ( _LE_USE_DEPTH + sizeof( le_time_t ) * 2 + sizeof( le_byte_t ) * 3 )
     # define LE_BUFFER_SYNC         ( _LE_USE_MTU )
     # define LE_BUFFER_STRM         ( _LE_USE_MTU * 2 )

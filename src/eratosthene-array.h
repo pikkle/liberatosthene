@@ -54,18 +54,14 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_ARRAY_C      { 0, 0, NULL }
-    # define LE_ARRAY_SF_C   { NULL, NULL, NULL }
-    # define LE_ARRAY_RF_C   { NULL, NULL }
-    # define LE_ARRAY_TF_C   { NULL }
-    # define LE_ARRAY_CF_C   { NULL, NULL }
+    # define LE_ARRAY_C    { 0, 0, NULL }
 
     /* define array step */
-    # define LE_ARRAY_STEP   ( 65356 )
+    # define LE_ARRAY_STEP ( 65356 )
 
     /* define array mapping sizes */
-    # define LE_ARRAY_SD     ( sizeof( le_real_t ) * 3 + sizeof( le_data_t ) * 3 )
-    # define LE_ARRAY_DT     ( sizeof( le_size_t ) + sizeof( le_time_t ) )
+    # define LE_ARRAY_SD   ( sizeof( le_real_t ) * 3 + sizeof( le_data_t ) * 3 )
+    # define LE_ARRAY_DT   ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
 /*
     header - preprocessor macros
@@ -76,16 +72,16 @@
     # define le_array_sd_data_( a, o ) ( ( le_data_t * ) ( a + o + sizeof( le_real_t ) * 3 ) )
 
     /* access macro for sd-records - array */
-    # define le_array_sd_pose( a, o ) ( ( le_real_t * ) ( ( a )->ar_byte + o ) )
-    # define le_array_sd_data( a, o ) ( ( le_data_t * ) ( ( a )->ar_byte + o + sizeof( le_real_t ) * 3 ) )
+    # define le_array_sd_pose( a, o )  ( ( le_real_t * ) ( ( a )->ar_byte + o ) )
+    # define le_array_sd_data( a, o )  ( ( le_data_t * ) ( ( a )->ar_byte + o + sizeof( le_real_t ) * 3 ) )
 
     /* access macro for dt-records - buffer */
     # define le_array_dt_size_( a, o ) ( ( le_size_t * ) ( a + o ) )
     # define le_array_dt_time_( a, o ) ( ( le_time_t * ) ( a + o + sizeof( le_size_t ) ) )
 
     /* access macro for dt-records - array */
-    # define le_array_dt_size( a, o ) ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
-    # define le_array_dt_time( a, o ) ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
+    # define le_array_dt_size( a, o )  ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
+    # define le_array_dt_time( a, o )  ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
 
 /*
     header - type definition
