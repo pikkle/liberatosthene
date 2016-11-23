@@ -122,7 +122,7 @@
      *  \return Returns query mode on success, LE_NETWORK_MODE_NULL otherwise
      */
 
-    le_enum_t le_client_switch( le_sock_t const le_socket );
+    le_byte_t le_client_switch( le_sock_t const le_socket );
 
     /*! \brief handshake methods
      *

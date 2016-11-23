@@ -35,11 +35,21 @@
         /* check consistency - send message */
         if ( le_ip == NULL ) return( _LE_SOCK_NULL );
 
-        /* convert address - send message */
-        if ( inet_pton( AF_INET, ( char * ) le_ip, & le_addr.sin_addr ) <= 0 ) return( _LE_SOCK_NULL );
+        /* convert address */
+        if ( inet_pton( AF_INET, ( char * ) le_ip, & le_addr.sin_addr ) <= 0 ) {
 
-        /* create socket - send message */
-        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) return( _LE_SOCK_NULL );
+            /* send message */
+            return( _LE_SOCK_NULL );
+
+        }
+
+        /* create socket */
+        if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) {
+
+            /* send message */
+            return( _LE_SOCK_NULL );
+
+        }
 
         /* sockets connection */
         if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( le_addr ) ) == _LE_SOCK_NULL ) {
@@ -59,8 +69,13 @@
 
     le_sock_t le_client_delete( le_sock_t const le_socket ) {
 
-        /* check socket - close socket */
-        if ( le_socket != _LE_SOCK_NULL ) close( le_socket );
+        /* check socket */
+        if ( le_socket != _LE_SOCK_NULL ) {
+
+            /* close socket */
+            close( le_socket );
+
+        }
 
         /* return null socket */
         return( _LE_SOCK_NULL );
@@ -74,32 +89,41 @@
     le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t const le_mode ) {
 
         /* socket i/o buffer variables */
-        le_enum_t er_buffer = le_mode;
+        le_byte_t er_buffer = le_mode;
 
-        /* check consistency - send message */
-        if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
+        /* write handshake */
+        if ( write( le_socket, & er_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
 
-        /* write handshake - send message */
-        if ( write( le_socket, & er_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_WRITE );
+            /* send message */
+            return( LE_ERROR_IO_WRITE );
 
-        /* read handshake - send message */
-        if ( read ( le_socket, & er_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_READ );
+        }
+
+        /* read handshake */
+        if ( read ( le_socket, & er_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
+
+            /* send message */
+            return( LE_ERROR_IO_READ );
+
+        }
 
         /* check server authorisation - send message */
         return( ( er_buffer & 0x7f ) == le_mode ? LE_ERROR_SUCCESS : LE_ERROR_AUTH );
 
     }
 
-    le_enum_t le_client_switch( le_sock_t const le_socket ) {
+    le_byte_t le_client_switch( le_sock_t const le_socket ) {
 
         /* socket i/o buffer variables */
-        le_enum_t le_buffer = LE_MODE_NULL;
+        le_byte_t le_buffer = LE_MODE_NULL;
 
-        /* check consistency */
-        if ( le_socket == _LE_SOCK_NULL ) return( LE_MODE_NULL );
+        /* read handshake */
+        if ( read( le_socket, & le_buffer, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
 
-        /* read handshake - send message */
-        if ( read( le_socket, & le_buffer, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_MODE_NULL );
+            /* send message */
+            return( LE_MODE_NULL );
+
+        }
 
         /* return received handshake */
         return( le_buffer );
@@ -108,11 +132,13 @@
 
     le_enum_t le_client_authorise( le_sock_t const le_socket, le_enum_t const le_auth ) {
 
-        /* check consistency - send message */
-        if ( le_socket == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
+        /* write authorisation */
+        if ( write( le_socket, & le_auth, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
 
-        /* write authorisation - send message */
-        if ( write( le_socket, & le_auth, sizeof( le_enum_t ) ) != sizeof( le_enum_t ) ) return( LE_ERROR_IO_WRITE );
+            /* send message */
+            return( LE_ERROR_IO_WRITE );
+
+        }
 
         /* send message */
         return( LE_ERROR_SUCCESS );
@@ -131,8 +157,13 @@
         /* socket variables */
         le_sock_t le_socket = _LE_SOCK_NULL;
 
-        /* create connection to server - send message */
-        if ( ( le_socket = le_client_create( le_ip, le_port ) ) == _LE_SOCK_NULL ) return( LE_ERROR_IO_SOCKET );
+        /* create connection to server */
+        if ( ( le_socket = le_client_create( le_ip, le_port ) ) == _LE_SOCK_NULL ) {
+
+            /* send message */
+            return( LE_ERROR_IO_SOCKET );
+
+        }
 
         /* server/client handshake */
         if ( ( le_return = le_client_handshake( le_socket, le_mode ) ) == LE_ERROR_SUCCESS ) {
