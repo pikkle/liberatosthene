@@ -54,8 +54,8 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_ADDRESS_C           { 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 }, 0 }
-    # define LE_ADDRESS_C_SIZE( s ) { s, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 }, 0 }
+    # define LE_ADDRESS_C           { 0, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
+    # define LE_ADDRESS_C_SIZE( s ) { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
 
     /* define WGS84 ellipsoid parameters */
     # define LE_ADDRESS_WGSA        ( 6378137.0 )
@@ -140,11 +140,11 @@
 
     typedef struct le_address_struct {
 
-        le_size_t as_size;
+        le_byte_t as_size;
         le_byte_t as_mode;
-        le_time_t as_times[_LE_USE_TIMES];
-        le_byte_t as_digit[_LE_USE_DEPTH];
-        le_size_t as_depth;
+        le_byte_t as_span;
+        le_time_t as_times[LE_BUFFER_TIME];
+        le_byte_t as_digit[LE_BUFFER_ADDR];
 
     } le_address_t;
 
@@ -186,7 +186,7 @@
      *  \return Address size
      */
 
-    le_size_t le_address_get_size( le_address_t const * const le_address );
+    le_byte_t le_address_get_size( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -211,7 +211,7 @@
      *  \return Query additional depth
      */
 
-    le_size_t le_address_get_depth( le_address_t const * const le_address );
+    le_byte_t le_address_get_span( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *
@@ -267,7 +267,7 @@
      *  \param le_size    Address size
      */
 
-    le_void_t le_address_set_size( le_address_t * const le_address, le_size_t const le_size );
+    le_void_t le_address_set_size( le_address_t * const le_address, le_byte_t const le_size );
 
     /*! \brief mutator methods
      *
@@ -290,7 +290,7 @@
      *  \param le_depth   Address query additional depth
      */
 
-    le_void_t le_address_set_depth( le_address_t * const le_address, le_size_t const le_depth );
+    le_void_t le_address_set_span( le_address_t * const le_address, le_byte_t const le_span );
 
     /*! \brief mutator methods
      *
@@ -335,7 +335,7 @@
      *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_address_io_write( le_address_t const * const le_address, le_sock_t const le_socket );
+    le_enum_t le_address_io_write( le_address_t * const le_address, le_sock_t const le_socket );
 
     /*! \brief conversion methods
      *

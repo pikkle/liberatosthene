@@ -434,8 +434,8 @@
         le_class_t le_class = LE_CLASS_C;
 
         /* address variables */
-        le_size_t le_size  = le_address_get_size ( le_addr );
-        le_size_t le_depth = le_address_get_depth( le_addr );
+        le_size_t le_size = le_address_get_size( le_addr );
+        le_size_t le_span = le_address_get_span( le_addr );
 
         /* query initialisation */
         if ( le_parse == 0 ) {
@@ -444,7 +444,7 @@
             if ( le_stream == _LE_USE_STREAM ) return;
 
             /* check consistency */
-            if ( le_size + le_depth >= le_server->sv_scfg ) return;
+            if ( le_size + le_span >= le_server->sv_scfg ) return;
 
         }
 
@@ -462,7 +462,7 @@
 
                 }
 
-            } else if ( le_parse == le_size + le_depth ) {
+            } else if ( le_parse == le_size + le_span ) {
 
                 /* position array variables */
                 le_real_t le_pose[3] = { 0.0 };

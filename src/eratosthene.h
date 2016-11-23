@@ -111,7 +111,7 @@
     # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
     # error "offset range is [4,8] inter N"
     # endif
-    # define _LE_USE_DEPTH          ( 64 )
+    # define _LE_USE_DEPTH          ( 40 )
     # define _LE_USE_TIMES          ( 2 )
     # define _LE_USE_DATA           ( 4 )
     # define _LE_USE_MTU            ( 1280 )
@@ -195,7 +195,9 @@
     # define LE_BUFFER_C            { 0 }
 
     /* define buffer sizes */
-    # define LE_BUFFER_ADDR         ( _LE_USE_DEPTH + sizeof( le_size_t ) * 2 + sizeof( le_byte_t ) + sizeof( le_time_t ) * 2 )
+    # define LE_BUFFER_TIME         ( _LE_USE_TIMES )
+    //# define LE_BUFFER_ADDR         ( _LE_USE_DEPTH + sizeof( le_size_t ) * 2 + sizeof( le_byte_t ) + sizeof( le_time_t ) * 2 )
+    # define LE_BUFFER_ADDR         ( _LE_USE_DEPTH + sizeof( le_time_t ) * 2 + sizeof( le_byte_t ) * 3 )
     # define LE_BUFFER_SYNC         ( _LE_USE_MTU )
     # define LE_BUFFER_STRM         ( _LE_USE_MTU * 2 )
 
