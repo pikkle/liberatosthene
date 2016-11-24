@@ -24,10 +24,10 @@
     source - constructor/destructor methods
  */
 
-    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path ) {
+    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path, le_size_t const le_msc ) {
 
         /* created structure variables */
-        le_server_t le_server = LE_SERVER_C;
+        le_server_t le_server = LE_SERVER_C_MSC( le_msc );
 
         /* address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C_PORT( le_port );
@@ -114,7 +114,7 @@
             }
 
             /* enable socket listening */
-            if ( listen( le_server.sv_sock, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
+            if ( listen( le_server.sv_sock, le_msc ) == _LE_SOCK_NULL ) {
 
                 /* close socket */
                 close( le_server.sv_sock );
@@ -136,8 +136,13 @@
         /* deleted structure variables */
         le_server_t le_delete = LE_SERVER_C;
 
-        /* check socket - close socket */
-        if ( le_server->sv_sock != _LE_SOCK_NULL ) close( le_server->sv_sock );
+        /* check socket */
+        if ( le_server->sv_sock != _LE_SOCK_NULL ) {
+
+            /* close socket */
+            close( le_server->sv_sock );
+
+        }
 
         /* parsing stream stack */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_STREAM; le_parse ++ ) {
@@ -158,7 +163,7 @@
         }
 
         /* delete structure */
-        * le_server = le_delete;
+        ( * le_server ) = le_delete;
 
     }
 
@@ -177,58 +182,59 @@
         /* client address length variables */
         socklen_t le_len = sizeof( struct sockaddr_in );
 
-        /* check consistency */
-        if ( le_server->sv_sock == _LE_SOCK_NULL ) return;
+        for ( ; ; ) {
 
-        /* accept incoming connection */
-        for (;;) if ( ( le_client = accept( le_server->sv_sock, ( struct sockaddr * ) & le_addr, & le_len ) ) != _LE_SOCK_NULL ) {
+            /* waiting client connexions */
+            if ( ( le_client = accept( le_server->sv_sock, ( struct sockaddr * ) & le_addr, & le_len ) ) != _LE_SOCK_NULL ) {
 
-            /* switch on handshake */
-            switch ( le_client_switch( le_client ) ) {
+                /* switch on handshake */
+                switch ( le_client_switch( le_client ) ) {
 
-                /* system injection */
-                case ( LE_MODE_IMOD ) : {
+                    /* system injection */
+                    case ( LE_MODE_IMOD ) : {
 
-                    /* send authorisation */
-                    if ( le_client_authorise( le_client, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
+                        /* send authorisation */
+                        if ( le_client_authorise( le_client, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
 
-                        /* connection to system injection */
-                        le_server_inject_client( le_server, le_client );
+                            /* connection to system injection */
+                            le_server_inject_client( le_server, le_client );
 
-                    }
+                        }
 
-                } break;
+                    } break;
 
-                /* system query */
-                case ( LE_MODE_QMOD ) : {
+                    /* system query */
+                    case ( LE_MODE_QMOD ) : {
 
-                    /* send authorisation */
-                    if ( le_client_authorise( le_client, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
+                        /* send authorisation */
+                        if ( le_client_authorise( le_client, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
 
-                        /* connection to system query */
-                        le_server_query_client( le_server, le_client );
+                            /* connection to system query */
+                            le_server_query_client( le_server, le_client );
 
-                    }
+                        }
 
-                } break;
+                    } break;
 
-                /* system configuration */
-                case ( LE_MODE_CMOD ) : {
+                    /* system configuration */
+                    case ( LE_MODE_CMOD ) : {
 
-                    /* send authorisation */
-                    if ( le_client_authorise( le_client, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
+                        /* send authorisation */
+                        if ( le_client_authorise( le_client, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
 
-                        /* connection to system */
-                        le_server_config_client( le_server, le_client );
+                            /* connection to system */
+                            le_server_config_client( le_server, le_client );
 
-                    }
+                        }
 
-                } break;
+                    } break;
+
+                }
+
+                /* close client socket */
+                close( le_client );
 
             }
-
-            /* close client connection */
-            close( le_client );
 
         }
 
