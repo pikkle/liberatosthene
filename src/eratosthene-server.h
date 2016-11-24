@@ -58,12 +58,11 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C        { _LE_SOCK_NULL, { 0 }, 0, 0, 1, 0, { 0 }, { { 0 } }, LE_ERROR_SUCCESS }
-    # define LE_SERVER_C_MSC(m) { _LE_SOCK_NULL, { 0 }, 0, 0, m, 0, { 0 }, { { 0 } }, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, 0, { 0 }, { { 0 } }, LE_ERROR_SUCCESS }
 
     /* define stream mode */
-    # define LE_SERVER_READ     ( 0 )
-    # define LE_SERVER_WRITE    ( 1 )
+    # define LE_SERVER_READ  ( 0 )
+    # define LE_SERVER_WRITE ( 1 )
 
 /*
     header - preprocessor macros
@@ -184,7 +183,7 @@
      *  \return Returns created server structure
      */
 
-    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path, le_size_t const le_msc );
+    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path );
 
     /*! \brief constructor/destructor methods
      *

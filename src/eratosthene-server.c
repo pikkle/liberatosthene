@@ -24,10 +24,10 @@
     source - constructor/destructor methods
  */
 
-    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path, le_size_t const le_msc ) {
+    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path ) {
 
         /* created structure variables */
-        le_server_t le_server = LE_SERVER_C_MSC( le_msc );
+        le_server_t le_server = LE_SERVER_C;
 
         /* address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C_PORT( le_port );
@@ -114,7 +114,7 @@
             }
 
             /* enable socket listening */
-            if ( listen( le_server.sv_sock, le_msc ) == _LE_SOCK_NULL ) {
+            if ( listen( le_server.sv_sock, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
 
                 /* close socket */
                 close( le_server.sv_sock );
