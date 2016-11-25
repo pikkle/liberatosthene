@@ -52,7 +52,7 @@
         }
 
         /* sockets connection */
-        if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( le_addr ) ) == _LE_SOCK_NULL ) {
+        if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
 
             /* close socket */
             close( le_socket );

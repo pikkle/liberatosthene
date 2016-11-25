@@ -59,7 +59,7 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, 0, NULL, LE_ERROR_SUCCESS }
 
     /* define stream mode */
     # define LE_SERVER_READ  ( 0 )
@@ -152,12 +152,15 @@
 
     typedef struct le_server_struct {
     
-        le_sock_t sv_sock;
+        le_sock_t   sv_sock;
 
-        le_char_t sv_path[_LE_USE_STRING];
-        le_size_t sv_scfg;
-        le_time_t sv_tcfg;
-        le_size_t sv_ncfg;
+        le_char_t   sv_path[_LE_USE_STRING];
+        le_size_t   sv_scfg;
+        le_time_t   sv_tcfg;
+        le_size_t   sv_ncfg;
+
+        le_size_t   sv_size;
+        le_time_t * sv_time;
 
     le_enum_t _status; } le_server_t;
 
@@ -273,7 +276,7 @@
      *  \param le_stream Index to the opened streams
      */
 
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_stream_t const * const le_stream );
+    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_stream_t const * const le_stream );
 
     /*! \brief client methods - server configuration
      *
@@ -305,37 +308,13 @@
 
     le_array_t le_server_config( le_server_t const * const le_server );
 
-    /*! \brief i/o methods
-     *
-     *  This function is used to create the files descriptors (random binary) to
-     *  the storage structure. It uses the provided time value to search in the
-     *  storage structure the data associated to the given time. It checks in
-     *  the stream stack if the provided time has already opened streams and
-     *  create them otherwise. It then returns the streams stack index of the
-     *  created/found streams associated to the time value.
-     *
-     *  \param le_server Server structure
-     *  \param le_time   Time value
-     *
-     *  \return Returns the stack index of the created streams
-     */
+    le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    le_size_t le_server_io_stream( le_server_t * const le_server, le_time_t le_time, le_enum_t const le_mode );
+    le_enum_t le_server_set_tenum( le_server_t * const le_server );
 
-    /*! \brief i/o methods
-     *
-     *  Considering a provided index to the streams stack, the function flush
-     *  the file descriptors associated with to pointed stream. It is mainly
-     *  used during data injection to ensure proper writing of the incoming
-     *  data in the storage structure.
-     *
-     *  \param le_server Server structure
-     *  \param le_stream Streams stack index of the stream to flush
-     */
+    le_void_t le_server_set_tfree( le_server_t * const le_server );
 
-    le_void_t le_server_io_flush( le_server_t const * const le_server, le_size_t const le_stream );
-
-    le_void_t le_server_io_reduce( le_server_t const * const le_server, le_address_t * const le_addr );
+    le_void_t le_server_reduce( le_server_t const * const le_server, le_address_t * const le_addr, le_size_t const le_index );
 
 /*
     header - C/C++ compatibility
