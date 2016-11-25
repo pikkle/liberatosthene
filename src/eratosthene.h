@@ -115,7 +115,7 @@
     # define _LE_USE_TIMES          ( 2 )
     # define _LE_USE_DATA           ( 4 )
     # define _LE_USE_MTU            ( 1280 )
-    # define _LE_USE_PORT           ( 43427 )
+    # define _LE_USE_PORT           ( 11027 )
     # define _LE_USE_PENDING        ( 5 )
     # define _LE_USE_RETRY          ( 3 )
     # define _LE_USE_STRING         ( 256 )

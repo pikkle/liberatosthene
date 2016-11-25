@@ -48,6 +48,7 @@
     # include "eratosthene-array.h"
     # include "eratosthene-class.h"
     # include "eratosthene-client.h"
+    # include "eratosthene-stream.h"
 
 /*
     header - external includes
@@ -58,7 +59,7 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, 0, { 0 }, { { 0 } }, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, LE_ERROR_SUCCESS }
 
     /* define stream mode */
     # define LE_SERVER_READ  ( 0 )
@@ -158,10 +159,6 @@
         le_time_t sv_tcfg;
         le_size_t sv_ncfg;
 
-        le_size_t sv_push;
-        le_time_t sv_time[_LE_USE_STREAM];
-        le_file_t sv_file[_LE_USE_STREAM][_LE_USE_DEPTH];
-
     le_enum_t _status; } le_server_t;
 
 /*
@@ -238,8 +235,7 @@
      *  \param le_time   Time value
      */
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
-//    le_void_t le_server_inject( le_server_t * const le_server, le_array_rf_t const * const le_access, le_time_t const le_time );
+    le_void_t le_server_inject( le_server_t * const le_server, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data, le_stream_t const * const le_stream );
 
     /*! \brief client methods - query
      *
@@ -277,7 +273,7 @@
      *  \param le_stream Index to the opened streams
      */
 
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream );
+    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_stream_t const * const le_stream );
 
     /*! \brief client methods - server configuration
      *
