@@ -153,7 +153,7 @@
      *  \return Class representative color array
      */
 
-    le_data_t * le_class_get_data( le_class_t const * const le_class );
+    le_void_t le_class_get_data( le_class_t const * const le_class, le_data_t * const le_data );
 
     /*! \brief mutator methods
      *

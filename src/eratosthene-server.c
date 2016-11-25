@@ -217,40 +217,49 @@
         }
 
         /* create stream */
-        if ( ( le_stream = le_stream_create( le_server->sv_path, le_time, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_WRITE ) )._status == LE_ERROR_SUCCESS ) {
+        le_stream = le_stream_create( le_server->sv_path, le_time, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_WRITE );
 
-            /* injection streaming loop */
-            while ( le_retry < _LE_USE_RETRY ) {
+        /* check stream status */
+        if ( le_stream._status != LE_ERROR_SUCCESS ) {
 
-                /* read streaming bloc */
-                if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) > 0 ) {
+            /* delete stream */
+            le_stream_delete( & le_stream );
 
-                    /* compute available records */
-                    if ( ( le_round = le_count - ( le_count % LE_ARRAY_SD ) ) != 0 ) {
+            /* abort injection */
+            return;
 
-                        /* parsing received streaming bloc */
-                        for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_SD ) {
+        }
 
-                            /* inject received element */
-                            le_server_inject( le_server, le_array_sd_pose_( le_buffer, le_parse ), le_time, le_array_sd_data_( le_buffer, le_parse ), & le_stream );
+        /* injection streaming loop */
+        while ( le_retry < _LE_USE_RETRY ) {
 
-                        }
+            /* read streaming bloc */
+            if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) > 0 ) {
 
-                        /* compute bridge value */
-                        if ( ( le_bridge = le_count % LE_ARRAY_SD ) != 0 ) {
+                /* compute available records */
+                if ( ( le_round = le_count - ( le_count % LE_ARRAY_SD ) ) != 0 ) {
 
-                            /* apply circular condition */
-                            memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
+                    /* parsing received streaming bloc */
+                    for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_SD ) {
 
-                        }
+                        /* inject received element */
+                        le_server_inject( le_server, le_array_sd_pose_b( le_buffer, le_parse ), le_time, le_array_sd_data_b( le_buffer, le_parse ), & le_stream );
 
-                    /* update bridge value */
-                    } else { le_bridge = le_count; }
+                    }
 
-                /* update retry flag */
-                le_retry = 0; } else { le_retry ++; }
+                    /* compute bridge value */
+                    if ( ( le_bridge = le_count % LE_ARRAY_SD ) != 0 ) {
 
-            }
+                        /* apply circular condition */
+                        memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
+
+                    }
+
+                /* update bridge value */
+                } else { le_bridge = le_count; }
+
+            /* update retry flag */
+            le_retry = 0; } else { le_retry ++; }
 
         }
 
@@ -429,20 +438,20 @@
 
             } else if ( le_parse == ( le_size + le_span ) ) {
 
-                /* position array variables */
-                le_real_t le_pose[3] = { 0.0 };
+                /* pepare array for injection */
+                le_array_set( le_array, LE_ARRAY_SD );
 
                 /* correct address size */
                 le_address_set_size( le_addr, le_parse );
 
-                /* retreive class representative */
-                le_address_get_pose( le_addr, le_pose );
+                /* inject position coordinates */
+                le_address_get_pose( le_addr, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
+
+                /* inject color components */
+                le_class_get_data( & le_class, ( le_data_t * ) le_array_sd_data_al( le_array ) );
 
                 /* restore address size */
                 le_address_set_size( le_addr, le_size );
-
-                /* inject gathered element in array */
-                le_array_map_sd( le_array, le_pose, le_class_get_data( & le_class ) );
 
             } else {
 

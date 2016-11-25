@@ -68,20 +68,16 @@
  */
 
     /* access macro for sd-records - buffer */
-    # define le_array_sd_pose_( a, o ) ( ( le_real_t * ) ( a + o ) )
-    # define le_array_sd_data_( a, o ) ( ( le_data_t * ) ( a + o + sizeof( le_real_t ) * 3 ) )
+    # define le_array_sd_pose_b( a, o ) ( ( le_real_t * ) ( a + o ) )
+    # define le_array_sd_data_b( a, o ) ( ( le_data_t * ) ( a + o + sizeof( le_real_t ) * 3 ) )
 
-    /* access macro for sd-records - array */
-    # define le_array_sd_pose( a, o )  ( ( le_real_t * ) ( ( a )->ar_byte + o ) )
-    # define le_array_sd_data( a, o )  ( ( le_data_t * ) ( ( a )->ar_byte + o + sizeof( le_real_t ) * 3 ) )
-
-    /* access macro for dt-records - buffer */
-    # define le_array_dt_size_( a, o ) ( ( le_size_t * ) ( a + o ) )
-    # define le_array_dt_time_( a, o ) ( ( le_time_t * ) ( a + o + sizeof( le_size_t ) ) )
+    /* access macro for sd-records - array last */
+    # define le_array_sd_pose_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD )
+    # define le_array_sd_data_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD + sizeof( le_real_t ) * 3 )
 
     /* access macro for dt-records - array */
-    # define le_array_dt_size( a, o )  ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
-    # define le_array_dt_time( a, o )  ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
+    # define le_array_dt_size_a( a, o )  ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
+    # define le_array_dt_time_a( a, o )  ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
 
 /*
     header - type definition
