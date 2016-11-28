@@ -59,8 +59,11 @@
     /* define array step */
     # define LE_ARRAY_STEP ( 1073741824 )
 
-    /* define array mapping sizes */
-    # define LE_ARRAY_SD   ( sizeof( le_real_t ) * 3 + sizeof( le_data_t ) * 3 )
+    /* define array mapping sizes - sd */
+    # define LE_ARRAY_SD_1 ( sizeof( le_real_t ) * 3 )
+    # define LE_ARRAY_SD   ( sizeof( le_data_t ) * 3 + LE_ARRAY_SD_1 )
+
+    /* define array mapping sizes - dt */
     # define LE_ARRAY_DT   ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
 /*
