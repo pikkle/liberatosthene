@@ -101,6 +101,38 @@
 
     }
 
+    le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size ) {
+
+        /* persistent memory variables */
+        le_byte_t * le_swap = NULL;
+
+        /* check array virtual size */
+        if ( le_size > le_array->ar_virt ) {
+
+            /* update virtual size */
+            le_array->ar_virt = le_size;
+
+            /* array memory (re)allocation */
+            if ( ( le_swap = ( le_byte_t * ) realloc( ( void * ) le_array->ar_byte, le_array->ar_virt ) ) == NULL ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+            /* assign (ra)allocated memory */
+            le_array->ar_byte = le_swap;
+
+        }
+
+        /* update array size */
+        le_array->ar_size = le_size;
+
+        /* send message */
+        return( _LE_TRUE );
+
+    }
+
 /*
     source - mapping methods
  */

@@ -178,6 +178,8 @@
 
     le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length );
 
+    le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
+
     le_void_t le_array_map_std( le_array_t * const le_array, le_real_t const * const le_pose, le_time_t const le_time, le_data_t const * const le_data );
 
     le_void_t le_array_map_sd( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
