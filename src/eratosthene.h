@@ -108,7 +108,7 @@
     /* features configuration */
     # define _LE_USE_BASE           ( 8 )
     # define _LE_USE_OFFSET         ( 5 )
-    # if ( _LE_USE_OFFSET < 4 ) || ( _LE_USE_OFFSET > 8 )
+    # if ( _LE_USE_OFFSET < 4 ) ||  ( _LE_USE_OFFSET > 8 )
     # error "offset range is [4,8] inter N"
     # endif
     # define _LE_USE_DEPTH          ( 40 )
