@@ -83,7 +83,7 @@
  */
 
     /* base according to scale */
-    # define LE_ADDRESS_BASE( s ) ( ( ( s ) < LE_ADDRESS_SYNA ) ? ( _LE_USE_BASE >> 1 ) : ( ( ( s ) < LE_ADDRESS_SYNP ) ? ( _LE_USE_BASE >> 2 ) : _LE_USE_BASE ) )
+    # define LE_ADDRESS_BASE( s )   ( ( ( s ) < LE_ADDRESS_SYNA ) ? ( _LE_USE_BASE >> 1 ) : ( ( ( s ) < LE_ADDRESS_SYNP ) ? ( _LE_USE_BASE >> 2 ) : _LE_USE_BASE ) )
 
 /*
     header - type definition

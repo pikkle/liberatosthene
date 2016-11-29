@@ -54,17 +54,17 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_ARRAY_C    { 0, 0, NULL }
+    # define LE_ARRAY_C                 { 0, 0, NULL }
 
     /* define array step */
-    # define LE_ARRAY_STEP ( 1073741824 )
+    # define LE_ARRAY_STEP              ( 1073741824 )
 
     /* define array mapping sizes - sd */
-    # define LE_ARRAY_SD_1 ( sizeof( le_real_t ) * 3 )
-    # define LE_ARRAY_SD   ( sizeof( le_data_t ) * 3 + LE_ARRAY_SD_1 )
+    # define LE_ARRAY_SD_1              ( sizeof( le_real_t ) * 3 )
+    # define LE_ARRAY_SD                ( sizeof( le_data_t ) * 3 + LE_ARRAY_SD_1 )
 
     /* define array mapping sizes - dt */
-    # define LE_ARRAY_DT   ( sizeof( le_size_t ) + sizeof( le_time_t ) )
+    # define LE_ARRAY_DT                ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
 /*
     header - preprocessor macros
@@ -79,8 +79,8 @@
     # define le_array_sd_data_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD + sizeof( le_real_t ) * 3 )
 
     /* access macro for dt-records - array */
-    # define le_array_dt_size_a( a, o )  ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
-    # define le_array_dt_time_a( a, o )  ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
+    # define le_array_dt_size_a( a, o ) ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
+    # define le_array_dt_time_a( a, o ) ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
 
 /*
     header - type definition
