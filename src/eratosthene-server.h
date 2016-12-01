@@ -221,6 +221,7 @@
      *  \param le_client Server-side client socket descriptor
      */
 
+    //le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
 
     /*! \brief client methods - injection
@@ -238,7 +239,8 @@
      *  \param le_time   Time value
      */
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data, le_stream_t const * const le_stream );
+    //le_void_t le_server_inject( le_server_t * const le_server, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data, le_stream_t const * const le_stream );
+    le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_stream_t const * const le_stream );
 
     /*! \brief client methods - query
      *

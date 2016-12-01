@@ -191,90 +191,52 @@
         /* time variables */
         le_time_t le_time = _LE_TIME_NULL;
 
-        /* parsing variables */
-        le_size_t le_parse = 0;
-
-        /* socket i/o count variables */
-        le_size_t le_count = 0;
-        le_size_t le_round = 0;
-
-        /* socket i/o reading variables */
-        le_size_t le_retry  = 0;
-        le_size_t le_bridge = 0;
-
         /* stream variables */
         le_stream_t le_stream = LE_STREAM_C;
 
-        /* socket i/o circular buffer variables */
-        le_byte_t le_buffer[LE_BUFFER_STRM] = LE_BUFFER_C;
+        /* array variables */
+        le_array_t le_array = LE_ARRAY_C;
 
-        /* read injection time */
-        if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) {
-
-            /* abort injection */
-            return;
-
-        }
+        /* read time - abort injection */
+        if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) return;
 
         /* create stream */
-        le_stream = le_stream_create( le_server->sv_path, le_time, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_WRITE );
+        if ( ( le_stream = le_stream_create( le_server->sv_path, le_time, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_WRITE ) )._status == LE_ERROR_SUCCESS ) {
 
-        /* check stream status */
-        if ( le_stream._status != LE_ERROR_SUCCESS ) {
+            /* read client array */
+            le_array_io_read( & le_array, le_client );
 
-            /* delete stream */
-            le_stream_delete( & le_stream );
+            /* inject array */
+            le_server_inject( le_server, & le_array, & le_stream );
 
-            /* abort injection */
-            return;
+            /* delete array */
+            le_array_delete( & le_array );
 
-        }
+            /* delete server stack */
+            le_server_set_tfree( le_server );
 
-        /* injection streaming loop */
-        while ( le_retry < _LE_USE_RETRY ) {
-
-            /* read streaming bloc */
-            if ( ( le_count = read( le_client, le_buffer + le_bridge, _LE_USE_MTU ) + le_bridge ) > 0 ) {
-
-                /* compute available records */
-                if ( ( le_round = le_count - ( le_count % LE_ARRAY_SD ) ) != 0 ) {
-
-                    /* parsing received streaming bloc */
-                    for ( le_parse = 0; le_parse < le_round; le_parse += LE_ARRAY_SD ) {
-
-                        /* inject received element */
-                        le_server_inject( le_server, le_array_sd_pose_b( le_buffer, le_parse ), le_time, le_array_sd_data_b( le_buffer, le_parse ), & le_stream );
-
-                    }
-
-                    /* compute bridge value */
-                    if ( ( le_bridge = le_count % LE_ARRAY_SD ) != 0 ) {
-
-                        /* apply circular condition */
-                        memcpy( le_buffer, le_buffer + le_count - le_bridge, le_bridge );
-
-                    }
-
-                /* update bridge value */
-                } else { le_bridge = le_count; }
-
-            /* update retry flag */
-            le_retry = 0; } else { le_retry ++; }
+            /* create server stack */
+            le_server_set_tenum( le_server );
 
         }
 
         /* delete stream */
         le_stream_delete( & le_stream );
 
-        /* delete server stack */
-        le_server_set_tfree( le_server );
-
-        /* create server stack */
-        le_server_set_tenum( le_server );
-
     }
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_real_t * const le_pose, le_time_t const le_time, le_data_t const * const le_data, le_stream_t const * const le_stream ) {
+    le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_stream_t const * const le_stream ) {
+
+        /* array size variables */
+        le_size_t le_size = le_array_get_size( le_array );
+
+        /* depth variables */
+        le_size_t le_parse = 0;
+        le_size_t le_panex = 0;
+
+        /* offset variables */
+        le_size_t le_offset = 0;
+        le_size_t le_offnex = 0;
 
         /* class variables */
         le_class_t le_class = LE_CLASS_C;
@@ -282,55 +244,64 @@
         /* address variables */
         le_address_t le_addr = LE_ADDRESS_C_SIZE( le_server->sv_scfg - 1 );
 
-        /* depth variables */
-        le_size_t le_parse = 0;
-        le_size_t le_panex = 1;
+        /* check consistency - abort injection */
+        if ( le_size == 0 ) return;
 
-        /* offset variables */
-        le_size_t le_offset = 0;
-        le_size_t le_offnex = 0;
+        /* parsing array */
+        for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_SD ) {
 
-        /* compute address index */
-        le_address_set_pose( & le_addr, le_pose );
+            /* reset address digits */
+            le_address_set_pose( & le_addr, le_array_sd_pose_a( le_array, le_index ) );
 
-        /* injection process */
-        do {
+            /* reset depth variables */
+            le_parse = 0;
+            le_panex = 1;
 
-            /* class importation */
-            if ( le_class_io_read( & le_class, le_offnex, le_stream_get( le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
+            /* reset offset variables */
+            le_offset = 0;
+            le_offnex = 0;
 
-                /* inject element in class */
-                le_class_set_push( & le_class, le_data );
+            /* injection process */
+            do {
 
-            } else {
+                /* class importation */
+                if ( le_class_io_read( & le_class, le_offnex, le_stream_get( le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
 
-                /* initialise class with element */
-                le_class = le_class_create( le_data );
+                    /* inject element in class */
+                    le_class_set_push( & le_class, le_array_sd_data_a( le_array, le_index ) );
 
-            }
+                } else {
 
-            /* retrieve daughter offset */
-            le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_parse ) );
+                    /* initialise class with element */
+                    le_class = le_class_create( le_array_sd_data_a( le_array, le_index ) );
 
-            /* check daughter state */
-            if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_server->sv_scfg ) ) {
+                }
 
-                /* seek next scale eof */
-                fseek( le_stream_get( le_stream, le_panex ), 0, SEEK_END );
+                /* retrieve daughter offset */
+                le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_parse ) );
 
-                /* assign eof offset */
-                le_offset = ftell( le_stream_get( le_stream, le_panex ) );
+                /* check daughter state */
+                if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_server->sv_scfg ) ) {
 
-                /* insert offset in class */
-                le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
+                    /* seek next scale eof */
+                    fseek( le_stream_get( le_stream, le_panex ), 0, SEEK_END );
 
-            }
+                    /* assign eof offset */
+                    le_offset = ftell( le_stream_get( le_stream, le_panex ) );
 
-            /* class exportation */
-            le_class_io_write( & le_class, le_offnex, le_stream_get( le_stream, le_parse ) );
+                    /* insert offset in class */
+                    le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
 
-        /* injection process condition */
-        } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_server->sv_scfg );
+                }
+
+                /* class exportation */
+                le_class_io_write( & le_class, le_offnex, le_stream_get( le_stream, le_parse ) );
+
+            /* injection process condition */
+            } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_server->sv_scfg );
+            
+
+        }
 
     }
 
