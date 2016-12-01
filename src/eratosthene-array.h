@@ -70,10 +70,6 @@
     header - preprocessor macros
  */
 
-    /* access macro for sd-records - buffer */
-    # define le_array_sd_pose_b( a, o ) ( ( le_real_t * ) ( a + o ) )
-    # define le_array_sd_data_b( a, o ) ( ( le_data_t * ) ( a + o + sizeof( le_real_t ) * 3 ) )
-
     /* access macro for sd-records - array */
     # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_byte + o ) )
     # define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_byte + o + sizeof( le_real_t ) * 3 ) )

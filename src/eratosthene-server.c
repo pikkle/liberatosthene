@@ -44,7 +44,7 @@
         }
 
         /* create server stack */
-        if ( ( le_server._status = le_server_set_tenum( & le_server ) ) != LE_ERROR_SUCCESS ) {
+        if ( ( le_server._status = le_server_set_enum( & le_server ) ) != LE_ERROR_SUCCESS ) {
 
             /* send message */
             return( le_server );
@@ -93,8 +93,13 @@
         /* deleted structure variables */
         le_server_t le_delete = LE_SERVER_C;
 
-        /* delete time stack */
-        le_server_set_tfree( le_server );
+        /* check stack */
+        if ( le_server->sv_time != NULL ) {
+
+            /* release stack memory */
+            free( le_server->sv_time );
+
+        }
 
         /* check socket */
         if ( le_server->sv_sock != _LE_SOCK_NULL ) {
@@ -212,11 +217,8 @@
             /* delete array */
             le_array_delete( & le_array );
 
-            /* delete server stack */
-            le_server_set_tfree( le_server );
-
             /* create server stack */
-            le_server_set_tenum( le_server );
+            le_server_set_enum( le_server );
 
         }
 
@@ -553,7 +555,7 @@
 
     }
 
-    le_enum_t le_server_set_tenum( le_server_t * const le_server ) {
+    le_enum_t le_server_set_enum( le_server_t * const le_server ) {
 
         /* memory allocation swap variables */
         le_void_t * le_swap = NULL;
@@ -563,6 +565,17 @@
 
         /* entity structure variables */
         struct dirent * le_ent = NULL;
+
+        /* check stack state */
+        if ( le_server->sv_time != NULL ) {
+
+            /* release stack memory */
+            free( le_server->sv_time );
+
+            /* invalidate pointer */
+            le_server->sv_time = NULL;
+
+        }
 
         /* open directory */
         le_dir = opendir( ( char * ) le_server->sv_path );
@@ -596,21 +609,6 @@
 
         /* send message */
         return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_void_t le_server_set_tfree( le_server_t * const le_server ) {
-
-        /* check stack state */
-        if ( le_server->sv_time != NULL ) {
-
-            /* unallocate stack memory */
-            free( le_server->sv_time );
-
-        }
-
-        /* reset stack size */
-        le_server->sv_size = 0;
 
     }
 
