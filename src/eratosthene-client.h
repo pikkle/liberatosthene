@@ -136,7 +136,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_client_authorise( le_sock_t const le_socket, le_enum_t const le_auth );
+    le_enum_t le_client_authorise( le_sock_t const le_socket, le_byte_t const le_auth );
 
     /*! \brief common methods
      *

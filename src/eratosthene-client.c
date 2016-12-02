@@ -130,7 +130,7 @@
 
     }
 
-    le_enum_t le_client_authorise( le_sock_t const le_socket, le_enum_t const le_auth ) {
+    le_enum_t le_client_authorise( le_sock_t const le_socket, le_byte_t const le_auth ) {
 
         /* write authorisation */
         if ( write( le_socket, & le_auth, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
