@@ -107,8 +107,16 @@
 
         }
 
-        /* check server authorisation - send message */
-        return( ( er_buffer & 0x7f ) == le_mode ? LE_ERROR_SUCCESS : LE_ERROR_AUTH );
+        /* check results */
+        if (  ( er_buffer & 0x55 ) != le_mode ) {
+
+            /* send message */
+            return( LE_ERROR_AUTH );
+
+        }
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 

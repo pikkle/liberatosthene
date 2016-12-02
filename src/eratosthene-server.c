@@ -205,25 +205,35 @@
         /* read time - abort injection */
         if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) return;
 
-        /* create stream */
-        if ( ( le_stream = le_stream_create( le_server->sv_path, le_time, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_WRITE ) )._status == LE_ERROR_SUCCESS ) {
+        /* read client array */
+        le_array_io_read( & le_array, le_client );
 
-            /* read client array */
-            le_array_io_read( & le_array, le_client );
+        /* check array size - security check */
+        if ( le_array_get_size( & le_array ) >= LE_ARRAY_SD ) {
 
-            /* inject array */
-            le_server_inject( le_server, & le_array, & le_stream );
+            /* check array size - security check */
+            if ( ( le_array_get_size( & le_array ) % LE_ARRAY_SD ) == 0 ) {
 
-            /* delete array */
-            le_array_delete( & le_array );
+                /* create stream */
+                if ( ( le_stream = le_stream_create( le_server->sv_path, le_time, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_WRITE ) )._status == LE_ERROR_SUCCESS ) {
 
-            /* create server stack */
-            le_server_set_enum( le_server );
+                    /* inject array */
+                    le_server_inject( le_server, & le_array, & le_stream );
+
+                    /* create server stack */
+                    le_server_set_enum( le_server );
+
+                }
+
+                /* delete stream */
+                le_stream_delete( & le_stream );
+
+            }
 
         }
 
-        /* delete stream */
-        le_stream_delete( & le_stream );
+        /* delete array */
+        le_array_delete( & le_array );
 
     }
 
@@ -333,7 +343,7 @@
         le_size = le_address_get_size( & le_addr );
         le_span = le_address_get_span( & le_addr );
 
-        /* check query consistency */
+        /* check consistency */
         if ( ( le_size + le_span ) >= le_server->sv_scfg ) {
 
             /* abort query */
