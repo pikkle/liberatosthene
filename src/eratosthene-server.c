@@ -567,6 +567,12 @@
 
     le_enum_t le_server_set_enum( le_server_t * const le_server ) {
 
+        /* parsing variables */
+        le_diff_t le_parse = 0;
+
+        /* time variables */
+        le_time_t le_time = _LE_TIME_NULL;
+
         /* memory allocation swap variables */
         le_void_t * le_swap = NULL;
 
@@ -607,8 +613,33 @@
                 /* assign memory allocation */
                 le_server->sv_time = ( le_time_t * ) le_swap;
 
-                /* convert and assign time - update stack size */
-                le_server->sv_time[le_server->sv_size ++] = le_time_str( le_ent->d_name );
+                /* convert directory name to time */
+                le_time = le_time_str( le_ent->d_name );
+
+                /* reset insertion search */
+                le_parse = 0;
+
+                /* search insertion position */
+                while ( le_parse < le_server->sv_size ) {
+
+                    /* check position */
+                    if ( le_server->sv_time[le_parse] <= le_time ) le_parse ++; else break;
+
+                }
+
+                /* shift array elements */
+                for ( le_diff_t le_shift = le_server->sv_size; le_shift > le_parse; le_shift -- ) {
+
+                    /* shift element */
+                    le_server->sv_time[le_shift] = le_server->sv_time[le_shift - 1];
+
+                }
+
+                /* ordered insertion */
+                le_server->sv_time[le_parse] = le_time;
+
+                /* update stack size */
+                le_server->sv_size ++;
 
             }
 
@@ -625,6 +656,123 @@
 /*
     source - specialised methods
  */
+
+    le_void_t le_server_reduce_beta( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_index ) {
+
+        /* address time variables */
+        le_time_t le_atime = le_address_get_time( le_addr, le_index ) / le_server->sv_tcfg;
+
+        /* address span variables */
+        le_size_t le_span = le_address_get_span( le_addr );
+
+        /* teme variables */
+        le_time_t le_try = _LE_TIME_NULL;
+        le_time_t le_red = _LE_TIME_NULL;
+
+        /* index variables */
+        le_diff_t le_lindex = 0;
+        le_diff_t le_uindex = 0;
+
+        /* array variables */
+        le_array_t le_array = LE_ARRAY_C;
+
+        /* stream variables */
+        le_stream_t le_stream = LE_STREAM_C;
+
+        /* reset address span */
+        le_address_set_span( le_addr, 0 );
+
+        /* search intervalle of address time */
+        while ( ( le_lindex < le_server->sv_size ) && ( le_atime >= le_server->sv_time[le_lindex] ) ) le_lindex ++;
+
+        /* create boundaries of address time intervalle */
+        le_uindex = le_lindex;
+        le_lindex = le_lindex - 1;
+
+        /* search local-reduced time */
+        while ( ( le_lindex >= 0 ) || ( le_uindex < le_server->sv_size ) ) {
+
+            /* check intervalle boundary */
+            if ( le_lindex >= 0 ) {
+
+                /* check intervalle boundary */
+                if ( le_uindex < le_server->sv_size ) {
+
+                    /* compute proximal time */
+                    if ( le_time_abs( le_server->sv_time[le_lindex] - le_atime ) < le_time_abs( le_server->sv_time[le_uindex] - le_atime ) ) {
+
+                        /* assign reduced time candidate */
+                        le_try = le_server->sv_time[le_lindex] * le_server->sv_tcfg;
+
+                        /* update search */
+                        le_lindex --;
+
+                    } else {
+
+                        /* assign reduced time candidate */
+                        le_try = le_server->sv_time[le_uindex] * le_server->sv_tcfg;
+
+                        /* update search */
+                        le_uindex ++;
+
+                    }
+
+                } else {
+
+                    /* assign reduced time candidate */
+                    le_try = le_server->sv_time[le_lindex] * le_server->sv_tcfg;
+
+                    /* update search */
+                    le_lindex --;
+
+                }
+
+            } else {
+
+                /* assign reduced time candidate */
+                le_try = le_server->sv_time[le_uindex] * le_server->sv_tcfg;
+
+                /* update search */
+                le_uindex ++;
+
+            }
+
+            /* assign address candidate */
+            le_address_set_time( le_addr, le_index, le_try );
+
+            /* create stream */
+            le_stream = le_stream_create( le_server->sv_path, le_try, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_READ );
+
+            /* perform time reduction query */
+            le_server_query( le_server, le_addr, le_address_get_size( le_addr ), 0, & le_array, 0, 0, & le_stream );
+
+            /* delete stream */
+            le_stream_delete( & le_stream );
+
+            /* check time reduction query */
+            if ( le_array_get_size( & le_array ) > 0 ) {
+
+                /* assign reduced time */
+                le_red = le_try;
+
+                /* cancel search */
+                le_lindex = -1;
+                le_uindex = le_server->sv_size;
+
+            }
+
+            /* clear array */
+            le_array_set_size( & le_array, 0 );
+
+        }
+
+        /* retore address span */
+        le_address_set_span( le_addr, le_span );
+
+        /* assign address local-reduced time */
+        le_address_set_time( le_addr, le_index, le_red );
+
+    }
 
     le_void_t le_server_reduce( le_server_t const * const le_server, le_address_t * const le_addr, le_size_t const le_index ) {
 
@@ -653,7 +801,7 @@
         }
 
         /* assign address time */
-        le_address_set_time( le_addr, le_index, le_rtime * le_server->sv_tcfg );
+        le_address_set_time( le_addr, le_index, ( le_rtime != _LE_TIME_NULL ) ? le_rtime * le_server->sv_tcfg : le_rtime );
 
     }
 

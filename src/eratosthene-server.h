@@ -312,6 +312,8 @@
 
     le_enum_t le_server_set_enum( le_server_t * const le_server );
 
+    le_void_t le_server_reduce_beta( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_index );
+
     le_void_t le_server_reduce( le_server_t const * const le_server, le_address_t * const le_addr, le_size_t const le_index );
 
 /*
