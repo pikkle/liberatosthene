@@ -44,10 +44,18 @@
         }
 
         /* create server stack */
-        if ( ( le_server._status = le_server_set_enum( & le_server ) ) != LE_ERROR_SUCCESS ) {
+        //if ( ( le_server._status = le_server_set_enum( & le_server ) ) != LE_ERROR_SUCCESS ) {
 
             /* send message */
-            return( le_server );
+        //    return( le_server );
+
+        //}
+
+        /* create server stream */
+        if ( ( le_server.sv_stream = le_stream_create( le_path, le_server.sv_scfg, le_server.sv_tcfg ) )._status != LE_ERROR_SUCCESS ) {
+
+            /* send message */
+            return( le_server._status = le_server.sv_stream._status, le_server );
 
         }
 
@@ -94,12 +102,12 @@
         le_server_t le_delete = LE_SERVER_C;
 
         /* check stack */
-        if ( le_server->sv_time != NULL ) {
+        //if ( le_server->sv_time != NULL ) {
 
             /* release stack memory */
-            free( le_server->sv_time );
+        //    free( le_server->sv_time );
 
-        }
+        //}
 
         /* check socket */
         if ( le_server->sv_sock != _LE_SOCK_NULL ) {
@@ -108,6 +116,9 @@
             close( le_server->sv_sock );
 
         }
+
+        /* delete server stream */
+        le_stream_delete( & le_server->sv_stream );
 
         /* delete structure */
         ( * le_server ) = le_delete;
@@ -197,7 +208,8 @@
         le_time_t le_time = _LE_TIME_NULL;
 
         /* stream variables */
-        le_stream_t le_stream = LE_STREAM_C;
+        //le_stream_t le_stream = LE_STREAM_C;
+        le_size_t le_stream = _LE_SIZE_NULL;
 
         /* array variables */
         le_array_t le_array = LE_ARRAY_C;
@@ -215,18 +227,20 @@
             if ( ( le_array_get_size( & le_array ) % LE_ARRAY_SD ) == 0 ) {
 
                 /* create stream */
-                if ( ( le_stream = le_stream_create( le_server->sv_path, le_time, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_WRITE ) )._status == LE_ERROR_SUCCESS ) {
+                //if ( ( le_stream = le_stream_create( le_server->sv_path, le_time, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_WRITE ) )._status == LE_ERROR_SUCCESS ) {
+                if ( ( le_stream = le_stream_get( & le_server->sv_stream, le_time, LE_STREAM_WRITE ) ) != _LE_SIZE_NULL ) {
 
                     /* inject array */
-                    le_server_inject( le_server, & le_array, & le_stream );
+                    //le_server_inject( le_server, & le_array, & le_stream );
+                    le_server_inject( le_server, & le_array, le_stream );
 
                     /* create server stack */
-                    le_server_set_enum( le_server );
+                    //le_server_set_enum( le_server );
 
                 }
 
                 /* delete stream */
-                le_stream_delete( & le_stream );
+                //le_stream_delete( & le_stream );
 
             }
 
@@ -237,7 +251,8 @@
 
     }
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_stream_t const * const le_stream ) {
+    //le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_stream_t const * const le_stream ) {
+    le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_size_t const le_stream ) {
 
         /* array size variables */
         le_size_t le_size = le_array_get_size( le_array );
@@ -277,7 +292,8 @@
             do {
 
                 /* class importation */
-                if ( le_class_io_read( & le_class, le_offnex, le_stream_get( le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
+                //if ( le_class_io_read( & le_class, le_offnex, le_stream_get( le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
+                if ( le_class_io_read( & le_class, le_offnex, le_stream_get_handle( & le_server->sv_stream, le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
 
                     /* inject element in class */
                     le_class_set_push( & le_class, le_array_sd_data_a( le_array, le_index ) );
@@ -296,10 +312,12 @@
                 if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_server->sv_scfg ) ) {
 
                     /* seek next scale eof */
-                    fseek( le_stream_get( le_stream, le_panex ), 0, SEEK_END );
+                    //fseek( le_stream_get( le_stream, le_panex ), 0, SEEK_END );
+                    fseek( le_stream_get_handle( & le_server->sv_stream, le_stream, le_panex ), 0, SEEK_END );
 
                     /* assign eof offset */
-                    le_offset = ftell( le_stream_get( le_stream, le_panex ) );
+                    //le_offset = ftell( le_stream_get( le_stream, le_panex ) );
+                    le_offset = ftell( le_stream_get_handle( & le_server->sv_stream, le_stream, le_panex ) );
 
                     /* insert offset in class */
                     le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
@@ -307,7 +325,8 @@
                 }
 
                 /* class exportation */
-                le_class_io_write( & le_class, le_offnex, le_stream_get( le_stream, le_parse ) );
+                //le_class_io_write( & le_class, le_offnex, le_stream_get( le_stream, le_parse ) );
+                le_class_io_write( & le_class, le_offnex, le_stream_get_handle( & le_server->sv_stream, le_stream, le_parse ) );
 
             /* injection process condition */
             } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_server->sv_scfg );
@@ -330,7 +349,8 @@
         le_address_t le_addr = LE_ADDRESS_C;
 
         /* stream variables */
-        le_stream_t le_stream = LE_STREAM_C;
+        //le_stream_t le_stream = LE_STREAM_C;
+        le_size_t le_stream = _LE_SIZE_NULL;
 
         /* address variables */
         le_size_t le_size = 0;
@@ -355,18 +375,21 @@
         if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
 
             /* reduce address time */
-            le_server_reduce( le_server, & le_addr, 0 );
+            //le_server_reduce( le_server, & le_addr, 0 );
+            le_address_set_time( & le_addr, 0, le_stream_get_reduced( & le_server->sv_stream, le_address_get_time( & le_addr, 0 ) ) );
 
             /* create stream */
-            if ( ( le_stream = le_stream_create( le_server->sv_path, le_address_get_time( & le_addr, 0 ), le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_READ ) )._status == LE_ERROR_SUCCESS ) {
+            //if ( ( le_stream = le_stream_create( le_server->sv_path, le_address_get_time( & le_addr, 0 ), le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_READ ) )._status == LE_ERROR_SUCCESS ) {
+            if ( ( le_stream = le_stream_get( & le_server->sv_stream, le_address_get_time( & le_addr, 0 ), LE_STREAM_READ ) ) != _LE_SIZE_NULL ) {
 
                 /* send system query */
-                le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, & le_stream );
+                //le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, & le_stream );
+                le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, le_stream );
 
             }
 
             /* delete stream */
-            le_stream_delete( & le_stream );
+            //le_stream_delete( & le_stream );
 
         }
 
@@ -374,18 +397,21 @@
         if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
 
             /* reduce address time */
-            le_server_reduce( le_server, & le_addr, 1 );
+            //le_server_reduce( le_server, & le_addr, 1 );
+            le_address_set_time( & le_addr, 1, le_stream_get_reduced( & le_server->sv_stream, le_address_get_time( & le_addr, 1 ) ) );
 
             /* create stream */
-            if ( ( le_stream = le_stream_create( le_server->sv_path, le_address_get_time( & le_addr, 1 ), le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_READ ) )._status == LE_ERROR_SUCCESS ) {
+            //if ( ( le_stream = le_stream_create( le_server->sv_path, le_address_get_time( & le_addr, 1 ), le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_READ ) )._status == LE_ERROR_SUCCESS ) {
+            if ( ( le_stream = le_stream_get( & le_server->sv_stream, le_address_get_time( & le_addr, 1 ), LE_STREAM_READ ) ) != _LE_SIZE_NULL ) {
 
                 /* send system query */
-                le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, & le_stream );
+                //le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, & le_stream );
+                le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, le_stream );
 
             }
 
             /* delete stream */
-            le_stream_delete( & le_stream );
+            //le_stream_delete( & le_stream );
 
         }
 
@@ -400,13 +426,15 @@
 
     }
 
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_stream_t const * const le_stream ) {
+    //le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_stream_t const * const le_stream ) {
+    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream ) {
 
         /* class variables */
         le_class_t le_class = LE_CLASS_C;
 
         /* read class */
-        if ( le_class_io_read( & le_class, le_offset, le_stream_get( le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
+        //if ( le_class_io_read( & le_class, le_offset, le_stream_get( le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
+        if ( le_class_io_read( & le_class, le_offset, le_stream_get_handle( & le_server->sv_stream, le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
 
             /* query process mode */
             if ( le_parse < le_size ) {
@@ -562,246 +590,6 @@
 
         /* send message */
         return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_enum_t le_server_set_enum( le_server_t * const le_server ) {
-
-        /* parsing variables */
-        le_diff_t le_parse = 0;
-
-        /* time variables */
-        le_time_t le_time = _LE_TIME_NULL;
-
-        /* memory allocation swap variables */
-        le_void_t * le_swap = NULL;
-
-        /* directory structure variables */
-        DIR * le_dir = NULL;
-
-        /* entity structure variables */
-        struct dirent * le_ent = NULL;
-
-        /* check stack state */
-        if ( le_server->sv_time != NULL ) {
-
-            /* release stack memory */
-            free( le_server->sv_time );
-
-            /* invalidate pointer */
-            le_server->sv_time = NULL;
-
-        }
-
-        /* open directory */
-        le_dir = opendir( ( char * ) le_server->sv_path );
-
-        /* enumerate directory entities */
-        while ( ( le_ent = readdir( le_dir ) ) != NULL ) {
-
-            /* select storage directory */
-            if ( ( le_ent->d_type == DT_DIR ) && ( le_ent->d_name[0] != '.' ) ) {
-
-                /* reallocate memory */
-                if ( ( le_swap = realloc( le_server->sv_time, ( le_server->sv_size + 1 ) * sizeof( le_time_t ) ) ) == NULL ) {
-
-                    /* send message */
-                    return( LE_ERROR_MEMORY );
-
-                }
-
-                /* assign memory allocation */
-                le_server->sv_time = ( le_time_t * ) le_swap;
-
-                /* convert directory name to time */
-                le_time = le_time_str( le_ent->d_name );
-
-                /* reset insertion search */
-                le_parse = 0;
-
-                /* search insertion position */
-                while ( le_parse < le_server->sv_size ) {
-
-                    /* check position */
-                    if ( le_server->sv_time[le_parse] <= le_time ) le_parse ++; else break;
-
-                }
-
-                /* shift array elements */
-                for ( le_diff_t le_shift = le_server->sv_size; le_shift > le_parse; le_shift -- ) {
-
-                    /* shift element */
-                    le_server->sv_time[le_shift] = le_server->sv_time[le_shift - 1];
-
-                }
-
-                /* ordered insertion */
-                le_server->sv_time[le_parse] = le_time;
-
-                /* update stack size */
-                le_server->sv_size ++;
-
-            }
-
-        }
-
-        /* close directory */
-        closedir( le_dir );
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-/*
-    source - specialised methods
- */
-
-    le_void_t le_server_reduce_beta( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_index ) {
-
-        /* address time variables */
-        le_time_t le_atime = le_address_get_time( le_addr, le_index ) / le_server->sv_tcfg;
-
-        /* address span variables */
-        le_size_t le_span = le_address_get_span( le_addr );
-
-        /* teme variables */
-        le_time_t le_try = _LE_TIME_NULL;
-        le_time_t le_red = _LE_TIME_NULL;
-
-        /* index variables */
-        le_diff_t le_lindex = 0;
-        le_diff_t le_uindex = 0;
-
-        /* array variables */
-        le_array_t le_array = LE_ARRAY_C;
-
-        /* stream variables */
-        le_stream_t le_stream = LE_STREAM_C;
-
-        /* reset address span */
-        le_address_set_span( le_addr, 0 );
-
-        /* search intervalle of address time */
-        while ( ( le_lindex < le_server->sv_size ) && ( le_atime >= le_server->sv_time[le_lindex] ) ) le_lindex ++;
-
-        /* create boundaries of address time intervalle */
-        le_uindex = le_lindex;
-        le_lindex = le_lindex - 1;
-
-        /* search local-reduced time */
-        while ( ( le_lindex >= 0 ) || ( le_uindex < le_server->sv_size ) ) {
-
-            /* check intervalle boundary */
-            if ( le_lindex >= 0 ) {
-
-                /* check intervalle boundary */
-                if ( le_uindex < le_server->sv_size ) {
-
-                    /* compute proximal time */
-                    if ( le_time_abs( le_server->sv_time[le_lindex] - le_atime ) < le_time_abs( le_server->sv_time[le_uindex] - le_atime ) ) {
-
-                        /* assign reduced time candidate */
-                        le_try = le_server->sv_time[le_lindex] * le_server->sv_tcfg;
-
-                        /* update search */
-                        le_lindex --;
-
-                    } else {
-
-                        /* assign reduced time candidate */
-                        le_try = le_server->sv_time[le_uindex] * le_server->sv_tcfg;
-
-                        /* update search */
-                        le_uindex ++;
-
-                    }
-
-                } else {
-
-                    /* assign reduced time candidate */
-                    le_try = le_server->sv_time[le_lindex] * le_server->sv_tcfg;
-
-                    /* update search */
-                    le_lindex --;
-
-                }
-
-            } else {
-
-                /* assign reduced time candidate */
-                le_try = le_server->sv_time[le_uindex] * le_server->sv_tcfg;
-
-                /* update search */
-                le_uindex ++;
-
-            }
-
-            /* assign address candidate */
-            le_address_set_time( le_addr, le_index, le_try );
-
-            /* create stream */
-            le_stream = le_stream_create( le_server->sv_path, le_try, le_server->sv_scfg, le_server->sv_tcfg, LE_STREAM_READ );
-
-            /* perform time reduction query */
-            le_server_query( le_server, le_addr, le_address_get_size( le_addr ), 0, & le_array, 0, 0, & le_stream );
-
-            /* delete stream */
-            le_stream_delete( & le_stream );
-
-            /* check time reduction query */
-            if ( le_array_get_size( & le_array ) > 0 ) {
-
-                /* assign reduced time */
-                le_red = le_try;
-
-                /* cancel search */
-                le_lindex = -1;
-                le_uindex = le_server->sv_size;
-
-            }
-
-            /* clear array */
-            le_array_set_size( & le_array, 0 );
-
-        }
-
-        /* retore address span */
-        le_address_set_span( le_addr, le_span );
-
-        /* assign address local-reduced time */
-        le_address_set_time( le_addr, le_index, le_red );
-
-    }
-
-    le_void_t le_server_reduce( le_server_t const * const le_server, le_address_t * const le_addr, le_size_t const le_index ) {
-
-        /* address time variables */
-        le_time_t le_atime = le_address_get_time( le_addr, le_index ) / le_server->sv_tcfg;
-
-        /* reduction variables */
-        le_time_t le_rtime = _LE_TIME_NULL;
-        le_time_t le_dtime = _LE_TIME_MAX;
-        le_time_t le_stime = _LE_TIME_NULL;
-
-        /* parsing server stack */
-        for ( le_size_t le_parse = 0; le_parse < le_server->sv_size; le_parse ++ ) {
-
-            /* compute and check distance */
-            if ( ( le_stime = le_time_abs( le_server->sv_time[le_parse] - le_atime ) ) < le_dtime ) {
-
-                /* update distance */
-                le_dtime = le_stime;
-
-                /* update reduced time */
-                le_rtime = le_server->sv_time[le_parse];
-
-            }
-
-        }
-
-        /* assign address time */
-        le_address_set_time( le_addr, le_index, ( le_rtime != _LE_TIME_NULL ) ? le_rtime * le_server->sv_tcfg : le_rtime );
 
     }
 

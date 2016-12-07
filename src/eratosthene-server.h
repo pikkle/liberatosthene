@@ -59,11 +59,12 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, 0, NULL, LE_ERROR_SUCCESS }
+    //# define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, 0, NULL, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, LE_STREAM_C, LE_ERROR_SUCCESS }
 
     /* define stream mode */
-    # define LE_SERVER_READ  ( 0 )
-    # define LE_SERVER_WRITE ( 1 )
+    //# define LE_SERVER_READ  ( 0 )
+    //# define LE_SERVER_WRITE ( 1 )
 
 /*
     header - preprocessor macros
@@ -159,8 +160,10 @@
         le_time_t   sv_tcfg;
         le_size_t   sv_ncfg;
 
-        le_size_t   sv_size;
-        le_time_t * sv_time;
+        //le_size_t   sv_size;
+        //le_time_t * sv_time;
+
+        le_stream_t sv_stream;
 
     le_enum_t _status; } le_server_t;
 
@@ -238,7 +241,8 @@
      *  \param le_time   Time value
      */
 
-    le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_stream_t const * const le_stream );
+    //le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_stream_t const * const le_stream );
+    le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_size_t const le_stream );
 
     /*! \brief client methods - query
      *
@@ -276,7 +280,8 @@
      *  \param le_stream Index to the opened streams
      */
 
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_stream_t const * const le_stream );
+    //le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_stream_t const * const le_stream );
+    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream );
 
     /*! \brief client methods - server configuration
      *

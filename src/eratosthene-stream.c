@@ -24,90 +24,113 @@
     source - constructor/destructor methods
  */
 
-    le_stream_t le_stream_create( le_char_t const * const le_root, le_time_t le_time, le_size_t const le_scfg, le_time_t const le_tcfg, le_enum_t const le_mode ) {
+    le_stream_t le_stream_create( le_char_t const * const le_root, le_size_t const le_scfg, le_time_t const le_tcfg ) {
 
         /* created structure variables */
-        le_stream_t le_stream = LE_STREAM_C_SIZE( le_scfg );
+        le_stream_t le_stream = LE_STREAM_C;
 
-        /* access path string variables */
-        le_char_t * le_path[_LE_USE_STRING] = { 0 };
+        /* entity variables */
+        struct dirent * le_ent = NULL;
 
-        /* check consistency */
-        if ( le_time == _LE_TIME_NULL ) {
+        /* directory variables */
+        DIR * le_dir = NULL;
 
-            /* send message */
-            return( le_stream._status = LE_ERROR_TIME, le_stream );
+        /* insertion variables */
+        le_diff_t le_parse = 0;
 
-        }
+        /* time variables */
+        le_time_t le_time = _LE_TIME_NULL;
 
-        /* compute time equivalence class */
-        le_time /= le_tcfg;
+        /* memory allocation variables */
+        le_byte_t * le_swap = NULL;
 
-        /* check stream mode */
-        if ( le_mode == LE_STREAM_READ ) {
+        /* path variables */
+        le_char_t le_path[_LE_USE_STRING] = { 0 };
 
-            /* create stream handles */
-            for ( le_size_t le_parse = 0; le_parse < le_stream.sr_size; le_parse ++ ) {
+        /* assign stack configuration */
+        le_stream.sr_scfg = le_scfg;
+        le_stream.sr_tcfg = le_tcfg;
 
-                /* compose handle path */
-                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_root, le_time, le_parse );
+        /* assign root path */
+        strcpy( ( char * ) le_stream.sr_root, ( char * ) le_root );
 
-                /* create random access handles - r+ */
-                if ( ( le_stream.sr_file[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
+        /* open and check directory */
+        if ( ( le_dir = opendir( ( char * ) le_root ) ) != NULL ) {
 
-                    /* send message */
-                    return( le_stream._status = LE_ERROR_IO_READ, le_stream );
+            /* entities enumeration */
+            while ( ( ( le_ent = readdir( le_dir ) ) != NULL ) && ( le_stream._status == LE_ERROR_SUCCESS ) ) {
+
+                /* check entity consistency */
+                if ( ( le_ent->d_type == DT_DIR ) && ( le_ent->d_name[0] != '.' ) ) {
+
+                    /* update stack memory */
+                    if ( ( le_swap = realloc( le_stream.sr_strm, ( le_stream.sr_size + 1 ) * sizeof( le_unit_t ) ) ) == NULL ) {
+
+                        /* send message */
+                        le_stream._status = LE_ERROR_MEMORY;
+
+                    } else {
+
+                        /* update stack memory */
+                        le_stream.sr_strm = ( le_unit_t * ) le_swap;
+
+                        /* retriev directory time */
+                        le_time = le_time_str( le_ent->d_name );
+
+                        /* search insertion position */
+                        le_parse = 0; while ( le_parse < le_stream.sr_size ) {
+
+                            /* check position */
+                            if ( le_stream.sr_strm[le_parse].su_time <= le_time ) le_parse ++; else break;
+
+                        }
+
+                        /* tail element shift */
+                        for ( le_diff_t le_shift = le_stream.sr_size; le_shift > le_parse; le_shift -- ) {
+
+                            /* shift element */
+                            le_stream.sr_strm[le_shift] = le_stream.sr_strm[le_shift - 1];
+
+                        }
+
+                        /* assign inserted element time */
+                        le_stream.sr_strm[le_parse].su_time = le_time;
+
+                        /* create stream handles */
+                        for ( le_size_t le_index = 0; le_index < le_stream.sr_scfg; le_index ++ ) {
+
+                            /* compose handle path */
+                            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_stream.sr_root, le_stream.sr_strm[le_parse].su_time, le_index );
+
+                            /* create handle */
+                            if ( ( le_stream.sr_strm[le_parse].su_file[le_index] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
+
+                                /* send message */
+                                le_stream._status = LE_ERROR_IO_READ;
+
+                            }
+
+                        }
+
+                        /* update stack size */
+                        le_stream.sr_size ++;
+
+                    }
 
                 }
 
             }
 
-        } else {
-
-            /* compose directory name */
-            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_root, le_time );
-
-            /* create directory and check result */
-            if ( mkdir( ( char * ) le_path, 0755 ) == 0 ) {
-
-                /* create stream handles */
-                for ( le_size_t le_parse = 0; le_parse < le_stream.sr_size; le_parse ++ ) {
-
-                    /* compose handle path */
-                    sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_root, le_time, le_parse );
-
-                    /* create random access handle - w+ */
-                    if ( ( le_stream.sr_file[le_parse] = fopen( ( char * ) le_path, "w+" ) ) == NULL ) {
-
-                        /* send message */
-                        return( le_stream._status = LE_ERROR_IO_WRITE, le_stream );
-                    }
-
-                }
-
-            } else {
-
-                /* create stream handles */
-                for ( le_size_t le_parse = 0; le_parse < le_stream.sr_size; le_parse ++ ) {
-
-                    /* compose handle path */
-                    sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_root, le_time, le_parse );
-
-                    /* create random access handle - r+ */
-                    if ( ( le_stream.sr_file[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
-
-                        /* send message */
-                        return( le_stream._status = LE_ERROR_IO_READ, le_stream );
-
-                    }
-
-                }
-
-            }
+            /* close directory */
+            closedir( le_dir );
 
         }
 
-        /* return create structure */
+        /* DEBUG */
+        //for ( le_size_t le_dg = 0; le_dg < le_stream.sr_size; le_dg ++ ) fprintf( stderr, "unit %" _LE_SIZE_P " with %" _LE_TIME_P "\n", le_dg, le_stream.sr_strm[le_dg].su_time );
+        /* DEBUG */
+
+        /* return created structure */
         return( le_stream );
 
     }
@@ -117,21 +140,34 @@
         /* deleted structure variables */
         le_stream_t le_delete = LE_STREAM_C;
 
-        /* parsing stream handles */
-        for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
+        /* check unit stack */
+        if ( le_stream->sr_size > 0 ) {
 
-            /* check stream handle */
-            if ( le_stream->sr_file[le_parse] != NULL ) {
+            /* parsing stream stack */
+            for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
 
-                /* close handle */
-                fclose( le_stream->sr_file[le_parse] );
+                /* parsing stream */
+                for ( le_size_t le_index = 0; le_index < le_stream->sr_scfg; le_index ++ ) {
+
+                    /* check handle state */
+                    if ( le_stream->sr_strm[le_parse].su_file[le_index] != NULL ) {
+
+                        /* delete handle */
+                        fclose( le_stream->sr_strm[le_parse].su_file[le_index] );
+
+                    }
+
+                }
 
             }
+
+            /* release memory */
+            free( le_stream->sr_strm );
 
         }
 
         /* delete structure */
-        ( * le_stream ) = le_delete;
+        ( * le_stream ) = le_delete;        
 
     }
 
@@ -139,10 +175,64 @@
     source - accessor methods
  */
 
-    le_file_t le_stream_get( le_stream_t const * const le_stream, le_size_t const le_index ) {
+    le_size_t le_stream_get( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode ) {
 
-        /* return pointed stream handle */
-        return( le_stream->sr_file[le_index] );
+        /* equivalent time */
+        le_time /= le_stream->sr_tcfg;
+
+        /* parsing stream times */
+        for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
+
+            /* check matching time */
+            if ( le_time == le_stream->sr_strm[le_parse].su_time ) {
+
+                /* send index */
+                return( le_parse );
+
+            }
+
+        }
+
+        /* returned stream index */
+        return( _LE_SIZE_NULL );
+
+    }
+
+    le_file_t le_stream_get_handle( le_stream_t const * const le_stream, le_size_t const le_time, le_size_t const le_scale ) {
+
+        /* return stream handle */
+        return( le_stream->sr_strm[le_time].su_file[le_scale] );
+
+    }
+
+    le_time_t le_stream_get_reduced( le_stream_t const * const le_stream, le_time_t le_time ) {
+
+        /* equivalent time */
+        le_time /= le_stream->sr_tcfg;
+
+        /* reduction variables */
+        le_time_t le_rtime = _LE_TIME_NULL;
+        le_time_t le_dtime = _LE_TIME_MAX;
+        le_time_t le_stime = _LE_TIME_NULL;
+
+        /* parsing server stack */
+        for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
+
+            /* compute and check distance */
+            if ( ( le_stime = le_time_abs( le_stream->sr_strm[le_parse].su_time - le_time ) ) < le_dtime ) {
+
+                /* update distance */
+                le_dtime = le_stime;
+
+                /* update reduced time */
+                le_rtime = le_stream->sr_strm[le_parse].su_time;
+
+            }
+
+        }
+
+        /* return reduced time */
+        return( le_rtime != _LE_TIME_NULL ? le_rtime * le_stream->sr_tcfg : le_rtime );
 
     }
 
