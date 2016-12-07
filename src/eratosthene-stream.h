@@ -54,19 +54,21 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_STREAM_C         { { 0 }, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
-    //# define LE_STREAM_C_SIZE(s) { s, { NULL } }
+    # define LE_STREAM_C          { { 0 }, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_STREAM_UNIT_C    { _LE_TIME_NULL, { NULL } }
+    # define LE_STREAM_UNIT_C     { _LE_TIME_NULL, { NULL } }
 
     /* define stream mode */
-    # define LE_STREAM_READ      ( 0 )
-    # define LE_STREAM_WRITE     ( 1 )
+    # define LE_STREAM_READ       ( 0 )
+    # define LE_STREAM_WRITE      ( 1 )
 
 /*
     header - preprocessor macros
  */
+
+    /* define handle macro */
+    # define le_stream_mac(s,t,l) ( ( s )->sr_strm[t].su_file[l] )
 
 /*
     header - type definition
@@ -88,19 +90,12 @@
         le_char_t   sr_root[_LE_USE_STRING];
 
         le_size_t   sr_scfg;
-        le_size_t   sr_tcfg;
+        le_time_t   sr_tcfg;
 
         le_size_t   sr_size;
         le_unit_t * sr_strm;
 
     le_enum_t _status; } le_stream_t;
-
-    /* typedef struct le_stream_struct {
-
-        le_size_t sr_size;
-        le_file_t sr_file[_LE_USE_DEPTH];
-
-    le_enum_t _status; } le_stream_t; */
 
 /*
     header - function prototypes
@@ -110,17 +105,11 @@
 
     le_void_t le_stream_delete( le_stream_t * const le_stream );
 
-    le_size_t le_stream_get( le_stream_t * const le_stream, le_time_t const le_time, le_enum_t const le_mode );
-
-    le_file_t le_stream_get_handle( le_stream_t const * const le_stream, le_size_t const le_time, le_size_t const le_scale );
+    le_size_t le_stream_get_strict( le_stream_t * const le_stream, le_time_t const le_time, le_enum_t const le_mode );
 
     le_time_t le_stream_get_reduced( le_stream_t const * const le_stream, le_time_t le_time );
 
-    //le_stream_t le_stream_create( le_char_t const * const le_root, le_time_t le_time, le_size_t const le_scfg, le_time_t const le_tcfg, le_enum_t const le_mode );
-
-    //le_void_t le_stream_delete( le_stream_t * const le_stream );
-
-    //le_file_t le_stream_get( le_stream_t const * const le_stream, le_size_t const le_index );
+    le_size_t le_stream_set( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode );
 
 /*
     header - C/C++ compatibility
