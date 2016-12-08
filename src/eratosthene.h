@@ -27,13 +27,13 @@
     /*! \mainpage liberatosthene
      *
      *  \section liberatosthene
-     * 
+     *
      *  The "erathosthene" system is designed to offers a worldwide 4D tile
      *  server of informations coming with a three-dimensional georeference and
      *  a time coordinates. Using hierarchical equivalence classes to drive its
      *  storage structure, it allows high-performance queries on the refereneced
      *  data it stores. Currently, the eratosthene system is developed to manage
-     *  colorimetric points as referenced data to provide an historical geographic 
+     *  colorimetric points as referenced data to provide an historical geographic
      *  information system of the 3D history of earth.
      *
      *  \section Copyright and License
@@ -90,12 +90,12 @@
     # include <inttypes.h>
     # include <dirent.h>
     # include <sys/stat.h>
-    # include <sys/types.h> 
+    # include <sys/types.h>
     # include <sys/socket.h>
     # include <netinet/in.h>
     # include <netinet/in.h>
     # include <arpa/inet.h>
-    # include <netdb.h> 
+    # include <netdb.h>
 
 /*
     header - preprocessor definitions

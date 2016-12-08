@@ -73,7 +73,7 @@
     /*! \brief constructor/destructor methods
      *
      *  This function creates a client socket descriptor. It establish the
-     *  connection to the provided server ip address and returns the initialised 
+     *  connection to the provided server ip address and returns the initialised
      *  socket descriptor.
      *
      *  \param le_ip   Server ip address

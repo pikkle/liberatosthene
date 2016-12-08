@@ -54,7 +54,7 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_STREAM_C          { { 0 }, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
+    # define LE_STREAM_C          { NULL, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
     # define LE_STREAM_UNIT_C     { _LE_TIME_NULL, { NULL } }
@@ -63,12 +63,16 @@
     # define LE_STREAM_READ       ( 0 )
     # define LE_STREAM_WRITE      ( 1 )
 
+    /* define path model */
+    # define LE_STREAM_TIME       ( "%s/%" _LE_TIME_P )
+    # define LE_STREAM_FILE       ( "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin" )
+
 /*
     header - preprocessor macros
  */
 
-    /* define handle macro */
-    # define le_stream_mac(s,t,l) ( ( s )->sr_strm[t].su_file[l] )
+    /* define file mode macro */
+    # define le_stream_mode(m)    ( ( m ) == LE_STREAM_READ ? "r+" : "w+" )
 
 /*
     header - type definition
@@ -87,7 +91,7 @@
 
     typedef struct le_stream_struct {
 
-        le_char_t   sr_root[_LE_USE_STRING];
+        le_char_t * sr_root;
 
         le_size_t   sr_scfg;
         le_time_t   sr_tcfg;
@@ -101,13 +105,17 @@
     header - function prototypes
  */
 
-    le_stream_t le_stream_create( le_char_t const * const le_root, le_size_t const le_scfg, le_time_t const le_tcfg );
+    le_stream_t le_stream_create( le_char_t * const le_path, le_size_t const le_scfg, le_time_t const le_tcfg );
 
     le_void_t le_stream_delete( le_stream_t * const le_stream );
 
     le_size_t le_stream_get_strict( le_stream_t * const le_stream, le_time_t const le_time, le_enum_t const le_mode );
 
-    le_time_t le_stream_get_reduced( le_stream_t const * const le_stream, le_time_t le_time );
+    le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_time_t le_time );
+
+    le_time_t le_stream_get_time( le_stream_t const * const le_stream, le_size_t const le_unit );
+
+    le_file_t le_stream_get_file( le_stream_t const * const le_stream, le_size_t const le_unit, le_size_t const le_file );
 
     le_size_t le_stream_set( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode );
 

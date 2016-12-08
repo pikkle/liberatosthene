@@ -207,7 +207,7 @@
             le_hblock = le_hblock + le_size;
 
         }
-            
+
         /* send message */
         return( LE_ERROR_SUCCESS );
 

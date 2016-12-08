@@ -83,7 +83,7 @@
     }
 
     le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose ) {
-       
+
         /* scales variables */
         le_real_t le_scale[3] = { 1.0, 1.0, 1.0 };
 
@@ -98,7 +98,7 @@
             /* update dimension scale */
             le_scale[0] *= 0.5;
 
-            /* analyse address digit and coordinates update */            
+            /* analyse address digit and coordinates update */
             if ( ( le_address->as_digit[le_parse] & 0x01 ) != 0 ) le_pose[0] += le_scale[0];
 
             /* asynchronous dimension management */

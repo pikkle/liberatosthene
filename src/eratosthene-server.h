@@ -59,7 +59,8 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, LE_STREAM_C, LE_ERROR_SUCCESS }
+    //# define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, LE_STREAM_C, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C    { _LE_SOCK_NULL, NULL, 0, 0, 1, LE_STREAM_C, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -84,7 +85,7 @@
      *  a time coordinates. Using hierarchical equivalence classes to drive its
      *  storage structure, it allows high-performance queries on the refereneced
      *  data it stores. Currently, the eratosthene system is developed to manage
-     *  colorimetric points as referenced data to provide an historical geographic 
+     *  colorimetric points as referenced data to provide an historical geographic
      *  information system of the 3D history of earth.
      *
      *  As every server, the eratosthene server expects client requests about
@@ -115,7 +116,7 @@
      *  data has to be stored. In other words, each time equivalence classes
      *  has its own spatial storage structure as decribed in the last paragraph.
      *
-     *  The \b sv_path field simply stores the root path of the server storage  
+     *  The \b sv_path field simply stores the root path of the server storage
      *  structure in which is expected the configuration file containing the
      *  server configuration paramters (\b sv_scfg and \b sv_tcfg, simply
      *  stored in a text file).
@@ -147,10 +148,10 @@
      */
 
     typedef struct le_server_struct {
-    
+
         le_sock_t   sv_sock;
 
-        le_char_t   sv_path[_LE_USE_STRING];
+        le_char_t * sv_path;
         le_size_t   sv_scfg;
         le_time_t   sv_tcfg;
         le_size_t   sv_ncfg;
@@ -178,7 +179,7 @@
      *  \return Returns created server structure
      */
 
-    le_server_t le_server_create( le_sock_t const le_port, le_char_t const * const le_path );
+    le_server_t le_server_create( le_char_t * const le_path, le_sock_t const le_port );
 
     /*! \brief constructor/destructor methods
      *

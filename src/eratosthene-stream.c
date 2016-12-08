@@ -24,60 +24,66 @@
     source - constructor/destructor methods
  */
 
-    le_stream_t le_stream_create( le_char_t const * const le_root, le_size_t const le_scfg, le_time_t const le_tcfg ) {
+    le_stream_t le_stream_create( le_char_t * const le_path, le_size_t const le_scfg, le_time_t const le_tcfg ) {
 
         /* created structure variables */
         le_stream_t le_stream = LE_STREAM_C;
 
         /* directory variables */
-        DIR * le_dir = NULL;
+        DIR * le_enum = NULL;
 
         /* entity variables */
-        struct dirent * le_ent = NULL;
+        struct dirent * le_file = NULL;
 
         /* time variables */
         le_time_t le_time = _LE_TIME_NULL;
 
-        /* assign stack configuration */
+        /* check consistency */
+        if ( le_path == NULL ) {
+
+            /* send message */
+            return( le_stream._status = LE_ERROR_IO_ACCESS, le_stream );
+
+        }
+
+        /* assign server configuration */
         le_stream.sr_scfg = le_scfg;
         le_stream.sr_tcfg = le_tcfg;
 
-        /* assign root path */
-        strcpy( ( char * ) le_stream.sr_root, ( char * ) le_root );
+        /* assign server path */
+        le_stream.sr_root = le_path;
 
         /* open and check directory */
-        if ( ( le_dir = opendir( ( char * ) le_root ) ) == NULL ) {
+        if ( ( le_enum = opendir( ( char * ) le_path ) ) == NULL ) {
 
             /* send message */
             return( le_stream._status = LE_ERROR_IO_READ, le_stream );
 
-        } else {
+        }
 
-            /* entities enumeration */
-            while ( ( ( le_ent = readdir( le_dir ) ) != NULL ) && ( le_stream._status == LE_ERROR_SUCCESS ) ) {
+        /* entities enumeration */
+        while ( ( ( le_file = readdir( le_enum ) ) != NULL ) && ( le_stream._status == LE_ERROR_SUCCESS ) ) {
 
-                /* check entity consistency */
-                if ( ( le_ent->d_type == DT_DIR ) && ( le_ent->d_name[0] != '.' ) ) {
+            /* check consistency */
+            if ( ( le_file->d_type == DT_DIR ) && ( le_file->d_name[0] != '.' ) ) {
 
-                    /* retreive directory time */
-                    le_time = le_time_str( le_ent->d_name ) * le_tcfg;
+                /* extract directory time */
+                le_time = le_time_str( le_file->d_name ) * le_tcfg;
 
-                    /* insert stream unit */
-                    if ( le_stream_set( & le_stream, le_time, LE_STREAM_READ ) == _LE_SIZE_NULL ) {
+                /* set stream unit */
+                if ( le_stream_set( & le_stream, le_time, LE_STREAM_READ ) == _LE_SIZE_NULL ) {
 
-                        /* send message */
-                        return( le_stream._status = LE_ERROR_IO_ACCESS, le_stream );
-
-                    }
+                    /* push message */
+                    le_stream._status = LE_ERROR_IO_ACCESS;
 
                 }
 
             }
 
-            /* close directory */
-            closedir( le_dir );
-
         }
+
+        /* close directory */
+        closedir( le_enum );
 
         /* return created structure */
         return( le_stream );
@@ -89,19 +95,19 @@
         /* deleted structure variables */
         le_stream_t le_delete = LE_STREAM_C;
 
-        /* check unit stack */
+        /* check stack */
         if ( le_stream->sr_size > 0 ) {
 
-            /* parsing stream stack */
+            /* parsing stream units */
             for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
 
-                /* parsing stream */
+                /* parsing unit files */
                 for ( le_size_t le_index = 0; le_index < le_stream->sr_scfg; le_index ++ ) {
 
-                    /* check handle state */
+                    /* check state */
                     if ( le_stream->sr_strm[le_parse].su_file[le_index] != NULL ) {
 
-                        /* delete handle */
+                        /* delete file */
                         fclose( le_stream->sr_strm[le_parse].su_file[le_index] );
 
                     }
@@ -116,7 +122,7 @@
         }
 
         /* delete structure */
-        ( * le_stream ) = le_delete;        
+        ( * le_stream ) = le_delete;
 
     }
 
@@ -126,19 +132,16 @@
 
     le_size_t le_stream_get_strict( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode ) {
 
-        /* parsing variables */
-        le_size_t le_parse = 0;
-
-        /* equivalent time */
+        /* compute equivalent time */
         le_time /= le_stream->sr_tcfg;
 
-        /* parsing stream times */
-        for ( le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
+        /* parsing units */
+        for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
 
             /* check matching time */
             if ( le_time == le_stream->sr_strm[le_parse].su_time ) {
 
-                /* send index */
+                /* return index */
                 return( le_parse );
 
             }
@@ -146,29 +149,31 @@
         }
 
         /* check mode */
-        if ( le_mode == LE_STREAM_READ ) {
-
-            /* returned stream index */
-            return( _LE_SIZE_NULL );
-
-        } else {
+        if ( le_mode == LE_STREAM_WRITE ) {
 
             /* create and insert - return index */
             return( le_stream_set( le_stream, le_time * le_stream->sr_tcfg, le_mode ) );
+
+        } else {
+
+            /* return index */
+            return( _LE_SIZE_NULL );
 
         }
 
     }
 
-    le_time_t le_stream_get_reduced( le_stream_t const * const le_stream, le_time_t le_time ) {
+    le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_time_t le_time ) {
 
-        /* equivalent time */
-        le_time /= le_stream->sr_tcfg;
+        /* returned value variables */
+        le_size_t le_index = _LE_SIZE_NULL;
 
         /* reduction variables */
-        le_time_t le_rtime = _LE_TIME_NULL;
         le_time_t le_dtime = _LE_TIME_MAX;
         le_time_t le_stime = _LE_TIME_NULL;
+
+        /* compute equivalent time */
+        le_time /= le_stream->sr_tcfg;
 
         /* parsing server stack */
         for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
@@ -179,15 +184,29 @@
                 /* update distance */
                 le_dtime = le_stime;
 
-                /* update reduced time */
-                le_rtime = le_stream->sr_strm[le_parse].su_time;
+                /* update index */
+                le_index = le_parse;
 
             }
 
         }
 
-        /* return reduced time */
-        return( le_rtime != _LE_TIME_NULL ? le_rtime * le_stream->sr_tcfg : le_rtime );
+        /* return index */
+        return( le_index );
+
+    }
+
+    le_time_t le_stream_get_time( le_stream_t const * const le_stream, le_size_t const le_unit ) {
+
+        /* return unit time */
+        return( le_stream->sr_strm[le_unit].su_time * le_stream->sr_tcfg );
+
+    }
+
+    le_file_t le_stream_get_file( le_stream_t const * const le_stream, le_size_t const le_unit, le_size_t const le_file ) {
+
+        /* return unit file */
+        return( le_stream->sr_strm[le_unit].su_file[le_file] );
 
     }
 
@@ -197,11 +216,11 @@
 
     le_size_t le_stream_set( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode ) {
 
-        /* insertion variables */
-        le_size_t le_parse = 0;        
-
-        /* memory allocation variables */
+        /* memory variables */
         le_void_t * le_swap = NULL;
+
+        /* insertion variables */
+        le_size_t le_parse = 0;
 
         /* path variables */
         le_char_t le_path[_LE_USE_STRING] = { 0 };
@@ -213,7 +232,7 @@
         if ( le_mode == LE_STREAM_WRITE ) {
 
             /* compose path */
-            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_stream->sr_root, le_time );
+            sprintf( ( char * ) le_path, LE_STREAM_TIME, le_stream->sr_root, le_time );
 
             /* create and check directory */
             if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
@@ -226,7 +245,10 @@
         }
 
         /* update stack memory */
-        if ( ( le_swap = realloc( le_stream->sr_strm, ( le_stream->sr_size + 1 ) * sizeof( le_unit_t ) ) ) == NULL ) {
+        le_swap = realloc( le_stream->sr_strm, ( le_stream->sr_size + 1 ) * sizeof( le_unit_t ) );
+
+        /* check consistency */
+        if ( le_swap == NULL ) {
 
             /* send message */
             return( _LE_SIZE_NULL );
@@ -236,33 +258,34 @@
         /* update stack memory */
         le_stream->sr_strm = ( le_unit_t * ) le_swap;
 
+        /* intialise position search */
+        le_parse = le_stream->sr_size;
+
         /* search insertion position */
-        le_parse = 0; while ( le_parse < le_stream->sr_size ) {
+        while ( ( le_parse > 0 ) && ( le_time < le_stream->sr_strm[le_parse-1].su_time ) ) {
 
-            /* check position */
-            if ( le_stream->sr_strm[le_parse].su_time <= le_time ) le_parse ++; else break;
+            /* shift elements */
+            le_stream->sr_strm[le_parse] = le_stream->sr_strm[le_parse-1];
 
-        }
-
-        /* insertion shift */
-        for ( le_diff_t le_shift = le_stream->sr_size; le_shift > le_parse; le_shift -- ) {
-
-            /* shift element */
-            le_stream->sr_strm[le_shift] = le_stream->sr_strm[le_shift - 1];
+            /* update index */
+            le_parse --;
 
         }
 
-        /* assign inserted element time */
+        /* assign unit time */
         le_stream->sr_strm[le_parse].su_time = le_time;
 
         /* parsing unit */
         for ( le_size_t le_index = 0; le_index < le_stream->sr_scfg; le_index ++ ) {
 
             /* compose path */
-            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_stream->sr_root, le_time, le_index );
+            sprintf( ( char * ) le_path, LE_STREAM_FILE, le_stream->sr_root, le_time, le_index );
 
-            /* create and check handle */
-            if ( ( le_stream->sr_strm[le_parse].su_file[le_index] = fopen( ( char * ) le_path, le_mode == LE_STREAM_READ ? "r+" : "w+" ) ) == NULL ) {
+            /* create file */
+            le_stream->sr_strm[le_parse].su_file[le_index] = fopen( ( char * ) le_path, le_stream_mode( le_mode ) );
+
+            /* check consistency */
+            if ( le_stream->sr_strm[le_parse].su_file[le_index] == NULL ) {
 
                 /* send message */
                 return( _LE_SIZE_NULL );
@@ -271,7 +294,7 @@
 
         }
 
-        /* update stack size */
+        /* validate stack update */
         le_stream->sr_size ++;
 
         /* return insertion index */
