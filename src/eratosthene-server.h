@@ -59,8 +59,7 @@
  */
 
     /* define pseudo-constructor */
-    //# define LE_SERVER_C     { _LE_SOCK_NULL, { 0 }, 0, 0, 1, LE_STREAM_C, LE_ERROR_SUCCESS }
-    # define LE_SERVER_C    { _LE_SOCK_NULL, NULL, 0, 0, 1, LE_STREAM_C, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, 1, LE_STREAM_C, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros

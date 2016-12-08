@@ -163,36 +163,85 @@
 
     }
 
-    le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_time_t le_time ) {
+    le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_address_t * const le_addr, le_size_t const le_addrt ) {
 
         /* returned value variables */
         le_size_t le_index = _LE_SIZE_NULL;
 
         /* reduction variables */
-        le_time_t le_dtime = _LE_TIME_MAX;
-        le_time_t le_stime = _LE_TIME_NULL;
+        le_diff_t le_ledge = 0;
+        le_diff_t le_uedge = 0;
 
-        /* compute equivalent time */
-        le_time /= le_stream->sr_tcfg;
+        /* address time variables */
+        le_time_t le_time = le_address_get_time( le_addr, le_addrt ) / le_stream->sr_tcfg;
 
-        /* parsing server stack */
-        for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
+        /* intervalle boundary */
+        while ( ( le_uedge < le_stream->sr_size ) && ( le_time >= le_stream->sr_strm[le_uedge].su_time ) ) {
 
-            /* compute and check distance */
-            if ( ( le_stime = le_time_abs( le_stream->sr_strm[le_parse].su_time - le_time ) ) < le_dtime ) {
+            /* update boundary */
+            le_uedge ++;
 
-                /* update distance */
-                le_dtime = le_stime;
+        }
 
-                /* update index */
-                le_index = le_parse;
+        /* check reduction requirement */
+        if ( le_time == le_stream->sr_strm[le_uedge].su_time ) {
+
+            /* return index */
+            return( le_uedge );
+
+        }
+
+        /* intervalle boundary */
+        le_ledge = le_uedge - 1;
+
+        /* reduction procedure */
+        while ( ( le_ledge >= 0 ) || ( le_uedge < le_stream->sr_size ) ) {
+
+            /* case analysis */
+            if ( le_ledge >= 0 ) {
+
+                /* case analysis */
+                if ( le_uedge < le_stream->sr_size ) {
+
+                    /* select nearest unit */
+                    if ( ( le_time - le_stream->sr_strm[le_ledge].su_time ) < ( le_stream->sr_strm[le_uedge].su_time - le_time ) ) {
+
+                        /* assign index */
+                        le_index = ( le_ledge -- );
+
+                    } else {
+
+                        /* assign index */
+                        le_index = ( le_uedge ++ );
+
+                    }
+
+                } else {
+
+                    /* assign index */
+                    le_index = ( le_ledge -- );
+
+                }
+
+            } else {
+
+                /* assign index */
+                le_index = ( le_uedge ++ );
+
+            }
+
+            /* check cell state */
+            if ( le_stream_io_offset( le_stream, le_index, le_addr ) != _LE_OFFS_NULL ) {
+
+                /* return index */
+                return( le_index );
 
             }
 
         }
 
         /* return index */
-        return( le_index );
+        return( _LE_SIZE_NULL );
 
     }
 
@@ -299,6 +348,50 @@
 
         /* return insertion index */
         return( le_parse );
+
+    }
+
+/*
+    source - i/o methods
+ */
+
+    le_size_t le_stream_io_offset( le_stream_t const * const le_stream, le_size_t const le_unit, le_address_t const * const le_addr ) {
+
+        /* returned value variables */
+        le_size_t le_offset = 0;
+
+        /* parsing variables */
+        le_size_t le_parse = 0;
+
+        /* class variables */
+        le_class_t le_class = LE_CLASS_C;
+
+        /* address variables */
+        le_size_t le_size = le_address_get_size( le_addr );
+
+        /* following offsets */
+        while ( ( le_parse < le_size ) && ( le_offset != _LE_OFFS_NULL ) ) {
+
+            /* read class */
+            if ( le_class_io_read( & le_class, le_offset, le_stream->sr_strm[le_unit].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
+
+                /* retrieve daughter offset */
+                le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) );
+
+            } else {
+
+                /* return offset */
+                return( _LE_OFFS_NULL );
+
+            }
+
+            /* update follower */
+            le_parse ++;
+
+        }
+
+        /* return offset */
+        return( le_offset );
 
     }
 

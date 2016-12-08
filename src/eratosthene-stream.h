@@ -44,6 +44,8 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-address.h"
+    # include "eratosthene-class.h"
 
 /*
     header - external includes
@@ -111,13 +113,15 @@
 
     le_size_t le_stream_get_strict( le_stream_t * const le_stream, le_time_t const le_time, le_enum_t const le_mode );
 
-    le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_time_t le_time );
+    le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_address_t * const le_addr, le_size_t const le_addrt );
 
     le_time_t le_stream_get_time( le_stream_t const * const le_stream, le_size_t const le_unit );
 
     le_file_t le_stream_get_file( le_stream_t const * const le_stream, le_size_t const le_unit, le_size_t const le_file );
 
     le_size_t le_stream_set( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode );
+
+    le_size_t le_stream_io_offset( le_stream_t const * const le_stream, le_size_t const le_unit, le_address_t const * const le_addr );
 
 /*
     header - C/C++ compatibility

@@ -352,7 +352,7 @@
         if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
 
             /* create and check stream */
-            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, le_address_get_time( & le_addr, 0 ) ) ) != _LE_SIZE_NULL ) {
+            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0 ) ) != _LE_SIZE_NULL ) {
 
                 /* assign reduced time */
                 le_address_set_time( & le_addr, 0, le_stream_get_time( & le_server->sv_stream, le_stream ) );
@@ -368,7 +368,7 @@
         if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
 
             /* create and check stream */
-            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, le_address_get_time( & le_addr, 1 ) ) ) != _LE_SIZE_NULL ) {
+            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0 ) ) != _LE_SIZE_NULL ) {
 
                 /* assign reduced time */
                 le_address_set_time( & le_addr, 1, le_stream_get_time( & le_server->sv_stream, le_stream ) );
