@@ -233,6 +233,9 @@
             /* check cell state */
             if ( le_stream_io_offset( le_stream, le_index, le_addr ) != _LE_OFFS_NULL ) {
 
+                /* reduce address time */
+                le_address_set_time( le_addr, le_addrt, le_stream->sr_strm[le_index].su_time * le_stream->sr_tcfg );
+
                 /* return index */
                 return( le_index );
 
@@ -240,15 +243,11 @@
 
         }
 
+        /* reduce address time */
+        le_address_set_time( le_addr, le_addrt, _LE_TIME_NULL );
+
         /* return index */
         return( _LE_SIZE_NULL );
-
-    }
-
-    le_time_t le_stream_get_time( le_stream_t const * const le_stream, le_size_t const le_unit ) {
-
-        /* return unit time */
-        return( le_stream->sr_strm[le_unit].su_time * le_stream->sr_tcfg );
 
     }
 

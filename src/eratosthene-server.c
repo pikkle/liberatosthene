@@ -129,9 +129,10 @@
         /* client address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C;
 
-        /* client address length variables */
+        /* client address variables */
         socklen_t le_len = sizeof( struct sockaddr_in );
 
+        /* server connexions */
         for ( ; ; ) {
 
             /* waiting client connexions */
@@ -148,6 +149,19 @@
 
                             /* connection to system injection */
                             le_server_inject_client( le_server, le_client );
+
+                        }
+
+                    } break;
+
+                    /* system query */
+                    case ( LE_MODE_RMOD ) : {
+
+                        /* send authorisation */
+                        if ( le_client_authorise( le_client, LE_MODE_RATH ) == LE_ERROR_SUCCESS ) {
+
+                            /* connection to system query */
+                            le_server_reduce_client( le_server, le_client );
 
                         }
 
@@ -205,27 +219,38 @@
         /* array variables */
         le_array_t le_array = LE_ARRAY_C;
 
-        /* read time - abort injection */
-        if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) return;
+        /* read time */
+        if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) {
+
+            /* abort injection */
+            return;
+
+        }
 
         /* read client array */
         le_array_io_read( & le_array, le_client );
 
-        /* check array size - security check */
-        if ( le_array_get_size( & le_array ) >= LE_ARRAY_SD ) {
+        /* check consistency - security check */
+        if ( le_array_get_size( & le_array ) < LE_ARRAY_SD ) {
 
-            /* check array size - security check */
-            if ( ( le_array_get_size( & le_array ) % LE_ARRAY_SD ) == 0 ) {
+            /* abort injection */
+            return;
 
-                /* create stream */
-                if ( ( le_stream = le_stream_get_strict( & le_server->sv_stream, le_time, LE_STREAM_WRITE ) ) != _LE_SIZE_NULL ) {
+        }
 
-                    /* inject array */
-                    le_server_inject( le_server, & le_array, le_stream );
+        /* check consistency - security check */
+        if ( ( le_array_get_size( & le_array ) % LE_ARRAY_SD ) != 0 ) {
 
-                }
+            /* abort injection */
+            return;
 
-            }
+        }
+
+        /* create stream */
+        if ( ( le_stream = le_stream_get_strict( & le_server->sv_stream, le_time, LE_STREAM_WRITE ) ) != _LE_SIZE_NULL ) {
+
+            /* inject array */
+            le_server_inject( le_server, & le_array, le_stream );
 
         }
 
@@ -315,6 +340,47 @@
     }
 
 /*
+    source - client methods - reduction
+ */
+
+    le_void_t le_server_reduce_client( le_server_t * const le_server, le_sock_t const le_client ) {
+
+        /* address variables */
+        le_address_t le_addr = LE_ADDRESS_C;
+
+        /* read address */
+        le_address_io_read( & le_addr, le_client );
+
+        /* check consistency */
+        if ( ( le_address_get_size( & le_addr ) + le_address_get_span( & le_addr ) ) >= le_server->sv_scfg ) {
+
+            /* abort query */
+            return;
+
+        }
+
+        /* check address mode */
+        if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
+
+            /* address reduction */
+            le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0 );
+
+        }
+
+        /* check address mode */
+        if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
+
+            /* address reduction */
+            le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1 );
+
+        }
+
+        /* write address */
+        le_address_io_write( & le_addr, le_client );
+
+    }
+
+/*
     source - client methods - query
  */
 
@@ -330,13 +396,15 @@
         le_size_t le_stream = _LE_SIZE_NULL;
 
         /* address variables */
+        le_size_t le_mode = 0;
         le_size_t le_size = 0;
         le_size_t le_span = 0;
 
-        /* read and decompose query */
+        /* read query address */
         le_address_io_read( & le_addr, le_client );
 
         /* extract address parameters */
+        le_mode = le_address_get_mode( & le_addr );
         le_size = le_address_get_size( & le_addr );
         le_span = le_address_get_span( & le_addr );
 
@@ -349,13 +417,10 @@
         }
 
         /* check address mode */
-        if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
+        if ( ( le_mode & 0x01 ) != 0 ) {
 
             /* create and check stream */
             if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0 ) ) != _LE_SIZE_NULL ) {
-
-                /* assign reduced time */
-                le_address_set_time( & le_addr, 0, le_stream_get_time( & le_server->sv_stream, le_stream ) );
 
                 /* perform query */
                 le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, le_stream );
@@ -365,13 +430,10 @@
         }
 
         /* check address mode */
-        if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
+        if ( ( le_mode & 0x02 ) != 0 ) {
 
             /* create and check stream */
-            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0 ) ) != _LE_SIZE_NULL ) {
-
-                /* assign reduced time */
-                le_address_set_time( & le_addr, 1, le_stream_get_time( & le_server->sv_stream, le_stream ) );
+            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1 ) ) != _LE_SIZE_NULL ) {
 
                 /* perform query */
                 le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, le_stream );

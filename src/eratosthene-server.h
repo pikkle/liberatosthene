@@ -235,6 +235,8 @@
 
     le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_size_t const le_stream );
 
+    le_void_t le_server_reduce_client( le_server_t * const le_server, le_sock_t const le_client );
+
     /*! \brief client methods - query
      *
      *  This function is a specific server sub-process.

@@ -115,8 +115,6 @@
 
     le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_address_t * const le_addr, le_size_t const le_addrt );
 
-    le_time_t le_stream_get_time( le_stream_t const * const le_stream, le_size_t const le_unit );
-
     le_file_t le_stream_get_file( le_stream_t const * const le_stream, le_size_t const le_unit, le_size_t const le_file );
 
     le_size_t le_stream_set( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode );
