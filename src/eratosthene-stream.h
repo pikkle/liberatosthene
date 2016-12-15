@@ -45,6 +45,7 @@
 
     # include "eratosthene.h"
     # include "eratosthene-address.h"
+    # include "eratosthene-array.h"
     # include "eratosthene-class.h"
 
 /*
@@ -120,6 +121,8 @@
     le_size_t le_stream_set( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode );
 
     le_size_t le_stream_io_offset( le_stream_t const * const le_stream, le_size_t const le_unit, le_address_t const * const le_addr );
+
+    le_void_t le_stream_io_gather( le_stream_t const * const le_stream, le_size_t const le_file, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
 /*
     header - C/C++ compatibility

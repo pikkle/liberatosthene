@@ -391,6 +391,7 @@
 
         /* address variables */
         le_address_t le_addr = LE_ADDRESS_C;
+        le_address_t le_enum = LE_ADDRESS_C;
 
         /* stream variables */
         le_size_t le_stream = _LE_SIZE_NULL;
@@ -400,30 +401,36 @@
         le_size_t le_size = 0;
         le_size_t le_span = 0;
 
+        /* offset variables */
+        le_size_t le_offset = 0;
+
         /* read query address */
         le_address_io_read( & le_addr, le_client );
 
         /* extract address parameters */
         le_mode = le_address_get_mode( & le_addr );
         le_size = le_address_get_size( & le_addr );
-        le_span = le_address_get_span( & le_addr );
+        le_span = le_address_get_span( & le_addr ) + le_size;
 
-        /* check consistency */
-        if ( ( le_size + le_span ) >= le_server->sv_scfg ) {
+        /* check consistency - abort query */
+        if ( le_span >= le_server->sv_scfg ) return;
 
-            /* abort query */
-            return;
-
-        }
-
-        /* check address mode */
+        /* check mode */
         if ( ( le_mode & 0x01 ) != 0 ) {
 
             /* create and check stream */
             if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0 ) ) != _LE_SIZE_NULL ) {
 
-                /* perform query */
-                le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, le_stream );
+                /* copy structure */
+                le_enum = le_addr;
+
+                /* retrieve class offset */
+                if ( ( le_offset = le_stream_io_offset( & le_server->sv_stream, le_stream, & le_enum ) ) != _LE_OFFS_NULL ) {
+
+                    /* gather daughters representative */
+                    le_stream_io_gather( & le_server->sv_stream, le_stream, & le_enum, le_offset, le_size, le_span, & le_array );
+
+                }
 
             }
 
@@ -435,8 +442,16 @@
             /* create and check stream */
             if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1 ) ) != _LE_SIZE_NULL ) {
 
-                /* perform query */
-                le_server_query( le_server, & le_addr, le_size, le_span, & le_array, 0, 0, le_stream );
+                /* copy structure */
+                le_enum = le_addr;
+
+                /* retrieve class offset */
+                if ( ( le_offset = le_stream_io_offset( & le_server->sv_stream, le_stream, & le_enum ) ) != _LE_OFFS_NULL ) {
+
+                    /* gather daughters representative */
+                    le_stream_io_gather( & le_server->sv_stream, le_stream, & le_enum, le_offset, le_size, le_span, & le_array );
+
+                }
 
             }
 
@@ -450,66 +465,6 @@
 
         /* unallocate array memory */
         le_array_delete( & le_array );
-
-    }
-
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream ) {
-
-        /* class variables */
-        le_class_t le_class = LE_CLASS_C;
-
-        /* read class */
-        if ( le_class_io_read( & le_class, le_offset, le_stream_get_file( & le_server->sv_stream, le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
-
-            /* query process mode */
-            if ( le_parse < le_size ) {
-
-                /* retreive daughter class offset */
-                if ( ( le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) ) ) != _LE_OFFS_NULL ) {
-
-                    /* recursive query */
-                    le_server_query( le_server, le_addr, le_size, le_span, le_array, le_parse + 1, le_offset, le_stream );
-
-                }
-
-            } else if ( le_parse == ( le_size + le_span ) ) {
-
-                /* pepare array for injection */
-                le_array_set( le_array, LE_ARRAY_SD );
-
-                /* correct address size */
-                le_address_set_size( le_addr, le_parse );
-
-                /* inject position coordinates */
-                le_address_get_pose( le_addr, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
-
-                /* inject color components */
-                le_class_get_data( & le_class, ( le_data_t * ) le_array_sd_data_al( le_array ) );
-
-                /* restore address size */
-                le_address_set_size( le_addr, le_size );
-
-            } else {
-
-                /* class daughters enumeration */
-                for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
-
-                    /* update address index digit */
-                    le_address_set_digit( le_addr, le_parse, le_digit );
-
-                    /* retreive daughter class offset */
-                    if ( ( le_offset = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
-
-                        /* recursive query */
-                        le_server_query( le_server, le_addr, le_size, le_span, le_array, le_parse + 1, le_offset, le_stream );
-
-                    }
-
-                }
-
-            }
-
-        }
 
     }
 
