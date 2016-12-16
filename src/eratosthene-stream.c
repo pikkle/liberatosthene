@@ -418,11 +418,8 @@
                 /* pepare array for injection */
                 le_array_set( le_array, LE_ARRAY_SD );
 
-                /* correct address size */
-                le_address_set_size( le_addr, le_parse );
-
                 /* inject position coordinates */
-                le_address_get_pose( le_addr, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
+                le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
 
                 /* inject color components */
                 le_class_get_data( & le_class, ( le_data_t * ) le_array_sd_data_al( le_array ) );

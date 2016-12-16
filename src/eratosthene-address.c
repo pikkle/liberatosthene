@@ -82,7 +82,7 @@
 
     }
 
-    le_void_t le_address_get_pose( le_address_t const * const le_address, le_real_t * const le_pose ) {
+    le_void_t le_address_get_pose_( le_address_t const * const le_address, le_size_t le_size, le_real_t * const le_pose ) {
 
         /* scales variables */
         le_real_t le_scale[3] = { 1.0, 1.0, 1.0 };
@@ -93,7 +93,7 @@
         le_pose[2] = 0.0;
 
         /* decomposing address */
-        for ( le_size_t le_parse = 0; le_parse < le_address->as_size; le_parse ++ ) {
+        for ( le_size_t le_parse = 0; le_parse < le_size; le_parse ++ ) {
 
             /* update dimension scale */
             le_scale[0] *= 0.5;

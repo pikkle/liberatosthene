@@ -423,9 +423,6 @@
                 /* gather daughters representative */
                 le_stream_io_gather( & le_server->sv_stream, le_stream, & le_addr, le_offset, le_size, le_span, & le_array );
 
-                /* restore address size */
-                le_address_set_size( & le_addr, le_size );
-
             }
 
         }
@@ -438,9 +435,6 @@
 
                 /* gather daughters representative */
                 le_stream_io_gather( & le_server->sv_stream, le_stream, & le_addr, le_offset, le_size, le_span, & le_array );
-
-                /* restore address size */
-                le_address_set_size( & le_addr, le_size );
 
             }
 
