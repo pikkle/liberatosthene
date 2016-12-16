@@ -191,6 +191,8 @@
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
+    le_enum_t le_server_set_config( le_server_t * const le_server );
+
     /*! \brief server methods
      *
      *  This function is the server main function. It holds the server loop
@@ -201,7 +203,7 @@
      *  \param le_server Server structure
      */
 
-    le_void_t le_server( le_server_t * const le_server );
+    le_void_t le_server_io( le_server_t * const le_server );
 
     /*! \brief client methods - injection
      *
@@ -216,9 +218,9 @@
      *  \param le_client Server-side client socket descriptor
      */
 
-    le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
+    le_void_t le_server_io_inject( le_server_t * const le_server, le_sock_t const le_client );
 
-    le_void_t le_server_reduce_client( le_server_t * const le_server, le_sock_t const le_client );
+    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client );
 
     /*! \brief client methods - query
      *
@@ -235,7 +237,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_void_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
+    le_void_t le_server_io_query( le_server_t * const le_server, le_sock_t const le_client );
 
     /*! \brief client methods - server configuration
      *
@@ -250,9 +252,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_void_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client );
-
-    le_enum_t le_server_set_config( le_server_t * const le_server );
+    le_void_t le_server_io_config( le_server_t const * const le_server, le_sock_t const le_client );
 
 /*
     header - C/C++ compatibility

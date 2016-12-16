@@ -57,25 +57,25 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_STREAM_C          { NULL, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
+    # define LE_STREAM_C       { NULL, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_STREAM_UNIT_C     { _LE_TIME_NULL, { NULL } }
+    # define LE_STREAM_UNIT_C  { _LE_TIME_NULL, { NULL } }
 
     /* define stream mode */
-    # define LE_STREAM_READ       ( 0 )
-    # define LE_STREAM_WRITE      ( 1 )
+    # define LE_STREAM_READ    ( 0 )
+    # define LE_STREAM_WRITE   ( 1 )
 
     /* define path model */
-    # define LE_STREAM_TIME       ( "%s/%" _LE_TIME_P )
-    # define LE_STREAM_FILE       ( "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin" )
+    # define LE_STREAM_TIME    ( "%s/%" _LE_TIME_P )
+    # define LE_STREAM_FILE    ( "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin" )
 
 /*
     header - preprocessor macros
  */
 
     /* define file mode macro */
-    # define le_stream_mode(m)    ( ( m ) == LE_STREAM_READ ? "r+" : "w+" )
+    # define le_stream_mode(m) ( ( m ) == LE_STREAM_READ ? "r+" : "w+" )
 
 /*
     header - type definition
@@ -115,8 +115,6 @@
     le_size_t le_stream_get_strict( le_stream_t * const le_stream, le_time_t const le_time, le_enum_t const le_mode );
 
     le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_address_t * const le_addr, le_size_t const le_addrt, le_size_t * const le_option );
-
-    le_file_t le_stream_get_file( le_stream_t const * const le_stream, le_size_t const le_unit, le_size_t const le_file );
 
     le_size_t le_stream_set( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode );
 

@@ -261,13 +261,6 @@
 
     }
 
-    le_file_t le_stream_get_file( le_stream_t const * const le_stream, le_size_t const le_unit, le_size_t const le_file ) {
-
-        /* return unit file */
-        return( le_stream->sr_strm[le_unit].su_file[le_file] );
-
-    }
-
 /*
     source - mutator methods
  */

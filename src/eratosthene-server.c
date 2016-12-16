@@ -118,10 +118,79 @@
     }
 
 /*
-    source - server methods
+    source - mutator methods
  */
 
-    le_void_t le_server( le_server_t * const le_server ) {
+    le_enum_t le_server_set_config( le_server_t * const le_server ) {
+
+        /* server path variables */
+        le_size_t le_plen = strlen( ( char * ) le_server->sv_path );
+
+        /* stream variables */
+        FILE * le_stream = NULL;
+
+        /* open configuration stream */
+        if ( ( le_stream = fopen( strcat( ( char * ) le_server->sv_path, "/system" ), "r" ) ) == NULL ) {
+
+            /* send message */
+            return( LE_ERROR_IO_ACCESS );
+
+        }
+
+        /* read configuration parameter */
+        if ( fscanf( le_stream, "%" _LE_SIZE_S, & le_server->sv_scfg ) != 1 ) {
+
+            /* close stream */
+            fclose( le_stream );
+
+            /* send message */
+            return( LE_ERROR_IO_READ );
+
+        }
+
+        /* read configuration parameter */
+        if ( fscanf( le_stream, "%" _LE_TIME_S, & le_server->sv_tcfg ) != 1 ) {
+
+            /* close stream */
+            fclose( le_stream );
+
+            /* send message */
+            return( LE_ERROR_IO_READ );
+
+        }
+
+        /* close stream */
+        fclose( le_stream );
+
+        /* check parameter consistency */
+        if ( ( le_server->sv_scfg <= 0 ) || ( le_server->sv_scfg >= _LE_USE_DEPTH ) ) {
+
+            /* send message */
+            return( LE_ERROR_DEPTH );
+
+        }
+
+        /* check parameter consistency */
+        if ( le_server->sv_tcfg <= 0 ) {
+
+            /* send message */
+            return( LE_ERROR_TIME );
+
+        }
+
+        /* remove configuration from path */
+        le_server->sv_path[le_plen] = '\0';
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
+/*
+    source - i/o methods - principale
+ */
+
+    le_void_t le_server_io( le_server_t * const le_server ) {
 
         /* client socket variables */
         le_sock_t le_client = _LE_SOCK_NULL;
@@ -148,7 +217,7 @@
                         if ( le_client_authorise( le_client, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
 
                             /* connection to system injection */
-                            le_server_inject_client( le_server, le_client );
+                            le_server_io_inject( le_server, le_client );
 
                         }
 
@@ -161,7 +230,7 @@
                         if ( le_client_authorise( le_client, LE_MODE_RATH ) == LE_ERROR_SUCCESS ) {
 
                             /* connection to system query */
-                            le_server_reduce_client( le_server, le_client );
+                            le_server_io_reduce( le_server, le_client );
 
                         }
 
@@ -174,7 +243,7 @@
                         if ( le_client_authorise( le_client, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
 
                             /* connection to system query */
-                            le_server_query_client( le_server, le_client );
+                            le_server_io_query( le_server, le_client );
 
                         }
 
@@ -187,7 +256,7 @@
                         if ( le_client_authorise( le_client, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
 
                             /* connection to system */
-                            le_server_config_client( le_server, le_client );
+                            le_server_io_config( le_server, le_client );
 
                         }
 
@@ -205,10 +274,10 @@
     }
 
 /*
-    source - client methods - injection
+    source - i/o methods
  */
 
-    le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_inject( le_server_t * const le_server, le_sock_t const le_client ) {
 
         /* array variables */
         le_array_t le_array = LE_ARRAY_C;
@@ -267,11 +336,7 @@
 
     }
 
-/*
-    source - client methods - reduction
- */
-
-    le_void_t le_server_reduce_client( le_server_t * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client ) {
 
         /* address variables */
         le_address_t le_addr = LE_ADDRESS_C;
@@ -308,11 +373,7 @@
 
     }
 
-/*
-    source - client methods - query
- */
-
-    le_void_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_query( le_server_t * const le_server, le_sock_t const le_client ) {
 
         /* array variables */
         le_array_t le_array = LE_ARRAY_C;
@@ -379,11 +440,7 @@
 
     }
 
-/*
-    source - client methods - server configuration
- */
-
-    le_void_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_config( le_server_t const * const le_server, le_sock_t const le_client ) {
 
         /* server configuration array variables */
         le_array_t le_array = LE_ARRAY_C;
@@ -396,75 +453,6 @@
 
         /* delete array */
         le_array_delete( & le_array );
-
-    }
-
-/*
-    source - mutator methods
- */
-
-    le_enum_t le_server_set_config( le_server_t * const le_server ) {
-
-        /* server path variables */
-        le_size_t le_plen = strlen( ( char * ) le_server->sv_path );
-
-        /* stream variables */
-        FILE * le_stream = NULL;
-
-        /* open configuration stream */
-        if ( ( le_stream = fopen( strcat( ( char * ) le_server->sv_path, "/system" ), "r" ) ) == NULL ) {
-
-            /* send message */
-            return( LE_ERROR_IO_ACCESS );
-
-        }
-
-        /* read configuration parameter */
-        if ( fscanf( le_stream, "%" _LE_SIZE_S, & le_server->sv_scfg ) != 1 ) {
-
-            /* close stream */
-            fclose( le_stream );
-
-            /* send message */
-            return( LE_ERROR_IO_READ );
-
-        }
-
-        /* read configuration parameter */
-        if ( fscanf( le_stream, "%" _LE_TIME_S, & le_server->sv_tcfg ) != 1 ) {
-
-            /* close stream */
-            fclose( le_stream );
-
-            /* send message */
-            return( LE_ERROR_IO_READ );
-
-        }
-
-        /* close stream */
-        fclose( le_stream );
-
-        /* check parameter consistency */
-        if ( ( le_server->sv_scfg <= 0 ) || ( le_server->sv_scfg >= _LE_USE_DEPTH ) ) {
-
-            /* send message */
-            return( LE_ERROR_DEPTH );
-
-        }
-
-        /* check parameter consistency */
-        if ( le_server->sv_tcfg <= 0 ) {
-
-            /* send message */
-            return( LE_ERROR_TIME );
-
-        }
-
-        /* remove configuration from path */
-        le_server->sv_path[le_plen] = '\0';
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
 
     }
 
