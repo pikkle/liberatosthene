@@ -383,35 +383,19 @@
     source - client methods - server configuration
  */
 
-    le_enum_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client ) {
-
-        /* returned value variables */
-        le_enum_t le_return = LE_ERROR_SUCCESS;
+    le_void_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client ) {
 
         /* server configuration array variables */
-        le_array_t le_array = le_server_config( le_server );
-
-        /* write array on socket */
-        le_return = le_array_io_write( & le_array, le_client );
-
-        /* delete array */
-        le_array_delete( & le_array );
-
-        /* send message */
-        return( le_return );
-
-    }
-
-    le_array_t le_server_config( le_server_t const * const le_server ) {
-
-        /* returned structure variables */
         le_array_t le_array = LE_ARRAY_C;
 
         /* compose configuration array */
         le_array_map_dt( & le_array, le_server->sv_scfg, le_server->sv_tcfg );
 
-        /* return structure */
-        return( le_array );
+        /* write array on socket */
+        le_array_io_write( & le_array, le_client );
+
+        /* delete array */
+        le_array_delete( & le_array );
 
     }
 

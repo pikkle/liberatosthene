@@ -250,22 +250,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client );
-
-    /*! \brief client methods - server configuration
-     *
-     *  This function is a specific server sub-process of second order.
-     *
-     *  This function is called byte its first order version. It packs the
-     *  two configuration parameters of the server in a bytes array that is
-     *  returned to the parent function.
-     *
-     *  \param le_server Server structure
-     *
-     *  \return Returns an array filled with configuration values, empty on error
-     */
-
-    le_array_t le_server_config( le_server_t const * const le_server );
+    le_void_t le_server_config_client( le_server_t const * const le_server, le_sock_t const le_client );
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
