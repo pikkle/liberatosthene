@@ -218,23 +218,6 @@
 
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client );
 
-    /*! \brief client methods - injection
-     *
-     *  This function is a specific server sub-process of second order.
-     *
-     *  This function is called byte its first order version. It expects a
-     *  mapping structure (RF format) that points the coordinates and color of
-     *  the point being injected in the storage structure. According to the
-     *  point coordinates and time value, the function injects the point into
-     *  to server storage structure.
-     *
-     *  \param le_server Server structure
-     *  \param le_access Bytes array mapping structure (RF format)
-     *  \param le_time   Time value
-     */
-
-    le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_size_t const le_stream );
-
     le_void_t le_server_reduce_client( le_server_t * const le_server, le_sock_t const le_client );
 
     /*! \brief client methods - query
@@ -253,27 +236,6 @@
      */
 
     le_void_t le_server_query_client( le_server_t * const le_server, le_sock_t const le_client );
-
-    /*! \brief client methods - query
-     *
-     *  This function is a specific server sub-process of second order.
-     *
-     *  This function is called byte its first order version. It starts to
-     *  browse the storage structure to collect the points requested through
-     *  the query address structure.
-     *
-     *  The \b le_parse and \b le_offset parameters are always zero on the first
-     *  call. These parameters are updated as the function calls itself.
-     *
-     *  \param le_server Server structure
-     *  \param le_addr   Query address structure
-     *  \param le_array  Array structure recieving the points
-     *  \param le_parse  Current scale (recursive variables, always 0)
-     *  \param le_offset Current offset (recursive variables, always 0)
-     *  \param le_stream Index to the opened streams
-     */
-
-    le_void_t le_server_query( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_size, le_size_t const le_span, le_array_t * const le_array, le_size_t const le_parse, le_size_t le_offset, le_size_t const le_stream );
 
     /*! \brief client methods - server configuration
      *
@@ -306,12 +268,6 @@
     le_array_t le_server_config( le_server_t const * const le_server );
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
-
-    le_enum_t le_server_set_enum( le_server_t * const le_server );
-
-    le_void_t le_server_reduce_beta( le_server_t * const le_server, le_address_t * const le_addr, le_size_t const le_index );
-
-    le_void_t le_server_reduce( le_server_t const * const le_server, le_address_t * const le_addr, le_size_t const le_index );
 
 /*
     header - C/C++ compatibility

@@ -210,14 +210,17 @@
 
     le_void_t le_server_inject_client( le_server_t * const le_server, le_sock_t const le_client ) {
 
+        /* array variables */
+        le_array_t le_array = LE_ARRAY_C;
+
         /* time variables */
         le_time_t le_time = _LE_TIME_NULL;
 
         /* stream variables */
         le_size_t le_stream = _LE_SIZE_NULL;
 
-        /* array variables */
-        le_array_t le_array = LE_ARRAY_C;
+        /* address variables */
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_server->sv_scfg - 1 );
 
         /* read time */
         if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) {
@@ -228,7 +231,12 @@
         }
 
         /* read client array */
-        le_array_io_read( & le_array, le_client );
+        if ( le_array_io_read( & le_array, le_client ) != LE_ERROR_SUCCESS ) {
+
+            /* abort injection */
+            return;
+
+        }
 
         /* check consistency - security check */
         if ( le_array_get_size( & le_array ) < LE_ARRAY_SD ) {
@@ -250,92 +258,12 @@
         if ( ( le_stream = le_stream_get_strict( & le_server->sv_stream, le_time, LE_STREAM_WRITE ) ) != _LE_SIZE_NULL ) {
 
             /* inject array */
-            le_server_inject( le_server, & le_array, le_stream );
+            le_stream_io_inject( & le_server->sv_stream, le_stream, & le_addr, & le_array );
 
         }
 
         /* delete array */
         le_array_delete( & le_array );
-
-    }
-
-    le_void_t le_server_inject( le_server_t * const le_server, le_array_t const * const le_array, le_size_t const le_stream ) {
-
-        /* array size variables */
-        le_size_t le_size = le_array_get_size( le_array );
-
-        /* depth variables */
-        le_size_t le_parse = 0;
-        le_size_t le_panex = 0;
-
-        /* offset variables */
-        le_size_t le_offset = 0;
-        le_size_t le_offnex = 0;
-
-        /* class variables */
-        le_class_t le_class = LE_CLASS_C;
-
-        /* address variables */
-        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_server->sv_scfg - 1 );
-
-        /* check consistency - abort injection */
-        if ( le_size == 0 ) return;
-
-        /* parsing array */
-        for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_SD ) {
-
-            /* reset address digits */
-            le_address_set_pose( & le_addr, le_array_sd_pose_a( le_array, le_index ) );
-
-            /* reset depth variables */
-            le_parse = 0;
-            le_panex = 1;
-
-            /* reset offset variables */
-            le_offset = 0;
-            le_offnex = 0;
-
-            /* injection process */
-            do {
-
-                /* class importation */
-                if ( le_class_io_read( & le_class, le_offnex, le_stream_get_file( & le_server->sv_stream, le_stream, le_parse ) ) == LE_ERROR_SUCCESS ) {
-
-                    /* inject element in class */
-                    le_class_set_push( & le_class, le_array_sd_data_a( le_array, le_index ) );
-
-                } else {
-
-                    /* initialise class with element */
-                    le_class = le_class_create( le_array_sd_data_a( le_array, le_index ) );
-
-                }
-
-                /* retrieve daughter offset */
-                le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_parse ) );
-
-                /* check daughter state */
-                if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_server->sv_scfg ) ) {
-
-                    /* seek next scale eof */
-                    fseek( le_stream_get_file( & le_server->sv_stream, le_stream, le_panex ), 0, SEEK_END );
-
-                    /* assign eof offset */
-                    le_offset = ftell( le_stream_get_file( & le_server->sv_stream, le_stream, le_panex ) );
-
-                    /* insert offset in class */
-                    le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
-
-                }
-
-                /* class exportation */
-                le_class_io_write( & le_class, le_offnex, le_stream_get_file( & le_server->sv_stream, le_stream, le_parse ) );
-
-            /* injection process condition */
-            } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_server->sv_scfg );
-
-
-        }
 
     }
 
