@@ -163,7 +163,7 @@
 
     }
 
-    le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_address_t * const le_addr, le_size_t const le_addrt ) {
+    le_size_t le_stream_get_reduct( le_stream_t const * const le_stream, le_address_t * const le_addr, le_size_t const le_addrt, le_size_t * const le_option ) {
 
         /* returned value variables */
         le_size_t le_index = _LE_SIZE_NULL;
@@ -172,16 +172,28 @@
         le_diff_t le_ledge = 0;
         le_diff_t le_uedge = 0;
 
+        /* offset variables */
+        le_size_t le_offset = _LE_OFFS_NULL;
+
         /* address time variables */
-        le_time_t le_time = le_address_get_time( le_addr, le_addrt ) / le_stream->sr_tcfg;
+        le_time_t le_time = le_address_get_time( le_addr, le_addrt );
 
-        /* intervalle boundary */
-        while ( ( le_uedge < le_stream->sr_size ) && ( le_time >= le_stream->sr_strm[le_uedge].su_time ) ) {
+        /* check consistency */
+        if ( le_time == _LE_TIME_NULL ) {
 
-            /* update boundary */
-            le_uedge ++;
+            /* return optional offset */
+            if ( le_option != NULL ) ( * le_option ) = le_offset;
+
+            /* return index */
+            return( _LE_SIZE_NULL );
 
         }
+
+        /* compute reduced time */
+        le_time /= le_stream->sr_tcfg;
+
+        /* intervalle boundary - update boundary */
+        while ( ( le_uedge < le_stream->sr_size ) && ( le_time >= le_stream->sr_strm[le_uedge].su_time ) ) le_uedge ++;
 
         /* intervalle boundary */
         le_ledge = le_uedge - 1;
@@ -199,34 +211,37 @@
                     if ( ( le_time - le_stream->sr_strm[le_ledge].su_time ) < ( le_stream->sr_strm[le_uedge].su_time - le_time ) ) {
 
                         /* assign index */
-                        le_index = ( le_ledge -- );
+                        le_index = le_ledge --;
 
                     } else {
 
                         /* assign index */
-                        le_index = ( le_uedge ++ );
+                        le_index = le_uedge ++;
 
                     }
 
                 } else {
 
                     /* assign index */
-                    le_index = ( le_ledge -- );
+                    le_index = le_ledge --;
 
                 }
 
             } else {
 
                 /* assign index */
-                le_index = ( le_uedge ++ );
+                le_index = le_uedge ++;
 
             }
 
             /* check cell state */
-            if ( le_stream_io_offset( le_stream, le_index, le_addr ) != _LE_OFFS_NULL ) {
+            if ( ( le_offset = le_stream_io_offset( le_stream, le_index, le_addr ) ) != _LE_OFFS_NULL ) {
 
                 /* reduce address time */
                 le_address_set_time( le_addr, le_addrt, le_stream->sr_strm[le_index].su_time * le_stream->sr_tcfg );
+
+                /* return optional offset */
+                if ( le_option != NULL ) ( * le_option ) = le_offset;
 
                 /* return index */
                 return( le_index );
@@ -237,6 +252,9 @@
 
         /* reduce address time */
         le_address_set_time( le_addr, le_addrt, _LE_TIME_NULL );
+
+        /* return optional offset */
+        if ( le_option != NULL ) ( * le_option ) = le_offset;
 
         /* return index */
         return( _LE_SIZE_NULL );

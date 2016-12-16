@@ -363,7 +363,7 @@
         if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
 
             /* address reduction */
-            le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0 );
+            le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, NULL );
 
         }
 
@@ -371,7 +371,7 @@
         if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
 
             /* address reduction */
-            le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1 );
+            le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, NULL );
 
         }
 
@@ -391,10 +391,6 @@
 
         /* address variables */
         le_address_t le_addr = LE_ADDRESS_C;
-        le_address_t le_enum = LE_ADDRESS_C;
-
-        /* stream variables */
-        le_size_t le_stream = _LE_SIZE_NULL;
 
         /* address variables */
         le_size_t le_mode = 0;
@@ -403,6 +399,9 @@
 
         /* offset variables */
         le_size_t le_offset = 0;
+
+        /* stream variables */
+        le_size_t le_stream = _LE_SIZE_NULL;
 
         /* read query address */
         le_address_io_read( & le_addr, le_client );
@@ -419,18 +418,13 @@
         if ( ( le_mode & 0x01 ) != 0 ) {
 
             /* create and check stream */
-            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0 ) ) != _LE_SIZE_NULL ) {
+            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, & le_offset ) ) != _LE_SIZE_NULL ) {
 
-                /* copy structure */
-                le_enum = le_addr;
+                /* gather daughters representative */
+                le_stream_io_gather( & le_server->sv_stream, le_stream, & le_addr, le_offset, le_size, le_span, & le_array );
 
-                /* retrieve class offset */
-                if ( ( le_offset = le_stream_io_offset( & le_server->sv_stream, le_stream, & le_enum ) ) != _LE_OFFS_NULL ) {
-
-                    /* gather daughters representative */
-                    le_stream_io_gather( & le_server->sv_stream, le_stream, & le_enum, le_offset, le_size, le_span, & le_array );
-
-                }
+                /* restore address size */
+                le_address_set_size( & le_addr, le_size );
 
             }
 
@@ -440,18 +434,13 @@
         if ( ( le_mode & 0x02 ) != 0 ) {
 
             /* create and check stream */
-            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1 ) ) != _LE_SIZE_NULL ) {
+            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, & le_offset ) ) != _LE_SIZE_NULL ) {
 
-                /* copy structure */
-                le_enum = le_addr;
+                /* gather daughters representative */
+                le_stream_io_gather( & le_server->sv_stream, le_stream, & le_addr, le_offset, le_size, le_span, & le_array );
 
-                /* retrieve class offset */
-                if ( ( le_offset = le_stream_io_offset( & le_server->sv_stream, le_stream, & le_enum ) ) != _LE_OFFS_NULL ) {
-
-                    /* gather daughters representative */
-                    le_stream_io_gather( & le_server->sv_stream, le_stream, & le_enum, le_offset, le_size, le_span, & le_array );
-
-                }
+                /* restore address size */
+                le_address_set_size( & le_addr, le_size );
 
             }
 
