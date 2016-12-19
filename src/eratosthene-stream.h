@@ -124,6 +124,8 @@
 
     le_void_t le_stream_io_gather( le_stream_t const * const le_stream, le_size_t const le_file, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
+    le_void_t le_stream_io_parallel( le_stream_t const * const le_stream, le_size_t const le_uni1, le_size_t const le_uni2, le_address_t * const le_addr, le_size_t le_off1, le_size_t le_off2, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
+
 /*
     header - C/C++ compatibility
  */

@@ -353,7 +353,7 @@
         }
 
         /* check address mode */
-        if ( ( le_address_get_mode( & le_addr ) & 0x01 ) != 0 ) {
+        if ( le_address_get_mode( & le_addr ) != 2 ) {
 
             /* address reduction */
             le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, NULL );
@@ -361,7 +361,7 @@
         }
 
         /* check address mode */
-        if ( ( le_address_get_mode( & le_addr ) & 0x02 ) != 0 ) {
+        if ( le_address_get_mode( & le_addr ) != 1 ) {
 
             /* address reduction */
             le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, NULL );
@@ -373,7 +373,7 @@
 
     }
 
-    le_void_t le_server_io_query( le_server_t * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_query( le_server_t const * const le_server, le_sock_t const le_client ) {
 
         /* array variables */
         le_array_t le_array = LE_ARRAY_C;
@@ -382,48 +382,64 @@
         le_address_t le_addr = LE_ADDRESS_C;
 
         /* address variables */
-        le_size_t le_mode = 0;
         le_size_t le_size = 0;
         le_size_t le_span = 0;
 
         /* offset variables */
-        le_size_t le_offset = 0;
+        le_size_t le_offseta = _LE_OFFS_NULL;
+        le_size_t le_offsetb = _LE_OFFS_NULL;
 
         /* stream variables */
-        le_size_t le_stream = _LE_SIZE_NULL;
+        le_size_t le_streama = _LE_SIZE_NULL;
+        le_size_t le_streamb = _LE_SIZE_NULL;
 
         /* read query address */
         le_address_io_read( & le_addr, le_client );
 
         /* extract address parameters */
-        le_mode = le_address_get_mode( & le_addr );
         le_size = le_address_get_size( & le_addr );
         le_span = le_address_get_span( & le_addr ) + le_size;
 
-        /* check consistency - abort query */
-        if ( le_span >= le_server->sv_scfg ) return;
+        /* check consistency */
+        if ( le_span >= le_server->sv_scfg ) {
 
-        /* check mode */
-        if ( ( le_mode & 0x01 ) != 0 ) {
-
-            /* create and check stream */
-            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, & le_offset ) ) != _LE_SIZE_NULL ) {
-
-                /* gather daughters representative */
-                le_stream_io_gather( & le_server->sv_stream, le_stream, & le_addr, le_offset, le_size, le_span, & le_array );
-
-            }
+            /* abort query */
+            return;
 
         }
 
         /* check address mode */
-        if ( ( le_mode & 0x02 ) != 0 ) {
+        if ( le_address_get_mode( & le_addr ) == 1 ) {
 
             /* create and check stream */
-            if ( ( le_stream = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, & le_offset ) ) != _LE_SIZE_NULL ) {
+            if ( ( le_streama = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, & le_offseta ) ) != _LE_SIZE_NULL ) {
 
-                /* gather daughters representative */
-                le_stream_io_gather( & le_server->sv_stream, le_stream, & le_addr, le_offset, le_size, le_span, & le_array );
+                /* gathering daughters representative */
+                le_stream_io_gather( & le_server->sv_stream, le_streama, & le_addr, le_offseta, le_size, le_span, & le_array );
+
+            }
+
+        } else if ( le_address_get_mode( & le_addr ) == 2 ) {
+
+            /* create and check stream */
+            if ( ( le_streamb = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, & le_offsetb ) ) != _LE_SIZE_NULL ) {
+
+                /* gathering daughters representative */
+                le_stream_io_gather( & le_server->sv_stream, le_streamb, & le_addr, le_offsetb, le_size, le_span, & le_array );
+
+            }
+
+        } else {
+
+            /* create streams */
+            le_streama = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, & le_offseta );
+            le_streamb = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, & le_offsetb );
+
+            /* check streams */
+            if ( ( le_streama != _LE_SIZE_NULL ) || ( le_streamb != _LE_SIZE_NULL ) ) {
+
+                /* gathering daughters representative */
+                le_stream_io_parallel( & le_server->sv_stream, le_streama, le_streamb, & le_addr, le_offseta, le_offsetb, le_size, le_span, & le_array );
 
             }
 

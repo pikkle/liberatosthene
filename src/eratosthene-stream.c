@@ -254,7 +254,7 @@
         le_address_set_time( le_addr, le_addrt, _LE_TIME_NULL );
 
         /* return optional offset */
-        if ( le_option != NULL ) ( * le_option ) = le_offset;
+        if ( le_option != NULL ) ( * le_option ) = _LE_OFFS_NULL;
 
         /* return index */
         return( _LE_SIZE_NULL );
@@ -487,13 +487,13 @@
             /* check query span */
             if ( le_parse == le_span ) {
 
-                /* pepare array for injection */
+                /* pepare array for insertion */
                 le_array_set( le_array, LE_ARRAY_SD );
 
-                /* inject position coordinates */
+                /* insert position coordinates */
                 le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
 
-                /* inject color components */
+                /* insert color components */
                 le_class_get_data( & le_class, ( le_data_t * ) le_array_sd_data_al( le_array ) );
 
             } else {
@@ -511,6 +511,124 @@
                         le_stream_io_gather( le_stream, le_file, le_addr, le_offset, le_parse + 1, le_span, le_array );
 
                     }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    le_void_t le_stream_io_parallel( le_stream_t const * const le_stream, le_size_t const le_unia, le_size_t const le_unib, le_address_t * const le_addr, le_size_t le_offseta, le_size_t le_offsetb, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
+
+        /* class variables */
+        le_class_t le_classa = LE_CLASS_C;
+        le_class_t le_classb = LE_CLASS_C;
+
+        /* status variables */
+        le_enum_t le_returna = LE_ERROR_IO_READ;
+        le_enum_t le_returnb = LE_ERROR_IO_READ;
+
+        /* check offset */
+        if ( le_offseta != _LE_OFFS_NULL ) {
+
+            /* read stream class */
+            le_returna = le_class_io_read( & le_classa, le_offseta, le_stream->sr_strm[le_unia].su_file[le_parse] );
+
+        }
+
+        /* check offset */
+        if ( le_offsetb != _LE_OFFS_NULL ) {
+
+            /* read stream class */
+            le_returnb = le_class_io_read( & le_classb, le_offsetb, le_stream->sr_strm[le_unib].su_file[le_parse] );
+
+        }
+
+        /* check gathering */
+        if ( le_parse == le_span ) {
+
+            /* pepare array for insertion */
+            le_array_set( le_array, LE_ARRAY_SD );
+
+            /* insert position coordinates */
+            le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
+
+            /* check address mode */
+            if ( le_address_get_mode( le_addr ) ==  3 ) {
+
+                /* logical or operator */
+                if ( le_returna == LE_ERROR_SUCCESS ) {
+
+                    /* insert color components */
+                    le_class_get_data( & le_classa, ( le_data_t * ) le_array_sd_data_al( le_array ) );
+
+                } else {
+
+                    /* insert color components */
+                    le_class_get_data( & le_classb, ( le_data_t * ) le_array_sd_data_al( le_array ) );
+
+                }
+
+            } else if ( le_address_get_mode( le_addr ) == 4 ) {
+
+                /* logical and operator */
+                if ( ( le_returna == LE_ERROR_SUCCESS ) && ( le_returnb == LE_ERROR_SUCCESS ) ) {
+
+                    /* insert color components */
+                    le_class_get_data( & le_classa, ( le_data_t * ) le_array_sd_data_al( le_array ) );
+
+                }
+
+            } else {
+
+                /* logical xor operator */
+                if ( ( le_returna == LE_ERROR_SUCCESS ) && ( le_returnb != LE_ERROR_SUCCESS ) ) {
+
+                    /* insert color components */
+                    le_class_get_data( & le_classa, ( le_data_t * ) le_array_sd_data_al( le_array ) );
+
+                } else if ( ( le_returna != LE_ERROR_SUCCESS ) && ( le_returnb == LE_ERROR_SUCCESS ) ) {
+
+                    /* insert color components */
+                    le_class_get_data( & le_classb, ( le_data_t * ) le_array_sd_data_al( le_array ) );
+
+                }
+
+            }
+
+        } else {
+
+            /* daughters classes enumeration */
+            for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
+
+                /* check status value */
+                if ( le_returna == LE_ERROR_SUCCESS ) {
+
+                    /* retreive daughter class offset */
+                    le_offseta = le_class_get_offset( & le_classa, le_digit );
+
+                /* assign null offset */
+                } else { le_offseta = _LE_OFFS_NULL; }
+
+                /* check status value */
+                if ( le_returnb == LE_ERROR_SUCCESS ) {
+
+                    /* retreive daughter class offset */
+                    le_offsetb = le_class_get_offset( & le_classb, le_digit );
+
+                /* assign null offset */
+                } else { le_offsetb = _LE_OFFS_NULL; }
+
+                /* gathering condition */
+                if ( ( le_offseta != _LE_OFFS_NULL ) || ( le_offsetb != _LE_OFFS_NULL ) ) {
+
+                    /* update address index digit */
+                    le_address_set_digit( le_addr, le_parse, le_digit );
+
+                    /* recursive gathering */
+                    le_stream_io_parallel( le_stream, le_unia, le_unib, le_addr, le_offseta, le_offsetb, le_parse + 1, le_span, le_array );
 
                 }
 

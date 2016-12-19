@@ -117,7 +117,7 @@
         if ( fread( ( le_void_t * ) le_class->cs_data, 1, LE_BUFFER_CLASS, le_stream ) != LE_BUFFER_CLASS ) {
 
             /* send message */
-            return( LE_ERROR_IO_WRITE );
+            return( LE_ERROR_IO_READ );
 
         } else {
 

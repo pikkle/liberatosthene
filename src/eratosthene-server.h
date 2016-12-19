@@ -237,7 +237,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_void_t le_server_io_query( le_server_t * const le_server, le_sock_t const le_client );
+    le_void_t le_server_io_query( le_server_t const * const le_server, le_sock_t const le_client );
 
     /*! \brief client methods - server configuration
      *
