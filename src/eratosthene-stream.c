@@ -549,22 +549,28 @@
         /* check gathering */
         if ( le_parse == le_span ) {
 
-            /* pepare array for insertion */
-            le_array_set( le_array, LE_ARRAY_SD );
-
-            /* insert position coordinates */
-            le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
-
             /* check address mode */
             if ( le_address_get_mode( le_addr ) ==  3 ) {
 
                 /* logical or operator */
                 if ( le_returna == LE_ERROR_SUCCESS ) {
 
+                    /* pepare array for insertion */
+                    le_array_set( le_array, LE_ARRAY_SD );
+
+                    /* insert position coordinates */
+                    le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
+
                     /* insert color components */
                     le_class_get_data( & le_classa, ( le_data_t * ) le_array_sd_data_al( le_array ) );
 
                 } else {
+
+                    /* pepare array for insertion */
+                    le_array_set( le_array, LE_ARRAY_SD );
+
+                    /* insert position coordinates */
+                    le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
 
                     /* insert color components */
                     le_class_get_data( & le_classb, ( le_data_t * ) le_array_sd_data_al( le_array ) );
@@ -576,6 +582,12 @@
                 /* logical and operator */
                 if ( ( le_returna == LE_ERROR_SUCCESS ) && ( le_returnb == LE_ERROR_SUCCESS ) ) {
 
+                    /* pepare array for insertion */
+                    le_array_set( le_array, LE_ARRAY_SD );
+
+                    /* insert position coordinates */
+                    le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
+
                     /* insert color components */
                     le_class_get_data( & le_classa, ( le_data_t * ) le_array_sd_data_al( le_array ) );
 
@@ -586,10 +598,22 @@
                 /* logical xor operator */
                 if ( ( le_returna == LE_ERROR_SUCCESS ) && ( le_returnb != LE_ERROR_SUCCESS ) ) {
 
+                    /* pepare array for insertion */
+                    le_array_set( le_array, LE_ARRAY_SD );
+
+                    /* insert position coordinates */
+                    le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
+
                     /* insert color components */
                     le_class_get_data( & le_classa, ( le_data_t * ) le_array_sd_data_al( le_array ) );
 
                 } else if ( ( le_returna != LE_ERROR_SUCCESS ) && ( le_returnb == LE_ERROR_SUCCESS ) ) {
+
+                    /* pepare array for insertion */
+                    le_array_set( le_array, LE_ARRAY_SD );
+
+                    /* insert position coordinates */
+                    le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
 
                     /* insert color components */
                     le_class_get_data( & le_classb, ( le_data_t * ) le_array_sd_data_al( le_array ) );
