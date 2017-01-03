@@ -72,9 +72,9 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function creates a client socket descriptor. It establish the
-     *  connection to the provided server ip address and returns the initialised
-     *  socket descriptor.
+     *  This function creates a client socket descriptor. It set a connexion
+     *  toward the provided server, specified through it ip address and service
+     *  port, and returns the created socket descriptor.
      *
      *  \param le_ip   Server ip address
      *  \param le_port Server service port
@@ -87,8 +87,8 @@
     /*! \brief constructor/destructor methods
      *
      *  This function uninitialise a socket descriptor created by the function
-     *  \b le_client_create(). It closes the connection with the server and
-     *  returns a null socket descriptor.
+     *  \b le_client_create(). It closes the connexion to the server and returns
+     *  a null socket descriptor.
      *
      *  \param le_socket Socket descriptor
      *
@@ -104,7 +104,7 @@
      *  server allows the client to continue the query.
      *
      *  \param le_socket Socket descriptor
-     *  \param le_mode   Query mode
+     *  \param le_mode   Client query mode
      *
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
@@ -115,11 +115,11 @@
      *
      *  This function reads the expected client query handshake sent by the
      *  \b le_client_handshake() function. On success, it simply returns the
-     *  query mode packet in the client query handshake.
+     *  query mode packed in the client query handshake.
      *
      *  \param le_socket Socket descriptor
      *
-     *  \return Returns query mode on success, LE_NETWORK_MODE_NULL otherwise
+     *  \return Returns query mode on success, LE_MODE_NULL otherwise
      */
 
     le_byte_t le_client_switch( le_sock_t const le_socket );
@@ -128,10 +128,10 @@
      *
      *  This function sends the sever answer to a client query handshake. It is
      *  used by the server to authorise the client to continue the query it
-     *  initiate through a handshake.
+     *  initiated through the handshake.
      *
      *  \param le_socket Socket descriptor
-     *  \param le_auth   Server authorisation
+     *  \param le_auth   Server authorisation mode
      *
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
@@ -142,12 +142,13 @@
      *
      *  This function allows for a client to read an array from the server as
      *  an answer to a specific query. This function is used by client to easily
-     *  retrieve time and configuration array from the server.
+     *  retrieve query and configuration array from the server. Clients can also
+     *  set their own version of this function.
      *
      *  \param le_ip    Server ip address
      *  \param le_port  Server service port
-     *  \param le_mode  Query mode
-     *  \param le_array Array structure
+     *  \param le_mode  Client query mode
+     *  \param le_array Client array structure
      *
      *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
      */
