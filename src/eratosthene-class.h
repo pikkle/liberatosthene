@@ -76,7 +76,8 @@
      *  \brief class structure
      *
      *  This structure holds the representation of an equivalence class as it
-     *  is considered in the server storage structure.
+     *  is considered in the server storage structure. Such structure can be
+     *  seen as the fundamental microstructure of the server storage structure.
      *
      *  Formally, it simply consist in a bytes array storing the colorimetric
      *  information of the class representative and the offsets of the daughter
@@ -93,7 +94,8 @@
      *  The color components gives the class representative color, the m value
      *  being used as a pseudo-mean variable. The offsets i gives the position,
      *  in the next scale storage file, of the daughter class i. Usually,
-     *  address digits are used to access the offsets 8-array.
+     *  address digits are used to access the offsets 8-array of this class
+     *  structure.
      *
      *  \var le_class_struct::cs_data
      *  Bytes array containing the equivalence class storage data
@@ -111,11 +113,11 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function creates and returns and class structure using the default
-     *  first color provided as parameter. In addition, it initialises the
-     *  daughter class offset array.
+     *  This function initialise and returns a class structure. It uses the
+     *  provided data as first element that initialise the class content. In
+     *  addition it initialise the class offset array using the NULL reference.
      *
-     *  \param le_data Colors 3-vector of the first point
+     *  \param le_data  Data 3-vector (colour)
      *
      *  \return Returns created class structure
      */
@@ -124,7 +126,8 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function deletes the class hold by the provided class structure.
+     *  This function uninitialise the provided class structure. It simply erase
+     *  the class structure fields using default values.
      *
      *  \param le_class Class structure
      */
@@ -133,47 +136,47 @@
 
     /*! \brief accessor methods
      *
-     *  Returns storage offset of the daughter class pointed by \b le_addr
-     *  index.
+     *  This function returns the offset of the daughter class pointed by the
+     *  provided index.
      *
      *  \param le_class Class structure
-     *  \param le_addr  Daughter class index
+     *  \param le_index Offset index
      *
      *  \return Daughter class storage offset
      */
 
-    le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr );
+    le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_index );
 
     /*! \brief accessor methods
      *
-     *  Returns pointer to the class representative color 3-vector.
+     *  This function fills the provided data 3-vector using the representative
+     *  colour of the provided class structure.
      *
      *  \param le_class Class structure
-     *
-     *  \return Class representative color array
+     *  \param le_data  Data 3-vector (colour)
      */
 
     le_void_t le_class_get_data( le_class_t const * const le_class, le_data_t * const le_data );
 
     /*! \brief mutator methods
      *
-     *  Set the storage offset of the daughter class pointed by \b le_addr.
+     *  This function set the offset of the daughter class pointed by the index.
      *
      *  \param le_class  Class structure
-     *  \param le_addr   Daughter class index
-     *  \param le_offset Daughter class storage offset
+     *  \param le_index  Offset index
+     *  \param le_offset Offset value
      */
 
-    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset );
+    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_index, le_size_t const le_offset );
 
     /*! \brief mutator methods
      *
-     *  This function injects an new element in the class. It then recomputes
-     *  the class representative color taking into account the injected point
-     *  color.
+     *  This function injects the provided data 3-vector in the provided class
+     *  structure. The function then recomputes the class representative colour
+     *  taking into account the injected data through a pseudo-mean method.
      *
      *  \param le_class Class structure
-     *  \param le_data  Injected element color 3-vector
+     *  \param le_data  Data 3-vector (colour)
      */
 
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data );

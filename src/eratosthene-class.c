@@ -51,10 +51,10 @@
     source - accessor methods
  */
 
-    le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_addr ) {
+    le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_index ) {
 
         /* offset pointer variables */
-        le_size_t * le_ptr = ( le_size_t * ) ( le_class_offset( le_class ) + le_addr * _LE_USE_OFFSET );
+        le_size_t * le_ptr = ( le_size_t * ) ( le_class_offset( le_class ) + le_index * _LE_USE_OFFSET );
 
         /* extract and return offset */
         return( ( * le_ptr ) & _LE_OFFS_NULL );
@@ -74,10 +74,10 @@
     source - mutator methods
  */
 
-    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_addr, le_size_t const le_offset ) {
+    le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_index, le_size_t const le_offset ) {
 
         /* offset pointer variables */
-        le_size_t * le_ptr = ( le_size_t * ) ( le_class_offset( le_class ) + le_addr * _LE_USE_OFFSET );
+        le_size_t * le_ptr = ( le_size_t * ) ( le_class_offset( le_class ) + le_index * _LE_USE_OFFSET );
 
         /* insert offset */
         ( * le_ptr ) = ( ( * le_ptr ) & ( ~ ( ( le_size_t ) _LE_OFFS_NULL ) ) ) | le_offset;
