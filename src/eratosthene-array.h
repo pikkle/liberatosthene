@@ -94,14 +94,19 @@
      *  \brief array structure
      *
      *  This structure holds the definition and content of a bytes array. These
-     *  arrays are commonly used to transmit data through TCP/IP sockets.
+     *  arrays are commonly used to transmit data through TCP/IP sockets. These
+     *  arrays of bytes are commonly interpreted through more complex types
+     *  using specific access marcos and pointers.
      *
-     *  Being a simple bytes succession, arrays are interpreted as more complexe
-     *  arrays of structures using memory mapper depending on the actual data
-     *  stored in the array.
+     *  The structure holds the byte array base pointer and two size fields. The
+     *  proper size field stores the actual size of the array, in bytes. The
+     *  virtual size holds the array memory allocation size, in bytes, usually
+     *  greater than the array proper size.
      *
-     *  The structures comes with methods allowing array size management and
-     *  socket i/o along with memory mapper structure initiated using macros.
+     *  The size and virtual size are used to minimize the amount of memory
+     *  reallocation during elements appending, the size following the size of
+     *  the appended elements while the virtual size, driving the memory
+     *  allocation, follows much larger steps.
      *
      *  \var le_array_struct::ar_virt
      *  Memory size of the bytes array, in bytes
@@ -125,8 +130,7 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function simply returns an array structure created using default
-     *  values.
+     *  This function initialise and returns an empty array structure.
      *
      *  \return Returns created structure
      */
@@ -135,8 +139,8 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function delete the provided array structure. It frees array
-     *  memory when required and clears the structure fields.
+     *  This function uninitialise the provided array structure. It unallocates
+     *  the array memory and reset the structure fields.
      *
      *  \param le_array Array structure
      */
@@ -145,8 +149,8 @@
 
     /*! \brief accessor methods
      *
-     *  Returns the data size, in bytes, of the array contained in the provided
-     *  structure.
+     *  This function returns the size, in bytes, of the data stored in the
+     *  provided array structure.
      *
      *  \param le_array Array structure
      *
@@ -157,8 +161,7 @@
 
     /*! \brief accessor methods
      *
-     *  Returns the memory base pointer of the array contained in the provided
-     *  structure.
+     *  This function returns the array memory base pointer.
      *
      *  \param le_array Array structure
      *
@@ -169,31 +172,73 @@
 
     /*! \brief mutator methods
      *
-     *  This function checks if an element of length \b le_length is addable to
-     *  the array memory allocation. When the array memory is not enough, it
-     *  reallocate the array memory allowing the addition of the element.
+     *  This function checks if the virtual size of the provided array structure
+     *  allows the insertion of an element of size \b le_length.
+     *
+     *  If the virtual size allows the insertion, the function update the array
+     *  size. Otherwise, it update the size of the array and also the virtual
+     *  size. In this case, the array memory is reallocated by the function
+     *  according to the updated virtual size.
      *
      *  \param le_array  Array structure
-     *  \param le_length Length, in bytes, of added element
+     *  \param le_length Length, in bytes, of inserted element
      *
-     *  \return Return _LE_ERROR_SUCCESS on success, an error code otherwise
+     *  \return Return _LE_TRUE on success, _LE_FALSE otherwise
      */
 
     le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length );
 
+    /*! \brief mutator methods
+     *
+     *  This function is used to force the size of the provided array to a
+     *  specific value. The function checks if the virtual size remains greater
+     *  than the specified size. In this case, the array memory allocation is
+     *  not changed. Otherwise, the virtual size of the array is aligned on the
+     *  provided size and the function reallocate the array memory.
+     *
+     *  \param le_array  Array structure
+     *  \param le_size   Size of the array
+     *
+     *  \return Return _LE_TRUE on success, _LE_FALSE otherwise
+     */
+
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
 
+    /*! \brief mapping methods
+     *
+     *  This function is used to pack both position and data information at end
+     *  of the provided array. The function starts by preparing the array to
+     *  receive the elements. Then it pack the two provided 3-vector as a
+     *  sequence of bytes at array end.
+     *
+     *  \param le_array Array structure
+     *  \param le_pose  Position 3-vector
+     *  \param le_data  Data 3-vector (colour)
+     */
+
     le_void_t le_array_map_sd( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
+
+    /*! \brief mapping methods
+     *
+     *  This function is used to pack both size and time value at end of the
+     *  provided array structure. The function starts by preparing the array to
+     *  receive the two elements. It then pack the two values as a sequence of
+     *  bytes at array end.
+     *
+     *  \param le_array Array structure
+     *  \param le_size  Size value
+     *  \param le_time  Time value
+     */
 
     le_void_t le_array_map_dt( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time );
 
     /*! \brief i/o methods
      *
-     *  This function writes the data content from the provided array on the
-     *  provided opened socket.
+     *  This function writes the provided array bytes in the socket pointed by
+     *  the provided socket descriptor.
      *
      *  \param le_array  Array structure
-     *  \param le_socket Opened socket
+     *  \param le_socket Socket descriptor
      *
      *  \return Return _LE_ERROR_SUCCESS on success, an error code otherwise
      */
@@ -202,11 +247,12 @@
 
     /*! \brief i/o methods
      *
-     *  This function reads the data content of the provided array from the
-     *  provided opened socket.
+     *  This function reads the provided array bytes from the socket pointed by
+     *  the provided socket descriptor. It reads bytes until the connection is
+     *  closed or a timeout is reached.
      *
-     *  It reads bytes blocks as their are coming until connection is closed
-     *  or socket become silent.
+     *  \param le_array  Array structure
+     *  \param le_socket Socket descriptor
      *
      *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
      */
