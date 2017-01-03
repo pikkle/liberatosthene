@@ -28,13 +28,17 @@
      *
      *  \section liberatosthene
      *
-     *  The "erathosthene" system is designed to offers a worldwide 4D tile
-     *  server of informations coming with a three-dimensional georeference and
-     *  a time coordinates. Using hierarchical equivalence classes to drive its
-     *  storage structure, it allows high-performance queries on the refereneced
-     *  data it stores. Currently, the eratosthene system is developed to manage
-     *  colorimetric points as referenced data to provide an historical geographic
-     *  information system of the 3D history of earth.
+     *  The _liberatosthene_ library implements an earth scale 4D tile server
+     *  through space-time index formalism. Using the theoretical framework of
+     *  the index, it implements a simple and reliable data storage and access.
+     *  This allows the servers built using this library to perform data
+     *  injection and query with high efficiency over the network.
+     *
+     *  From a theoretical point of view any kind of data, as referenced in
+     *  space and time, can be considered through the index formalism. Currently,
+     *  colours are considered as data. This allows server to broadcast large
+     *  amount of point cloud over the network, toward large and multi scale 4D
+     *  geographic information systems.
      *
      *  \section Copyright and License
      *
