@@ -59,7 +59,7 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, 1, LE_STREAM_C, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, LE_STREAM_C, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -77,73 +77,81 @@
      *  \brief server structure
      *
      *  This structure is the principal structure of the library as it holds
-     *  the description of the server.
+     *  the descriptor of the servers.
      *
-     *  The "erathosthene" system is designed to offers a worldwide 4D tile
-     *  server of informations coming with a three-dimensional georeference and
-     *  a time coordinates. Using hierarchical equivalence classes to drive its
-     *  storage structure, it allows high-performance queries on the refereneced
-     *  data it stores. Currently, the eratosthene system is developed to manage
-     *  colorimetric points as referenced data to provide an historical geographic
-     *  information system of the 3D history of earth.
+     *  The server offers a 4D mapping service of the earth through to storage,
+     *  access and network broadcasting of colorimetric point. Its storage
+     *  structure, data injection and data query are driven by the formalism
+     *  of spatiotemporal index. In other words, the server can be seen as a
+     *  4D tile server based on the theoretical framework of index.
      *
-     *  As every server, the eratosthene server expects client requests about
-     *  4D informations. According to the request time and spatial definition,
-     *  it searches the data into its storage structure and send them back to
-     *  the clients.
+     *  A server is then responsible of receiving data from client during
+     *  injection, data broadcasting during client query, broadcasting of its
+     *  main parameter through client specific query and the storage management
+     *  of the data. This structure is then the heart allowing these operation
+     *  to be fulfilled.
      *
-     *  It also allow client to inject 4D information in the storage structure
-     *  using internet protocol. The server reads the client 4D information and
-     *  injects them in the storage structure. In addition, it is also capable
-     *  of answering query about available times and about its configuration.
+     *  A first field is dedicated to store the server socket descriptor. As any
+     *  server, an eratosthene server maintain a service on a computer available
+     *  throught a predefined port. This field store the socket descriptor set
+     *  to listen to client queries.
      *
-     *  The eratosthene server is built around its data storage strategy and
-     *  management. The geographics coordinates are considered and ranges are
-     *  defined : [0,2pi[ for longitude, [-pi/2,pi/2] for the latitude and
-     *  [hmin,hmax] for the ellipsoid heights (WGS84 is considered as the
-     *  server reference ellipsoid). Considering scales, from zero to a highest
-     *  scale (\b sv_scfg parameter), it devides each dimension ranges into
-     *  2^k homogeneous equivalence classes, where k gives the considered scale.
-     *  As a point is injected in the storage structure, it is added to each
-     *  classes along the scales it belong to. This octree structure allows to
-     *  perform high-performances queries on spatial structure.
+     *  Three fields are dedicated to the server configuration. The first one
+     *  holds a character array storing the main path of the storage structure.
+     *  This path is used to access storage structure files. The two remaining
+     *  configuration fields are used to store the space and time parameters,
+     *  The space parameter gives the number of scale engaged in the storage
+     *  structure. It follows that any space index used to access or store data
+     *  has to contain less digit than this configuration value. The time value
+     *  gives the size of the temporal equivalence classes. Both parameters fix
+     *  the server resolution power in both space and time.
      *
-     *  As any information stored in the server storage structure, the points
-     *  are associated with a time value that drives their storage. The value
-     *  \b sv_tcfg gives the size of the uni-scale temporal equivalence classes
-     *  defined on time. It is used to determine in which time allocation the
-     *  data has to be stored. In other words, each time equivalence classes
-     *  has its own spatial storage structure as decribed in the last paragraph.
+     *  The last field of the structure holds a sub-structure dedicated to the
+     *  management of i/o operation made on the storage structure. The server
+     *  has to give this structure to any i/o method accessing the storage
+     *  structure. More information on the stream structure can be found in the
+     *  stream module documentation.
      *
-     *  The \b sv_path field simply stores the root path of the server storage
-     *  structure in which is expected the configuration file containing the
-     *  server configuration paramters (\b sv_scfg and \b sv_tcfg, simply
-     *  stored in a text file).
+     *  As the server offers a 4D information system through the formalism of
+     *  spatiotemporal index, one has to take into account geographic ranges
+     *  allowed by indexation. For both longitude and latitude, the canonical
+     *  ranges are considered (with coordinates always in radian) : [-pi,pi] and
+     *  [-pi/2,pi/2]. A more specific range is considered for height values
+     *  (with coordinates always in meter above WGS84 ellipsoid) : [-h,h] where
+     *  h equal to \b LE_ADDRESS_MAXH (address module). Any point injected in
+     *  the server has to be inside the defined ranges.
      *
-     *  As each active temporal classes comes with its own spatial storage
-     *  structure, this structure holds a simple file streams management
-     *  strategy. It stores a stack of file streams (\b sv_file) that contains
-     *  the \b sv_tcfg required file stream to access the scales. The temporal
-     *  description of each opened file streams is stored using the \b sv_time
-     *  array, which is always of the same size of the file streams stack.
-     *  The \b sv_push value simply indicates which stack allocation to use if
-     *  the required file streams if not already opened in the file streams
-     *  stack.
+     *  The server data storage and access are driven by the spatiotemporal
+     *  index formalism. As any point is assumed to be referenced in space and
+     *  time, to equivalence relation are defined : one on the time range and
+     *  the other along the spatial scales. The time relation simply establish
+     *  homogenous ranges along the time dimension collapsing all time in each
+     *  range to a single equivalence class. It follow that two time falling in
+     *  the same class cannot be distinguished anymore after injection. The
+     *  structure time parameter gives the size, in seconds, of time equivalence
+     *  classes.
+     *
+     *  Each temporal class holds a spatial storage unit. Each unit contain
+     *  scales (files) in amount given by the structure spatial configuration
+     *  value. On the model of the relation defined on time, a similar relation
+     *  is set on each scale : each scale, in term of range, is splitted in
+     *  2^i ranges identified as equivalence classses. Any given point belong
+     *  to a given class at each scale. Index are used, through their digits
+     *  to browse the spatial scales to find or store any point. Again, two
+     *  point falling in the same class in a specific scale cannot be separated
+     *  after injection. In other words, index digits are the address allowing
+     *  to go from a scale to another following the logic of octrees.
      *
      *  \var le_server_struct::sv_sock
      *  Server socket descriptor
      *  \var le_server_struct::sv_path
-     *  Server storage structure local path
+     *  Server storage structure path
      *  \var le_server_struct::sv_scfg
-     *  Server number of spatial scales in the storage structure
+     *  Server spatial configuration value : number of scale
      *  \var le_server_struct::sv_tcfg
-     *  Server time discretisation parameter in the storage structure
-     *  \var le_server_struct::sv_push
-     *  Number of active streams in the stream stack
-     *  \var le_server_struct::sv_time
-     *  Stack of Times of the active streams
-     *  \var le_server_struct::sv_file
-     *  Stack of files descriptors of the active streams
+     *  Server temporal configuration value : size of temporal classes
+     *  \var le_server_struct::sv_stream
+     *  Server i/o stream sub-system
      */
 
     typedef struct le_server_struct {
@@ -153,7 +161,6 @@
         le_char_t * sv_path;
         le_size_t   sv_scfg;
         le_time_t   sv_tcfg;
-        le_size_t   sv_ncfg;
 
         le_stream_t sv_stream;
 
@@ -166,14 +173,18 @@
     /*! \brief constructor/destructor methods
      *
      *  This function creates a server structure and initialises it contents
-     *  according to the provided parameters. It initialise the streams stack
-     *  and reads the server configuration file hold in the storage structure.
+     *  according to the provided parameters. It initialise the stream sub
+     *  system and reads the server configuration file hold in the storage
+     *  structure pointed by the provided path.
      *
      *  It also create the socket descriptor used by the server to listen to
      *  client queries.
      *
+     *  This function returning the created structure, the status is stored in
+     *  the structure itself using the reserved _status field.
+     *
      *  \param le_port Server service port
-     *  \param le_path Server storage structure local path
+     *  \param le_path Server storage structure path
      *
      *  \return Returns created server structure
      */
@@ -183,73 +194,121 @@
     /*! \brief constructor/destructor methods
      *
      *  This function deletes the server structure provided as parameter by
-     *  closing the socket descriptor and by closing every openned file
-     *  descriptor present in the streams stack.
+     *  closing the socket descriptor and by deleting the stream sub system.
+     *  The function ends by clearing the structure fields.
      *
      *  \param le_server Server structure
      */
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
+    /*! \brief mutator methods
+     *
+     *  This function reads the configuration file at the root of the server
+     *  storage structure. To locate the storage structure, this function uses
+     *  the path hold by the structure itself, assumed to be correctly filled.
+     *
+     *  The function opens and reads the two space and time configuration values
+     *  stored in the file (text mode) and perform basic consistency checks.
+     *
+     *  \param le_server Server structure
+     *
+     * \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
+
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /*! \brief server methods
+    /*! \brief i/o methods - principale
      *
-     *  This function is the server main function. It holds the server loop
-     *  listening for incomming client queries. As a query is revieved, this
-     *  function handle the server-side handshake procedure and answer the
-     *  client by calling the specific server sub-process.
+     *  With the structure constructor and destructor methods, the function is
+     *  part of the main methods. As the structure is created, it starts an
+     *  infinite loop waiting for client connexions.
+     *
+     *  As a client connects to the server, the function create a socket for
+     *  the incoming connexion and analysis the client handshake. The connexion
+     *  is then dispatch to the specific server sub-process according to the
+     *  handshake analysis.
+     *
+     *  As the client query is processed by the sub-process, the server closes
+     *  the dedicated socket and returns back to the listening loop.
      *
      *  \param le_server Server structure
      */
 
     le_void_t le_server_io( le_server_t * const le_server );
 
-    /*! \brief client methods - injection
+    /*! \brief i/o methods
      *
      *  This function is a specific server sub-process.
      *
-     *  Its role is to provides points injection service. It expects the client
-     *  to send colorimetric points stream (RF format). As points are streamed,
-     *  this function sends them to its specific sub-process responsible of the
-     *  insertion of the incoming points in the storage structure.
+     *  It is called as the dispatcher receives an injection query from a remote
+     *  client. It reads the injection time and data array from the provided
+     *  socket and, after security checks, calls the stream injection function.
      *
      *  \param le_server Server structure
-     *  \param le_client Server-side client socket descriptor
+     *  \param le_client Client socket descriptor - server-side
      */
 
     le_void_t le_server_io_inject( le_server_t * const le_server, le_sock_t const le_client );
 
-    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client );
-
-    /*! \brief client methods - query
+    /*! \brief i/o methods
      *
      *  This function is a specific server sub-process.
      *
-     *  Its role is to answer to points queries. It expects the client to send
-     *  an address structure that points the equvalence class (or its daughters)
-     *  containing the points requested by the client. It then gathers the
-     *  points in a simple array structure and sends it back to the client.
+     *  It is called as the dispatcher receives an time reduction query from a
+     *  remote client. It reads the address structure from the socket and ask,
+     *  for the time(s) engaged by the address mode, the stream function to
+     *  reduce it(them). As time(s) is(are) reduced, the address structure is
+     *  updated and written back on the client socket.
+     *
+     *  Time reduction is a specific features sideways from proper data query.
+     *  A client does not know anything about data available through the server.
+     *  It follows, as it provides times through the address used for query,
+     *  that almost always these times does not fit any time class available in
+     *  the storage structure. The server searches then the best non-empty, from
+     *  the spatial index point of view, time class. As a result, the server
+     *  update the address times - explaining why they are written back to the
+     *  client during data queries.
+     *
+     *  For some graphical clients, it is important to be able to know how the
+     *  server will affect the address times (time reduction) before to perform
+     *  the proper query, explaining this functionallity.
      *
      *  \param le_server Server structure
-     *  \param le_client Server-side client socket descriptor
+     *  \param le_client Client socket descriptor - server-side
+     */
+
+    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client );
+
+    /*! \brief i/o methods
      *
-     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     *  This function is a specific server sub-process.
+     *
+     *  It is called as the dispatcher receive an data query from a remote
+     *  client. It reads the query address structure from the socket and gather
+     *  the relevant data through specific stream method according to the time
+     *  reduction (see \b le_server_io_reduce()) result and the address mode.
+     *
+     *  As the points are gathered from the storage structure, the function
+     *  writes back the time-reduced address and the gathered data array on the
+     *  on the client socket.
+     *
+     *  \param le_server Server structure
+     *  \param le_client Client socket descriptor - server-side
      */
 
     le_void_t le_server_io_query( le_server_t const * const le_server, le_sock_t const le_client );
 
-    /*! \brief client methods - server configuration
+    /*! \brief i/o methods
      *
      *  This function is a specific server sub-process.
      *
-     *  Its role is to allow clients to retrieve the server configuration values
-     *  use to drive and manage the storage structure.
+     *  It is called as the dispatcher receives a configuration query from a
+     *  remote client. It packs the spatial and temporal configuration values
+     *  in an array and writes it in the provided client socket.
      *
      *  \param le_server Server structure
-     *  \param le_client Server-side client socket descriptor
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     *  \param le_client Client socket descriptor - server-side
      */
 
     le_void_t le_server_io_config( le_server_t const * const le_server, le_sock_t const le_client );
