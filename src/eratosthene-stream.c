@@ -357,10 +357,13 @@
     source - i/o methods
  */
 
-    le_void_t le_stream_io_inject( le_stream_t const * const le_stream, le_size_t const le_unit, le_address_t * const le_addr, le_array_t const * const le_array ) {
+    le_void_t le_stream_io_inject( le_stream_t const * const le_stream, le_size_t const le_unit, le_array_t const * const le_array ) {
 
         /* class variables */
         le_class_t le_class = LE_CLASS_C;
+
+        /* address variables */
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_stream->sr_scfg - 1 );
 
         /* depth variables */
         le_size_t le_parse = 0;
@@ -374,7 +377,7 @@
         le_size_t le_size = le_array_get_size( le_array );
 
         /* address size variables */
-        le_size_t le_span = le_address_get_size( le_addr ) + 1;
+        le_size_t le_span = le_address_get_size( & le_addr ) + 1;
 
         /* check consistency - abort injection */
         if ( le_size == 0 ) return;
@@ -383,7 +386,7 @@
         for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_SD ) {
 
             /* reset address digits */
-            le_address_set_pose( le_addr, le_array_sd_pose_a( le_array, le_index ) );
+            le_address_set_pose( & le_addr, le_array_sd_pose_a( le_array, le_index ) );
 
             /* reset depth variables */
             le_parse = 0;
@@ -410,7 +413,7 @@
                 }
 
                 /* retrieve daughter offset */
-                le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) );
+                le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_parse ) );
 
                 /* check daughter state */
                 if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_span ) ) {
@@ -422,7 +425,7 @@
                     le_offset = ftell( le_stream->sr_strm[le_unit].su_file[le_panex] );
 
                     /* insert offset in class */
-                    le_class_set_offset( & le_class, le_address_get_digit( le_addr, le_parse ), le_offset );
+                    le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
 
                 }
 
@@ -476,13 +479,13 @@
 
     }
 
-    le_void_t le_stream_io_gather( le_stream_t const * const le_stream, le_size_t const le_file, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
+    le_void_t le_stream_io_gather( le_stream_t const * const le_stream, le_size_t const le_unit, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         /* class variables */
         le_class_t le_class = LE_CLASS_C;
 
         /* read class */
-        if ( le_class_io_read( & le_class, le_offset, le_stream->sr_strm[le_file].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
+        if ( le_class_io_read( & le_class, le_offset, le_stream->sr_strm[le_unit].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
 
             /* check query span */
             if ( le_parse == le_span ) {
@@ -508,7 +511,7 @@
                         le_address_set_digit( le_addr, le_parse, le_digit );
 
                         /* recursive query */
-                        le_stream_io_gather( le_stream, le_file, le_addr, le_offset, le_parse + 1, le_span, le_array );
+                        le_stream_io_gather( le_stream, le_unit, le_addr, le_offset, le_parse + 1, le_span, le_array );
 
                     }
 

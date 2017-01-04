@@ -288,9 +288,6 @@
         /* stream variables */
         le_size_t le_stream = _LE_SIZE_NULL;
 
-        /* address variables */
-        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_server->sv_scfg - 1 );
-
         /* read time */
         if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) {
 
@@ -327,7 +324,7 @@
         if ( ( le_stream = le_stream_get_strict( & le_server->sv_stream, le_time, LE_STREAM_WRITE ) ) != _LE_SIZE_NULL ) {
 
             /* inject array */
-            le_stream_io_inject( & le_server->sv_stream, le_stream, & le_addr, & le_array );
+            le_stream_io_inject( & le_server->sv_stream, le_stream, & le_array );
 
         }
 

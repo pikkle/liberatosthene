@@ -243,7 +243,11 @@
      *  equivalence class corner pointed by the index stored in the address
      *  structure.
      *
+     *  This function expects the number of digits of the index to be provided
+     *  as parameter, discaring the size field of the address strutcure.
+     *
      *  \param le_address Address structure
+     *  \param le_size    Number of digits
      *  \param le_pose    3-vector receiving the coordinates
      */
 

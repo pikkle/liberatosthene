@@ -181,7 +181,7 @@
      *  client queries.
      *
      *  This function returning the created structure, the status is stored in
-     *  the structure itself using the reserved _status field.
+     *  the structure itself using the reserved \b _status field.
      *
      *  \param le_port Server service port
      *  \param le_path Server storage structure path
