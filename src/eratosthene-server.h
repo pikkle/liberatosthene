@@ -19,7 +19,7 @@
  */
 
     /*! \file   eratosthene-server.h
-     *  \author Nils Hamel <n.hamel@bluewin.ch>
+     *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
      *  Server module
      */

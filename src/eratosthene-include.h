@@ -19,7 +19,7 @@
  */
 
     /*! \file   eratosthene-include.h
-     *  \author Nils Hamel <n.hamel@bluewin.ch>
+     *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
      *  Inclusion header
      */
