@@ -1,5 +1,5 @@
 /*
- *  liberatosthene - eratosthene indexation server
+ *  liberatosthene
  *
  *      Nils Hamel - nils.hamel@bluewin.ch
  *      Copyright (c) 2016 EPFL CDH DHLAB
