@@ -103,7 +103,7 @@
      *  virtual size holds the array memory allocation size, in bytes, usually
      *  greater than the array proper size.
      *
-     *  The size and virtual size are used to minimize the amount of memory
+     *  The size and virtual size are used to minimise the amount of memory
      *  reallocation during elements appending, the size following the size of
      *  the appended elements while the virtual size, driving the memory
      *  allocation, follows much larger steps.
@@ -139,7 +139,7 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function uninitialise the provided array structure. It unallocates
+     *  This function uninitialises the provided array structure. It unallocates
      *  the array memory and reset the structure fields.
      *
      *  \param le_array Array structure

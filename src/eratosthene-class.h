@@ -91,7 +91,7 @@
      *  where m, r, g and b are stored using one byte and where the offsets are
      *  whole numbers coded on _LE_USE_OFFSET bytes long integers.
      *
-     *  The color components gives the class representative color, the m value
+     *  The colour components gives the class representative colour, the m value
      *  being used as a pseudo-mean variable. The offsets i gives the position,
      *  in the next scale storage file, of the daughter class i. Usually,
      *  address digits are used to access the offsets 8-array of this class
@@ -126,8 +126,8 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function uninitialise the provided class structure. It simply erase
-     *  the class structure fields using default values.
+     *  This function uninitialises the provided class structure. It simply
+     *  erases the class structure fields using default values.
      *
      *  \param le_class Class structure
      */
@@ -200,7 +200,7 @@
      *
      *  This function performs the invert operation of \b le_class_io_write
      *  function. It creates the storage representation of the provided class
-     *  in the stream that decribe an already opened file in binary mode.
+     *  in the stream that describes an already opened file in binary mode.
      *
      *  \param le_class  Class structure
      *  \param le_offset Class storage offset

@@ -94,7 +94,7 @@
      *
      *  The time value hold by the structure is used to access the directory
      *  that stores the class storage files. It is not a proper time value as it
-     *  is devided by the server time parameter, the storage directories being
+     *  is divided by the server time parameter, the storage directories being
      *  named this way.
      *
      *  The file descriptors stack holds the handles to class storage files. The
@@ -131,7 +131,7 @@
      *  found in the storage structure. During structure creation, the storage
      *  structure is scanned to detect all temporal classes and their directory.
      *  A stream unit is created for each detected class. This allows the stream
-     *  module to perform i/o operations on the server storage structure wihtout
+     *  module to perform i/o operations on the server storage structure without
      *  having to constantly create and delete the required file descriptors.
      *
      *  A specific constraint is applied on the stream unit stack : it has to be
@@ -203,7 +203,7 @@
      *  This function is used to deleted the provided stream structure. It reads
      *  the content of the stream units stack and deletes the stream units one
      *  by one by closing their file descriptors. The stack itself is then
-     *  unallocared and the structure fields are cleared.
+     *  unallocated and the structure fields are cleared.
      *
      *  \param le_stream Stream structure
      */
@@ -225,7 +225,7 @@
      *  and adds a new stream unit to the stack. This function is mainly used
      *  during data injection.
      *
-     *  The provided time value has to be a proper time, not devided by the
+     *  The provided time value has to be a proper time, not divided by the
      *  server time configuration value.
      *
      *  \param le_stream Stream structure
@@ -258,7 +258,7 @@
      *  structure, returning its offset allows the caller subsequent processes
      *  to avoid to search it again.
      *
-     *  The provided time value has to be a proper time, not devided by the
+     *  The provided time value has to be a proper time, not divided by the
      *  server time configuration value.
      *
      *  \param le_stream Stream structure
@@ -280,7 +280,7 @@
      *  structure temporal class. As the class is found, the function creates
      *  a new stream unit on the stack and initialises it for the found class.
      *
-     *  If the class is not found in the storage structure, the behavoir of the
+     *  If the class is not found in the storage structure, the behaviour of the
      *  function depends on the access mode : \b LE_STREAM_READ indicates the
      *  function to fail. Providing \b LE_STREAM_WRITE tells the function to
      *  create the class storage directory and files and to create a stream unit
@@ -289,7 +289,7 @@
      *  If a new stream unit is created by the function, it inserts it in the
      *  stream units stack following the order constraint.
      *
-     *  The provided time value has to be a proper time, not devided by the
+     *  The provided time value has to be a proper time, not divided by the
      *  server time configuration value.
      *
      *  \param le_stream Stream structure
@@ -307,7 +307,7 @@
      *  storage structure.
      *
      *  The provided array is expect to have the "SD" format, that is a series
-     *  of records composed of a coordinates 3-vector and a color 3-vector. See
+     *  of records composed of a coordinates 3-vector and a colour 3-vector. See
      *  array module for more information.
      *
      *  For each array record, the function initiates an address structure using
@@ -348,17 +348,17 @@
 
     /*! \brief i/o methods
      *
-     *  This function is used to gather spatial classes position and color
+     *  This function is used to gather spatial classes position and colour
      *  information to build a array using the "SD" format. See documentation
      *  of array module and \b le_stream_io_inject() function for more elements
      *  on this format.
      *
      *  This function assume that the offset of the spatial class pointed by the
      *  address index is known (\b le_stream_io_offset()). Starting from the
-     *  offsets array of this class, it starts to gather the position and colors
-     *  by enumerating the class daughters and sub-daughters through a recursive
-     *  process. It detect the gathering scale using the main class scale and
-     *  the address additionnal depth (span).
+     *  offsets array of this class, it starts to gather the position and
+     *  colours by enumerating the class daughters and sub-daughters through a
+     *  recursive process. It detect the gathering scale using the main class
+     *  scale and the address additional depth (span).
      *
      *  The array is filled with the gathered the daughters and sub-daughters
      *  spatial classes representative. The array is filled by pushing the
@@ -369,7 +369,7 @@
      *  \param le_addr   Address structure
      *  \param le_offset Spatial class offset
      *  \param le_parse  Spatial class scale
-     *  \param le_span   Query additionnal depth
+     *  \param le_span   Query additional depth
      *  \param le_array  Data array filled by the function
      */
 
@@ -378,7 +378,7 @@
     /*! \brief i/o methods
      *
      *  This function implements a parallel version of \b le_stream_io_gather()
-     *  function. It performs the same operations simply considering distincts
+     *  function. It performs the same operations simply considering distinct
      *  times explaining why some parameters are doubled.
      *
      *  As two parallel gathering process take place in this function, it allows
@@ -398,7 +398,7 @@
      *  \param le_off1   Spatial class offset - time 1
      *  \param le_off2   Spatial class offset - time 2
      *  \param le_parse  Spatial class scale
-     *  \param le_span   Query additionnal depth
+     *  \param le_span   Query additional depth
      *  \param le_array  Data array filled by the function
      */
 

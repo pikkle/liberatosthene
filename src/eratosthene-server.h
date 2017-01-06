@@ -93,7 +93,7 @@
      *
      *  A first field is dedicated to store the server socket descriptor. As any
      *  server, an eratosthene server maintain a service on a computer available
-     *  throught a predefined port. This field store the socket descriptor set
+     *  through a predefined port. This field store the socket descriptor set
      *  to listen to client queries.
      *
      *  Three fields are dedicated to the server configuration. The first one
@@ -125,7 +125,7 @@
      *  index formalism. As any point is assumed to be referenced in space and
      *  time, to equivalence relation are defined : one on the time range and
      *  the other along the spatial scales. The time relation simply establish
-     *  homogenous ranges along the time dimension collapsing all time in each
+     *  homogeneous ranges along the time dimension collapsing all time in each
      *  range to a single equivalence class. It follow that two time falling in
      *  the same class cannot be distinguished anymore after injection. The
      *  structure time parameter gives the size, in seconds, of time equivalence
@@ -134,13 +134,13 @@
      *  Each temporal class holds a spatial storage unit. Each unit contain
      *  scales (files) in amount given by the structure spatial configuration
      *  value. On the model of the relation defined on time, a similar relation
-     *  is set on each scale : each scale, in term of range, is splitted in
-     *  2^i ranges identified as equivalence classses. Any given point belong
-     *  to a given class at each scale. Index are used, through their digits
-     *  to browse the spatial scales to find or store any point. Again, two
-     *  point falling in the same class in a specific scale cannot be separated
-     *  after injection. In other words, index digits are the address allowing
-     *  to go from a scale to another following the logic of octrees.
+     *  is set on each scale : each scale, in term of range, is split in 2^i
+     *  ranges identified as equivalence classes. Any given point belong to a
+     *  given class at each scale. Index are used, through their digits to
+     *  browse the spatial scales to find or store any point. Again, two point
+     *  falling in the same class in a specific scale cannot be separated after
+     *  injection. In other words, index digits are the address allowing to go
+     *  from a scale to another following the logic of octrees.
      *
      *  \var le_server_struct::sv_sock
      *  Server socket descriptor
@@ -222,10 +222,10 @@
      *
      *  With the structure constructor and destructor methods, the function is
      *  part of the main methods. As the structure is created, it starts an
-     *  infinite loop waiting for client connexions.
+     *  infinite loop waiting for client connections.
      *
-     *  As a client connects to the server, the function create a socket for
-     *  the incoming connexion and analysis the client handshake. The connexion
+     *  As a client connects to the server, the function create a socket for the
+     *  incoming connection and analysis the client handshake. The connection
      *  is then dispatch to the specific server sub-process according to the
      *  handshake analysis.
      *
@@ -272,7 +272,7 @@
      *
      *  For some graphical clients, it is important to be able to know how the
      *  server will affect the address times (time reduction) before to perform
-     *  the proper query, explaining this functionallity.
+     *  the proper query, explaining this functionality.
      *
      *  \param le_server Server structure
      *  \param le_client Client socket descriptor - server-side

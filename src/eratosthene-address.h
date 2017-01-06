@@ -113,16 +113,16 @@
      *      mode = 4 : first time (logical and) second time
      *      mode = 5 : first time (logical xor) second time
      *
-     *  The proper spatial addresse of the pointed equivalence class is stored
+     *  The proper spatial address of the pointed equivalence class is stored
      *  in an array holding the digits of the address. The amount of digits is
      *  provided by the size field.
      *
      *  In the last place, the structure holds an depth parameter that gives,
-     *  usually in case of data query, the additionnal scale depth where the
+     *  usually in case of data query, the additional scale depth where the
      *  desired data have to be gathered.
      *
      *  Times are understood under the UTC standard in the way they give the
-     *  amount of seconds ellapsed since EPOCH (UTC) with consideration of leap
+     *  amount of seconds elapsed since EPOCH (UTC) with consideration of leap
      *  seconds.
      *
      *  As an example, the following address, written in its text form :
@@ -224,7 +224,7 @@
     /*! \brief accessor methods
      *
      *  This function compare the two provided address structures and returns a
-     *  boolean value indicating their identity.
+     *  Boolean value indicating their identity.
      *
      *  \param le_addr1 First address structure
      *  \param le_addr2 Second address structure
@@ -244,7 +244,7 @@
      *  structure.
      *
      *  This function expects the number of digits of the index to be provided
-     *  as parameter, discaring the size field of the address strutcure.
+     *  as parameter, discarding the size field of the address structure.
      *
      *  \param le_address Address structure
      *  \param le_size    Number of digits
@@ -298,7 +298,7 @@
 
     /*! \brief mutator methods
      *
-     *  Set the address additionnal depth (span).
+     *  Set the address additional depth (span).
      *
      *  \param le_address Address structure
      *  \param le_span    Additionnal depth
@@ -356,7 +356,7 @@
      *  text form.
      *
      *  Considering m the times comparison mode, t1 and t2 the times, d the
-     *  digits of the spatial index and q the query additionnal depth, the
+     *  digits of the spatial index and q the query additional depth, the
      *  function provides a string structured as follow :
      *
      *      /m/t1,t2/ddd...d/q
@@ -376,7 +376,7 @@
      *      /m/t1,t2/ddd...d/q
      *
      *  with m the time comparison mode, t1 and t2 the address times, d the
-     *  digits of the spatial index and q the addtionnal depth.
+     *  digits of the spatial index and q the additional depth.
      *
      *  \param le_address Address structure
      *  \param le_string  String containing the converted address structure

@@ -72,7 +72,7 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function creates a client socket descriptor. It set a connexion
+     *  This function creates a client socket descriptor. It set a connection
      *  toward the provided server, specified through it ip address and service
      *  port, and returns the created socket descriptor.
      *
@@ -86,9 +86,9 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function uninitialise a socket descriptor created by the function
-     *  \b le_client_create(). It closes the connexion to the server and returns
-     *  a null socket descriptor.
+     *  This function uninitialises a socket descriptor created by the function
+     *  \b le_client_create(). It closes the connection to the server and
+     *  returns a null socket descriptor.
      *
      *  \param le_socket Socket descriptor
      *
