@@ -6,7 +6,7 @@ From a theoretical point of view any kind of data, as referenced in space and ti
 
 ## Dependencies
 
-The _liberatosthene_ comes with the following package dependencies (Ubuntu 14.04 LTS) :
+The _liberatosthene_ comes with the following package dependencies (Ubuntu 16.04 LTS) :
 
 * build-essential
 
