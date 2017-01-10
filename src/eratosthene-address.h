@@ -28,8 +28,8 @@
     header - inclusion guard
  */
 
-    # ifndef __LE_SYSTEM_ADDRESS__
-    # define __LE_SYSTEM_ADDRESS__
+    # ifndef __LE_ADDRESS__
+    # define __LE_ADDRESS__
 
 /*
     header - C/C++ compatibility

@@ -28,8 +28,8 @@
     header - inclusion guard
  */
 
-    # ifndef __LE_SYSTEM_ARRAY__
-    # define __LE_SYSTEM_ARRAY__
+    # ifndef __LE_ARRAY__
+    # define __LE_ARRAY__
 
 /*
     header - C/C++ compatibility

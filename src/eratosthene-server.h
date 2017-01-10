@@ -46,7 +46,6 @@
     # include "eratosthene.h"
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
-    # include "eratosthene-class.h"
     # include "eratosthene-client.h"
     # include "eratosthene-stream.h"
 
