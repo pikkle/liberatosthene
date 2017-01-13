@@ -21,7 +21,7 @@
     /*! \file   eratosthene-client.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  Client module
+     *  liberatosthene - client module
      */
 
 /*

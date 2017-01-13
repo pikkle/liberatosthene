@@ -21,7 +21,7 @@
     /*! \file   eratosthene-array.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  Array module
+     *  liberatosthene - array module
      */
 
 /*

@@ -21,7 +21,7 @@
     /*! \file   eratosthene-server.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  Server module
+     *  liberatosthene - server module
      */
 
 /*

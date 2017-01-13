@@ -21,7 +21,7 @@
     /*! \file   eratosthene-address.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  Address module
+     *  liberatosthene - address module
      */
 
 /*

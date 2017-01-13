@@ -21,7 +21,7 @@
     /*! \file   eratosthene.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  Common header
+     *  liberatosthene - common header
      */
 
     /*! \mainpage liberatosthene
