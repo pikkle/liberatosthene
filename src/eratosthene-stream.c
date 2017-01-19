@@ -237,14 +237,30 @@
             /* check cell state */
             if ( ( le_offset = le_stream_io_offset( le_stream, le_index, le_addr ) ) != _LE_OFFS_NULL ) {
 
-                /* reduce address time */
-                le_address_set_time( le_addr, le_addrt, le_stream->sr_strm[le_index].su_time * le_stream->sr_tcfg );
+                /* temporal distance limitation */
+                if ( le_time_abs( ( le_time - le_stream->sr_strm[le_index].su_time ) * le_stream->sr_tcfg ) < 1576800000 ) {
 
-                /* return optional offset */
-                if ( le_option != NULL ) ( * le_option ) = le_offset;
+                    /* reduce address time */
+                    le_address_set_time( le_addr, le_addrt, le_stream->sr_strm[le_index].su_time * le_stream->sr_tcfg );
 
-                /* return index */
-                return( le_index );
+                    /* return optional offset */
+                    if ( le_option != NULL ) ( * le_option ) = le_offset;
+
+                    /* return index */
+                    return( le_index );
+
+                } else {
+
+                    /* reduce address time */
+                    le_address_set_time( le_addr, le_addrt, _LE_TIME_NULL );
+
+                    /* return optional offset */
+                    if ( le_option != NULL ) ( * le_option ) = _LE_OFFS_NULL;
+
+                    /* return index */
+                    return( _LE_SIZE_NULL );
+
+                }
 
             }
 
