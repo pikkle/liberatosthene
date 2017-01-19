@@ -237,7 +237,7 @@
 
     le_size_t le_stream_get_strict( le_stream_t * const le_stream, le_time_t const le_time, le_enum_t const le_mode );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods (outdated : addition of time limitation)
      *
      *  This function is used to get the access index to a stream unit of the
      *  stack. It searches the stream unit that is the nearest to the address
