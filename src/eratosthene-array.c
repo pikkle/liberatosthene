@@ -193,6 +193,39 @@
         le_byte_t * le_hblock = le_array->ar_byte + le_size;
         le_byte_t * le_sblock = le_array->ar_byte + le_array->ar_size;
 
+        /* send array size - send message */
+        if ( write( le_socket, & le_array->ar_size, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) return( LE_ERROR_IO_WRITE );
+
+        /* socket writing */
+        while ( le_lblock < le_sblock ) {
+
+            /* check block size - compute block size */
+            if ( le_hblock > le_sblock ) le_size = le_sblock - le_lblock;
+
+            /* send block to socket - send message */
+            if ( write( le_socket, le_lblock, le_size ) != le_size ) return( LE_ERROR_IO_WRITE );
+
+            /* update block pointers */
+            le_lblock = le_hblock;
+            le_hblock = le_hblock + le_size;
+
+        }
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
+    le_enum_t le_array_io_write__( le_array_t const * const le_array, le_sock_t const le_socket ) {
+
+        /* block size variables */
+        le_size_t le_size = _LE_USE_MTU;
+
+        /* block pointer variables */
+        le_byte_t * le_lblock = le_array->ar_byte;
+        le_byte_t * le_hblock = le_array->ar_byte + le_size;
+        le_byte_t * le_sblock = le_array->ar_byte + le_array->ar_size;
+
         /* socket writing */
         while ( le_lblock < le_sblock ) {
 
@@ -214,6 +247,33 @@
     }
 
     le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
+
+        /* array size variables */
+        le_size_t le_size = 0;
+
+        /* read array size */
+        if ( read( le_socket, & le_size, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) return( LE_ERROR_IO_READ );
+
+        /* array memory allocation */
+        if ( le_array_set( le_array, le_size ) != _LE_TRUE ) return( LE_ERROR_MEMORY );
+
+        /* reset size */
+        le_size = 0;
+
+        /* socket reading */
+        while ( le_size < le_array->ar_size ) {
+
+            /* read block from socket */
+            le_size += read( le_socket, le_array->ar_byte + le_size, _LE_USE_MTU );
+
+        }
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
+    le_enum_t le_array_io_read__( le_array_t * const le_array, le_sock_t const le_socket ) {
 
         /* socket i/o variables */
         le_size_t le_size = 0;
