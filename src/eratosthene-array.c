@@ -216,40 +216,12 @@
 
     }
 
-    le_enum_t le_array_io_write__( le_array_t const * const le_array, le_sock_t const le_socket ) {
-
-        /* block size variables */
-        le_size_t le_size = _LE_USE_MTU;
-
-        /* block pointer variables */
-        le_byte_t * le_lblock = le_array->ar_byte;
-        le_byte_t * le_hblock = le_array->ar_byte + le_size;
-        le_byte_t * le_sblock = le_array->ar_byte + le_array->ar_size;
-
-        /* socket writing */
-        while ( le_lblock < le_sblock ) {
-
-            /* check block size - compute block size */
-            if ( le_hblock > le_sblock ) le_size = le_sblock - le_lblock;
-
-            /* send block to socket - send message */
-            if ( write( le_socket, le_lblock, le_size ) != le_size ) return( LE_ERROR_IO_WRITE );
-
-            /* update block pointers */
-            le_lblock = le_hblock;
-            le_hblock = le_hblock + le_size;
-
-        }
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
     le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
 
-        /* array size variables */
+        /* socket i/o variables */
         le_size_t le_size = 0;
+        le_size_t le_read = 0;
+        le_size_t le_fail = 0;
 
         /* read array size */
         if ( read( le_socket, & le_size, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) return( LE_ERROR_IO_READ );
@@ -257,45 +229,20 @@
         /* array memory allocation */
         if ( le_array_set( le_array, le_size ) != _LE_TRUE ) return( LE_ERROR_MEMORY );
 
-        /* reset size */
+        /* initialise read size */
         le_size = 0;
 
         /* socket reading */
-        while ( le_size < le_array->ar_size ) {
+        while ( ( le_size < le_array->ar_size ) && ( le_fail < _LE_USE_RETRY ) ) {
 
             /* read block from socket */
-            le_size += read( le_socket, le_array->ar_byte + le_size, _LE_USE_MTU );
+            if ( ( le_read = read( le_socket, le_array->ar_byte + le_size, _LE_USE_MTU ) ) > 0 ) {
 
-        }
+                /* update size */
+                le_size += le_read;
 
-        /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_enum_t le_array_io_read__( le_array_t * const le_array, le_sock_t const le_socket ) {
-
-        /* socket i/o variables */
-        le_size_t le_size = 0;
-        le_size_t le_read = 0;
-
-        /* socket reeading */
-        while ( le_read < _LE_USE_RETRY ) {
-
-            /* array memory allocation - Send message */
-            if ( le_array_set( le_array, _LE_USE_MTU ) != _LE_TRUE ) return( LE_ERROR_MEMORY );
-
-            /* array size management */
-            le_array->ar_size -= _LE_USE_MTU;
-
-            /* read block from socket */
-            if ( ( le_size = read( le_socket, le_array->ar_byte + le_array->ar_size, _LE_USE_MTU ) ) > 0 ) {
-
-                /* array size management */
-                le_array->ar_size += le_size;
-
-            /* update reading value */
-            le_read = 0; } else { le_read ++; }
+            /* update failure */
+            } else { le_fail ++; }
 
         }
 
