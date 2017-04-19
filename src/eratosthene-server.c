@@ -197,10 +197,10 @@
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
 
             /* assign null socket */
-            le_boxes[le_parse].bx_socket = _LE_SOCK_NULL;
+            le_boxes[le_parse].bx_sock = _LE_SOCK_NULL;
 
             /* assign server structure */
-            le_boxes[le_parse].bx_server = le_server;
+            le_boxes[le_parse].bx_srvp = ( le_void_t * ) le_server;
 
         }
 
@@ -208,7 +208,7 @@
         for ( ; ; ) {
 
             /* search empty box */
-            while ( le_boxes[le_index].bx_socket != _LE_SOCK_NULL ) {
+            while ( le_boxes[le_index].bx_sock != _LE_SOCK_NULL ) {
 
                 /* update box index */
                 le_index = ( le_index + 1 ) % _LE_USE_PENDING;
@@ -216,10 +216,10 @@
             }
 
             /* waiting clients connections */
-            if ( ( le_boxes[le_index].bx_socket = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len ) ) != _LE_SOCK_NULL ) {
+            if ( ( le_boxes[le_index].bx_sock = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len ) ) != _LE_SOCK_NULL ) {
 
                 /* create clients thread */
-                pthread_create( & le_boxes[le_index].bx_thread, NULL, & le_server_io_client, ( le_void_t * ) & le_boxes[le_index] );
+                pthread_create( & le_boxes[le_index].bx_proc, NULL, & le_server_io_client, ( le_void_t * ) & le_boxes[le_index] );
 
             }
 
@@ -233,11 +233,8 @@
         /* thread box variables */
         le_box_t * le_box = ( le_box_t * ) le_box_;
 
-        /* client socket variables */
-        le_sock_t le_client = le_box->bx_socket;
-
         /* server variables */
-        le_server_t * le_server = le_box->bx_server;
+        le_server_t * le_server = le_box->bx_srvp;
 
         /* stream variables */
         le_stream_t le_stream = LE_STREAM_C;
@@ -246,16 +243,16 @@
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
 
         /* switch on handshake */
-        switch ( le_client_switch( le_client ) ) {
+        switch ( le_client_switch( le_box->bx_sock ) ) {
 
             /* system injection */
             case ( LE_MODE_IMOD ) : {
 
                 /* send authorisation */
-                if ( le_client_authorise( le_client, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
+                if ( le_client_authorise( le_box->bx_sock, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
 
                     /* connection to system injection */
-                    le_server_io_inject( le_server, le_client, & le_stream );
+                    le_server_io_inject( le_server, le_box->bx_sock, & le_stream );
 
                 }
 
@@ -265,10 +262,10 @@
             case ( LE_MODE_RMOD ) : {
 
                 /* send authorisation */
-                if ( le_client_authorise( le_client, LE_MODE_RATH ) == LE_ERROR_SUCCESS ) {
+                if ( le_client_authorise( le_box->bx_sock, LE_MODE_RATH ) == LE_ERROR_SUCCESS ) {
 
                     /* connection to system query */
-                    le_server_io_reduce( le_server, le_client, & le_stream );
+                    le_server_io_reduce( le_server, le_box->bx_sock, & le_stream );
 
                 }
 
@@ -278,10 +275,10 @@
             case ( LE_MODE_QMOD ) : {
 
                 /* send authorisation */
-                if ( le_client_authorise( le_client, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
+                if ( le_client_authorise( le_box->bx_sock, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
 
                     /* connection to system query */
-                    le_server_io_query( le_server, le_client, & le_stream );
+                    le_server_io_query( le_server, le_box->bx_sock, & le_stream );
 
                 }
 
@@ -291,10 +288,10 @@
             case ( LE_MODE_CMOD ) : {
 
                 /* send authorisation */
-                if ( le_client_authorise( le_client, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
+                if ( le_client_authorise( le_box->bx_sock, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
 
                     /* connection to system */
-                    le_server_io_config( le_server, le_client, & le_stream );
+                    le_server_io_config( le_server, le_box->bx_sock, & le_stream );
 
                 }
 
@@ -306,10 +303,10 @@
         le_stream_delete( & le_stream );
 
         /* close client socket */
-        close( le_client );
+        close( le_box->bx_sock );
 
         /* release thread box */
-        return( le_box->bx_socket = _LE_SOCK_NULL, NULL );
+        return( le_box->bx_sock = _LE_SOCK_NULL, NULL );
 
     }
 

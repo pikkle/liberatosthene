@@ -58,8 +58,6 @@
  */
 
     /* define pseudo-constructor */
-    //# define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, LE_STREAM_C, LE_ERROR_SUCCESS }
-    //# define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, _LE_SOCK_NULL, LE_ERROR_SUCCESS }
     # define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, LE_ERROR_SUCCESS }
 
 /*
@@ -167,9 +165,9 @@
 
     typedef struct le_server_box_struct {
 
-        le_sock_t     bx_socket;
-        pthread_t     bx_thread;
-        le_server_t * bx_server;
+        le_sock_t   bx_sock;
+        le_proc_t   bx_proc;
+        le_void_t * bx_srvp;
 
     } le_server_box_t, le_box_t;
 
