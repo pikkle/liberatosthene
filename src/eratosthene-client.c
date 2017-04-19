@@ -157,6 +157,8 @@
     source - common methods
  */
 
+    //// removing method (no more used in permanent connected mode
+
     le_enum_t le_client_array( le_char_t const * const le_ip, le_sock_t const le_port, le_enum_t const le_mode, le_array_t * const le_array ) {
 
         /* returned value variables */

@@ -100,6 +100,7 @@
     # include <netinet/in.h>
     # include <arpa/inet.h>
     # include <netdb.h>
+    # include <pthread.h>
 
 /*
     header - preprocessor definitions
@@ -120,7 +121,7 @@
     # define _LE_USE_DATA           ( 4 )
     # define _LE_USE_MTU            ( 1280 )
     # define _LE_USE_PORT           ( 11027 )
-    # define _LE_USE_PENDING        ( 5 )
+    # define _LE_USE_PENDING        ( 16 )
     # define _LE_USE_RETRY          ( 3 )
     # define _LE_USE_STRING         ( 256 )
     # define _LE_USE_ASCII_ITOA     ( 48 )

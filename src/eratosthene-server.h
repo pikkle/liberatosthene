@@ -58,7 +58,9 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, LE_STREAM_C, LE_ERROR_SUCCESS }
+    //# define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, LE_STREAM_C, LE_ERROR_SUCCESS }
+    //# define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, _LE_SOCK_NULL, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -161,9 +163,15 @@
         le_size_t   sv_scfg;
         le_time_t   sv_tcfg;
 
-        le_stream_t sv_stream;
-
     le_enum_t _status; } le_server_t;
+
+    typedef struct le_server_box_struct {
+
+        le_sock_t     bx_socket;
+        pthread_t     bx_thread;
+        le_server_t * bx_server;
+
+    } le_server_box_t, le_box_t;
 
 /*
     header - function prototypes
@@ -236,6 +244,8 @@
 
     le_void_t le_server_io( le_server_t * const le_server );
 
+    le_void_t * le_server_io_client( le_void_t * le_box_ );
+
     /*! \brief i/o methods
      *
      *  This function is a specific server sub-process.
@@ -248,7 +258,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_void_t le_server_io_inject( le_server_t * const le_server, le_sock_t const le_client );
+    le_void_t le_server_io_inject( le_server_t * const le_server, le_sock_t const le_client, le_stream_t * const le_stream );
 
     /*! \brief i/o methods
      *
@@ -277,7 +287,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client );
+    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client, le_stream_t * const le_stream );
 
     /*! \brief i/o methods
      *
@@ -296,7 +306,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_void_t le_server_io_query( le_server_t const * const le_server, le_sock_t const le_client );
+    le_void_t le_server_io_query( le_server_t const * const le_server, le_sock_t const le_client, le_stream_t * const le_stream );
 
     /*! \brief i/o methods
      *
@@ -310,7 +320,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_void_t le_server_io_config( le_server_t const * const le_server, le_sock_t const le_client );
+    le_void_t le_server_io_config( le_server_t const * const le_server, le_sock_t const le_client, le_stream_t * const le_stream );
 
 /*
     header - C/C++ compatibility

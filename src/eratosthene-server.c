@@ -51,14 +51,6 @@
 
         }
 
-        /* create server stream */
-        if ( ( le_server.sv_stream = le_stream_create( le_path, le_server.sv_scfg, le_server.sv_tcfg ) )._status != LE_ERROR_SUCCESS ) {
-
-            /* send message */
-            return( le_server._status = le_server.sv_stream._status, le_server );
-
-        }
-
         /* create server socket */
         if ( ( le_server.sv_sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) {
 
@@ -108,9 +100,6 @@
             close( le_server->sv_sock );
 
         }
-
-        /* delete server stream */
-        le_stream_delete( & le_server->sv_stream );
 
         /* delete structure */
         ( * le_server ) = le_delete;
@@ -192,8 +181,11 @@
 
     le_void_t le_server_io( le_server_t * const le_server ) {
 
-        /* client socket variables */
-        le_sock_t le_client = _LE_SOCK_NULL;
+        /* thread boxes variables */
+        le_box_t le_boxes[_LE_USE_PENDING];
+
+        /* boxes index variables */
+        le_size_t le_index = 0;
 
         /* client address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C;
@@ -201,75 +193,123 @@
         /* client address variables */
         socklen_t le_len = sizeof( struct sockaddr_in );
 
-        /* server connexions */
+        /* initialise boxes */
+        for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
+
+            /* assign null socket */
+            le_boxes[le_parse].bx_socket = _LE_SOCK_NULL;
+
+            /* assign server structure */
+            le_boxes[le_parse].bx_server = le_server;
+
+        }
+
+        /* client connection handler */
         for ( ; ; ) {
 
-            /* waiting client connexions */
-            if ( ( le_client = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len ) ) != _LE_SOCK_NULL ) {
+            /* search empty box */
+            while ( le_boxes[le_index].bx_socket != _LE_SOCK_NULL ) {
 
-                /* switch on handshake */
-                switch ( le_client_switch( le_client ) ) {
-
-                    /* system injection */
-                    case ( LE_MODE_IMOD ) : {
-
-                        /* send authorisation */
-                        if ( le_client_authorise( le_client, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
-
-                            /* connection to system injection */
-                            le_server_io_inject( le_server, le_client );
-
-                        }
-
-                    } break;
-
-                    /* system query */
-                    case ( LE_MODE_RMOD ) : {
-
-                        /* send authorisation */
-                        if ( le_client_authorise( le_client, LE_MODE_RATH ) == LE_ERROR_SUCCESS ) {
-
-                            /* connection to system query */
-                            le_server_io_reduce( le_server, le_client );
-
-                        }
-
-                    } break;
-
-                    /* system query */
-                    case ( LE_MODE_QMOD ) : {
-
-                        /* send authorisation */
-                        if ( le_client_authorise( le_client, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
-
-                            /* connection to system query */
-                            le_server_io_query( le_server, le_client );
-
-                        }
-
-                    } break;
-
-                    /* system configuration */
-                    case ( LE_MODE_CMOD ) : {
-
-                        /* send authorisation */
-                        if ( le_client_authorise( le_client, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
-
-                            /* connection to system */
-                            le_server_io_config( le_server, le_client );
-
-                        }
-
-                    } break;
-
-                }
-
-                /* close client socket */
-                close( le_client );
+                /* update box index */
+                le_index = ( le_index + 1 ) % _LE_USE_PENDING;
 
             }
 
+            /* waiting clients connections */
+            if ( ( le_boxes[le_index].bx_socket = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len ) ) != _LE_SOCK_NULL ) {
+
+                /* create clients thread */
+                pthread_create( & le_boxes[le_index].bx_thread, NULL, & le_server_io_client, ( le_void_t * ) & le_boxes[le_index] );
+
+            }
+
+
         }
+
+    }
+
+    le_void_t * le_server_io_client( le_void_t * le_box_ ) {
+
+        /* thread box variables */
+        le_box_t * le_box = ( le_box_t * ) le_box_;
+
+        /* client socket variables */
+        le_sock_t le_client = le_box->bx_socket;
+
+        /* server variables */
+        le_server_t * le_server = le_box->bx_server;
+
+        /* stream variables */
+        le_stream_t le_stream = LE_STREAM_C;
+
+        /* create stream structure */
+        le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
+
+        /* switch on handshake */
+        switch ( le_client_switch( le_client ) ) {
+
+            /* system injection */
+            case ( LE_MODE_IMOD ) : {
+
+                /* send authorisation */
+                if ( le_client_authorise( le_client, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
+
+                    /* connection to system injection */
+                    le_server_io_inject( le_server, le_client, & le_stream );
+
+                }
+
+            } break;
+
+            /* system reduction */
+            case ( LE_MODE_RMOD ) : {
+
+                /* send authorisation */
+                if ( le_client_authorise( le_client, LE_MODE_RATH ) == LE_ERROR_SUCCESS ) {
+
+                    /* connection to system query */
+                    le_server_io_reduce( le_server, le_client, & le_stream );
+
+                }
+
+            } break;
+
+            /* system query */
+            case ( LE_MODE_QMOD ) : {
+
+                /* send authorisation */
+                if ( le_client_authorise( le_client, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
+
+                    /* connection to system query */
+                    le_server_io_query( le_server, le_client, & le_stream );
+
+                }
+
+            } break;
+
+            /* system configuration */
+            case ( LE_MODE_CMOD ) : {
+
+                /* send authorisation */
+                if ( le_client_authorise( le_client, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
+
+                    /* connection to system */
+                    le_server_io_config( le_server, le_client, & le_stream );
+
+                }
+
+            } break;
+
+        }
+
+        /* delete stream structure */
+        le_stream_delete( & le_stream );
+
+        /* close client socket */
+        close( le_client );
+
+        /* release thread box */
+        return( le_box->bx_socket = _LE_SOCK_NULL, NULL );
 
     }
 
@@ -277,7 +317,7 @@
     source - i/o methods
  */
 
-    le_void_t le_server_io_inject( le_server_t * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_inject( le_server_t * const le_server, le_sock_t const le_client, le_stream_t * const le_stream ) {
 
         /* array variables */
         le_array_t le_array = LE_ARRAY_C;
@@ -286,7 +326,7 @@
         le_time_t le_time = _LE_TIME_NULL;
 
         /* stream variables */
-        le_size_t le_stream = _LE_SIZE_NULL;
+        le_size_t le_index = _LE_SIZE_NULL;
 
         /* read time */
         if ( read( le_client, & le_time, sizeof( le_time_t ) ) != sizeof( le_time_t ) ) {
@@ -321,10 +361,10 @@
         }
 
         /* create stream */
-        if ( ( le_stream = le_stream_get_strict( & le_server->sv_stream, le_time, LE_STREAM_WRITE ) ) != _LE_SIZE_NULL ) {
+        if ( ( le_index = le_stream_get_strict( le_stream, le_time, LE_STREAM_WRITE ) ) != _LE_SIZE_NULL ) {
 
             /* inject array */
-            le_stream_io_inject( & le_server->sv_stream, le_stream, & le_array );
+            le_stream_io_inject( le_stream, le_index, & le_array );
 
         }
 
@@ -333,7 +373,7 @@
 
     }
 
-    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client, le_stream_t * const le_stream ) {
 
         /* address variables */
         le_address_t le_addr = LE_ADDRESS_C;
@@ -353,7 +393,7 @@
         if ( le_address_get_mode( & le_addr ) != 2 ) {
 
             /* address reduction */
-            le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, NULL );
+            le_stream_get_reduct( le_stream, & le_addr, 0, NULL );
 
         }
 
@@ -361,7 +401,7 @@
         if ( le_address_get_mode( & le_addr ) != 1 ) {
 
             /* address reduction */
-            le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, NULL );
+            le_stream_get_reduct( le_stream, & le_addr, 1, NULL );
 
         }
 
@@ -370,7 +410,7 @@
 
     }
 
-    le_void_t le_server_io_query( le_server_t const * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_query( le_server_t const * const le_server, le_sock_t const le_client, le_stream_t * const le_stream ) {
 
         /* array variables */
         le_array_t le_array = LE_ARRAY_C;
@@ -409,34 +449,34 @@
         if ( le_address_get_mode( & le_addr ) == 1 ) {
 
             /* create and check stream */
-            if ( ( le_streama = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, & le_offseta ) ) != _LE_SIZE_NULL ) {
+            if ( ( le_streama = le_stream_get_reduct( le_stream, & le_addr, 0, & le_offseta ) ) != _LE_SIZE_NULL ) {
 
                 /* gathering daughters representative */
-                le_stream_io_gather( & le_server->sv_stream, le_streama, & le_addr, le_offseta, le_size, le_span, & le_array );
+                le_stream_io_gather( le_stream, le_streama, & le_addr, le_offseta, le_size, le_span, & le_array );
 
             }
 
         } else if ( le_address_get_mode( & le_addr ) == 2 ) {
 
             /* create and check stream */
-            if ( ( le_streamb = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, & le_offsetb ) ) != _LE_SIZE_NULL ) {
+            if ( ( le_streamb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_offsetb ) ) != _LE_SIZE_NULL ) {
 
                 /* gathering daughters representative */
-                le_stream_io_gather( & le_server->sv_stream, le_streamb, & le_addr, le_offsetb, le_size, le_span, & le_array );
+                le_stream_io_gather( le_stream, le_streamb, & le_addr, le_offsetb, le_size, le_span, & le_array );
 
             }
 
         } else {
 
             /* create streams */
-            le_streama = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 0, & le_offseta );
-            le_streamb = le_stream_get_reduct( & le_server->sv_stream, & le_addr, 1, & le_offsetb );
+            le_streama = le_stream_get_reduct( le_stream, & le_addr, 0, & le_offseta );
+            le_streamb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_offsetb );
 
             /* check streams */
             if ( ( le_streama != _LE_SIZE_NULL ) || ( le_streamb != _LE_SIZE_NULL ) ) {
 
                 /* gathering daughters representative */
-                le_stream_io_parallel( & le_server->sv_stream, le_streama, le_streamb, & le_addr, le_offseta, le_offsetb, le_size, le_span, & le_array );
+                le_stream_io_parallel( le_stream, le_streama, le_streamb, & le_addr, le_offseta, le_offsetb, le_size, le_span, & le_array );
 
             }
 
@@ -453,7 +493,7 @@
 
     }
 
-    le_void_t le_server_io_config( le_server_t const * const le_server, le_sock_t const le_client ) {
+    le_void_t le_server_io_config( le_server_t const * const le_server, le_sock_t const le_client, le_stream_t * const le_stream ) {
 
         /* server configuration array variables */
         le_array_t le_array = LE_ARRAY_C;
