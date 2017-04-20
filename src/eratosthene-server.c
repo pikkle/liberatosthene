@@ -230,8 +230,8 @@
 
     le_void_t * le_server_io_client( le_void_t * le_box_ ) {
 
-        /* client mode variables */
-        le_byte_t le_mode = LE_MODE_NULL;
+        /* connection variables */
+        le_enum_t le_active = _LE_TRUE;
 
         /* thread box variables */
         le_box_t * le_box = ( le_box_t * ) le_box_;
@@ -245,86 +245,97 @@
         /* create stream structure */
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
 
+        /* client connection handler */
+        while ( le_active == _LE_TRUE ) {
+
         /* switch on handshake */
-        switch ( le_mode = le_client_switch( le_box->bx_sock ) ) {
+        switch ( le_client_switch( le_box->bx_sock ) ) {
 
-            /* system connection */
-            case ( LE_MODE_AMOD ) : {
+                /* system connection */
+                case ( LE_MODE_AMOD ) : {
 
-                /* check stream consistency */
-                if ( le_stream._status == LE_ERROR_SUCCESS ) {
+                    /* check stream consistency */
+                    if ( le_stream._status == LE_ERROR_SUCCESS ) {
+
+                        /* send client authorisation */
+                        le_client_authorise( le_box->bx_sock, LE_MODE_AMOD );
+
+                    } else {
+
+                        /* send client failure */
+                        le_client_authorise( le_box->bx_sock, LE_MODE_NULL );
+
+                        /* disconnect client */
+                        le_active = _LE_FALSE;
+
+                    }
+
+                } break;
+
+                /* system disconnection */
+                case ( LE_MODE_BMOD ) : {
 
                     /* send client authorisation */
-                    le_client_authorise( le_box->bx_sock, le_mode );
+                    le_client_authorise( le_box->bx_sock, LE_MODE_BMOD );
 
-                } else {
+                    /* disconnect client */
+                    le_active = _LE_FALSE;
 
-                    /* send client failure */
-                    le_client_authorise( le_box->bx_sock, LE_MODE_NULL );
+                } break;
 
-                }
+                /* system injection */
+                case ( LE_MODE_IMOD ) : {
 
-            } break;
+                    /* send authorisation */
+                    if ( le_client_authorise( le_box->bx_sock, LE_MODE_IMOD ) == LE_ERROR_SUCCESS ) {
 
-            /* system disconnection */
-            case ( LE_MODE_BMOD ) : {
+                        /* connection to system injection */
+                        le_server_io_inject( le_server, le_box->bx_sock, & le_stream );
 
-                /* send client authorisation */
-                le_client_authorise( le_box->bx_sock, le_mode );
+                    }
 
-            } break;
+                } break;
 
-            /* system injection */
-            case ( LE_MODE_IMOD ) : {
+                /* system reduction */
+                case ( LE_MODE_RMOD ) : {
 
-                /* send authorisation */
-                if ( le_client_authorise( le_box->bx_sock, le_mode ) == LE_ERROR_SUCCESS ) {
+                    /* send authorisation */
+                    if ( le_client_authorise( le_box->bx_sock, LE_MODE_RMOD ) == LE_ERROR_SUCCESS ) {
 
-                    /* connection to system injection */
-                    le_server_io_inject( le_server, le_box->bx_sock, & le_stream );
+                        /* connection to system query */
+                        le_server_io_reduce( le_server, le_box->bx_sock, & le_stream );
 
-                }
+                    }
 
-            } break;
+                } break;
 
-            /* system reduction */
-            case ( LE_MODE_RMOD ) : {
+                /* system query */
+                case ( LE_MODE_QMOD ) : {
 
-                /* send authorisation */
-                if ( le_client_authorise( le_box->bx_sock, le_mode ) == LE_ERROR_SUCCESS ) {
+                    /* send authorisation */
+                    if ( le_client_authorise( le_box->bx_sock, LE_MODE_QMOD ) == LE_ERROR_SUCCESS ) {
 
-                    /* connection to system query */
-                    le_server_io_reduce( le_server, le_box->bx_sock, & le_stream );
+                        /* connection to system query */
+                        le_server_io_query( le_server, le_box->bx_sock, & le_stream );
 
-                }
+                    }
 
-            } break;
+                } break;
 
-            /* system query */
-            case ( LE_MODE_QMOD ) : {
+                /* system configuration */
+                case ( LE_MODE_CMOD ) : {
 
-                /* send authorisation */
-                if ( le_client_authorise( le_box->bx_sock, le_mode ) == LE_ERROR_SUCCESS ) {
+                    /* send authorisation */
+                    if ( le_client_authorise( le_box->bx_sock, LE_MODE_CMOD ) == LE_ERROR_SUCCESS ) {
 
-                    /* connection to system query */
-                    le_server_io_query( le_server, le_box->bx_sock, & le_stream );
+                        /* connection to system */
+                        le_server_io_config( le_server, le_box->bx_sock, & le_stream );
 
-                }
+                    }
 
-            } break;
+                } break;
 
-            /* system configuration */
-            case ( LE_MODE_CMOD ) : {
-
-                /* send authorisation */
-                if ( le_client_authorise( le_box->bx_sock, le_mode ) == LE_ERROR_SUCCESS ) {
-
-                    /* connection to system */
-                    le_server_io_config( le_server, le_box->bx_sock, & le_stream );
-
-                }
-
-            } break;
+            }
 
         }
 
