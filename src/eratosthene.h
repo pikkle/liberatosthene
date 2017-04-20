@@ -209,14 +209,12 @@
 
     /* define server/client modes */
     # define LE_MODE_NULL           ( 0x00 )
-    # define LE_MODE_IMOD           ( 0x01 )
+    # define LE_MODE_AMOD           ( 0x01 )
+    # define LE_MODE_BMOD           ( 0x02 )
+    # define LE_MODE_IMOD           ( 0x03 )
     # define LE_MODE_RMOD           ( 0x04 )
-    # define LE_MODE_QMOD           ( 0x10 )
-    # define LE_MODE_CMOD           ( 0x40 )
-    # define LE_MODE_IATH           ( 0xab )
-    # define LE_MODE_RATH           ( 0xae )
-    # define LE_MODE_QATH           ( 0xba )
-    # define LE_MODE_CATH           ( 0xea )
+    # define LE_MODE_QMOD           ( 0x05 )
+    # define LE_MODE_CMOD           ( 0x06 )
 
     /* define mathematical constants */
     # define LE_PI                  ( 3.1415926535897932384626433832795029 )

@@ -230,6 +230,9 @@
 
     le_void_t * le_server_io_client( le_void_t * le_box_ ) {
 
+        /* client mode variables */
+        le_byte_t le_mode = LE_MODE_NULL;
+
         /* thread box variables */
         le_box_t * le_box = ( le_box_t * ) le_box_;
 
@@ -243,13 +246,39 @@
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
 
         /* switch on handshake */
-        switch ( le_client_switch( le_box->bx_sock ) ) {
+        switch ( le_mode = le_client_switch( le_box->bx_sock ) ) {
+
+            /* system connection */
+            case ( LE_MODE_AMOD ) : {
+
+                /* check stream consistency */
+                if ( le_stream._status == LE_ERROR_SUCCESS ) {
+
+                    /* send client authorisation */
+                    le_client_authorise( le_box->bx_sock, le_mode );
+
+                } else {
+
+                    /* send client failure */
+                    le_client_authorise( le_box->bx_sock, LE_MODE_NULL );
+
+                }
+
+            } break;
+
+            /* system disconnection */
+            case ( LE_MODE_BMOD ) : {
+
+                /* send client authorisation */
+                le_client_authorise( le_box->bx_sock, le_mode );
+
+            } break;
 
             /* system injection */
             case ( LE_MODE_IMOD ) : {
 
                 /* send authorisation */
-                if ( le_client_authorise( le_box->bx_sock, LE_MODE_IATH ) == LE_ERROR_SUCCESS ) {
+                if ( le_client_authorise( le_box->bx_sock, le_mode ) == LE_ERROR_SUCCESS ) {
 
                     /* connection to system injection */
                     le_server_io_inject( le_server, le_box->bx_sock, & le_stream );
@@ -262,7 +291,7 @@
             case ( LE_MODE_RMOD ) : {
 
                 /* send authorisation */
-                if ( le_client_authorise( le_box->bx_sock, LE_MODE_RATH ) == LE_ERROR_SUCCESS ) {
+                if ( le_client_authorise( le_box->bx_sock, le_mode ) == LE_ERROR_SUCCESS ) {
 
                     /* connection to system query */
                     le_server_io_reduce( le_server, le_box->bx_sock, & le_stream );
@@ -275,7 +304,7 @@
             case ( LE_MODE_QMOD ) : {
 
                 /* send authorisation */
-                if ( le_client_authorise( le_box->bx_sock, LE_MODE_QATH ) == LE_ERROR_SUCCESS ) {
+                if ( le_client_authorise( le_box->bx_sock, le_mode ) == LE_ERROR_SUCCESS ) {
 
                     /* connection to system query */
                     le_server_io_query( le_server, le_box->bx_sock, & le_stream );
@@ -288,7 +317,7 @@
             case ( LE_MODE_CMOD ) : {
 
                 /* send authorisation */
-                if ( le_client_authorise( le_box->bx_sock, LE_MODE_CATH ) == LE_ERROR_SUCCESS ) {
+                if ( le_client_authorise( le_box->bx_sock, le_mode ) == LE_ERROR_SUCCESS ) {
 
                     /* connection to system */
                     le_server_io_config( le_server, le_box->bx_sock, & le_stream );

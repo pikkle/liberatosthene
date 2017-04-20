@@ -108,7 +108,7 @@
         }
 
         /* check results */
-        if (  ( er_buffer & 0x55 ) != le_mode ) {
+        if ( ( ( er_buffer & 0x0f ) != le_mode ) || ( ( er_buffer & 0xf0 ) != 0xd0 ) ) {
 
             /* send message */
             return( LE_ERROR_AUTH );
@@ -138,10 +138,13 @@
 
     }
 
-    le_enum_t le_client_authorise( le_sock_t const le_socket, le_byte_t const le_auth ) {
+    le_enum_t le_client_authorise( le_sock_t const le_socket, le_byte_t le_mode ) {
+
+        /* compose authorisation */
+        le_mode |= 0xd0;
 
         /* write authorisation */
-        if ( write( le_socket, & le_auth, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
+        if ( write( le_socket, & le_mode, sizeof( le_byte_t ) ) != sizeof( le_byte_t ) ) {
 
             /* send message */
             return( LE_ERROR_IO_WRITE );
