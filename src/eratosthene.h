@@ -119,7 +119,7 @@
     # define _LE_USE_DEPTH          ( 40 )
     # define _LE_USE_TIMES          ( 2 )
     # define _LE_USE_DATA           ( 4 )
-    # define _LE_USE_MTU            ( 1280 )
+    # define _LE_USE_MTU            ( 1485 )
     # define _LE_USE_PORT           ( 11027 )
     # define _LE_USE_PENDING        ( 16 )
     # define _LE_USE_RETRY          ( 3 )
