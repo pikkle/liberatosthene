@@ -230,6 +230,10 @@
 
     le_void_t * le_server_io_client( le_void_t * le_box_ ) {
 
+// temporary // beta //
+fprintf( stderr, "Starting client thread 0x%x\n", ( ( le_box_t * ) le_box_ )->bx_sock );
+// temporary // beta //
+
         /* connection variables */
         le_enum_t le_active = _LE_TRUE;
 
@@ -244,6 +248,8 @@
 
         /* create stream structure */
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
+
+        /* specific handshake for connection - apart from the main client loop */
 
         /* client connection handler */
         while ( le_active == _LE_TRUE ) {
@@ -344,6 +350,10 @@
 
         /* close client socket */
         close( le_box->bx_sock );
+
+// temporary // beta //
+fprintf( stderr, "Stopping client thread 0x%x\n", ( ( le_box_t * ) le_box_ )->bx_sock );
+// temporary // beta //
 
         /* release thread box */
         return( le_box->bx_sock = _LE_SOCK_NULL, NULL );

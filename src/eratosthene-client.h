@@ -138,23 +138,6 @@
 
     le_enum_t le_client_authorise( le_sock_t const le_socket, le_byte_t le_mode );
 
-    /*! \brief common methods
-     *
-     *  This function allows for a client to read an array from the server as
-     *  an answer to a specific query. This function is used by client to easily
-     *  retrieve query and configuration array from the server. Clients can also
-     *  set their own version of this function.
-     *
-     *  \param le_ip    Server ip address
-     *  \param le_port  Server service port
-     *  \param le_mode  Client query mode
-     *  \param le_array Client array structure
-     *
-     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
-     */
-
-    le_enum_t le_client_array( le_char_t const * const le_ip, le_sock_t const le_port, le_enum_t const le_mode, le_array_t * const le_array );
-
 /*
     header - C/C++ compatibility
  */
