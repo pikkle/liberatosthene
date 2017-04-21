@@ -181,19 +181,16 @@
 
     le_void_t le_server_io( le_server_t * const le_server ) {
 
-        /* thread boxes variables */
-        le_box_t le_boxes[_LE_USE_PENDING];
-
-        /* boxes index variables */
-        le_size_t le_index = 0;
-
         /* client address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C;
 
         /* client address variables */
         socklen_t le_len = sizeof( struct sockaddr_in );
 
-        /* initialise boxes */
+        /* thread boxes variables */
+        le_box_t le_boxes[_LE_USE_PENDING];
+
+        /* parsing boxes */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
 
             /* assign null socket */
@@ -205,15 +202,10 @@
         }
 
         /* client connection handler */
-        for ( ; ; ) {
+        for ( le_size_t le_index = 0; le_index < _LE_USE_PENDING ; le_index = ( le_index + 1 ) % _LE_USE_PENDING ) {
 
-            /* search empty box */
-            while ( le_boxes[le_index].bx_sock != _LE_SOCK_NULL ) {
-
-                /* update box index */
-                le_index = ( le_index + 1 ) % _LE_USE_PENDING;
-
-            }
+            /* check box state */
+            if ( le_boxes[le_index].bx_sock != _LE_SOCK_NULL ) continue;
 
             /* waiting clients connections */
             if ( ( le_boxes[le_index].bx_sock = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len ) ) != _LE_SOCK_NULL ) {
@@ -223,16 +215,11 @@
 
             }
 
-
         }
 
     }
 
     le_void_t * le_server_io_client( le_void_t * le_box_ ) {
-
-// temporary // beta //
-fprintf( stderr, "Starting client thread 0x%x\n", ( ( le_box_t * ) le_box_ )->bx_sock );
-// temporary // beta //
 
         /* connection variables */
         le_enum_t le_active = _LE_TRUE;
@@ -248,8 +235,6 @@ fprintf( stderr, "Starting client thread 0x%x\n", ( ( le_box_t * ) le_box_ )->bx
 
         /* create stream structure */
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
-
-        /* specific handshake for connection - apart from the main client loop */
 
         /* client connection handler */
         while ( le_active == _LE_TRUE ) {
@@ -350,10 +335,6 @@ fprintf( stderr, "Starting client thread 0x%x\n", ( ( le_box_t * ) le_box_ )->bx
 
         /* close client socket */
         close( le_box->bx_sock );
-
-// temporary // beta //
-fprintf( stderr, "Stopping client thread 0x%x\n", ( ( le_box_t * ) le_box_ )->bx_sock );
-// temporary // beta //
 
         /* release thread box */
         return( le_box->bx_sock = _LE_SOCK_NULL, NULL );
