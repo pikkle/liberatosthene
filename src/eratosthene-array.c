@@ -185,29 +185,19 @@
 
     le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket ) {
 
-        /* block size variables */
-        le_size_t le_size = _LE_USE_MTU;
+        /* send array size */
+        if ( write( le_socket, ( le_void_t * ) & le_array->ar_size, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) {
 
-        /* block pointer variables */
-        le_byte_t * le_lblock = le_array->ar_byte;
-        le_byte_t * le_hblock = le_array->ar_byte + le_size;
-        le_byte_t * le_sblock = le_array->ar_byte + le_array->ar_size;
+            /* send message */
+            return( LE_ERROR_IO_WRITE );
 
-        /* send array size - send message */
-        if ( write( le_socket, & le_array->ar_size, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) return( LE_ERROR_IO_WRITE );
+        }
 
-        /* socket writing */
-        while ( le_lblock < le_sblock ) {
+        /* send array data */
+        if ( write( le_socket, ( le_void_t * ) le_array->ar_byte, le_array->ar_size ) != le_array->ar_size ) {
 
-            /* check block size - compute block size */
-            if ( le_hblock > le_sblock ) le_size = le_sblock - le_lblock;
-
-            /* send block to socket - send message */
-            if ( write( le_socket, le_lblock, le_size ) != le_size ) return( LE_ERROR_IO_WRITE );
-
-            /* update block pointers */
-            le_lblock = le_hblock;
-            le_hblock = le_hblock + le_size;
+            /* send message */
+            return( LE_ERROR_IO_WRITE );
 
         }
 
