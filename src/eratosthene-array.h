@@ -54,7 +54,11 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_ARRAY_C                 { 0, 0, NULL }
+    //# define LE_ARRAY_C                 { 0, 0, NULL }
+    # define LE_ARRAY_C                 { 0, NULL, 0, NULL }
+
+    /* define array header */
+    # define LE_ARRAY_HEADER            ( sizeof( le_size_t ) + sizeof( le_byte_t ) )
 
     /* define array step */
     # define LE_ARRAY_STEP              ( 1073741824 )
@@ -71,16 +75,22 @@
  */
 
     /* access macro for sd-records - array */
-    # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_byte + o ) )
-    # define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_byte + o + sizeof( le_real_t ) * 3 ) )
+    //# define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_byte + o ) )
+    //# define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_byte + o + sizeof( le_real_t ) * 3 ) )
+    # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )
+    # define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_vbyte + o + sizeof( le_real_t ) * 3 ) )
 
     /* access macro for sd-records - array last */
-    # define le_array_sd_pose_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD )
-    # define le_array_sd_data_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD + sizeof( le_real_t ) * 3 )
+    //# define le_array_sd_pose_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD )
+    //# define le_array_sd_data_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD + sizeof( le_real_t ) * 3 )
+    # define le_array_sd_pose_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_SD )
+    # define le_array_sd_data_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_SD + sizeof( le_real_t ) * 3 )
 
     /* access macro for dt-records - array */
-    # define le_array_dt_size_a( a, o ) ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
-    # define le_array_dt_time_a( a, o ) ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
+    //# define le_array_dt_size_a( a, o ) ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
+    //# define le_array_dt_time_a( a, o ) ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
+    # define le_array_dt_size_a( a, o ) ( ( le_size_t * ) ( ( a )->ar_vbyte + o ) )
+    # define le_array_dt_time_a( a, o ) ( ( le_time_t * ) ( ( a )->ar_vbyte + o + sizeof( le_size_t ) ) )
 
 /*
     header - type definition
@@ -116,11 +126,22 @@
      *  Bytes array memory base pointer
      */
 
+    //typedef struct le_array_prev {
+
+        //le_size_t   ar_virt;
+        //le_size_t   ar_size;
+        //le_byte_t * ar_byte;
+
+    //} le_array_t;
+
     typedef struct le_array_struct {
 
-        le_size_t   ar_virt;
-        le_size_t   ar_size;
-        le_byte_t * ar_byte;
+        le_size_t   ar_rsize;
+        le_byte_t * ar_rbyte;
+
+        //le_size_t * ar_vsize;
+        le_size_t   ar_vsize;
+        le_byte_t * ar_vbyte;
 
     } le_array_t;
 
@@ -147,6 +168,10 @@
 
     le_void_t le_array_delete( le_array_t * const le_array );
 
+    /* *** */
+
+    le_byte_t le_array_get_type( le_array_t const * const le_array );
+
     /*! \brief accessor methods
      *
      *  This function returns the size, in bytes, of the data stored in the
@@ -169,6 +194,10 @@
      */
 
     le_byte_t * le_array_get_byte( le_array_t const * const le_array );
+
+    /* *** */
+
+    le_void_t le_array_set_type( le_array_t * const le_array, le_byte_t le_type );
 
     /*! \brief mutator methods
      *
@@ -243,7 +272,7 @@
      *  \return Return _LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket );
+    le_enum_t le_array_io_write( le_array_t * const le_array, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *

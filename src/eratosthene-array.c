@@ -40,7 +40,7 @@
         le_array_t le_delete = LE_ARRAY_C;
 
         /* check array state - memory unallocation */
-        if ( le_array->ar_byte != NULL ) free( le_array->ar_byte );
+        if ( le_array->ar_rbyte != NULL ) free( le_array->ar_rbyte );
 
         /* delete structure */
         ( * le_array ) = le_delete;
@@ -51,17 +51,24 @@
     source - accessor methods
  */
 
+    le_byte_t le_array_get_type( le_array_t const * const le_array ) {
+
+        /* return header type */
+        return( le_array->ar_rbyte[sizeof( le_size_t )] );
+
+    }
+
     le_size_t le_array_get_size( le_array_t const * const le_array ) {
 
         /* return array size */
-        return( le_array->ar_size );
+        return( le_array->ar_vsize );
 
     }
 
     le_byte_t * le_array_get_byte( le_array_t const * const le_array ) {
 
         /* return array bytes pointer */
-        return( ( le_byte_t * ) le_array->ar_byte );
+        return( ( le_byte_t * ) le_array->ar_vbyte );
 
     }
 
@@ -69,32 +76,45 @@
     source - mutator methods
  */
 
+    le_void_t le_array_set_type( le_array_t * const le_array, le_byte_t le_type ) {
+
+        /* update header type */
+        le_array->ar_rbyte[sizeof( le_size_t )] = le_type;
+
+    }
+
     le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length ) {
 
-        /* persistent memory variables */
-        le_byte_t * le_swap = NULL;
+        /* array memory swap variables */
+        le_void_t * le_swap = NULL;
 
-        /* check requirements - update array size */
-        if ( ( le_array->ar_size += le_length ) >= le_array->ar_virt ) {
+        /* check requierments */
+        if ( le_array->ar_rsize >= ( ( le_array->ar_vsize += le_length ) + LE_ARRAY_HEADER ) ) {
 
-            /* update memory size */
-            le_array->ar_virt += LE_ARRAY_STEP;
-
-            /* array memory (re)allocation */
-            if ( ( le_swap = ( le_byte_t * ) realloc( ( void * ) le_array->ar_byte, le_array->ar_virt ) ) == NULL ) {
-
-                /* cancel array size update */
-                le_array->ar_size -= le_length;
-
-                /* send message */
-                return( _LE_FALSE );
-
-            }
-
-            /* assign (re)allocated memory */
-            le_array->ar_byte = le_swap;
+            /* send message */
+            return( _LE_TRUE );
 
         }
+
+        /* allocate array memory */
+        if ( ( le_swap =  realloc( ( le_void_t * ) le_array->ar_rbyte, le_array->ar_rsize += LE_ARRAY_STEP ) ) == NULL ) {
+
+            /* restore array size */
+            le_array->ar_rsize -= LE_ARRAY_STEP;
+
+            /* restore array size */
+            le_array->ar_vsize -= le_length;
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* update structure references */
+        le_array->ar_rbyte = ( le_byte_t * ) le_swap;
+
+        /* update structure references */
+        le_array->ar_vbyte = ( le_byte_t * ) ( le_array->ar_rbyte + LE_ARRAY_HEADER );
 
         /* send message */
         return( _LE_TRUE );
@@ -103,30 +123,36 @@
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size ) {
 
-        /* persistent memory variables */
-        le_byte_t * le_swap = NULL;
+        /* array memory swap variables */
+        le_void_t * le_swap = NULL;
 
-        /* check array virtual size */
-        if ( le_size > le_array->ar_virt ) {
+        /* check requirements */
+        if ( le_array->ar_rsize >= ( le_size + LE_ARRAY_HEADER ) ) {
 
-            /* update virtual size */
-            le_array->ar_virt = le_size;
-
-            /* array memory (re)allocation */
-            if ( ( le_swap = ( le_byte_t * ) realloc( ( void * ) le_array->ar_byte, le_array->ar_virt ) ) == NULL ) {
-
-                /* send message */
-                return( _LE_FALSE );
-
-            }
-
-            /* assign (ra)allocated memory */
-            le_array->ar_byte = le_swap;
+            /* send message */
+            return( _LE_TRUE );
 
         }
 
+        /* allocate array memory */
+        if ( ( le_swap = realloc( ( le_void_t * ) le_array->ar_rbyte, le_size + LE_ARRAY_HEADER ) ) == NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* update structure references */
+        le_array->ar_rbyte = ( le_byte_t * ) le_swap;
+
+        /* update structure references */
+        le_array->ar_vbyte = ( le_byte_t * ) ( le_array->ar_rbyte + LE_ARRAY_HEADER );
+
         /* update array size */
-        le_array->ar_size = le_size;
+        le_array->ar_rsize = le_size + LE_ARRAY_HEADER;
+
+        /* update structure references */
+        le_array->ar_vsize = le_size;
 
         /* send message */
         return( _LE_TRUE );
@@ -143,7 +169,7 @@
         if ( le_array_set( le_array, LE_ARRAY_SD ) != _LE_TRUE ) return;
 
         /* mapping offset variables */
-        le_byte_t * le_offset = le_array->ar_byte + le_array->ar_size - LE_ARRAY_SD;
+        le_byte_t * le_offset = le_array->ar_vbyte + le_array->ar_vsize - LE_ARRAY_SD;
 
         /* mapping of spatial components */
         ( ( le_real_t * ) le_offset )[0] = le_pose[0];
@@ -166,7 +192,7 @@
         if ( le_array_set( le_array, LE_ARRAY_DT ) != _LE_TRUE ) return;
 
         /* mapping offset variables */
-        le_byte_t * le_offset = le_array->ar_byte + le_array->ar_size - LE_ARRAY_DT;
+        le_byte_t * le_offset = le_array->ar_vbyte + le_array->ar_vsize - LE_ARRAY_DT;
 
         /* mapping of size parameter */
         ( ( le_size_t * ) le_offset )[0] = le_size;
@@ -183,18 +209,19 @@
     source - i/o methods
  */
 
-    le_enum_t le_array_io_write( le_array_t const * const le_array, le_sock_t const le_socket ) {
+    le_enum_t le_array_io_write( le_array_t * const le_array, le_sock_t const le_socket ) {
 
-        /* send array size */
-        if ( write( le_socket, ( le_void_t * ) & le_array->ar_size, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) {
+        /* socket-array size variables */
+        le_size_t le_size = le_array->ar_vsize + LE_ARRAY_HEADER;
 
-            /* send message */
-            return( LE_ERROR_IO_WRITE );
+        /* serialise array size */
+        ( * ( ( le_size_t * ) le_array->ar_rbyte ) ) = le_array->ar_vsize;
 
-        }
+        /* serialise array mode */
+        /* ... */
 
-        /* send array data */
-        if ( write( le_socket, ( le_void_t * ) le_array->ar_byte, le_array->ar_size ) != le_array->ar_size ) {
+        /* write array on socket */
+        if ( write( le_socket, le_array->ar_rbyte, le_size ) != le_size ) {
 
             /* send message */
             return( LE_ERROR_IO_WRITE );
@@ -208,33 +235,43 @@
 
     le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
 
-        /* socket i/o variables */
-        le_size_t le_size = 0;
+        /* socket-array variables */
+        le_size_t le_size = sizeof( le_size_t );
         le_size_t le_read = 0;
         le_size_t le_fail = 0;
 
-        /* read array size */
-        if ( read( le_socket, & le_size, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) return( LE_ERROR_IO_READ );
+        /* read socket-array header */
+        if ( read( le_socket, & le_array->ar_vsize, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) {
 
-        /* array memory allocation */
-        if ( le_array_set( le_array, le_size ) != _LE_TRUE ) return( LE_ERROR_MEMORY );
+            /* send message */
+            return( LE_ERROR_IO_READ );
 
-        /* initialise read size */
-        le_size = 0;
+        }
 
-        /* socket reading */
-        while ( ( le_size < le_array->ar_size ) && ( le_fail < _LE_USE_RETRY ) ) {
+        /* allocate socket-array memory */
+        if ( le_array_set_size( le_array, le_array->ar_vsize ) == _LE_FALSE ) {
 
-            /* read block from socket */
-            if ( ( le_read = read( le_socket, le_array->ar_byte + le_size, _LE_USE_MTU ) ) > 0 ) {
+            /* send message */
+            return( LE_ERROR_MEMORY );
 
-                /* update size */
+        }
+
+        /* read socket-array */
+        while ( ( le_size < le_array->ar_rsize ) && ( le_fail < _LE_USE_RETRY ) ) {
+
+            /* read socket block */
+            if ( ( le_read = read( le_socket, le_array->ar_rbyte + le_size, le_array->ar_rsize ) ) > 0 ) {
+
+                /* update read size */
                 le_size += le_read;
 
-            /* update failure */
+            /* update read failure */
             } else { le_fail ++; }
 
         }
+
+        /* unserialise array mode */
+        /* ... */
 
         /* send message */
         return( LE_ERROR_SUCCESS );
