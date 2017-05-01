@@ -114,7 +114,7 @@
         }
 
         /* read class buffer */
-        if ( fread( ( le_void_t * ) le_class->cs_data, 1, LE_BUFFER_CLASS, le_stream ) != LE_BUFFER_CLASS ) {
+        if ( fread( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_ARRAY, le_stream ) != LE_CLASS_ARRAY ) {
 
             /* send message */
             return( LE_ERROR_IO_READ );
@@ -139,7 +139,7 @@
         }
 
         /* write class buffer */
-        if ( fwrite( ( le_void_t * ) le_class->cs_data, 1, LE_BUFFER_CLASS, le_stream ) != LE_BUFFER_CLASS ) {
+        if ( fwrite( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_ARRAY, le_stream ) != LE_CLASS_ARRAY ) {
 
             /* send message */
             return( LE_ERROR_IO_WRITE );

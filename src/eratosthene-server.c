@@ -328,15 +328,15 @@
         le_array_serial( le_array, & le_agree, sizeof( le_size_t ), 0, _LE_GET );
 
         /* check agreement value */
-        if ( le_agree == LE_AGREE_CLIENT ) {
+        if ( le_agree == LE_AGRT_QUER ) {
 
             /* update agreement value */
-            le_agree = LE_AGREE_SERVER;
+            le_agree = LE_AGRT_AUTH;
 
         } else {
 
             /* update agreement value */
-            le_agree = LE_AGREE_REFUSE;
+            le_agree = LE_AGRT_NULL;
 
         }
 
@@ -344,7 +344,7 @@
         if ( le_array_get_size( le_array ) != sizeof( le_size_t ) ) {
 
             /* update agreement value */
-            le_agree = LE_AGREE_REFUSE;
+            le_agree = LE_AGRT_NULL;
 
         }
 
@@ -352,7 +352,7 @@
         if ( le_stream->_status != LE_ERROR_SUCCESS ) {
 
             /* update agreement value */
-            le_agree = LE_AGREE_REFUSE;
+            le_agree = LE_AGRT_NULL;
 
         }
 
@@ -368,7 +368,7 @@
         le_array_io_write( le_array, LE_MODE_AUTH, le_socket );
 
         /* send message */
-        return( le_agree == LE_AGREE_SERVER ? _LE_TRUE : _LE_FALSE );
+        return( le_agree == LE_AGRT_AUTH ? _LE_TRUE : _LE_FALSE );
 
     }
 

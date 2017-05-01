@@ -54,17 +54,19 @@
  */
 
     /* define pseudo-constructor */
-    //# define LE_ARRAY_C                 { 0, 0, NULL }
     # define LE_ARRAY_C                 { 0, NULL, 0, NULL }
+
+    /* define array step */
+    # define LE_ARRAY_STEP              ( 1073741824 )
 
     /* define array header size */
     # define LE_ARRAY_HEADER            ( sizeof( le_size_t ) + sizeof( le_byte_t ) )
 
-    /* define array load size */
+    /* define arrays size */
     # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) * 2 + sizeof( le_time_t ) )
-
-    /* define array step */
-    # define LE_ARRAY_STEP              ( 1073741824 )
+    # define LE_ARRAY_ADDR_TIME         ( sizeof( le_time_t ) * 2 )
+    # define LE_ARRAY_ADDR_DESC         ( sizeof( le_time_t ) * 3 )
+    # define LE_ARRAY_ADDR              ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
 
     /* define array mapping sizes - sd */
     # define LE_ARRAY_SD_1              ( sizeof( le_real_t ) * 3 )

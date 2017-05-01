@@ -58,10 +58,6 @@
     # define LE_ADDRESS_C             { 0, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
     # define LE_ADDRESS_C_SIZE( s )   { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
 
-    /* define serial offsets */
-    # define LE_ADDRESS_CONFIG        ( sizeof( le_time_t ) * 2 )
-    # define LE_ADDRESS_DIGITS        ( sizeof( le_byte_t ) * 3 )
-
     /* define WGS84 ellipsoid parameters */
     # define LE_ADDRESS_WGSA          ( 6378137.0 )
     # define LE_ADDRESS_WGSF          ( 298.257223563 )
@@ -158,8 +154,8 @@
         le_byte_t as_size;
         le_byte_t as_mode;
         le_byte_t as_span;
-        le_time_t as_times[LE_BUFFER_TIME];
-        le_byte_t as_digit[LE_BUFFER_ADDR];
+        le_time_t as_times[_LE_USE_TIMES];
+        le_byte_t as_digit[_LE_USE_DEPTH];
 
     } le_address_t;
 

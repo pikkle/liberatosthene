@@ -118,18 +118,16 @@
     # define _LE_USE_BASE           ( 8 )
     # define _LE_USE_OFFSET         ( 5 )
     # if ( _LE_USE_OFFSET < 4 ) ||  ( _LE_USE_OFFSET > 8 )
-    # error "offset range is [4,8] inter N"
+    # error "offset range is [4,8]"
     # endif
     # define _LE_USE_DEPTH          ( 40 )
     # define _LE_USE_TIMES          ( 2 )
     # define _LE_USE_DATA           ( 4 )
-    # define _LE_USE_MTU            ( 1485 )
     # define _LE_USE_PORT           ( 11027 )
     # define _LE_USE_PENDING        ( 16 )
     # define _LE_USE_RETRY          ( 3 )
     # define _LE_USE_STRING         ( 256 )
     # define _LE_USE_ASCII_ITOA     ( 48 )
-    # define _LE_USE_STREAM         ( 8 )
 
     /* define types */
     # define _LE_VOID               void
@@ -202,30 +200,12 @@
     # define LE_ADDRIN_C            { AF_INET, 0         , { INADDR_ANY }, { 0 } }
     # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
 
-    /* define pseudo-constructor */
-    # define LE_BUFFER_C            { 0 }
-
-    /* define buffer sizes */
-    # define LE_BUFFER_TIME         ( _LE_USE_TIMES )
-    # define LE_BUFFER_CLASS        ( _LE_USE_DATA + _LE_USE_OFFSET * _LE_USE_BASE )
-    # define LE_BUFFER_ADDR         ( _LE_USE_DEPTH + sizeof( le_time_t ) * 2 + sizeof( le_byte_t ) * 3 )
-    # define LE_BUFFER_SYNC         ( _LE_USE_MTU )
-    # define LE_BUFFER_STRM         ( _LE_USE_MTU * 2 )
-
     /* define server/client agreement */
-    # define LE_AGREE_REFUSE        ( 0xffffffff00000000 )
-    # define LE_AGREE_CLIENT        ( 0xffff0000ffff0000 )
-    # define LE_AGREE_SERVER        ( 0x0000ffff0000ffff )
+    # define LE_AGRT_NULL           ( 0xffffffff00000000 )
+    # define LE_AGRT_QUER           ( 0xffff0000ffff0000 )
+    # define LE_AGRT_AUTH           ( 0x0000ffff0000ffff )
 
     /* define server/client modes */
-    # define LE_MODE_NULL           ( 0x00 )
-    # define LE_MODE_AMOD           ( 0x01 )
-    # define LE_MODE_BMOD           ( 0x02 )
-    # define LE_MODE_IMOD           ( 0x03 )
-    # define LE_MODE_RMOD           ( 0x04 )
-    # define LE_MODE_QMOD           ( 0x05 )
-    # define LE_MODE_CMOD           ( 0x06 )
-
     # define LE_MODE_NULL           ( 0x00 )
     # define LE_MODE_AUTH           ( 0x01 )
     # define LE_MODE_RESI           ( 0x02 )

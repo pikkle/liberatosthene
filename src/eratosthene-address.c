@@ -254,7 +254,7 @@
             le_address->as_times[1] = le_time[1];
 
             /* update serial base */
-            le_base += LE_ADDRESS_CONFIG;
+            le_base += LE_ARRAY_ADDR_TIME;
 
             /* serialise address configration */
             le_address->as_size = le_base[0];
@@ -262,7 +262,7 @@
             le_address->as_span = le_base[2];
 
             /* serialise address digits */
-            memcpy( le_address->as_digit, le_base + LE_ADDRESS_DIGITS, _LE_USE_DEPTH );
+            memcpy( le_address->as_digit, le_base + LE_ARRAY_ADDR_DESC, _LE_USE_DEPTH );
 
         } else {
 
@@ -271,7 +271,7 @@
             le_time[1] = le_address->as_times[1];
 
             /* update serial base */
-            le_base += LE_ADDRESS_CONFIG;
+            le_base += LE_ARRAY_ADDR_TIME;
 
             /* serialise address configuration */
             le_base[0] = le_address->as_size;
@@ -279,12 +279,12 @@
             le_base[2] = le_address->as_span;
 
             /* serialise address digits */
-            memcpy( le_base + LE_ADDRESS_DIGITS, le_address->as_digit, _LE_USE_DEPTH );
+            memcpy( le_base + LE_ARRAY_ADDR_DESC, le_address->as_digit, _LE_USE_DEPTH );
 
         }
 
         /* return updated offset */
-        return( le_offset + LE_BUFFER_ADDR );
+        return( le_offset + LE_ARRAY_ADDR );
 
     }
 
@@ -295,7 +295,7 @@
     le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string ) {
 
         /* conversion buffer variables */
-        le_char_t le_data[_LE_USE_DEPTH] = LE_BUFFER_C;
+        le_char_t le_data[_LE_USE_DEPTH] = { 0 };
 
         /* convert address */
         for ( le_size_t le_parse = 0; le_parse < le_address->as_size; le_parse ++ ) {
@@ -313,7 +313,7 @@
     le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string ) {
 
         /* conversion buffer variables */
-        le_char_t le_data[_LE_USE_DEPTH] = LE_BUFFER_C;
+        le_char_t le_data[_LE_USE_DEPTH] = { 0 };
 
         /* decompose address string */
         sscanf( ( char * ) le_string, "/%" _LE_BYTE_S "/%" _LE_TIME_S ",%" _LE_TIME_S "/%[^/]/%" _LE_BYTE_S, & le_address->as_mode, le_address->as_times, le_address->as_times + 1, le_data, & le_address->as_span );
