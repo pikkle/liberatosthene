@@ -44,6 +44,7 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-array.h"
 
 /*
     header - external includes
@@ -56,6 +57,10 @@
     /* define pseudo-constructor */
     # define LE_ADDRESS_C             { 0, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
     # define LE_ADDRESS_C_SIZE( s )   { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
+
+    /* define serial offsets */
+    # define LE_ADDRESS_CONFIG        ( sizeof( le_time_t ) * 2 )
+    # define LE_ADDRESS_DIGITS        ( sizeof( le_byte_t ) * 3 )
 
     /* define WGS84 ellipsoid parameters */
     # define LE_ADDRESS_WGSA          ( 6378137.0 )
@@ -320,36 +325,9 @@
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
 
-    /*! \brief i/o methods
-     *
-     *  This function reads in the provided socket descriptor the compact byte
-     *  representation of the address and translates it into a standard address
-     *  structure.
-     *
-     *  The compact byte representation of the address is expected in the format
-     *  defined by the \b le_address_io_write() function.
-     *
-     *  \param le_address Address structure
-     *  \param le_socket  Socket descriptor
-     *
-     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
-     */
+    /* *** */
 
-    le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket );
-
-    /*! \brief i/o methods
-     *
-     *  This function translates the provided standard address structure in its
-     *  compact byte representation. It then write the compacted address in the
-     *  socket pointed by the socket descriptor.
-     *
-     *  \param le_address Address structure
-     *  \param le_socket  Socket descriptor
-     *
-     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
-     */
-
-    le_enum_t le_address_io_write( le_address_t * const le_address, le_sock_t const le_socket );
+    le_size_t le_address_serial( le_address_t * const le_address, le_array_t * const le_array, le_size_t const le_offset, le_enum_t const le_mode );
 
     /*! \brief conversion methods
      *

@@ -110,6 +110,10 @@
     # define _LE_FALSE              ( 0 )
     # define _LE_TRUE               ( 1 )
 
+    /* i/o values */
+    # define _LE_GET                ( 0 )
+    # define _LE_SET                ( 1 )
+
     /* features configuration value */
     # define _LE_USE_BASE           ( 8 )
     # define _LE_USE_OFFSET         ( 5 )
@@ -192,6 +196,7 @@
     # define LE_ERROR_BASE          ( 0x000b )
     # define LE_ERROR_AUTH          ( 0x000c )
     # define LE_ERROR_FORMAT        ( 0x000d )
+    # define LE_ERROR_AGREE         ( 0x000e )
 
     /* define pseudo-constructor */
     # define LE_ADDRIN_C            { AF_INET, 0         , { INADDR_ANY }, { 0 } }
@@ -207,6 +212,11 @@
     # define LE_BUFFER_SYNC         ( _LE_USE_MTU )
     # define LE_BUFFER_STRM         ( _LE_USE_MTU * 2 )
 
+    /* define server/client agreement */
+    # define LE_AGREE_REFUSE        ( 0xffffffff00000000 )
+    # define LE_AGREE_CLIENT        ( 0xffff0000ffff0000 )
+    # define LE_AGREE_SERVER        ( 0x0000ffff0000ffff )
+
     /* define server/client modes */
     # define LE_MODE_NULL           ( 0x00 )
     # define LE_MODE_AMOD           ( 0x01 )
@@ -215,6 +225,13 @@
     # define LE_MODE_RMOD           ( 0x04 )
     # define LE_MODE_QMOD           ( 0x05 )
     # define LE_MODE_CMOD           ( 0x06 )
+
+    # define LE_MODE_NULL           ( 0x00 )
+    # define LE_MODE_AUTH           ( 0x01 )
+    # define LE_MODE_RESI           ( 0x02 )
+    # define LE_MODE_REDU           ( 0x03 )
+    # define LE_MODE_QUER           ( 0x04 )
+    # define LE_MODE_INJE           ( 0x05 )
 
     /* define mathematical constants */
     # define LE_PI                  ( 3.1415926535897932384626433832795029 )

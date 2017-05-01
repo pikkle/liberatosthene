@@ -97,47 +97,6 @@
 
     le_sock_t le_client_delete( le_sock_t const le_socket );
 
-    /*! \brief handshake methods
-     *
-     *  This function sends the query handshake to the server connected through
-     *  the socket descriptor and waits the server answer. It then checks if the
-     *  server allows the client to continue the query.
-     *
-     *  \param le_socket Socket descriptor
-     *  \param le_mode   Client query mode
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
-     */
-
-    le_enum_t le_client_handshake( le_sock_t const le_socket, le_enum_t const le_mode );
-
-    /*! \brief handshake methods
-     *
-     *  This function reads the expected client query handshake sent by the
-     *  \b le_client_handshake() function. On success, it simply returns the
-     *  query mode packed in the client query handshake.
-     *
-     *  \param le_socket Socket descriptor
-     *
-     *  \return Returns query mode on success, LE_MODE_NULL otherwise
-     */
-
-    le_byte_t le_client_switch( le_sock_t const le_socket );
-
-    /*! \brief handshake methods
-     *
-     *  This function sends the sever answer to a client query handshake. It is
-     *  used by the server to authorise the client to continue the query it
-     *  initiated through the handshake.
-     *
-     *  \param le_socket Socket descriptor
-     *  \param le_auth   Server authorisation mode
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
-     */
-
-    le_enum_t le_client_authorise( le_sock_t const le_socket, le_byte_t le_mode );
-
 /*
     header - C/C++ compatibility
  */

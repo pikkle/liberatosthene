@@ -242,7 +242,13 @@
 
     le_void_t le_server_io( le_server_t * const le_server );
 
+    /* *** */
+
     le_void_t * le_server_io_client( le_void_t * le_box_ );
+
+    /* *** */
+
+    le_enum_t le_server_io_agreement( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
@@ -256,7 +262,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_void_t le_server_io_inject( le_server_t * const le_server, le_sock_t const le_client, le_stream_t * const le_stream );
+    le_enum_t le_server_io_inject( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
@@ -285,7 +291,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_void_t le_server_io_reduce( le_server_t * const le_server, le_sock_t const le_client, le_stream_t * const le_stream );
+    le_enum_t le_server_io_reduce( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
@@ -304,21 +310,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_void_t le_server_io_query( le_server_t const * const le_server, le_sock_t const le_client, le_stream_t * const le_stream );
-
-    /*! \brief i/o methods
-     *
-     *  This function is a specific server sub-process.
-     *
-     *  It is called as the dispatcher receives a configuration query from a
-     *  remote client. It packs the spatial and temporal configuration values
-     *  in an array and writes it in the provided client socket.
-     *
-     *  \param le_server Server structure
-     *  \param le_client Client socket descriptor - server-side
-     */
-
-    le_void_t le_server_io_config( le_server_t const * const le_server, le_sock_t const le_client, le_stream_t * const le_stream );
+    le_enum_t le_server_io_query( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility

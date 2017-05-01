@@ -235,52 +235,56 @@
     }
 
 /*
-    source - i/o methods
+    source - serialisation methods
  */
 
-    le_enum_t le_address_io_read( le_address_t * const le_address, le_sock_t const le_socket ) {
+    le_size_t le_address_serial( le_address_t * const le_address, le_array_t * const le_array, le_size_t const le_offset, le_enum_t const le_mode ) {
 
-        /* socket buffer variables */
-        le_time_t * le_time = ( le_time_t * ) ( le_address->as_digit + _LE_USE_DEPTH );
-        le_byte_t * le_byte = ( le_byte_t * ) ( le_time + 2 );
+        /* serialisation variables */
+        le_byte_t * le_base = le_array_get_byte( le_array ) + le_offset;
 
-        /* read buffer from socket - send message */
-        if ( read( le_socket, le_address->as_digit, LE_BUFFER_ADDR ) != LE_BUFFER_ADDR ) return( LE_ERROR_IO_READ );
+        /* serialisation variables */
+        le_time_t * le_time = ( le_time_t * ) le_base;
 
-        /* decompose socket buffer */
-        le_address->as_times[0] = le_time[0];
-        le_address->as_times[1] = le_time[1];
+        /* check serialisation mode */
+        if ( le_mode == _LE_GET ) {
 
-        /* decompose socket buffer */
-        le_address->as_size = le_byte[0];
-        le_address->as_mode = le_byte[1];
-        le_address->as_span = le_byte[2];
+            /* serialise times */
+            le_address->as_times[0] = le_time[0];
+            le_address->as_times[1] = le_time[1];
 
-        /* send message */
-        return( LE_ERROR_SUCCESS );
+            /* update serial base */
+            le_base += LE_ADDRESS_CONFIG;
 
-    }
+            /* serialise address configration */
+            le_address->as_size = le_base[0];
+            le_address->as_mode = le_base[1];
+            le_address->as_span = le_base[2];
 
-    le_enum_t le_address_io_write( le_address_t * const le_address, le_sock_t const le_socket ) {
+            /* serialise address digits */
+            memcpy( le_address->as_digit, le_base + LE_ADDRESS_DIGITS, _LE_USE_DEPTH );
 
-        /* socket buffer variables */
-        le_time_t * le_time = ( le_time_t * ) ( le_address->as_digit + _LE_USE_DEPTH );
-        le_byte_t * le_byte = ( le_byte_t * ) ( le_time + 2 );
+        } else {
 
-        /* compose socket buffer */
-        le_time[0] = le_address->as_times[0];
-        le_time[1] = le_address->as_times[1];
+            /* serialise times */
+            le_time[0] = le_address->as_times[0];
+            le_time[1] = le_address->as_times[1];
 
-        /* compose socket buffer */
-        le_byte[0] = le_address->as_size;
-        le_byte[1] = le_address->as_mode;
-        le_byte[2] = le_address->as_span;
+            /* update serial base */
+            le_base += LE_ADDRESS_CONFIG;
 
-        /* write buffer on socket - send message */
-        if ( write( le_socket, le_address->as_digit, LE_BUFFER_ADDR ) != LE_BUFFER_ADDR ) return( LE_ERROR_IO_WRITE );
+            /* serialise address configuration */
+            le_base[0] = le_address->as_size;
+            le_base[1] = le_address->as_mode;
+            le_base[2] = le_address->as_span;
 
-        /* send message */
-        return( LE_ERROR_SUCCESS );
+            /* serialise address digits */
+            memcpy( le_base + LE_ADDRESS_DIGITS, le_address->as_digit, _LE_USE_DEPTH );
+
+        }
+
+        /* return updated offset */
+        return( le_offset + LE_BUFFER_ADDR );
 
     }
 

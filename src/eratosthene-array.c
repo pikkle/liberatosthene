@@ -51,13 +51,6 @@
     source - accessor methods
  */
 
-    le_byte_t le_array_get_type( le_array_t const * const le_array ) {
-
-        /* return header type */
-        return( le_array->ar_rbyte[sizeof( le_size_t )] );
-
-    }
-
     le_size_t le_array_get_size( le_array_t const * const le_array ) {
 
         /* return array size */
@@ -76,13 +69,6 @@
     source - mutator methods
  */
 
-    le_void_t le_array_set_type( le_array_t * const le_array, le_byte_t le_type ) {
-
-        /* update header type */
-        le_array->ar_rbyte[sizeof( le_size_t )] = le_type;
-
-    }
-
     le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length ) {
 
         /* array memory swap variables */
@@ -97,7 +83,7 @@
         }
 
         /* allocate array memory */
-        if ( ( le_swap =  realloc( ( le_void_t * ) le_array->ar_rbyte, le_array->ar_rsize += LE_ARRAY_STEP ) ) == NULL ) {
+        if ( ( le_swap = realloc( ( le_void_t * ) le_array->ar_rbyte, le_array->ar_rsize += LE_ARRAY_STEP ) ) == NULL ) {
 
             /* restore array size */
             le_array->ar_rsize -= LE_ARRAY_STEP;
@@ -111,7 +97,7 @@
         }
 
         /* update structure references */
-        le_array->ar_rbyte = ( le_byte_t * ) le_swap;
+        le_array->ar_rbyte = ( le_byte_t * ) ( le_swap );
 
         /* update structure references */
         le_array->ar_vbyte = ( le_byte_t * ) ( le_array->ar_rbyte + LE_ARRAY_HEADER );
@@ -143,7 +129,7 @@
         }
 
         /* update structure references */
-        le_array->ar_rbyte = ( le_byte_t * ) le_swap;
+        le_array->ar_rbyte = ( le_byte_t * ) ( le_swap );
 
         /* update structure references */
         le_array->ar_vbyte = ( le_byte_t * ) ( le_array->ar_rbyte + LE_ARRAY_HEADER );
@@ -160,48 +146,26 @@
     }
 
 /*
-    source - mapping methods
+    source - serialisation methods
  */
 
-    le_void_t le_array_map_sd( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data ) {
+    le_size_t le_array_serial( le_array_t * const le_array, le_void_t * const le_bytes, le_size_t const le_length, le_size_t const le_offset, le_enum_t const le_mode ) {
 
-        /* array memory management - abort mapping */
-        if ( le_array_set( le_array, LE_ARRAY_SD ) != _LE_TRUE ) return;
+        /* check serialisation mode */
+        if ( le_mode == _LE_GET ) {
 
-        /* mapping offset variables */
-        le_byte_t * le_offset = le_array->ar_vbyte + le_array->ar_vsize - LE_ARRAY_SD;
+            /* serialisation */
+            memcpy( le_bytes, le_array->ar_vbyte + le_offset, le_length );
 
-        /* mapping of spatial components */
-        ( ( le_real_t * ) le_offset )[0] = le_pose[0];
-        ( ( le_real_t * ) le_offset )[1] = le_pose[1];
-        ( ( le_real_t * ) le_offset )[2] = le_pose[2];
+        } else {
 
-        /* update mapping offset */
-        le_offset += sizeof( le_real_t ) * 3;
+            /* serialisation */
+            memcpy( le_array->ar_vbyte + le_offset, le_bytes, le_length );
 
-        /* mapping of data components */
-        ( ( le_data_t * ) le_offset )[0] = le_data[0];
-        ( ( le_data_t * ) le_offset )[1] = le_data[1];
-        ( ( le_data_t * ) le_offset )[2] = le_data[2];
+        }
 
-    }
-
-    le_void_t le_array_map_dt( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time ) {
-
-        /* array memory management - abort mapping */
-        if ( le_array_set( le_array, LE_ARRAY_DT ) != _LE_TRUE ) return;
-
-        /* mapping offset variables */
-        le_byte_t * le_offset = le_array->ar_vbyte + le_array->ar_vsize - LE_ARRAY_DT;
-
-        /* mapping of size parameter */
-        ( ( le_size_t * ) le_offset )[0] = le_size;
-
-        /* update mapping offset */
-        le_offset += sizeof( le_size_t );
-
-        /* mapping of time parameter */
-        ( ( le_time_t * ) le_offset )[0] = le_time;
+        /* return updated offset */
+        return( le_offset + le_length );
 
     }
 
@@ -209,7 +173,7 @@
     source - i/o methods
  */
 
-    le_enum_t le_array_io_write( le_array_t * const le_array, le_sock_t const le_socket ) {
+    le_byte_t le_array_io_write( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket ) {
 
         /* socket-array size variables */
         le_size_t le_size = le_array->ar_vsize + LE_ARRAY_HEADER;
@@ -218,63 +182,68 @@
         ( * ( ( le_size_t * ) le_array->ar_rbyte ) ) = le_array->ar_vsize;
 
         /* serialise array mode */
-        /* ... */
+        ( * ( le_array->ar_rbyte + sizeof( le_size_t ) ) ) = le_mode;
 
         /* write array on socket */
         if ( write( le_socket, le_array->ar_rbyte, le_size ) != le_size ) {
 
             /* send message */
-            return( LE_ERROR_IO_WRITE );
+            return( LE_MODE_NULL );
 
         }
 
         /* send message */
-        return( LE_ERROR_SUCCESS );
+        return( le_mode );
 
     }
 
-    le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
+    le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
 
-        /* socket-array variables */
-        le_size_t le_size = sizeof( le_size_t );
+        /* reading head variables */
+        le_size_t le_head = sizeof( le_size_t );
+
+        /* reading size variables */
+        le_size_t le_size = LE_ARRAY_HEADER;
+
+        /* socket i/o variables */
         le_size_t le_read = 0;
         le_size_t le_fail = 0;
 
-        /* read socket-array header */
-        if ( read( le_socket, & le_array->ar_vsize, sizeof( le_size_t ) ) != sizeof( le_size_t ) ) {
+        /* socket-array header */
+        if ( read( le_socket, & le_array->ar_vsize, le_head ) != le_head ) {
 
             /* send message */
-            return( LE_ERROR_IO_READ );
+            return( LE_MODE_NULL );
 
         }
 
-        /* allocate socket-array memory */
+        /* socket-array memory */
         if ( le_array_set_size( le_array, le_array->ar_vsize ) == _LE_FALSE ) {
 
             /* send message */
-            return( LE_ERROR_MEMORY );
+            return( LE_MODE_NULL );
 
         }
 
-        /* read socket-array */
-        while ( ( le_size < le_array->ar_rsize ) && ( le_fail < _LE_USE_RETRY ) ) {
+        /* socket-array socket size */
+        le_size += le_array->ar_vsize;
 
-            /* read socket block */
-            if ( ( le_read = read( le_socket, le_array->ar_rbyte + le_size, le_array->ar_rsize ) ) > 0 ) {
+        /* socket-array reading */
+        while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
 
-                /* update read size */
-                le_size += le_read;
+            /* socket-array blocks */
+            if ( ( le_read = read( le_socket, le_array->ar_rbyte + le_head, le_size - le_head ) ) > 0 ) {
 
-            /* update read failure */
+                /* update head */
+                le_head += le_read;
+
+            /* update failure */
             } else { le_fail ++; }
 
         }
 
         /* unserialise array mode */
-        /* ... */
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
+        return( * ( le_array->ar_rbyte + sizeof( le_size_t ) ) );
 
     }
 

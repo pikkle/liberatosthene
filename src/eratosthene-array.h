@@ -57,8 +57,11 @@
     //# define LE_ARRAY_C                 { 0, 0, NULL }
     # define LE_ARRAY_C                 { 0, NULL, 0, NULL }
 
-    /* define array header */
+    /* define array header size */
     # define LE_ARRAY_HEADER            ( sizeof( le_size_t ) + sizeof( le_byte_t ) )
+
+    /* define array load size */
+    # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) * 2 + sizeof( le_time_t ) )
 
     /* define array step */
     # define LE_ARRAY_STEP              ( 1073741824 )
@@ -67,30 +70,17 @@
     # define LE_ARRAY_SD_1              ( sizeof( le_real_t ) * 3 )
     # define LE_ARRAY_SD                ( sizeof( le_data_t ) * 3 + LE_ARRAY_SD_1 )
 
-    /* define array mapping sizes - dt */
-    # define LE_ARRAY_DT                ( sizeof( le_size_t ) + sizeof( le_time_t ) )
-
 /*
     header - preprocessor macros
  */
 
     /* access macro for sd-records - array */
-    //# define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_byte + o ) )
-    //# define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_byte + o + sizeof( le_real_t ) * 3 ) )
     # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )
     # define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_vbyte + o + sizeof( le_real_t ) * 3 ) )
 
     /* access macro for sd-records - array last */
-    //# define le_array_sd_pose_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD )
-    //# define le_array_sd_data_al( a )   ( ( a )->ar_byte + ( a )->ar_size - LE_ARRAY_SD + sizeof( le_real_t ) * 3 )
     # define le_array_sd_pose_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_SD )
     # define le_array_sd_data_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_SD + sizeof( le_real_t ) * 3 )
-
-    /* access macro for dt-records - array */
-    //# define le_array_dt_size_a( a, o ) ( ( le_size_t * ) ( ( a )->ar_byte + o ) )
-    //# define le_array_dt_time_a( a, o ) ( ( le_time_t * ) ( ( a )->ar_byte + o + sizeof( le_size_t ) ) )
-    # define le_array_dt_size_a( a, o ) ( ( le_size_t * ) ( ( a )->ar_vbyte + o ) )
-    # define le_array_dt_time_a( a, o ) ( ( le_time_t * ) ( ( a )->ar_vbyte + o + sizeof( le_size_t ) ) )
 
 /*
     header - type definition
@@ -168,10 +158,6 @@
 
     le_void_t le_array_delete( le_array_t * const le_array );
 
-    /* *** */
-
-    le_byte_t le_array_get_type( le_array_t const * const le_array );
-
     /*! \brief accessor methods
      *
      *  This function returns the size, in bytes, of the data stored in the
@@ -194,10 +180,6 @@
      */
 
     le_byte_t * le_array_get_byte( le_array_t const * const le_array );
-
-    /* *** */
-
-    le_void_t le_array_set_type( le_array_t * const le_array, le_byte_t le_type );
 
     /*! \brief mutator methods
      *
@@ -233,33 +215,9 @@
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
 
-    /*! \brief mapping methods
-     *
-     *  This function is used to pack both position and data information at end
-     *  of the provided array. The function starts by preparing the array to
-     *  receive the elements. Then it pack the two provided 3-vector as a
-     *  sequence of bytes at array end.
-     *
-     *  \param le_array Array structure
-     *  \param le_pose  Position 3-vector
-     *  \param le_data  Data 3-vector (colour)
-     */
+    /* *** */
 
-    le_void_t le_array_map_sd( le_array_t * const le_array, le_real_t const * const le_pose, le_data_t const * const le_data );
-
-    /*! \brief mapping methods
-     *
-     *  This function is used to pack both size and time value at end of the
-     *  provided array structure. The function starts by preparing the array to
-     *  receive the two elements. It then pack the two values as a sequence of
-     *  bytes at array end.
-     *
-     *  \param le_array Array structure
-     *  \param le_size  Size value
-     *  \param le_time  Time value
-     */
-
-    le_void_t le_array_map_dt( le_array_t * const le_array, le_size_t const le_size, le_time_t const le_time );
+    le_size_t le_array_serial( le_array_t * const le_array, le_void_t * const le_bytes, le_size_t const le_length, le_size_t const le_offset, le_enum_t const le_mode );
 
     /*! \brief i/o methods
      *
@@ -272,7 +230,7 @@
      *  \return Return _LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_array_io_write( le_array_t * const le_array, le_sock_t const le_socket );
+    le_byte_t le_array_io_write( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
@@ -286,7 +244,7 @@
      *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
+    le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility
