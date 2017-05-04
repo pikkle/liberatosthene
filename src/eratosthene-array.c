@@ -115,33 +115,38 @@
         /* check requirements */
         if ( le_array->ar_rsize >= ( le_size + LE_ARRAY_HEADER ) ) {
 
+            /* update array size */
+            le_array->ar_vsize = le_size;
+
+            /* send message */
+            return( _LE_TRUE );
+
+        } else {
+
+            /* allocate array memory */
+            if ( ( le_swap = realloc( ( le_void_t * ) le_array->ar_rbyte, le_size + LE_ARRAY_HEADER ) ) == NULL ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+            /* update structure references */
+            le_array->ar_rbyte = ( le_byte_t * ) ( le_swap );
+
+            /* update structure references */
+            le_array->ar_vbyte = ( le_byte_t * ) ( le_array->ar_rbyte + LE_ARRAY_HEADER );
+
+            /* update array size */
+            le_array->ar_rsize = le_size + LE_ARRAY_HEADER;
+
+            /* update array size */
+            le_array->ar_vsize = le_size;
+
             /* send message */
             return( _LE_TRUE );
 
         }
-
-        /* allocate array memory */
-        if ( ( le_swap = realloc( ( le_void_t * ) le_array->ar_rbyte, le_size + LE_ARRAY_HEADER ) ) == NULL ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* update structure references */
-        le_array->ar_rbyte = ( le_byte_t * ) ( le_swap );
-
-        /* update structure references */
-        le_array->ar_vbyte = ( le_byte_t * ) ( le_array->ar_rbyte + LE_ARRAY_HEADER );
-
-        /* update array size */
-        le_array->ar_rsize = le_size + LE_ARRAY_HEADER;
-
-        /* update structure references */
-        le_array->ar_vsize = le_size;
-
-        /* send message */
-        return( _LE_TRUE );
 
     }
 

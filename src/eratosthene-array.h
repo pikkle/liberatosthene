@@ -57,7 +57,7 @@
     # define LE_ARRAY_C                 { 0, NULL, 0, NULL }
 
     /* define array step */
-    # define LE_ARRAY_STEP              ( 1073741824 )
+    # define LE_ARRAY_STEP              ( 1048576 )
 
     /* define array header size */
     # define LE_ARRAY_HEADER            ( sizeof( le_size_t ) + sizeof( le_byte_t ) )

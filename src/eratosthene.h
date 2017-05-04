@@ -165,6 +165,8 @@
     # define _LE_ENUM_S             "i"
     # define _LE_SIZE_P             PRIu64
     # define _LE_SIZE_S             SCNu64
+    # define _LE_DIFF_P             PRId64
+    # define _LE_DIFF_S             SCNd64
     # define _LE_REAL_P             ".14e"
     # define _LE_REAL_S             "lf"
     # define _LE_TIME_P             PRIi64
