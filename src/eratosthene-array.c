@@ -204,21 +204,27 @@
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
 
-        /* reading head variables */
-        le_size_t le_head = sizeof( le_size_t );
-
         /* reading size variables */
-        le_size_t le_size = LE_ARRAY_HEADER;
+        le_size_t le_size = sizeof( le_size_t );
+
+        /* reading head variables */
+        le_size_t le_head = 0;
 
         /* socket i/o variables */
         le_size_t le_read = 0;
         le_size_t le_fail = 0;
 
-        /* socket-array header */
-        if ( read( le_socket, & le_array->ar_vsize, le_head ) != le_head ) {
+        /* socket array reading */
+        while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
 
-            /* send message */
-            return( LE_MODE_NULL );
+            /* socket-array size */
+            if ( ( le_read = read( le_socket, ( ( le_byte_t * ) & le_array->ar_vsize ) + le_head, le_size - le_head ) ) > 0 ) {
+
+                /* update head */
+                le_head += le_read;
+
+            /* update failure */
+            } else { le_fail ++; }
 
         }
 
@@ -230,13 +236,13 @@
 
         }
 
-        /* socket-array socket size */
-        le_size += le_array->ar_vsize;
+        /* socket-array size */
+        le_size = le_array->ar_vsize + LE_ARRAY_HEADER;
 
         /* socket-array reading */
         while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
 
-            /* socket-array blocks */
+            /* socket-array content */
             if ( ( le_read = read( le_socket, le_array->ar_rbyte + le_head, le_size - le_head ) ) > 0 ) {
 
                 /* update head */
@@ -247,8 +253,8 @@
 
         }
 
-        /* unserialise array mode */
-        return( * ( le_array->ar_rbyte + sizeof( le_size_t ) ) );
+        /* serialise array mode */
+        return( le_array->ar_rbyte[sizeof( le_size_t )] );
 
     }
 

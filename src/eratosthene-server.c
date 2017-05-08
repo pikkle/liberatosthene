@@ -261,14 +261,6 @@
 
                 } break;
 
-                /* client/server reduction */
-                case ( LE_MODE_REDU ) : {
-
-                    /* mode management */
-                    le_active = le_server_io_reduce( le_server, & le_stream, & le_array, le_box->bx_sock );
-
-                } break;
-
                 /* client/server query */
                 case ( LE_MODE_QUER ) : {
 
@@ -399,59 +391,17 @@
 
     }
 
-    /* verification de la taille socket-array - ne plus verifier span + size (gestion par null dans les fichiers) */
-
-    le_enum_t le_server_io_reduce( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket ) {
-
-        /* address variables */
-        le_address_t le_addr = LE_ADDRESS_C;
-
-        /* serialise address */
-        le_address_serial( & le_addr, le_array, 0, _LE_GET );
-
-        /* check consistency */
-        if ( ( le_address_get_size( & le_addr ) + le_address_get_span( & le_addr ) ) >= le_server->sv_scfg ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* check address mode */
-        if ( le_address_get_mode( & le_addr ) != 2 ) {
-
-            /* address temporal reduction */
-            le_stream_get_reduct( le_stream, & le_addr, 0, NULL );
-
-        }
-
-        /* check address_mode */
-        if ( le_address_get_mode( & le_addr ) != 1 ) {
-
-            /* address temporal reduction */
-            le_stream_get_reduct( le_stream, & le_addr, 1, NULL );
-
-        }
-
-        /* serialise address */
-        le_address_serial( & le_addr, le_array, 0, _LE_SET );
-
-        /* write socket-array */
-        le_array_io_write( le_array, LE_MODE_REDU, le_socket );
-
-        /* send message */
-        return( _LE_TRUE );
-
-    }
-
-    /* verification de la taille socket-array - ne plus verifier span + size (gestion par null dans les fichiers) */
-
     le_enum_t le_server_io_query( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket ) {
 
         /* address variables */
         le_address_t le_addr = LE_ADDRESS_C;
 
-        /* address variables */
+        /* query-pack variables */
+        le_size_t le_parse = 0;
+        le_size_t le_stack = le_array_get_size( le_array );
+
+        /* address parameter variables */
+        le_size_t le_mode = 0;
         le_size_t le_size = 0;
         le_size_t le_span = 0;
 
@@ -463,74 +413,67 @@
         le_size_t le_stra = _LE_SIZE_NULL;
         le_size_t le_strb = _LE_SIZE_NULL;
 
-        /* serialise address */
-        le_address_serial( & le_addr, le_array, 0, _LE_GET );
+        /* array variables */
+        le_array_t le_answer = LE_ARRAY_C;
 
-        /* address parameters */
-        le_size = le_address_get_size( & le_addr );
-        le_span = le_address_get_span( & le_addr ) + le_size;
+        /* reading query-pack */
+        while ( ( le_parse = le_address_serial( & le_addr, le_array, le_parse, _LE_GET ) ) <= le_stack ) {
 
-        /* check consistency */
-        if ( le_span >= le_server->sv_scfg ) {
+            /* retrieve address parameters */
+            le_size = le_address_get_size( & le_addr );
+            le_span = le_address_get_span( & le_addr ) + le_size;
 
-            /* send message */
-            return( _LE_FALSE );
+            /* retrieve address mode */
+            le_mode = le_address_get_mode( & le_addr );
 
-        }
+            /* update array size */
+            le_array_set_size( & le_answer, LE_ARRAY_ADDR );
 
-        /* switch on address mode */
-        switch ( le_address_get_mode( & le_addr ) ) {
-
-            /* single-time address */
-            case ( 1 ) : {
+            /* switch on address mode */
+            if ( le_mode == 1 ) {
 
                 /* reduce address */
                 if ( ( le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_ofsa ) ) != _LE_SIZE_NULL ) {
 
-                    /* gathering stream data */
-                    le_stream_io_gather( le_stream, le_stra, & le_addr, le_ofsa, le_size, le_span, le_array );
+                    /* gathering data */
+                    le_stream_io_gather( le_stream, le_stra, & le_addr, le_ofsa, le_size, le_span, & le_answer );
 
                 }
 
-            } break;
-
-            /* single-time address */
-            case ( 2 ) : {
+            } else
+            if ( le_mode == 2 ) {
 
                 /* reduce address */
                 if ( ( le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_ofsb ) ) != _LE_SIZE_NULL ) {
 
-                    /* gathering stream data */
-                    le_stream_io_gather( le_stream, le_strb, & le_addr, le_ofsb, le_size, le_span, le_array );
+                    /* gathering data */
+                    le_stream_io_gather( le_stream, le_strb, & le_addr, le_ofsb, le_size, le_span, & le_answer );
 
                 }
 
-            } break;
-
-            /* dual-time address */
-            default : {
+            } else {
 
                 /* reduce address */
                 le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_ofsa );
                 le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_ofsb );
 
-                /* check address reduction */
+                /* check reductions */
                 if ( ( le_stra != _LE_SIZE_NULL ) || ( le_strb != _LE_SIZE_NULL ) ) {
 
-                    /* gathering stream data */
-                    le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_ofsa, le_ofsb, le_size, le_span, le_array );
+                    /* gathering data */
+                    le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_ofsa, le_ofsb, le_size, le_span, & le_answer );
 
                 }
 
-            } break;
+            }
 
-        };
+            /* serialise address */
+            le_address_serial( & le_addr, & le_answer, 0, _LE_SET );
 
-        /* serialise address */
-        le_address_serial( & le_addr, le_array, 0, _LE_SET );
+            /* write socket-array */
+            le_array_io_write( & le_answer, LE_MODE_QUER, le_socket );
 
-        /* write socket-array */
-        le_array_io_write( le_array, LE_MODE_QUER, le_socket );
+        }
 
         /* send message */
         return( _LE_TRUE );
