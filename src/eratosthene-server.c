@@ -427,7 +427,7 @@
             le_mode = le_address_get_mode( & le_addr );
 
             /* update array size */
-            le_array_set_size( & le_answer, LE_ARRAY_ADDR );
+            le_array_set_size( & le_answer, 0 );
 
             /* switch on address mode */
             if ( le_mode == 1 ) {
@@ -466,9 +466,6 @@
                 }
 
             }
-
-            /* serialise address */
-            le_address_serial( & le_addr, & le_answer, 0, _LE_SET );
 
             /* write socket-array */
             le_array_io_write( & le_answer, LE_MODE_QUER, le_socket );
