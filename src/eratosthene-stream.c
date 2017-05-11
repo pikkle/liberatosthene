@@ -399,7 +399,7 @@
         if ( le_size == 0 ) return;
 
         /* parsing array */
-        for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_SD ) {
+        for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_UF3 ) {
 
             /* reset address digits */
             le_address_set_pose( & le_addr, le_array_sd_pose_a( le_array, le_index + sizeof( le_time_t ) ) );
@@ -507,7 +507,7 @@
             if ( le_parse == le_span ) {
 
                 /* pepare array for insertion */
-                le_array_set( le_array, LE_ARRAY_SD );
+                le_array_set( le_array, LE_ARRAY_UF3 );
 
                 /* insert position coordinates */
                 le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
@@ -575,7 +575,7 @@
                 if ( le_returna == LE_ERROR_SUCCESS ) {
 
                     /* pepare array for insertion */
-                    le_array_set( le_array, LE_ARRAY_SD );
+                    le_array_set( le_array, LE_ARRAY_UF3 );
 
                     /* insert position coordinates */
                     le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
@@ -586,7 +586,7 @@
                 } else {
 
                     /* pepare array for insertion */
-                    le_array_set( le_array, LE_ARRAY_SD );
+                    le_array_set( le_array, LE_ARRAY_UF3 );
 
                     /* insert position coordinates */
                     le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
@@ -602,7 +602,7 @@
                 if ( ( le_returna == LE_ERROR_SUCCESS ) && ( le_returnb == LE_ERROR_SUCCESS ) ) {
 
                     /* pepare array for insertion */
-                    le_array_set( le_array, LE_ARRAY_SD );
+                    le_array_set( le_array, LE_ARRAY_UF3 );
 
                     /* insert position coordinates */
                     le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
@@ -618,7 +618,7 @@
                 if ( ( le_returna == LE_ERROR_SUCCESS ) && ( le_returnb != LE_ERROR_SUCCESS ) ) {
 
                     /* pepare array for insertion */
-                    le_array_set( le_array, LE_ARRAY_SD );
+                    le_array_set( le_array, LE_ARRAY_UF3 );
 
                     /* insert position coordinates */
                     le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
@@ -629,7 +629,7 @@
                 } else if ( ( le_returna != LE_ERROR_SUCCESS ) && ( le_returnb == LE_ERROR_SUCCESS ) ) {
 
                     /* pepare array for insertion */
-                    le_array_set( le_array, LE_ARRAY_SD );
+                    le_array_set( le_array, LE_ARRAY_UF3 );
 
                     /* insert position coordinates */
                     le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );

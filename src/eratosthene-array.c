@@ -58,10 +58,10 @@
 
     }
 
-    le_byte_t * le_array_get_byte( le_array_t const * const le_array ) {
+    le_byte_t * le_array_get_byte( le_array_t * const le_array ) {
 
         /* return array bytes pointer */
-        return( ( le_byte_t * ) le_array->ar_vbyte );
+        return( le_array->ar_vbyte );
 
     }
 
@@ -255,6 +255,119 @@
 
         /* serialise array mode */
         return( le_array->ar_rbyte[sizeof( le_size_t )] );
+
+    }
+
+/*
+    source - entropic methods
+ */
+
+    le_void_t le_array_uf3_encode( le_array_t * const le_array ) {
+
+        /* pointer variables */
+        le_byte_t * le_real = le_array->ar_vbyte + LE_ARRAY_UF3;
+        le_byte_t * le_hide = le_array->ar_vbyte + LE_ARRAY_UF3;
+
+        /* check necessities */
+        if ( le_array->ar_vsize <= LE_ARRAY_UF3 ) {
+
+            /* array unchanged */
+            return;
+
+        }
+
+        /* parsing array */
+        while ( ( le_real - le_array->ar_vbyte ) < le_array->ar_vsize ) {
+
+            /* encode array */
+            ( ( le_hide_t * ) le_hide )[0] = ( ( le_real_t * ) le_real )[0] - ( ( le_real_t * ) le_array->ar_vbyte )[0];
+            ( ( le_hide_t * ) le_hide )[1] = ( ( le_real_t * ) le_real )[1] - ( ( le_real_t * ) le_array->ar_vbyte )[1];
+            ( ( le_hide_t * ) le_hide )[2] = ( ( le_real_t * ) le_real )[2] - ( ( le_real_t * ) le_array->ar_vbyte )[2];
+
+            /* update pointer */
+            le_real += LE_ARRAY_UF3_POSE;
+            le_hide += LE_ARRAY_CU3_POSE;
+
+            /* encode array */
+            ( ( le_data_t * ) le_hide )[0] = ( ( le_data_t * ) le_real )[0];
+            ( ( le_data_t * ) le_hide )[1] = ( ( le_data_t * ) le_real )[1];
+            ( ( le_data_t * ) le_hide )[2] = ( ( le_data_t * ) le_real )[2];
+
+            /* update pointer */
+            le_real += LE_ARRAY_UF3_DATA;
+            le_hide += LE_ARRAY_CU3_DATA;
+
+        }
+
+        /* assign array size */
+        le_array->ar_vsize = le_hide - le_array->ar_vbyte;
+
+    }
+
+    le_enum_t le_array_uf3_decode( le_array_t * const le_array ) {
+
+        /* pointer variables */
+        le_byte_t * le_real = NULL;
+
+        /* pointer variables */
+        le_byte_t * le_hide = le_array->ar_vbyte + LE_ARRAY_UF3;
+
+        /* mirror array variables */
+        le_array_t le_mirror = LE_ARRAY_C;
+
+        /* check necessities */
+        if ( le_array->ar_vsize <= LE_ARRAY_UF3 ) {
+
+            /* send message */
+            return( LE_ERROR_SUCCESS );
+
+        }
+
+        /* create mirror array */
+        if ( le_array_set_size( & le_mirror, le_array_uf3_size( le_array ) ) != _LE_TRUE ) {
+
+            /* send message */
+            return( LE_ERROR_MEMORY );
+
+        }
+
+        /* copy reference */
+        memcpy( le_mirror.ar_vbyte, le_array->ar_vbyte, LE_ARRAY_UF3 );
+
+        /* mirror pointer */
+        le_real = le_mirror.ar_vbyte + LE_ARRAY_UF3;
+
+        /* parsing array */
+        while ( ( le_real - le_mirror.ar_vbyte ) < le_mirror.ar_vsize ) {
+
+            /* decode array */
+            ( ( le_real_t * ) le_real )[0] = ( ( le_hide_t * ) le_hide )[0] + ( ( le_real_t * ) le_array->ar_vbyte )[0];
+            ( ( le_real_t * ) le_real )[1] = ( ( le_hide_t * ) le_hide )[1] + ( ( le_real_t * ) le_array->ar_vbyte )[1];
+            ( ( le_real_t * ) le_real )[2] = ( ( le_hide_t * ) le_hide )[2] + ( ( le_real_t * ) le_array->ar_vbyte )[2];
+
+            /* update pointer */
+            le_real += LE_ARRAY_UF3_POSE;
+            le_hide += LE_ARRAY_CU3_POSE;
+
+            /* decode array */
+            ( ( le_data_t * ) le_real )[0] = ( ( le_data_t * ) le_hide )[0];
+            ( ( le_data_t * ) le_real )[1] = ( ( le_data_t * ) le_hide )[1];
+            ( ( le_data_t * ) le_real )[2] = ( ( le_data_t * ) le_hide )[2];
+
+            /* update pointer */
+            le_real += LE_ARRAY_UF3_DATA;
+            le_hide += LE_ARRAY_CU3_DATA;
+
+        }
+
+        /* delete array */
+        le_array_delete( le_array );
+
+        /* assign mirror array */
+        ( * le_array ) = le_mirror;
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 

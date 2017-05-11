@@ -190,7 +190,7 @@
         /* thread boxes variables */
         le_box_t le_boxes[_LE_USE_PENDING];
 
-        /* parsing boxes */
+        /* initialise boxes */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
 
             /* assign null socket */
@@ -201,7 +201,7 @@
 
         }
 
-        /* client connection handler */
+        /* client connexion handler */
         for ( le_size_t le_index = 0; le_index < _LE_USE_PENDING ; le_index = ( le_index + 1 ) % _LE_USE_PENDING ) {
 
             /* check box state */
@@ -396,6 +396,9 @@
         /* address variables */
         le_address_t le_addr = LE_ADDRESS_C;
 
+        /* array variables */
+        le_array_t le_gather = LE_ARRAY_C;
+
         /* query-pack variables */
         le_size_t le_parse = 0;
         le_size_t le_stack = le_array_get_size( le_array );
@@ -413,9 +416,6 @@
         le_size_t le_stra = _LE_SIZE_NULL;
         le_size_t le_strb = _LE_SIZE_NULL;
 
-        /* array variables */
-        le_array_t le_answer = LE_ARRAY_C;
-
         /* reading query-pack */
         while ( ( le_parse = le_address_serial( & le_addr, le_array, le_parse, _LE_GET ) ) <= le_stack ) {
 
@@ -427,7 +427,7 @@
             le_mode = le_address_get_mode( & le_addr );
 
             /* update array size */
-            le_array_set_size( & le_answer, 0 );
+            le_array_set_size( & le_gather, 0 );
 
             /* switch on address mode */
             if ( le_mode == 1 ) {
@@ -436,7 +436,7 @@
                 if ( ( le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_ofsa ) ) != _LE_SIZE_NULL ) {
 
                     /* gathering data */
-                    le_stream_io_gather( le_stream, le_stra, & le_addr, le_ofsa, le_size, le_span, & le_answer );
+                    le_stream_io_gather( le_stream, le_stra, & le_addr, le_ofsa, le_size, le_span, & le_gather );
 
                 }
 
@@ -447,7 +447,7 @@
                 if ( ( le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_ofsb ) ) != _LE_SIZE_NULL ) {
 
                     /* gathering data */
-                    le_stream_io_gather( le_stream, le_strb, & le_addr, le_ofsb, le_size, le_span, & le_answer );
+                    le_stream_io_gather( le_stream, le_strb, & le_addr, le_ofsb, le_size, le_span, & le_gather );
 
                 }
 
@@ -461,14 +461,17 @@
                 if ( ( le_stra != _LE_SIZE_NULL ) || ( le_strb != _LE_SIZE_NULL ) ) {
 
                     /* gathering data */
-                    le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_ofsa, le_ofsb, le_size, le_span, & le_answer );
+                    le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_ofsa, le_ofsb, le_size, le_span, & le_gather );
 
                 }
 
             }
 
+            /* encode socket-array */
+            le_array_uf3_encode( & le_gather );
+
             /* write socket-array */
-            le_array_io_write( & le_answer, LE_MODE_QUER, le_socket );
+            le_array_io_write( & le_gather, LE_MODE_QUER, le_socket );
 
         }
 

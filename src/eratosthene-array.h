@@ -62,27 +62,36 @@
     /* define array header size */
     # define LE_ARRAY_HEADER            ( sizeof( le_size_t ) + sizeof( le_byte_t ) )
 
-    /* define arrays size */
+    /* define array-size - authorise */
     # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) * 2 + sizeof( le_time_t ) )
+
+    /* define array-size - address */
     # define LE_ARRAY_ADDR_TIME         ( sizeof( le_time_t ) * 2 )
-    # define LE_ARRAY_ADDR_DESC         ( sizeof( le_time_t ) * 3 )
+    # define LE_ARRAY_ADDR_DESC         ( sizeof( le_byte_t ) * 3 )
     # define LE_ARRAY_ADDR              ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
 
-    /* define array mapping sizes - sd */
-    # define LE_ARRAY_SD_1              ( sizeof( le_real_t ) * 3 )
-    # define LE_ARRAY_SD                ( sizeof( le_data_t ) * 3 + LE_ARRAY_SD_1 )
+    /* define array-size - uf3/cu3 */
+    # define LE_ARRAY_UF3_POSE          ( 3 * sizeof( le_real_t ) )
+    # define LE_ARRAY_UF3_DATA          ( 3 * sizeof( le_data_t ) )
+    # define LE_ARRAY_UF3               ( LE_ARRAY_UF3_POSE + LE_ARRAY_UF3_DATA )
+    # define LE_ARRAY_CU3_POSE          ( 3 * sizeof( le_hide_t ) )
+    # define LE_ARRAY_CU3_DATA          ( 3 * sizeof( le_data_t ) )
+    # define LE_ARRAY_CU3               ( LE_ARRAY_CU3_POSE + LE_ARRAY_CU3_DATA )
 
 /*
     header - preprocessor macros
  */
 
+    /* encoding size macro */
+    # define le_array_cu3_size( a )     ( ( ( ( ( a )->ar_vsize / LE_ARRAY_UF3 ) - 1 ) * LE_ARRAY_CU3 ) + LE_ARRAY_UF3 )
+    # define le_array_uf3_size( a )     ( ( ( ( ( a )->ar_vsize - LE_ARRAY_UF3 ) / LE_ARRAY_CU3 ) + 1 ) * LE_ARRAY_UF3 )
+
     /* access macro for sd-records - array */
     # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )
     # define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_vbyte + o + sizeof( le_real_t ) * 3 ) )
 
-    /* access macro for sd-records - array last */
-    # define le_array_sd_pose_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_SD )
-    # define le_array_sd_data_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_SD + sizeof( le_real_t ) * 3 )
+    # define le_array_sd_pose_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3 )
+    # define le_array_sd_data_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3 + sizeof( le_real_t ) * 3 )
 
 /*
     header - type definition
@@ -118,20 +127,11 @@
      *  Bytes array memory base pointer
      */
 
-    //typedef struct le_array_prev {
-
-        //le_size_t   ar_virt;
-        //le_size_t   ar_size;
-        //le_byte_t * ar_byte;
-
-    //} le_array_t;
-
     typedef struct le_array_struct {
 
         le_size_t   ar_rsize;
         le_byte_t * ar_rbyte;
 
-        //le_size_t * ar_vsize;
         le_size_t   ar_vsize;
         le_byte_t * ar_vbyte;
 
@@ -181,7 +181,7 @@
      *  \return Returns array memory base pointer
      */
 
-    le_byte_t * le_array_get_byte( le_array_t const * const le_array );
+    le_byte_t * le_array_get_byte( le_array_t * const le_array );
 
     /*! \brief mutator methods
      *
@@ -247,6 +247,14 @@
      */
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
+
+    /* *** */
+
+    le_void_t le_array_uf3_encode( le_array_t * const le_array );
+
+    /* *** */
+
+    le_enum_t le_array_uf3_decode( le_array_t * const le_array );
 
 /*
     header - C/C++ compatibility
