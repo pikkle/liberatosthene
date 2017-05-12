@@ -106,6 +106,8 @@
      *  Bytes array containing the equivalence class storage data
      */
 
+    // typedef le_byte_t le_class_t_[LE_CLASS_MEMORY];
+
     typedef struct le_class_struct {
 
         le_data_t cs_data[LE_CLASS_MEMORY];

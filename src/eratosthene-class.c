@@ -30,7 +30,7 @@
         le_class_t le_class = LE_CLASS_C_DATA( le_data[0], le_data[1], le_data[2] );
 
         /* initialise offsets */
-        memset( le_class.cs_data + _LE_USE_DATA, 0xff, _LE_USE_OFFSET * 8 );
+        memset( le_class.cs_data + _LE_USE_DATA, 0xff, _LE_USE_OFFSET * _LE_USE_BASE );
 
         /* return constructed structure */
         return( le_class );

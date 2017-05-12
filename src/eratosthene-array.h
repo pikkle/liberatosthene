@@ -89,7 +89,6 @@
     /* access macro for sd-records - array */
     # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )
     # define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_vbyte + o + sizeof( le_real_t ) * 3 ) )
-
     # define le_array_sd_pose_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3 )
     # define le_array_sd_data_al( a )   ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3 + sizeof( le_real_t ) * 3 )
 

@@ -177,7 +177,7 @@
     # define _LE_SIZE_NULL          ( _LE_SIZE_MIN )
     # define _LE_TIME_NULL          ( _LE_TIME_MIN )
     # define _LE_SOCK_NULL          ( -1 )
-    # define _LE_OFFS_NULL          ( ( _LE_SIZE_L( 1 ) << ( _LE_SIZE_L( 8 ) * _LE_USE_OFFSET ) ) - _LE_SIZE_L( 1 ) )
+    # define _LE_OFFS_NULL          ( ( _LE_SIZE_L( 1 ) << ( _LE_USE_BASE * _LE_USE_OFFSET ) ) - _LE_SIZE_L( 1 ) )
 
     /* define errors */
     # define LE_ERROR_SUCCESS       ( 0x0000 )
