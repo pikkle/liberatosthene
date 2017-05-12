@@ -136,7 +136,7 @@
     # define _LE_ENUM               int
     # define _LE_SIZE               int64_t
     # define _LE_REAL               double
-    # define _LE_HIDE               float
+    # define _LE_TRIM               float
     # define _LE_TIME               int64_t
     # define _LE_DATA               uint8_t
     # define _LE_SOCK               int
@@ -238,7 +238,7 @@
     typedef _LE_ENUM le_enum_t;
     typedef _LE_SIZE le_size_t;
     typedef _LE_REAL le_real_t;
-    typedef _LE_HIDE le_hide_t;
+    typedef _LE_TRIM le_trim_t;
     typedef _LE_TIME le_time_t;
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;

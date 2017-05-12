@@ -266,7 +266,7 @@
 
         /* pointer variables */
         le_byte_t * le_real = le_array->ar_vbyte + LE_ARRAY_UF3;
-        le_byte_t * le_hide = le_array->ar_vbyte + LE_ARRAY_UF3;
+        le_byte_t * le_trim = le_array->ar_vbyte + LE_ARRAY_UF3;
 
         /* check necessities */
         if ( le_array->ar_vsize <= LE_ARRAY_UF3 ) {
@@ -280,27 +280,27 @@
         while ( ( le_real - le_array->ar_vbyte ) < le_array->ar_vsize ) {
 
             /* encode array */
-            ( ( le_hide_t * ) le_hide )[0] = ( ( le_real_t * ) le_real )[0] - ( ( le_real_t * ) le_array->ar_vbyte )[0];
-            ( ( le_hide_t * ) le_hide )[1] = ( ( le_real_t * ) le_real )[1] - ( ( le_real_t * ) le_array->ar_vbyte )[1];
-            ( ( le_hide_t * ) le_hide )[2] = ( ( le_real_t * ) le_real )[2] - ( ( le_real_t * ) le_array->ar_vbyte )[2];
+            ( ( le_trim_t * ) le_trim )[0] = ( ( le_real_t * ) le_real )[0] - ( ( le_real_t * ) le_array->ar_vbyte )[0];
+            ( ( le_trim_t * ) le_trim )[1] = ( ( le_real_t * ) le_real )[1] - ( ( le_real_t * ) le_array->ar_vbyte )[1];
+            ( ( le_trim_t * ) le_trim )[2] = ( ( le_real_t * ) le_real )[2] - ( ( le_real_t * ) le_array->ar_vbyte )[2];
 
             /* update pointer */
             le_real += LE_ARRAY_UF3_POSE;
-            le_hide += LE_ARRAY_CU3_POSE;
+            le_trim += LE_ARRAY_CU3_POSE;
 
             /* encode array */
-            ( ( le_data_t * ) le_hide )[0] = ( ( le_data_t * ) le_real )[0];
-            ( ( le_data_t * ) le_hide )[1] = ( ( le_data_t * ) le_real )[1];
-            ( ( le_data_t * ) le_hide )[2] = ( ( le_data_t * ) le_real )[2];
+            ( ( le_data_t * ) le_trim )[0] = ( ( le_data_t * ) le_real )[0];
+            ( ( le_data_t * ) le_trim )[1] = ( ( le_data_t * ) le_real )[1];
+            ( ( le_data_t * ) le_trim )[2] = ( ( le_data_t * ) le_real )[2];
 
             /* update pointer */
             le_real += LE_ARRAY_UF3_DATA;
-            le_hide += LE_ARRAY_CU3_DATA;
+            le_trim += LE_ARRAY_CU3_DATA;
 
         }
 
         /* assign array size */
-        le_array->ar_vsize = le_hide - le_array->ar_vbyte;
+        le_array->ar_vsize = le_trim - le_array->ar_vbyte;
 
     }
 
@@ -310,7 +310,7 @@
         le_byte_t * le_real = NULL;
 
         /* pointer variables */
-        le_byte_t * le_hide = le_array->ar_vbyte + LE_ARRAY_UF3;
+        le_byte_t * le_trim = le_array->ar_vbyte + LE_ARRAY_UF3;
 
         /* mirror array variables */
         le_array_t le_mirror = LE_ARRAY_C;
@@ -341,22 +341,22 @@
         while ( ( le_real - le_mirror.ar_vbyte ) < le_mirror.ar_vsize ) {
 
             /* decode array */
-            ( ( le_real_t * ) le_real )[0] = ( ( le_hide_t * ) le_hide )[0] + ( ( le_real_t * ) le_array->ar_vbyte )[0];
-            ( ( le_real_t * ) le_real )[1] = ( ( le_hide_t * ) le_hide )[1] + ( ( le_real_t * ) le_array->ar_vbyte )[1];
-            ( ( le_real_t * ) le_real )[2] = ( ( le_hide_t * ) le_hide )[2] + ( ( le_real_t * ) le_array->ar_vbyte )[2];
+            ( ( le_real_t * ) le_real )[0] = ( ( le_trim_t * ) le_trim )[0] + ( ( le_real_t * ) le_array->ar_vbyte )[0];
+            ( ( le_real_t * ) le_real )[1] = ( ( le_trim_t * ) le_trim )[1] + ( ( le_real_t * ) le_array->ar_vbyte )[1];
+            ( ( le_real_t * ) le_real )[2] = ( ( le_trim_t * ) le_trim )[2] + ( ( le_real_t * ) le_array->ar_vbyte )[2];
 
             /* update pointer */
             le_real += LE_ARRAY_UF3_POSE;
-            le_hide += LE_ARRAY_CU3_POSE;
+            le_trim += LE_ARRAY_CU3_POSE;
 
             /* decode array */
-            ( ( le_data_t * ) le_real )[0] = ( ( le_data_t * ) le_hide )[0];
-            ( ( le_data_t * ) le_real )[1] = ( ( le_data_t * ) le_hide )[1];
-            ( ( le_data_t * ) le_real )[2] = ( ( le_data_t * ) le_hide )[2];
+            ( ( le_data_t * ) le_real )[0] = ( ( le_data_t * ) le_trim )[0];
+            ( ( le_data_t * ) le_real )[1] = ( ( le_data_t * ) le_trim )[1];
+            ( ( le_data_t * ) le_real )[2] = ( ( le_data_t * ) le_trim )[2];
 
             /* update pointer */
             le_real += LE_ARRAY_UF3_DATA;
-            le_hide += LE_ARRAY_CU3_DATA;
+            le_trim += LE_ARRAY_CU3_DATA;
 
         }
 
