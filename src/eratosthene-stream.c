@@ -169,8 +169,8 @@
         le_size_t le_index = _LE_SIZE_NULL;
 
         /* reduction variables */
-        le_diff_t le_ledge = 0;
-        le_diff_t le_uedge = 0;
+        le_size_t le_ledge = 0;
+        le_size_t le_uedge = 0;
 
         /* offset variables */
         le_size_t le_offset = _LE_OFFS_NULL;

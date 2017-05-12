@@ -117,8 +117,8 @@
     /* features configuration value */
     # define _LE_USE_BASE           ( 8 )
     # define _LE_USE_OFFSET         ( 5 )
-    # if ( _LE_USE_OFFSET < 4 ) ||  ( _LE_USE_OFFSET > 8 )
-    # error "offset range is [4,8]"
+    # if ( _LE_USE_OFFSET < 4 ) ||  ( _LE_USE_OFFSET > 7 )
+    # error "offset range is [4,7]"
     # endif
     # define _LE_USE_DEPTH          ( 40 )
     # define _LE_USE_TIMES          ( 2 )
@@ -134,8 +134,7 @@
     # define _LE_BYTE               uint8_t
     # define _LE_CHAR               unsigned char
     # define _LE_ENUM               int
-    # define _LE_SIZE               uint64_t
-    # define _LE_DIFF               int64_t
+    # define _LE_SIZE               int64_t
     # define _LE_REAL               double
     # define _LE_HIDE               float
     # define _LE_TIME               int64_t
@@ -147,14 +146,14 @@
     /* define boundaries */
     # define _LE_BYTE_MIN           ( 0 )
     # define _LE_BYTE_MAX           ( UINT8_MAX )
-    # define _LE_SIZE_MIN           ( 0 )
-    # define _LE_SIZE_MAX           ( UINT64_MAX )
+    # define _LE_SIZE_MIN           ( INT64_MIN )
+    # define _LE_SIZE_MAX           ( INT64_MAX )
     # define _LE_TIME_MIN           ( INT64_MIN )
     # define _LE_TIME_MAX           ( INT64_MAX )
 
     /* define litteral suffix */
     # define _LE_REAL_L(t)          ( t )
-    # define _LE_SIZE_L(t)          ( UINT64_C( t ) )
+    # define _LE_SIZE_L(t)          ( INT64_C( t ) )
     # define _LE_TIME_L(t)          ( INT64_C( t ) )
 
     /* define i/o specifiers */
@@ -164,10 +163,8 @@
     # define _LE_CHAR_S             "hhu"
     # define _LE_ENUM_P             "i"
     # define _LE_ENUM_S             "i"
-    # define _LE_SIZE_P             PRIu64
-    # define _LE_SIZE_S             SCNu64
-    # define _LE_DIFF_P             PRId64
-    # define _LE_DIFF_S             SCNd64
+    # define _LE_SIZE_P             PRId64
+    # define _LE_SIZE_S             SCNd64
     # define _LE_REAL_P             ".14e"
     # define _LE_REAL_S             "lf"
     # define _LE_TIME_P             PRIi64
@@ -177,7 +174,7 @@
 
     /* define type nulls */
     # define _LE_BYTE_NULL          ( _LE_BYTE_MAX )
-    # define _LE_SIZE_NULL          ( _LE_SIZE_MAX )
+    # define _LE_SIZE_NULL          ( _LE_SIZE_MIN )
     # define _LE_TIME_NULL          ( _LE_TIME_MIN )
     # define _LE_SOCK_NULL          ( -1 )
     # define _LE_OFFS_NULL          ( ( _LE_SIZE_L( 1 ) << ( _LE_SIZE_L( 8 ) * _LE_USE_OFFSET ) ) - _LE_SIZE_L( 1 ) )
@@ -240,7 +237,6 @@
     typedef _LE_CHAR le_char_t;
     typedef _LE_ENUM le_enum_t;
     typedef _LE_SIZE le_size_t;
-    typedef _LE_DIFF le_diff_t;
     typedef _LE_REAL le_real_t;
     typedef _LE_HIDE le_hide_t;
     typedef _LE_TIME le_time_t;
