@@ -468,7 +468,8 @@
             }
 
             /* encode socket-array */
-            le_array_uf3_encode( & le_gather );
+            //le_array_uf3_encode( & le_gather );
+            le_array_uf3_rec_encode( & le_gather );
 
             /* write socket-array */
             le_array_io_write( & le_gather, LE_MODE_QUER, le_socket );

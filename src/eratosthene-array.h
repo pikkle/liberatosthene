@@ -247,13 +247,21 @@
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
 
-    /* *** */
+    /* experimental */
 
-    le_void_t le_array_uf3_encode( le_array_t * const le_array );
+    le_void_t le_array_uf3_rfr_encode( le_array_t * const le_array );
 
-    /* *** */
+    /* experimental */
 
-    le_enum_t le_array_uf3_decode( le_array_t * const le_array );
+    le_enum_t le_array_uf3_rfr_decode( le_array_t * const le_array );
+
+    /* experimental */
+
+    le_enum_t le_array_uf3_rec_encode( le_array_t * const le_array );
+
+    /* experimental */
+
+    le_enum_t le_array_uf3_rec_decode( le_array_t * const le_array );
 
 /*
     header - C/C++ compatibility
