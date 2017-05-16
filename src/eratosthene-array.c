@@ -413,9 +413,9 @@
         while ( ( le_head - le_array->ar_vbyte ) < le_array->ar_vsize ) {
 
             /* switch initialisation */
-            ( * ( le_tail ++ ) ) = 0;
-            ( * ( le_tail ++ ) ) = 0;
-            ( * ( le_tail ++ ) ) = 0;
+            ( * le_tail ++ ) = 0;
+            ( * le_tail ++ ) = 0;
+            ( * le_tail ++ ) = 0;
 
             /* switch mask reset  */
             le_mask = 0x1;
@@ -427,10 +427,10 @@
                 if ( ( * le_head ) != ( * ( le_head - LE_ARRAY_UF3 ) ) ) {
 
                     /* encode byte */
-                    ( * ( le_tail ++ ) ) = ( * ( le_head ) );
+                    ( * le_tail ++ ) = ( * le_head );
 
                     /* update switch */
-                    ( * ( ( uint32_t * ) le_desc ) ) |= le_mask;
+                    ( * ( le_mask_t * ) le_desc ) |= le_mask;
 
                 }
 
@@ -440,9 +440,9 @@
             }
 
             /* encode data */
-            ( * ( le_tail ++ ) ) = ( * ( le_head ++ ) );
-            ( * ( le_tail ++ ) ) = ( * ( le_head ++ ) );
-            ( * ( le_tail ++ ) ) = ( * ( le_head ++ ) );
+            ( * le_tail ++ ) = ( * le_head ++ );
+            ( * le_tail ++ ) = ( * le_head ++ );
+            ( * le_tail ++ ) = ( * le_head ++ );
 
             /* update pointer */
             le_desc = le_tail;
@@ -451,7 +451,7 @@
         }
 
         /* pack array size */
-        ( * ( ( le_size_t * ) le_tail ) ) = le_array->ar_vsize;
+        ( * ( le_size_t * ) le_tail ) = le_array->ar_vsize;
 
         /* update array size */
         le_dual.ar_vsize = le_tail - le_dual.ar_vbyte + sizeof( le_size_t );
@@ -480,8 +480,8 @@
         le_byte_t * le_line = NULL;
 
         /* array poiter variables */
-        le_byte_t * le_desc = le_array->ar_vbyte + LE_ARRAY_UF3;
-        le_byte_t * le_tail = le_desc;
+        le_byte_t * le_tail = le_array->ar_vbyte + LE_ARRAY_UF3;
+        le_byte_t * le_desc = le_tail;
 
         /* check requirements */
         if ( le_array->ar_vsize <= LE_ARRAY_UF3 ) {
@@ -492,7 +492,7 @@
         }
 
         /* restore array size */
-        if ( le_array_set_size( & le_dual, * ( ( le_size_t * ) ( le_array->ar_vbyte + le_array->ar_vsize - sizeof( le_size_t ) ) ) ) != _LE_TRUE ) {
+        if ( le_array_set_size( & le_dual, * ( le_size_t * ) ( le_array->ar_vbyte + le_array->ar_vsize - sizeof( le_size_t ) ) ) != _LE_TRUE ) {
 
             /* send message */
             return( LE_ERROR_MEMORY );
@@ -511,14 +511,14 @@
             /* switch mask reset */
             le_mask = 0x1, le_tail += 3;
 
-            /* decode record */
+            /* decode pose */
             while ( ( le_head - le_line ) < LE_ARRAY_UF3_POSE ) {
 
                 /* check switch */
-                if ( ( ( * ( ( uint32_t * ) le_desc ) ) & le_mask ) != 0 ) {
+                if ( ( ( * ( le_mask_t * ) le_desc ) & le_mask ) != 0 ) {
 
                     /* decode byte */
-                    ( * le_head ) = ( * ( le_tail ++ ) );
+                    ( * le_head ) = ( * le_tail ++ );
 
                 } else {
 
@@ -533,9 +533,9 @@
             }
 
             /* decode data */
-            ( * ( le_head ++ ) ) = ( * ( le_tail ++ ) );
-            ( * ( le_head ++ ) ) = ( * ( le_tail ++ ) );
-            ( * ( le_head ++ ) ) = ( * ( le_tail ++ ) );
+            ( * le_head ++ ) = ( * le_tail ++ );
+            ( * le_head ++ ) = ( * le_tail ++ );
+            ( * le_head ++ ) = ( * le_tail ++ );
 
             /* update pointer */
             le_desc = le_tail;
