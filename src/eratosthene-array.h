@@ -54,13 +54,15 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_ARRAY_C                 { 0, NULL, 0, NULL }
+    # define LE_ARRAY_C                 { 0, NULL, 0, 0, NULL }
 
     /* define array step */
     # define LE_ARRAY_STEP              ( 1048576 )
 
     /* define array header size */
-    # define LE_ARRAY_HEADER            ( sizeof( le_size_t ) + sizeof( le_byte_t ) )
+    # define LE_ARRAY_HEADER_SIZE       ( sizeof( le_size_t ) * 2 )
+    # define LE_ARRAY_HEADER_MODE       ( sizeof( le_byte_t ) )
+    # define LE_ARRAY_HEADER            ( LE_ARRAY_HEADER_SIZE + LE_ARRAY_HEADER_MODE )
 
     /* define array-size - authorise */
     # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) * 2 + sizeof( le_time_t ) )
@@ -82,9 +84,8 @@
     header - preprocessor macros
  */
 
-    /* encoding size macro */
-    # define le_array_cu3_size( a )     ( ( ( ( ( a )->ar_vsize / LE_ARRAY_UF3 ) - 1 ) * LE_ARRAY_CU3 ) + LE_ARRAY_UF3 )
-    # define le_array_uf3_size( a )     ( ( ( ( ( a )->ar_vsize - LE_ARRAY_UF3 ) / LE_ARRAY_CU3 ) + 1 ) * LE_ARRAY_UF3 )
+    /* define encoded size */
+    # define le_array_esize( s )        ( ( s / LE_ARRAY_UF3 ) * ( LE_ARRAY_UF3 + 3 ) )
 
     /* access macro for sd-records - array */
     # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )
@@ -132,6 +133,7 @@
         le_byte_t * ar_rbyte;
 
         le_size_t   ar_vsize;
+        le_size_t   ar_csize;
         le_byte_t * ar_vbyte;
 
     } le_array_t;
@@ -247,21 +249,13 @@
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
 
-    /* experimental */
+    /* *** */
 
-    le_void_t le_array_uf3_rfr_encode( le_array_t * const le_array );
+    le_enum_t le_array_uf3_encode( le_array_t * const le_array );
 
-    /* experimental */
+    /* *** */
 
-    le_enum_t le_array_uf3_rfr_decode( le_array_t * const le_array );
-
-    /* experimental */
-
-    le_enum_t le_array_uf3_rec_encode( le_array_t * const le_array );
-
-    /* experimental */
-
-    le_enum_t le_array_uf3_rec_decode( le_array_t * const le_array );
+    le_enum_t le_array_uf3_decode( le_array_t * const le_array );
 
 /*
     header - C/C++ compatibility

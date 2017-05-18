@@ -184,10 +184,11 @@
         le_size_t le_size = le_array->ar_vsize + LE_ARRAY_HEADER;
 
         /* serialise array size */
-        ( * ( ( le_size_t * ) le_array->ar_rbyte ) ) = le_array->ar_vsize;
+        ( ( le_size_t * ) le_array->ar_rbyte )[0] = le_array->ar_vsize;
+        ( ( le_size_t * ) le_array->ar_rbyte )[1] = le_array->ar_csize;
 
         /* serialise array mode */
-        ( * ( le_array->ar_rbyte + sizeof( le_size_t ) ) ) = le_mode;
+        le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] = le_mode;
 
         /* write array on socket */
         if ( write( le_socket, le_array->ar_rbyte, le_size ) != le_size ) {
@@ -228,6 +229,14 @@
 
         }
 
+        /* check failure */
+        if ( le_fail == _LE_USE_RETRY ) {
+
+            /* send message */
+            return( LE_MODE_NULL );
+
+        }
+
         /* socket-array memory */
         if ( le_array_set_size( le_array, le_array->ar_vsize ) == _LE_FALSE ) {
 
@@ -253,125 +262,27 @@
 
         }
 
+        /* check failure */
+        if ( le_fail == _LE_USE_RETRY ) {
+
+            /* send message */
+            return( LE_MODE_NULL );
+
+        }
+
+        /* serialise array size */
+        le_array->ar_csize = ( ( le_size_t * ) le_array->ar_rbyte )[1];
+
         /* serialise array mode */
-        return( le_array->ar_rbyte[sizeof( le_size_t )] );
+        return( le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] );
 
     }
 
 /*
-    source - entropic methods
+    source - uf3-specific methods
  */
 
-    le_void_t le_array_uf3_rfr_encode( le_array_t * const le_array ) {
-
-        /* pointer variables */
-        le_byte_t * le_real = le_array->ar_vbyte + LE_ARRAY_UF3;
-        le_byte_t * le_trim = le_array->ar_vbyte + LE_ARRAY_UF3;
-
-        /* check necessities */
-        if ( le_array->ar_vsize <= LE_ARRAY_UF3 ) {
-
-            /* array unchanged */
-            return;
-
-        }
-
-        /* parsing array */
-        while ( ( le_real - le_array->ar_vbyte ) < le_array->ar_vsize ) {
-
-            /* encode array */
-            ( ( le_trim_t * ) le_trim )[0] = ( ( le_real_t * ) le_real )[0] - ( ( le_real_t * ) le_array->ar_vbyte )[0];
-            ( ( le_trim_t * ) le_trim )[1] = ( ( le_real_t * ) le_real )[1] - ( ( le_real_t * ) le_array->ar_vbyte )[1];
-            ( ( le_trim_t * ) le_trim )[2] = ( ( le_real_t * ) le_real )[2] - ( ( le_real_t * ) le_array->ar_vbyte )[2];
-
-            /* update pointer */
-            le_real += LE_ARRAY_UF3_POSE;
-            le_trim += LE_ARRAY_CU3_POSE;
-
-            /* encode array */
-            ( ( le_data_t * ) le_trim )[0] = ( ( le_data_t * ) le_real )[0];
-            ( ( le_data_t * ) le_trim )[1] = ( ( le_data_t * ) le_real )[1];
-            ( ( le_data_t * ) le_trim )[2] = ( ( le_data_t * ) le_real )[2];
-
-            /* update pointer */
-            le_real += LE_ARRAY_UF3_DATA;
-            le_trim += LE_ARRAY_CU3_DATA;
-
-        }
-
-        /* assign array size */
-        le_array->ar_vsize = le_trim - le_array->ar_vbyte;
-
-    }
-
-    le_enum_t le_array_uf3_rfr_decode( le_array_t * const le_array ) {
-
-        /* pointer variables */
-        le_byte_t * le_real = NULL;
-
-        /* pointer variables */
-        le_byte_t * le_trim = le_array->ar_vbyte + LE_ARRAY_UF3;
-
-        /* mirror array variables */
-        le_array_t le_mirror = LE_ARRAY_C;
-
-        /* check necessities */
-        if ( le_array->ar_vsize <= LE_ARRAY_UF3 ) {
-
-            /* send message */
-            return( LE_ERROR_SUCCESS );
-
-        }
-
-        /* create mirror array */
-        if ( le_array_set_size( & le_mirror, le_array_uf3_size( le_array ) ) != _LE_TRUE ) {
-
-            /* send message */
-            return( LE_ERROR_MEMORY );
-
-        }
-
-        /* copy reference */
-        memcpy( le_mirror.ar_vbyte, le_array->ar_vbyte, LE_ARRAY_UF3 );
-
-        /* mirror pointer */
-        le_real = le_mirror.ar_vbyte + LE_ARRAY_UF3;
-
-        /* parsing array */
-        while ( ( le_real - le_mirror.ar_vbyte ) < le_mirror.ar_vsize ) {
-
-            /* decode array */
-            ( ( le_real_t * ) le_real )[0] = ( ( le_trim_t * ) le_trim )[0] + ( ( le_real_t * ) le_array->ar_vbyte )[0];
-            ( ( le_real_t * ) le_real )[1] = ( ( le_trim_t * ) le_trim )[1] + ( ( le_real_t * ) le_array->ar_vbyte )[1];
-            ( ( le_real_t * ) le_real )[2] = ( ( le_trim_t * ) le_trim )[2] + ( ( le_real_t * ) le_array->ar_vbyte )[2];
-
-            /* update pointer */
-            le_real += LE_ARRAY_UF3_POSE;
-            le_trim += LE_ARRAY_CU3_POSE;
-
-            /* decode array */
-            ( ( le_data_t * ) le_real )[0] = ( ( le_data_t * ) le_trim )[0];
-            ( ( le_data_t * ) le_real )[1] = ( ( le_data_t * ) le_trim )[1];
-            ( ( le_data_t * ) le_real )[2] = ( ( le_data_t * ) le_trim )[2];
-
-            /* update pointer */
-            le_real += LE_ARRAY_UF3_DATA;
-            le_trim += LE_ARRAY_CU3_DATA;
-
-        }
-
-        /* delete array */
-        le_array_delete( le_array );
-
-        /* assign mirror array */
-        ( * le_array ) = le_mirror;
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_enum_t le_array_uf3_rec_encode( le_array_t * const le_array ) {
+    le_enum_t le_array_uf3_encode( le_array_t * const le_array ) {
 
         /* encoded array variables */
         le_array_t le_dual = LE_ARRAY_C;
@@ -388,7 +299,7 @@
         le_byte_t * le_desc = NULL;
 
         /* check requirements */
-        if ( le_array->ar_vsize <= LE_ARRAY_UF3 ) {
+        if ( ( le_array->ar_csize = ( le_array->ar_vsize <= LE_ARRAY_UF3 ? 0 : 1 ) ) == 0 ) {
 
             /* send message */
             return( LE_ERROR_SUCCESS );
@@ -396,7 +307,7 @@
         }
 
         /* create dual array */
-        if ( le_array_set_size( & le_dual, le_array->ar_vsize << 1 ) != _LE_TRUE ) {
+        if ( le_array_set_size( & le_dual, le_array_esize( le_array->ar_vsize ) ) != _LE_TRUE ) {
 
             /* send message */
             return( LE_ERROR_MEMORY );
@@ -450,11 +361,11 @@
 
         }
 
-        /* pack array size */
-        ( * ( le_size_t * ) le_tail ) = le_array->ar_vsize;
+        /* pack original size */
+        le_dual.ar_csize = le_array->ar_vsize;
 
         /* update array size */
-        le_dual.ar_vsize = le_tail - le_dual.ar_vbyte + sizeof( le_size_t );
+        le_dual.ar_vsize = le_tail - le_dual.ar_vbyte;
 
         /* delete array */
         free( le_array->ar_rbyte );
@@ -467,7 +378,7 @@
 
     }
 
-    le_enum_t le_array_uf3_rec_decode( le_array_t * const le_array ) {
+    le_enum_t le_array_uf3_decode( le_array_t * const le_array ) {
 
         /* decoded array variables */
         le_array_t le_dual = LE_ARRAY_C;
@@ -484,15 +395,15 @@
         le_byte_t * le_desc = le_tail;
 
         /* check requirements */
-        if ( le_array->ar_vsize <= LE_ARRAY_UF3 ) {
+        if ( le_array->ar_csize == 0 ) {
 
             /* send message */
-            return( EXIT_SUCCESS );
+            return( LE_ERROR_SUCCESS );
 
         }
 
         /* restore array size */
-        if ( le_array_set_size( & le_dual, * ( le_size_t * ) ( le_array->ar_vbyte + le_array->ar_vsize - sizeof( le_size_t ) ) ) != _LE_TRUE ) {
+        if ( le_array_set_size( & le_dual, le_array->ar_csize ) != _LE_TRUE ) {
 
             /* send message */
             return( LE_ERROR_MEMORY );
