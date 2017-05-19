@@ -76,9 +76,12 @@
     # define LE_ARRAY_UF3_POSE          ( 3 * sizeof( le_real_t ) )
     # define LE_ARRAY_UF3_DATA          ( 3 * sizeof( le_data_t ) )
     # define LE_ARRAY_UF3               ( LE_ARRAY_UF3_POSE + LE_ARRAY_UF3_DATA )
-    # define LE_ARRAY_CU3_POSE          ( 3 * sizeof( le_trim_t ) )
-    # define LE_ARRAY_CU3_DATA          ( 3 * sizeof( le_data_t ) )
-    # define LE_ARRAY_CU3               ( LE_ARRAY_CU3_POSE + LE_ARRAY_CU3_DATA )
+    //# define LE_ARRAY_CU3_POSE          ( 3 * sizeof( le_trim_t ) )
+    //# define LE_ARRAY_CU3_DATA          ( 3 * sizeof( le_data_t ) )
+    //# define LE_ARRAY_CU3               ( LE_ARRAY_CU3_POSE + LE_ARRAY_CU3_DATA )
+
+    /* define array-size - inject */
+    # define LE_ARRAY_INJE_HEAD         ( sizeof( le_time_t ) )
 
 /*
     header - preprocessor macros
@@ -251,11 +254,11 @@
 
     /* *** */
 
-    le_enum_t le_array_uf3_encode( le_array_t * const le_array );
+    le_enum_t le_array_uf3_encode( le_array_t * const le_src, le_array_t * const le_dst );
 
     /* *** */
 
-    le_enum_t le_array_uf3_decode( le_array_t * const le_array );
+    le_enum_t le_array_uf3_decode( le_array_t * const le_src, le_array_t * const le_dst );
 
 /*
     header - C/C++ compatibility

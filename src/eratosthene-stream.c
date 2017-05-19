@@ -390,7 +390,8 @@
         le_size_t le_offnex = 0;
 
         /* array size variables */
-        le_size_t le_size = le_array_get_size( le_array ) - sizeof( le_time_t );
+        //le_size_t le_size = le_array_get_size( le_array ) - sizeof( le_time_t );
+        le_size_t le_size = le_array_get_size( le_array );
 
         /* address size variables */
         le_size_t le_span = le_address_get_size( & le_addr ) + 1;
@@ -402,7 +403,8 @@
         for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_UF3 ) {
 
             /* reset address digits */
-            le_address_set_pose( & le_addr, le_array_sd_pose_a( le_array, le_index + sizeof( le_time_t ) ) );
+            //le_address_set_pose( & le_addr, le_array_sd_pose_a( le_array, le_index + sizeof( le_time_t ) ) );
+            le_address_set_pose( & le_addr, le_array_sd_pose_a( le_array, le_index ) );
 
             /* reset depth variables */
             le_parse = 0;
@@ -419,12 +421,14 @@
                 if ( le_class_io_read( & le_class, le_offnex, le_stream->sr_strm[le_unit].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
 
                     /* inject element in class */
-                    le_class_set_push( & le_class, le_array_sd_data_a( le_array, le_index + sizeof( le_time_t ) ) );
+                    //le_class_set_push( & le_class, le_array_sd_data_a( le_array, le_index + sizeof( le_time_t ) ) );
+                    le_class_set_push( & le_class, le_array_sd_data_a( le_array, le_index ) );
 
                 } else {
 
                     /* initialise class with element */
-                    le_class = le_class_create( le_array_sd_data_a( le_array, le_index + sizeof( le_time_t ) ) );
+                    //le_class = le_class_create( le_array_sd_data_a( le_array, le_index + sizeof( le_time_t ) ) );
+                    le_class = le_class_create( le_array_sd_data_a( le_array, le_index ) );
 
                 }
 

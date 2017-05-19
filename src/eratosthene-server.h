@@ -248,7 +248,7 @@
 
     /* *** */
 
-    le_enum_t le_server_io_agreement( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
+    le_enum_t le_server_io_agreement( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
@@ -262,7 +262,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_enum_t le_server_io_inject( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
+    le_enum_t le_server_io_inject( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
@@ -291,7 +291,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_enum_t le_server_io_reduce( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
+    //le_enum_t le_server_io_reduce( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
@@ -310,7 +310,7 @@
      *  \param le_client Client socket descriptor - server-side
      */
 
-    le_enum_t le_server_io_query( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
+    le_enum_t le_server_io_query( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility
