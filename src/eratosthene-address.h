@@ -86,7 +86,6 @@
     /* base according to scale */
     # define le_address_base( s )     ( ( s ) < LE_ADDRESS_SYNP ) ? ( _LE_USE_BASE >> 2 ) : ( ( ( s ) < LE_ADDRESS_SYNA ) ? ( _LE_USE_BASE >> 1 ) : ( _LE_USE_BASE ) )
 
-
     /* method alias */
     # define le_address_get_pose(a,p) ( le_address_get_pose_( ( a ), ( a )->as_size, ( p ) ) )
 

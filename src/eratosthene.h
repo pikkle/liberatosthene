@@ -127,7 +127,6 @@
     # define _LE_USE_PENDING        ( 16 )
     # define _LE_USE_RETRY          ( 3 )
     # define _LE_USE_STRING         ( 256 )
-    # define _LE_USE_ASCII_ITOA     ( 48 )
 
     /* define types */
     # define _LE_VOID               void
@@ -136,7 +135,6 @@
     # define _LE_ENUM               int
     # define _LE_SIZE               int64_t
     # define _LE_REAL               double
-    # define _LE_TRIM               float
     # define _LE_TIME               int64_t
     # define _LE_DATA               uint8_t
     # define _LE_SOCK               int
@@ -239,14 +237,11 @@
     typedef _LE_ENUM le_enum_t;
     typedef _LE_SIZE le_size_t;
     typedef _LE_REAL le_real_t;
-    typedef _LE_TRIM le_trim_t;
-
     typedef _LE_TIME le_time_t;
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;
     typedef _LE_FILE le_file_t;
     typedef _LE_PROC le_proc_t;
-
     typedef _LE_MASK le_mask_t;
 
 /*

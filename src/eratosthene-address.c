@@ -301,7 +301,7 @@
         for ( le_size_t le_parse = 0; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* digit/character conversion */
-            le_data[le_parse] = le_address->as_digit[le_parse] + _LE_USE_ASCII_ITOA;
+            le_data[le_parse] = le_address->as_digit[le_parse] + 48;
 
         }
 
@@ -325,7 +325,7 @@
         for ( le_size_t le_parse = 0; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* digit/character conversion */
-            le_address->as_digit[le_parse] = le_data[le_parse] - _LE_USE_ASCII_ITOA;
+            le_address->as_digit[le_parse] = le_data[le_parse] - 48;
 
         }
 

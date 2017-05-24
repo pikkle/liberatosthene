@@ -72,6 +72,16 @@
     header - structures
  */
 
+    /* *** */
+
+    typedef struct le_server_box_struct {
+
+        le_sock_t   bx_sock;
+        le_proc_t   bx_proc;
+        le_void_t * bx_srvp;
+
+    } le_server_box_t, le_box_t;
+
     /*! \struct le_server_struct
      *  \brief server structure
      *
@@ -162,14 +172,6 @@
         le_time_t   sv_tcfg;
 
     le_enum_t _status; } le_server_t;
-
-    typedef struct le_server_box_struct {
-
-        le_sock_t   bx_sock;
-        le_proc_t   bx_proc;
-        le_void_t * bx_srvp;
-
-    } le_server_box_t, le_box_t;
 
 /*
     header - function prototypes
@@ -263,35 +265,6 @@
      */
 
     le_enum_t le_server_io_inject( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
-
-    /*! \brief i/o methods
-     *
-     *  This function is a specific server sub-process.
-     *
-     *  It is called as the dispatcher receives an time reduction query from a
-     *  remote client. It reads the address structure from the socket and ask,
-     *  for the time(s) engaged by the address mode, the stream function to
-     *  reduce it(them). As time(s) is(are) reduced, the address structure is
-     *  updated and written back on the client socket.
-     *
-     *  Time reduction is a specific features sideways from proper data query.
-     *  A client does not know anything about data available through the server.
-     *  It follows, as it provides times through the address used for query,
-     *  that almost always these times does not fit any time class available in
-     *  the storage structure. The server searches then the best non-empty, from
-     *  the spatial index point of view, time class. As a result, the server
-     *  update the address times - explaining why they are written back to the
-     *  client during data queries.
-     *
-     *  For some graphical clients, it is important to be able to know how the
-     *  server will affect the address times (time reduction) before to perform
-     *  the proper query, explaining this functionality.
-     *
-     *  \param le_server Server structure
-     *  \param le_client Client socket descriptor - server-side
-     */
-
-    //le_enum_t le_server_io_reduce( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_array, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
