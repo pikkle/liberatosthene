@@ -227,20 +227,21 @@
         /* server structure variables */
         le_server_t * le_server = le_box->bx_srvp;
 
-        /* connection variables */
-        le_enum_t le_active = _LE_TRUE;
+        /* state variables */
+        le_enum_t le_active = _LE_FALSE;
+        le_enum_t le_enable = _LE_FALSE;
 
         /* socket-array stack variables */
         le_array_t le_stack[3] = { LE_ARRAY_C, LE_ARRAY_C, LE_ARRAY_C };
 
-        /* stream structure */
+        /* stream structure variables */
         le_stream_t le_stream = LE_STREAM_C;
 
         /* create stream structure */
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
 
-        /* client socket management */
-        while ( le_active == _LE_TRUE ) {
+        /* client management */
+        do {
 
             /* waiting client socket-array */
             switch( le_array_io_read( le_stack, le_box->bx_sock ) ) {
@@ -249,7 +250,7 @@
                 case ( LE_MODE_AUTH ) : {
 
                     /* mode management */
-                    le_active = le_server_io_agreement( le_server, & le_stream, le_stack, le_box->bx_sock );
+                    le_active = le_enable = le_server_io_agreement( le_server, & le_stream, le_stack, le_box->bx_sock );
 
                 } break;
 
@@ -257,7 +258,7 @@
                 case ( LE_MODE_RESI ) : {
 
                     /* mode management */
-                    le_active = _LE_FALSE;
+                    le_active = le_server_io_resiliate( le_server, & le_stream, le_stack, le_box->bx_sock );
 
                 } break;
 
@@ -287,7 +288,7 @@
 
             };
 
-        }
+        } while ( ( le_active == _LE_TRUE ) && ( le_enable == _LE_TRUE ) );
 
         /* delete stream structure */
         le_stream_delete( & le_stream );
@@ -312,14 +313,10 @@
         /* serialisation variables */
         le_size_t le_head = 0;
 
-        /* server configuration variables */
-        le_size_t le_space = le_server->sv_scfg;
-        le_time_t le_times = le_server->sv_tcfg;
-
-        /* client agreement value */
+        /* serialise authentication */
         le_array_serial( le_stack, & le_agree, sizeof( le_size_t ), 0, _LE_GET );
 
-        /* check agreement value */
+        /* check authentication */
         if ( le_agree == LE_AGRT_QUER ) {
 
             /* update agreement value */
@@ -327,7 +324,7 @@
 
         }
 
-        /* check array consistency */
+        /* check additionnal consistency */
         if ( le_array_get_size( le_stack ) != sizeof( le_size_t ) ) {
 
             /* update agreement value */
@@ -335,7 +332,7 @@
 
         }
 
-        /* check stream structure */
+        /* check stream state */
         if ( le_stream->_status != LE_ERROR_SUCCESS ) {
 
             /* update agreement value */
@@ -346,16 +343,25 @@
         /* resize socket-array */
         le_array_set_size( le_stack, LE_ARRAY_AUTH );
 
-        /* compose socket-array */
+        /* serialise authentication */
         le_head = le_array_serial( le_stack, & le_agree, sizeof( le_size_t ), le_head, _LE_SET );
-        le_head = le_array_serial( le_stack, & le_space, sizeof( le_size_t ), le_head, _LE_SET );
-        le_head = le_array_serial( le_stack, & le_times, sizeof( le_time_t ), le_head, _LE_SET );
+
+        /* serialise confirguration */
+        le_head = le_array_serial( le_stack, & le_server->sv_scfg, sizeof( le_size_t ), le_head, _LE_SET );
+        le_head = le_array_serial( le_stack, & le_server->sv_tcfg, sizeof( le_time_t ), le_head, _LE_SET );
 
         /* send socket-array */
         le_array_io_write( le_stack, LE_MODE_AUTH, le_socket );
 
         /* send message */
         return( le_agree == LE_AGRT_AUTH ? _LE_TRUE : _LE_FALSE );
+
+    }
+
+    le_enum_t le_server_io_resiliate( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
+
+        /* send message */
+        return( _LE_FALSE );
 
     }
 
