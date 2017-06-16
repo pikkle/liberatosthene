@@ -263,7 +263,7 @@
                     if ( le_unlock == _LE_FALSE ) {
 
                         /* mode management */
-                        le_active = le_server_io_agreement( le_server, & le_stream, le_stack, le_box->bx_sock );
+                        le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_box->bx_sock );
 
                         /* update authentication lock */
                         le_unlock = le_active;
@@ -280,7 +280,7 @@
                     if ( le_unlock == _LE_TRUE ) {
 
                         /* mode management */
-                        le_active = le_server_io_resiliate( le_server, & le_stream, le_stack, le_box->bx_sock );
+                        le_active = le_server_io_resume( le_server, & le_stream, le_stack, le_box->bx_sock );
 
                     /* resume client connection */
                     } else { le_active = _LE_FALSE; }
@@ -342,22 +342,22 @@
     source - i/o methods
  */
 
-    le_enum_t le_server_io_agreement( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
-
-        /* agreement value variables */
-        le_size_t le_agree = LE_AGRT_NULL;
+    le_enum_t le_server_io_auth( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
         /* serialisation variables */
         le_size_t le_head = 0;
 
+        /* agreement value variables */
+        le_size_t le_auth = LE_AUTH_AUTH;
+
         /* serialise authentication */
-        le_array_serial( le_stack, & le_agree, sizeof( le_size_t ), 0, _LE_GET );
+        le_array_serial( le_stack, & le_auth, sizeof( le_size_t ), 0, _LE_GET );
 
         /* check authentication */
-        if ( le_agree == LE_AGRT_QUER ) {
+        if ( le_auth != LE_AUTH_QUER ) {
 
             /* update agreement value */
-            le_agree = LE_AGRT_AUTH;
+            le_auth = LE_AUTH_NULL;
 
         }
 
@@ -365,7 +365,7 @@
         if ( le_array_get_size( le_stack ) != sizeof( le_size_t ) ) {
 
             /* update agreement value */
-            le_agree = LE_AGRT_NULL;
+            le_auth = LE_AUTH_NULL;
 
         }
 
@@ -373,7 +373,7 @@
         if ( le_stream->_status != LE_ERROR_SUCCESS ) {
 
             /* update agreement value */
-            le_agree = LE_AGRT_NULL;
+            le_auth = LE_AUTH_NULL;
 
         }
 
@@ -381,7 +381,7 @@
         le_array_set_size( le_stack, LE_ARRAY_AUTH );
 
         /* serialise authentication */
-        le_head = le_array_serial( le_stack, & le_agree, sizeof( le_size_t ), le_head, _LE_SET );
+        le_head = le_array_serial( le_stack, & le_auth, sizeof( le_size_t ), le_head, _LE_SET );
 
         /* serialise confirguration */
         le_head = le_array_serial( le_stack, & le_server->sv_scfg, sizeof( le_size_t ), le_head, _LE_SET );
@@ -391,11 +391,11 @@
         le_array_io_write( le_stack, LE_MODE_AUTH, le_socket );
 
         /* send message */
-        return( le_agree == LE_AGRT_AUTH ? _LE_TRUE : _LE_FALSE );
+        return( le_auth == LE_AUTH_AUTH ? _LE_TRUE : _LE_FALSE );
 
     }
 
-    le_enum_t le_server_io_resiliate( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
+    le_enum_t le_server_io_resume( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
         /* send message */
         return( _LE_FALSE );

@@ -202,9 +202,9 @@
     # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
 
     /* define server/client agreement */
-    # define LE_AGRT_NULL           ( 0xffffffff00000000 )
-    # define LE_AGRT_QUER           ( 0xffff0000ffff0000 )
-    # define LE_AGRT_AUTH           ( 0x0000ffff0000ffff )
+    # define LE_AUTH_NULL           ( 0x0000000000000000 )
+    # define LE_AUTH_QUER           ( 0xffff0000ffff0000 )
+    # define LE_AUTH_AUTH           ( 0x0000ffff0000ffff )
 
     /* define server/client modes */
     # define LE_MODE_NULL           ( 0x00 )
