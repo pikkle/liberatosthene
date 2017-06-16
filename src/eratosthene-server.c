@@ -225,70 +225,107 @@
         le_box_t * le_box = ( le_box_t * ) le_box_;
 
         /* server structure variables */
-        le_server_t * le_server = le_box->bx_srvp;
+        le_server_t * le_server = ( le_server_t * ) le_box->bx_srvp;
 
-        /* state variables */
-        le_enum_t le_active = _LE_FALSE;
-        le_enum_t le_enable = _LE_FALSE;
+        /* client state variables */
+        le_enum_t le_active = _LE_TRUE;
 
-        /* socket-array stack variables */
-        le_array_t le_stack[3] = { LE_ARRAY_C, LE_ARRAY_C, LE_ARRAY_C };
+        /* authentication flag variables */
+        le_enum_t le_unlock = _LE_FALSE;
 
         /* stream structure variables */
         le_stream_t le_stream = LE_STREAM_C;
+
+        /* socket-array stack variables */
+        le_array_t le_stack[_LE_USE_ARRAY];
+
+        /* initialise socket-array stack */
+        for ( le_size_t le_parse = 0; le_parse < _LE_USE_ARRAY; le_parse ++ ) {
+
+            /* initialise socket-array */
+            le_stack[le_parse] = le_array_create();
+
+        }
 
         /* create stream structure */
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
 
         /* client management */
-        do {
+        while ( le_active == _LE_TRUE ) {
 
             /* waiting client socket-array */
             switch( le_array_io_read( le_stack, le_box->bx_sock ) ) {
 
-                /* client/server auhtorisation */
+                /* client/server authentication */
                 case ( LE_MODE_AUTH ) : {
 
-                    /* mode management */
-                    le_active = le_enable = le_server_io_agreement( le_server, & le_stream, le_stack, le_box->bx_sock );
+                    /* check authentication lock */
+                    if ( le_unlock == _LE_FALSE ) {
+
+                        /* mode management */
+                        le_active = le_server_io_agreement( le_server, & le_stream, le_stack, le_box->bx_sock );
+
+                        /* update authentication lock */
+                        le_unlock = le_active;
+
+                    /* resume client connection */
+                    } else { le_active = _LE_FALSE; }
 
                 } break;
 
                 /* client/server resiliation */
                 case ( LE_MODE_RESI ) : {
 
-                    /* mode management */
-                    le_active = le_server_io_resiliate( le_server, & le_stream, le_stack, le_box->bx_sock );
+                    /* check authentication lock */
+                    if ( le_unlock == _LE_TRUE ) {
+
+                        /* mode management */
+                        le_active = le_server_io_resiliate( le_server, & le_stream, le_stack, le_box->bx_sock );
+
+                    /* resume client connection */
+                    } else { le_active = _LE_FALSE; }
 
                 } break;
 
                 /* client/server query */
                 case ( LE_MODE_QUER ) : {
 
-                    /* mode management */
-                    le_active = le_server_io_query( le_server, & le_stream, le_stack, le_box->bx_sock );
+                    /* check authentication lock */
+                    if ( le_unlock == _LE_TRUE ) {
+
+                        /* mode management */
+                        le_active = le_server_io_query( le_server, & le_stream, le_stack, le_box->bx_sock );
+
+                    /* resume client connection */
+                    } else { le_active = _LE_FALSE; }
 
                 } break;
 
                 /* client/server injection */
                 case ( LE_MODE_INJE ) : {
 
-                    /* mode management */
-                    le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_box->bx_sock );
+                    /* check authentication lock */
+                    if ( le_unlock == _LE_TRUE ) {
+
+                        /* mode management */
+                        le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_box->bx_sock );
+
+                    /* resume client connection */
+                    } else { le_active = _LE_FALSE; }
 
                 } break;
 
-                /* client/server unknown mode */
+                /* client/server unexpected mode */
                 default : {
 
-                    /* mode management */
+                    /* resume client connection */
                     le_active = _LE_FALSE;
 
                 } break;
 
             };
 
-        } while ( ( le_active == _LE_TRUE ) && ( le_enable == _LE_TRUE ) );
+        }
 
         /* delete stream structure */
         le_stream_delete( & le_stream );

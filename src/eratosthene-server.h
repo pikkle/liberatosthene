@@ -76,8 +76,9 @@
 
     typedef struct le_server_box_struct {
 
-        le_sock_t   bx_sock;
         le_proc_t   bx_proc;
+
+        le_sock_t   bx_sock;
         le_void_t * bx_srvp;
 
     } le_server_box_t, le_box_t;
