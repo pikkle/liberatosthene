@@ -348,16 +348,16 @@
         le_size_t le_head = 0;
 
         /* agreement value variables */
-        le_size_t le_auth = LE_AUTH_AUTH;
+        le_size_t le_auth = LE_AUTH_NULL;
 
         /* serialise authentication */
         le_array_serial( le_stack, & le_auth, sizeof( le_size_t ), 0, _LE_GET );
 
         /* check authentication */
-        if ( le_auth != LE_AUTH_QUER ) {
+        if ( le_auth == LE_AUTH_QUER ) {
 
             /* update agreement value */
-            le_auth = LE_AUTH_NULL;
+            le_auth = LE_AUTH_AUTH;
 
         }
 
