@@ -287,20 +287,6 @@
 
                 } break;
 
-                /* client/server query */
-                case ( LE_MODE_QUER ) : {
-
-                    /* check authentication lock */
-                    if ( le_unlock == _LE_TRUE ) {
-
-                        /* mode management */
-                        le_active = le_server_io_query( le_server, & le_stream, le_stack, le_box->bx_sock );
-
-                    /* resume client connection */
-                    } else { le_active = _LE_FALSE; }
-
-                } break;
-
                 /* client/server injection */
                 case ( LE_MODE_INJE ) : {
 
@@ -309,6 +295,20 @@
 
                         /* mode management */
                         le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_box->bx_sock );
+
+                    /* resume client connection */
+                    } else { le_active = _LE_FALSE; }
+
+                } break;
+
+                /* client/server query */
+                case ( LE_MODE_QUER ) : {
+
+                    /* check authentication lock */
+                    if ( le_unlock == _LE_TRUE ) {
+
+                        /* mode management */
+                        le_active = le_server_io_query( le_server, & le_stream, le_stack, le_box->bx_sock );
 
                     /* resume client connection */
                     } else { le_active = _LE_FALSE; }
@@ -434,6 +434,12 @@
 
         /* inject array */
         le_stream_io_inject( le_stream, le_index, le_stack + 1 );
+
+        /* update array size */
+        le_array_set_size( le_stack, 0 );
+
+        /* write array */
+        le_array_io_write( le_stack, LE_MODE_INJE, le_socket );
 
         /* send message */
         return( _LE_TRUE );
