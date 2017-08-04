@@ -215,19 +215,16 @@
 
     }
 
-    le_void_t * le_server_io_client( le_void_t * le_box_ ) {
+    le_void_t * le_server_io_client( le_void_t * le_ring_ ) {
 
         /* thread box variables */
-        le_ring_t * le_box = ( le_ring_t * ) le_box_;
+        le_ring_t * le_ring = ( le_ring_t * ) le_ring_;
 
         /* server structure variables */
-        le_server_t * le_server = ( le_server_t * ) le_box->rg_srvp;
+        le_server_t * le_server = ( le_server_t * ) le_ring->rg_srvp;
 
         /* client state variables */
         le_enum_t le_active = _LE_TRUE;
-
-        /* authentication flag variables */
-        le_enum_t le_unlock = _LE_FALSE;
 
         /* stream structure variables */
         le_stream_t le_stream = LE_STREAM_C;
@@ -250,74 +247,42 @@
         while ( le_active == _LE_TRUE ) {
 
             /* waiting client socket-array */
-            switch( le_array_io_read( le_stack, le_box->rg_sock ) ) {
+            switch( le_array_io_read( le_stack, le_ring->rg_sock ) ) {
 
                 /* client/server authentication */
                 case ( LE_MODE_AUTH ) : {
 
-                    /* check authentication lock */
-                    if ( le_unlock == _LE_FALSE ) {
-
-                        /* mode management */
-                        le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_box->rg_sock );
-
-                        /* update authentication lock */
-                        le_unlock = le_active;
-
-                    /* resume client connection */
-                    } else { le_active = _LE_FALSE; }
+                    /* mode management */
+                    le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
                 } break;
 
                 /* client/server resiliation */
                 case ( LE_MODE_RESI ) : {
 
-                    /* check authentication lock */
-                    if ( le_unlock == _LE_TRUE ) {
-
-                        /* mode management */
-                        le_active = le_server_io_resume( le_server, & le_stream, le_stack, le_box->rg_sock );
-
-                    /* resume client connection */
-                    } else { le_active = _LE_FALSE; }
+                    /* mode management */
+                    le_active = le_server_io_resume( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
                 } break;
 
                 /* client/server injection */
                 case ( LE_MODE_INJE ) : {
 
-                    /* check authentication lock */
-                    if ( le_unlock == _LE_TRUE ) {
-
-                        /* mode management */
-                        le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_box->rg_sock );
-
-                    /* resume client connection */
-                    } else { le_active = _LE_FALSE; }
+                    /* mode management */
+                    le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
                 } break;
 
                 /* client/server query */
                 case ( LE_MODE_QUER ) : {
 
-                    /* check authentication lock */
-                    if ( le_unlock == _LE_TRUE ) {
-
-                        /* mode management */
-                        le_active = le_server_io_query( le_server, & le_stream, le_stack, le_box->rg_sock );
-
-                    /* resume client connection */
-                    } else { le_active = _LE_FALSE; }
+                    /* mode management */
+                    le_active = le_server_io_query( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
                 } break;
 
-                /* client/server unexpected mode */
-                default : {
-
-                    /* resume client connection */
-                    le_active = _LE_FALSE;
-
-                } break;
+                /* client/server unexpected mode - resume connection */
+                default : { le_active = _LE_FALSE; } break;
 
             };
 
@@ -327,10 +292,10 @@
         le_stream_delete( & le_stream );
 
         /* close client socket */
-        close( le_box->rg_sock );
+        close( le_ring->rg_sock );
 
         /* release thread */
-        return( le_box->rg_sock = _LE_SOCK_NULL, NULL );
+        return( le_ring->rg_sock = _LE_SOCK_NULL, NULL );
 
     }
 
