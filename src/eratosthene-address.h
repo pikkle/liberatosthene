@@ -59,32 +59,32 @@
     # define LE_ADDRESS_C_SIZE( s )   { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
 
     /* define WGS84 ellipsoid parameters */
-    # define LE_ADDRESS_WGSA          ( 6378137.0 )
-    # define LE_ADDRESS_WGSF          ( 298.257223563 )
+    # define LE_ADDRESS_WGS_A         ( 6378137.0 )
+    # define LE_ADDRESS_WGS_F         ( 298.257223563 )
 
     /* asynchronous dimension edges */
-    # define LE_ADDRESS_SYNP          ( 1 )
-    # define LE_ADDRESS_SYNA          ( 10 )
+    # define LE_ADDRESS_DEPTH_P       ( 1 )
+    # define LE_ADDRESS_DEPTH_A       ( 10 )
 
     /* define ellispoidal coordinates boundaries */
-    # define LE_ADDRESS_MINL          ( - LE_PI )
-    # define LE_ADDRESS_MAXL          ( + LE_PI )
-    # define LE_ADDRESS_MINA          ( - LE_P2 )
-    # define LE_ADDRESS_MAXA          ( + LE_P2 )
-    # define LE_ADDRESS_MINH          ( - ( LE_PI * LE_ADDRESS_WGSA ) / 1024.0 )
-    # define LE_ADDRESS_MAXH          ( + ( LE_PI * LE_ADDRESS_WGSA ) / 1024.0 )
+    # define LE_ADDRESS_MIN_L         ( - LE_PI )
+    # define LE_ADDRESS_MAX_L         ( + LE_PI )
+    # define LE_ADDRESS_MIN_A         ( - LE_P2 )
+    # define LE_ADDRESS_MAX_A         ( + LE_P2 )
+    # define LE_ADDRESS_MIN_H         ( - ( LE_PI * LE_ADDRESS_WGS_A ) / 1024.0 )
+    # define LE_ADDRESS_MAX_H         ( + ( LE_PI * LE_ADDRESS_WGS_A ) / 1024.0 )
 
     /* define ellipsoidal coordinates ranges */
-    # define LE_ADDRESS_RNGL          ( LE_ADDRESS_MAXL - LE_ADDRESS_MINL )
-    # define LE_ADDRESS_RNGA          ( LE_ADDRESS_MAXA - LE_ADDRESS_MINA )
-    # define LE_ADDRESS_RNGH          ( LE_ADDRESS_MAXH - LE_ADDRESS_MINH )
+    # define LE_ADDRESS_RAN_L         ( LE_ADDRESS_MAX_L - LE_ADDRESS_MIN_L )
+    # define LE_ADDRESS_RAN_A         ( LE_ADDRESS_MAX_A - LE_ADDRESS_MIN_A )
+    # define LE_ADDRESS_RAN_H         ( LE_ADDRESS_MAX_H - LE_ADDRESS_MIN_H )
 
 /*
     header - preprocessor macros
  */
 
     /* base according to scale */
-    # define le_address_base( s )     ( ( s ) < LE_ADDRESS_SYNP ) ? ( _LE_USE_BASE >> 2 ) : ( ( ( s ) < LE_ADDRESS_SYNA ) ? ( _LE_USE_BASE >> 1 ) : ( _LE_USE_BASE ) )
+    # define le_address_base( s )     ( ( s ) < LE_ADDRESS_DEPTH_P ) ? ( _LE_USE_BASE >> 2 ) : ( ( ( s ) < LE_ADDRESS_DEPTH_A ) ? ( _LE_USE_BASE >> 1 ) : ( _LE_USE_BASE ) )
 
     /* method alias */
     # define le_address_get_pose(a,p) ( le_address_get_pose_( ( a ), ( a )->as_size, ( p ) ) )
@@ -233,7 +233,7 @@
      *  \return Returns _LE_TRUE on identity, _LE_FALSE otherwise
      */
 
-    le_enum_t le_address_get_equal( le_address_t const * const le_addr1, le_address_t const * const le_addr2 );
+    le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb );
 
     /*! \brief accessor methods
      *

@@ -197,15 +197,6 @@
     # define LE_ERROR_FORMAT        ( 0x000d )
     # define LE_ERROR_AGREE         ( 0x000e )
 
-    /* define pseudo-constructor */
-    # if defined ( __APPLE__ ) && defined ( __MACH__ )
-    # define LE_ADDRIN_C            { AF_INET, 0         , INADDR_ANY, { 0 } }
-    # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), INADDR_ANY, { 0 } }
-    # else
-    # define LE_ADDRIN_C            { AF_INET, 0         , { INADDR_ANY }, { 0 } }
-    # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
-    # endif
-
     /* define server/client agreement */
     # define LE_AUTH_NULL           ( 0x0000000000000000 )
     # define LE_AUTH_QUER           ( 0xffff0000ffff0000 )
@@ -222,6 +213,15 @@
     # define LE_PI                  ( 3.1415926535897932384626433832795029 )
     # define LE_P2                  ( LE_PI / 2.0 )
     # define LE_2P                  ( LE_PI * 2.0 )
+
+    /* define pseudo-constructor */
+    # if defined ( __APPLE__ ) && defined ( __MACH__ )
+    # define LE_ADDRIN_C            { AF_INET, 0         , INADDR_ANY, { 0 } }
+    # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), INADDR_ANY, { 0 } }
+    # else
+    # define LE_ADDRIN_C            { AF_INET, 0         , { INADDR_ANY }, { 0 } }
+    # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
+    # endif
 
 /*
     header - preprocessor macros
