@@ -32,16 +32,13 @@
         /* address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C_PORT( le_port );
 
-        /* check consistency */
-        if ( le_path == NULL ) {
+        /* assign server path - check consistency */
+        if ( ( le_server.sv_path = le_path ) == NULL ) {
 
             /* send message */
             return( le_server._status = LE_ERROR_IO_ACCESS, le_server );
 
         }
-
-        /* assign server path */
-        le_server.sv_path = le_path;
 
         /* create server configuration */
         if ( ( le_server._status = le_server_set_config( & le_server ) ) != LE_ERROR_SUCCESS ) {
@@ -57,29 +54,27 @@
             /* send message */
             return( le_server._status = LE_ERROR_IO_SOCKET, le_server );
 
-        } else {
+        }
 
-            /* server socket address */
-            if ( bind( le_server.sv_sock, ( struct sockaddr * ) ( & le_addr ), sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
+        /* server socket address */
+        if ( bind( le_server.sv_sock, ( struct sockaddr * ) ( & le_addr ), sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
 
-                /* close server socket */
-                close( le_server.sv_sock );
+            /* close server socket */
+            close( le_server.sv_sock );
 
-                /* send message */
-                return( le_server._status = LE_ERROR_IO_BIND, le_server );
+            /* send message */
+            return( le_server._status = LE_ERROR_IO_BIND, le_server );
 
-            }
+        }
 
-            /* server socket state */
-            if ( listen( le_server.sv_sock, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
+        /* server socket state */
+        if ( listen( le_server.sv_sock, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
 
-                /* close server socket */
-                close( le_server.sv_sock );
+            /* close server socket */
+            close( le_server.sv_sock );
 
-                /* send message */
-                return( le_server._status = LE_ERROR_IO_LISTEN, le_server );
-
-            }
+            /* send message */
+            return( le_server._status = LE_ERROR_IO_LISTEN, le_server );
 
         }
 
@@ -112,11 +107,11 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server ) {
 
-        /* server path variables */
-        le_size_t le_plen = strlen( ( char * ) le_server->sv_path );
-
         /* stream variables */
         FILE * le_stream = NULL;
+
+        /* string length variables */
+        le_size_t le_plen = strlen( ( char * ) le_server->sv_path );
 
         /* open configuration stream */
         if ( ( le_stream = fopen( strcat( ( char * ) le_server->sv_path, "/system" ), "r" ) ) == NULL ) {
@@ -151,7 +146,7 @@
         /* close stream */
         fclose( le_stream );
 
-        /* check parameter consistency */
+        /* check consistency */
         if ( ( le_server->sv_scfg <= 0 ) || ( le_server->sv_scfg >= _LE_USE_DEPTH ) ) {
 
             /* send message */
@@ -159,7 +154,7 @@
 
         }
 
-        /* check parameter consistency */
+        /* check consistency */
         if ( le_server->sv_tcfg <= 0 ) {
 
             /* send message */
@@ -167,7 +162,7 @@
 
         }
 
-        /* remove configuration from path */
+        /* restore server path */
         le_server->sv_path[le_plen] = '\0';
 
         /* send message */
@@ -181,39 +176,47 @@
 
     le_void_t le_server_io( le_server_t * const le_server ) {
 
+        /* thread boxes variables */
+        le_ring_t le_ring[_LE_USE_PENDING];
+
+        /* index variables */
+        le_size_t le_index = 0;
+
         /* client address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C;
 
         /* client address variables */
         socklen_t le_len = sizeof( struct sockaddr_in );
 
-        /* thread boxes variables */
-        le_box_t le_boxes[_LE_USE_PENDING];
+        while ( le_index < _LE_USE_PENDING ) {
 
-        /* initialise boxes */
-        for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
+            /* initialise socket */
+            le_ring[le_index].rg_sock = _LE_SOCK_NULL;
 
-            /* assign null socket */
-            le_boxes[le_parse].bx_sock = _LE_SOCK_NULL;
+            /* initialise reference */
+            le_ring[le_index].rg_srvp = ( le_void_t * ) le_server;
 
-            /* assign server structure */
-            le_boxes[le_parse].bx_srvp = ( le_void_t * ) le_server;
+            /* update index */
+            le_index ++;
 
         }
 
-        /* client connexion handler */
-        for ( le_size_t le_index = 0; le_index < _LE_USE_PENDING ; le_index = ( le_index + 1 ) % _LE_USE_PENDING ) {
+        while ( le_index < _LE_USE_PENDING ) {
 
-            /* check box state */
-            if ( le_boxes[le_index].bx_sock != _LE_SOCK_NULL ) continue;
+            /* update index */
+            le_index = ( le_index + 1 ) % _LE_USE_PENDING;
 
-            /* waiting clients connections */
-            if ( ( le_boxes[le_index].bx_sock = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len ) ) != _LE_SOCK_NULL ) {
+            /* select available box */
+            if ( le_ring[le_index].rg_sock != _LE_SOCK_NULL ) continue;
 
-                /* create clients thread */
-                pthread_create( & le_boxes[le_index].bx_proc, NULL, & le_server_io_client, ( le_void_t * ) & le_boxes[le_index] );
+            /* waiting connection */
+            le_ring[le_index].rg_sock = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len );
 
-            }
+            /* check connection */
+            if ( le_ring[le_index].rg_sock == _LE_SOCK_NULL ) continue;
+
+            /* create client thread */
+            pthread_create( & le_ring[le_index].rg_proc, NULL, & le_server_io_client, ( le_void_t * ) ( & le_ring[le_index] ) );
 
         }
 
@@ -222,10 +225,10 @@
     le_void_t * le_server_io_client( le_void_t * le_box_ ) {
 
         /* thread box variables */
-        le_box_t * le_box = ( le_box_t * ) le_box_;
+        le_ring_t * le_box = ( le_ring_t * ) le_box_;
 
         /* server structure variables */
-        le_server_t * le_server = ( le_server_t * ) le_box->bx_srvp;
+        le_server_t * le_server = ( le_server_t * ) le_box->rg_srvp;
 
         /* client state variables */
         le_enum_t le_active = _LE_TRUE;
@@ -254,7 +257,7 @@
         while ( le_active == _LE_TRUE ) {
 
             /* waiting client socket-array */
-            switch( le_array_io_read( le_stack, le_box->bx_sock ) ) {
+            switch( le_array_io_read( le_stack, le_box->rg_sock ) ) {
 
                 /* client/server authentication */
                 case ( LE_MODE_AUTH ) : {
@@ -263,7 +266,7 @@
                     if ( le_unlock == _LE_FALSE ) {
 
                         /* mode management */
-                        le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_box->bx_sock );
+                        le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_box->rg_sock );
 
                         /* update authentication lock */
                         le_unlock = le_active;
@@ -280,7 +283,7 @@
                     if ( le_unlock == _LE_TRUE ) {
 
                         /* mode management */
-                        le_active = le_server_io_resume( le_server, & le_stream, le_stack, le_box->bx_sock );
+                        le_active = le_server_io_resume( le_server, & le_stream, le_stack, le_box->rg_sock );
 
                     /* resume client connection */
                     } else { le_active = _LE_FALSE; }
@@ -294,7 +297,7 @@
                     if ( le_unlock == _LE_TRUE ) {
 
                         /* mode management */
-                        le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_box->bx_sock );
+                        le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_box->rg_sock );
 
                     /* resume client connection */
                     } else { le_active = _LE_FALSE; }
@@ -308,7 +311,7 @@
                     if ( le_unlock == _LE_TRUE ) {
 
                         /* mode management */
-                        le_active = le_server_io_query( le_server, & le_stream, le_stack, le_box->bx_sock );
+                        le_active = le_server_io_query( le_server, & le_stream, le_stack, le_box->rg_sock );
 
                     /* resume client connection */
                     } else { le_active = _LE_FALSE; }
@@ -331,10 +334,10 @@
         le_stream_delete( & le_stream );
 
         /* close client socket */
-        close( le_box->bx_sock );
+        close( le_box->rg_sock );
 
         /* release thread */
-        return( le_box->bx_sock = _LE_SOCK_NULL, NULL );
+        return( le_box->rg_sock = _LE_SOCK_NULL, NULL );
 
     }
 

@@ -74,14 +74,13 @@
 
     /* *** */
 
-    typedef struct le_server_box_struct {
+    typedef struct le_server_ring_struct {
 
-        le_proc_t   bx_proc;
+        le_proc_t   rg_proc;
+        le_sock_t   rg_sock;
+        le_void_t * rg_srvp;
 
-        le_sock_t   bx_sock;
-        le_void_t * bx_srvp;
-
-    } le_server_box_t, le_box_t;
+    } le_server_ring_t, le_ring_t;
 
     /*! \struct le_server_struct
      *  \brief server structure
