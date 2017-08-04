@@ -39,8 +39,13 @@
         /* deleted structure variables */
         le_array_t le_delete = LE_ARRAY_C;
 
-        /* check array state - memory unallocation */
-        if ( le_array->ar_rbyte != NULL ) free( le_array->ar_rbyte );
+        /* check array pointer */
+        if ( le_array->ar_rbyte != NULL ) {
+
+            /* release array memory */
+            free( le_array->ar_rbyte );
+
+        }
 
         /* delete structure */
         ( * le_array ) = le_delete;
@@ -53,14 +58,14 @@
 
     le_size_t le_array_get_size( le_array_t const * const le_array ) {
 
-        /* return array size */
+        /* return size */
         return( le_array->ar_vsize );
 
     }
 
     le_byte_t * le_array_get_byte( le_array_t * const le_array ) {
 
-        /* return array bytes pointer */
+        /* return bytes pointer */
         return( le_array->ar_vbyte );
 
     }
@@ -71,8 +76,8 @@
 
     le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length ) {
 
-        /* array memory swap variables */
-        le_void_t * le_swap = NULL;
+        /* swap pointer variables */
+        le_byte_t * le_swap = NULL;
 
         /* check requierments */
         if ( le_array->ar_rsize >= ( ( le_array->ar_vsize += le_length ) + LE_ARRAY_HEADER ) ) {
@@ -82,8 +87,8 @@
 
         }
 
-        /* allocate array memory */
-        if ( ( le_swap = realloc( ( le_void_t * ) le_array->ar_rbyte, le_array->ar_rsize += LE_ARRAY_STEP ) ) == NULL ) {
+        /* reallocate array memory */
+        if ( ( le_swap = ( le_byte_t * ) realloc( ( le_void_t * ) le_array->ar_rbyte, le_array->ar_rsize += LE_ARRAY_STEP ) ) == NULL ) {
 
             /* restore array size */
             le_array->ar_rsize -= LE_ARRAY_STEP;
@@ -97,10 +102,10 @@
         }
 
         /* update structure references */
-        le_array->ar_rbyte = ( le_byte_t * ) ( le_swap );
+        le_array->ar_rbyte = le_swap;
 
         /* update structure references */
-        le_array->ar_vbyte = ( le_byte_t * ) ( le_array->ar_rbyte + LE_ARRAY_HEADER );
+        le_array->ar_vbyte = le_array->ar_rbyte + LE_ARRAY_HEADER;
 
         /* send message */
         return( _LE_TRUE );
@@ -109,36 +114,14 @@
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size ) {
 
-        /* array memory swap variables */
-        le_void_t * le_swap = NULL;
+        /* swap pointer variables */
+        le_byte_t * le_swap = NULL;
+
+        /* memory size variables */
+        le_size_t le_real = le_size + LE_ARRAY_HEADER;
 
         /* check requirements */
-        if ( le_array->ar_rsize >= ( le_size + LE_ARRAY_HEADER ) ) {
-
-            /* update array size */
-            le_array->ar_vsize = le_size;
-
-            /* send message */
-            return( _LE_TRUE );
-
-        } else {
-
-            /* allocate array memory */
-            if ( ( le_swap = realloc( ( le_void_t * ) le_array->ar_rbyte, le_size + LE_ARRAY_HEADER ) ) == NULL ) {
-
-                /* send message */
-                return( _LE_FALSE );
-
-            }
-
-            /* update structure references */
-            le_array->ar_rbyte = ( le_byte_t * ) ( le_swap );
-
-            /* update structure references */
-            le_array->ar_vbyte = ( le_byte_t * ) ( le_array->ar_rbyte + LE_ARRAY_HEADER );
-
-            /* update array size */
-            le_array->ar_rsize = le_size + LE_ARRAY_HEADER;
+        if ( le_array->ar_rsize >= le_real ) {
 
             /* update array size */
             le_array->ar_vsize = le_size;
@@ -147,6 +130,29 @@
             return( _LE_TRUE );
 
         }
+
+        /* allocate array memory */
+        if ( ( le_swap = ( le_byte_t * ) realloc( ( le_void_t * ) le_array->ar_rbyte, le_real ) ) == NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* update structure references */
+        le_array->ar_rbyte = le_swap;
+
+        /* update structure references */
+        le_array->ar_vbyte = le_array->ar_rbyte + LE_ARRAY_HEADER;
+
+        /* update array size */
+        le_array->ar_rsize = le_real;
+
+        /* update array size */
+        le_array->ar_vsize = le_size;
+
+        /* send message */
+        return( _LE_TRUE );
 
     }
 
