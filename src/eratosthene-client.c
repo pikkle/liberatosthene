@@ -32,8 +32,13 @@
         /* returned value variables */
         le_sock_t le_socket = _LE_SOCK_NULL;
 
-        /* check consistency - send message */
-        if ( le_ip == NULL ) return( _LE_SOCK_NULL );
+        /* check consistency */
+        if ( le_ip == NULL ) {
+
+            /* send message */
+            return( _LE_SOCK_NULL );
+
+        }
 
         /* convert address */
         if ( inet_pton( AF_INET, ( char * ) le_ip, & le_addr.sin_addr ) <= 0 ) {
@@ -51,7 +56,7 @@
 
         }
 
-        /* sockets connection */
+        /* socket connection */
         if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
 
             /* close socket */
@@ -62,7 +67,7 @@
 
         }
 
-        /* return connected socket */
+        /* return socket */
         return( le_socket );
 
     }
