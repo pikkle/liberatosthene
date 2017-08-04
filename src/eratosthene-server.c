@@ -179,44 +179,37 @@
         /* thread boxes variables */
         le_ring_t le_ring[_LE_USE_PENDING];
 
-        /* index variables */
-        le_size_t le_index = 0;
-
         /* client address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C;
 
         /* client address variables */
         socklen_t le_len = sizeof( struct sockaddr_in );
 
-        while ( le_index < _LE_USE_PENDING ) {
+        /* initialise rings */
+        for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
 
             /* initialise socket */
-            le_ring[le_index].rg_sock = _LE_SOCK_NULL;
+            le_ring[le_parse].rg_sock = _LE_SOCK_NULL;
 
             /* initialise reference */
-            le_ring[le_index].rg_srvp = ( le_void_t * ) le_server;
-
-            /* update index */
-            le_index ++;
+            le_ring[le_parse].rg_srvp = ( le_void_t * ) le_server;
 
         }
 
-        while ( le_index < _LE_USE_PENDING ) {
+        /* server main loop */
+        for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse = ( le_parse + 1 ) % _LE_USE_PENDING ) {
 
-            /* update index */
-            le_index = ( le_index + 1 ) % _LE_USE_PENDING;
-
-            /* select available box */
-            if ( le_ring[le_index].rg_sock != _LE_SOCK_NULL ) continue;
+            /* select available box - resume */
+            if ( le_ring[le_parse].rg_sock != _LE_SOCK_NULL ) continue;
 
             /* waiting connection */
-            le_ring[le_index].rg_sock = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len );
+            le_ring[le_parse].rg_sock = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len );
 
-            /* check connection */
-            if ( le_ring[le_index].rg_sock == _LE_SOCK_NULL ) continue;
+            /* check connection - resume */
+            if ( le_ring[le_parse].rg_sock == _LE_SOCK_NULL ) continue;
 
             /* create client thread */
-            pthread_create( & le_ring[le_index].rg_proc, NULL, & le_server_io_client, ( le_void_t * ) ( & le_ring[le_index] ) );
+            pthread_create( & le_ring[le_parse].rg_proc, NULL, & le_server_io_client, ( le_void_t * ) ( & le_ring[le_parse] ) );
 
         }
 
