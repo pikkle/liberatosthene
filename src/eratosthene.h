@@ -192,10 +192,6 @@
     # define LE_ERROR_MEMORY        ( 0x0008 )
     # define LE_ERROR_DEPTH         ( 0x0009 )
     # define LE_ERROR_TIME          ( 0x000a )
-    # define LE_ERROR_BASE          ( 0x000b )
-    # define LE_ERROR_AUTH          ( 0x000c )
-    # define LE_ERROR_FORMAT        ( 0x000d )
-    # define LE_ERROR_AGREE         ( 0x000e )
 
     /* define server/client modes */
     # define LE_MODE_NULL           ( 0x00 )

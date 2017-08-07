@@ -357,7 +357,7 @@
         /* serialise time */
         le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
 
-        /* read data array */
+        /* read socket-array */
         if ( le_array_io_read( le_stack, le_socket ) != LE_MODE_INJE ) {
 
             /* send message */
@@ -366,7 +366,10 @@
         }
 
         /* create stream index */
-        if ( ( le_index = le_stream_get_strict( le_stream, le_time, LE_STREAM_WRITE ) ) == _LE_SIZE_NULL ) {
+        le_index = le_stream_get_strict( le_stream, le_time, LE_STREAM_WRITE );
+
+        /* check stream index */
+        if ( le_index == _LE_SIZE_NULL ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -378,12 +381,6 @@
 
         /* inject array */
         le_stream_io_inject( le_stream, le_index, le_stack + 1 );
-
-        /* update array size */
-        le_array_set_size( le_stack, 0 );
-
-        /* write array */
-        le_array_io_write( le_stack, LE_MODE_INJE, le_socket );
 
         /* send message */
         return( _LE_TRUE );
