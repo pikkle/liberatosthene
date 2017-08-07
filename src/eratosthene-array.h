@@ -220,6 +220,10 @@
 
     /* *** */
 
+    le_void_t le_array_set_reset( le_array_t * const le_array );
+
+    /* *** */
+
     le_size_t le_array_serial( le_array_t * const le_array, le_void_t * const le_bytes, le_size_t const le_length, le_size_t const le_offset, le_enum_t const le_mode );
 
     /*! \brief i/o methods
