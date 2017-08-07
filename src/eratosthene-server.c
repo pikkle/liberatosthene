@@ -313,54 +313,29 @@
 
     le_enum_t le_server_io_auth( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
-        /* serialisation variables */
-        le_size_t le_head = 0;
+        /* serailisation variables */
+        le_size_t le_serial = 0;
 
-        /* agreement value variables */
-        le_size_t le_auth = LE_AUTH_NULL;
+        /* check consistency */
+        if ( le_array_get_size( le_stack ) != 0 ) {
 
-        /* serialise authentication */
-        le_array_serial( le_stack, & le_auth, sizeof( le_size_t ), 0, _LE_GET );
-
-        /* check authentication */
-        if ( le_auth == LE_AUTH_QUER ) {
-
-            /* update agreement value */
-            le_auth = LE_AUTH_AUTH;
+            /* send message */
+            return( _LE_FALSE );
 
         }
 
-        /* check additionnal consistency */
-        if ( le_array_get_size( le_stack ) != sizeof( le_size_t ) ) {
-
-            /* update agreement value */
-            le_auth = LE_AUTH_NULL;
-
-        }
-
-        /* check stream state */
-        if ( le_stream->_status != LE_ERROR_SUCCESS ) {
-
-            /* update agreement value */
-            le_auth = LE_AUTH_NULL;
-
-        }
-
-        /* resize socket-array */
+        /* update socket-array size */
         le_array_set_size( le_stack, LE_ARRAY_AUTH );
 
-        /* serialise authentication */
-        le_head = le_array_serial( le_stack, & le_auth, sizeof( le_size_t ), le_head, _LE_SET );
+        /* serialise server configuration */
+        le_serial = le_array_serial( le_stack, & le_server->sv_scfg, sizeof( le_size_t ), le_serial, _LE_SET );
+        le_serial = le_array_serial( le_stack, & le_server->sv_tcfg, sizeof( le_time_t ), le_serial, _LE_SET );
 
-        /* serialise confirguration */
-        le_head = le_array_serial( le_stack, & le_server->sv_scfg, sizeof( le_size_t ), le_head, _LE_SET );
-        le_head = le_array_serial( le_stack, & le_server->sv_tcfg, sizeof( le_time_t ), le_head, _LE_SET );
-
-        /* send socket-array */
+        /* write socket-array */
         le_array_io_write( le_stack, LE_MODE_AUTH, le_socket );
 
         /* send message */
-        return( le_auth == LE_AUTH_AUTH ? _LE_TRUE : _LE_FALSE );
+        return( _LE_TRUE );
 
     }
 

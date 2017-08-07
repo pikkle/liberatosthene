@@ -65,7 +65,7 @@
     # define LE_ARRAY_HEADER            ( LE_ARRAY_HEADER_SIZE + LE_ARRAY_HEADER_MODE )
 
     /* define array-size - authorise */
-    # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) * 2 + sizeof( le_time_t ) )
+    # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
     /* define array-size - address */
     # define LE_ARRAY_ADDR_TIME         ( sizeof( le_time_t ) * 2 )
