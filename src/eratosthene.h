@@ -197,11 +197,6 @@
     # define LE_ERROR_FORMAT        ( 0x000d )
     # define LE_ERROR_AGREE         ( 0x000e )
 
-    /* define server/client agreement */
-    # define LE_AUTH_NULL           ( 0x0000000000000000 )
-    # define LE_AUTH_QUER           ( 0xffff0000ffff0000 )
-    # define LE_AUTH_AUTH           ( 0x0000ffff0000ffff )
-
     /* define server/client modes */
     # define LE_MODE_NULL           ( 0x00 )
     # define LE_MODE_AUTH           ( 0x01 )
