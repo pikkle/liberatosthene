@@ -217,78 +217,86 @@
 
     le_void_t * le_server_io_client( le_void_t * le_ring_ ) {
 
-        /* thread box variables */
+        /* server ring variables */
         le_ring_t * le_ring = ( le_ring_t * ) le_ring_;
 
-        /* server structure variables */
+        /* server variables */
         le_server_t * le_server = ( le_server_t * ) le_ring->rg_srvp;
 
-        /* client state variables */
+        /* ring state variables */
         le_enum_t le_active = _LE_TRUE;
 
-        /* stream structure variables */
+        /* ring stream variables */
         le_stream_t le_stream = LE_STREAM_C;
 
-        /* socket-array stack variables */
+        /* ring socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
 
-        /* initialise socket-array stack */
+        /* initialise socket-arrays */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_ARRAY; le_parse ++ ) {
 
-            /* initialise socket-array */
+            /* create socket-array */
             le_stack[le_parse] = le_array_create();
 
         }
 
-        /* create stream structure */
+        /* create ring stream */
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
 
-        /* client management */
+        /* check ring stream */
+        if ( le_stream._status != LE_ERROR_SUCCESS ) {
+
+            /* update ring state */
+            le_active = _LE_FALSE;
+
+        }
+
+        /* server ring */
         while ( le_active == _LE_TRUE ) {
 
             /* waiting client socket-array */
             switch( le_array_io_read( le_stack, le_ring->rg_sock ) ) {
 
-                /* client/server authentication */
+                /* authentication */
                 case ( LE_MODE_AUTH ) : {
 
-                    /* mode management */
+                    /* mode management - update ring state */
                     le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
                 } break;
 
-                /* client/server resiliation */
+                /* resiliation */
                 case ( LE_MODE_RESI ) : {
 
-                    /* mode management */
+                    /* mode management - update ring state */
                     le_active = le_server_io_resume( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
                 } break;
 
-                /* client/server injection */
+                /* injection */
                 case ( LE_MODE_INJE ) : {
 
-                    /* mode management */
+                    /* mode management - update ring state */
                     le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
                 } break;
 
-                /* client/server query */
+                /* query */
                 case ( LE_MODE_QUER ) : {
 
-                    /* mode management */
+                    /* mode management - update ring state */
                     le_active = le_server_io_query( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
                 } break;
 
-                /* client/server unexpected mode - resume connection */
+                /* unexpected mode - update ring state */
                 default : { le_active = _LE_FALSE; } break;
 
             };
 
         }
 
-        /* delete stream structure */
+        /* delete ring stream */
         le_stream_delete( & le_stream );
 
         /* close client socket */
