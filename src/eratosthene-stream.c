@@ -27,7 +27,7 @@
     le_stream_t le_stream_create( le_char_t * const le_path, le_size_t const le_scfg, le_time_t const le_tcfg ) {
 
         /* created structure variables */
-        le_stream_t le_stream = LE_STREAM_C;
+        le_stream_t le_stream = LE_STREAM_I( le_path, le_scfg, le_tcfg );
 
         /* directory variables */
         DIR * le_enum = NULL;
@@ -39,22 +39,15 @@
         le_time_t le_time = _LE_TIME_NULL;
 
         /* check consistency */
-        if ( le_path == NULL ) {
+        if ( le_stream.sr_root == NULL ) {
 
             /* send message */
             return( le_stream._status = LE_ERROR_IO_ACCESS, le_stream );
 
         }
 
-        /* assign server configuration */
-        le_stream.sr_scfg = le_scfg;
-        le_stream.sr_tcfg = le_tcfg;
-
-        /* assign server path */
-        le_stream.sr_root = le_path;
-
         /* open and check directory */
-        if ( ( le_enum = opendir( ( char * ) le_path ) ) == NULL ) {
+        if ( ( le_enum = opendir( ( char * ) le_stream.sr_root ) ) == NULL ) {
 
             /* send message */
             return( le_stream._status = LE_ERROR_IO_READ, le_stream );
@@ -68,7 +61,7 @@
             if ( ( le_file->d_type == DT_DIR ) && ( le_file->d_name[0] != '.' ) ) {
 
                 /* extract directory time */
-                le_time = le_time_str( le_file->d_name ) * le_tcfg;
+                le_time = le_time_str( le_file->d_name ) * le_stream.sr_tcfg;
 
                 /* set stream unit */
                 if ( le_stream_set( & le_stream, le_time, LE_STREAM_READ ) == _LE_SIZE_NULL ) {
@@ -104,10 +97,10 @@
                 /* parsing unit files */
                 for ( le_size_t le_index = 0; le_index < le_stream->sr_scfg; le_index ++ ) {
 
-                    /* check state */
+                    /* check stream state */
                     if ( le_stream->sr_strm[le_parse].su_file[le_index] != NULL ) {
 
-                        /* delete file */
+                        /* delete stream */
                         fclose( le_stream->sr_strm[le_parse].su_file[le_index] );
 
                     }
@@ -130,16 +123,16 @@
     source - accessor methods
  */
 
-    le_size_t le_stream_get_strict( le_stream_t * const le_stream, le_time_t le_time, le_enum_t const le_mode ) {
+    le_size_t le_stream_get_strict( le_stream_t * const le_stream, le_time_t const le_time, le_enum_t const le_mode ) {
 
-        /* compute equivalent time */
-        le_time /= le_stream->sr_tcfg;
+        /* time variables */
+        le_time_t le_reduce = le_time / le_stream->sr_tcfg;
 
         /* parsing units */
         for ( le_size_t le_parse = 0; le_parse < le_stream->sr_size; le_parse ++ ) {
 
             /* check matching time */
-            if ( le_time == le_stream->sr_strm[le_parse].su_time ) {
+            if ( le_reduce == le_stream->sr_strm[le_parse].su_time ) {
 
                 /* return index */
                 return( le_parse );
@@ -148,18 +141,14 @@
 
         }
 
-        /* check mode */
+        /* check access mode */
         if ( le_mode == LE_STREAM_WRITE ) {
 
-            /* create and insert - return index */
-            return( le_stream_set( le_stream, le_time * le_stream->sr_tcfg, le_mode ) );
+            /* trigger unit creation - return index */
+            return( le_stream_set( le_stream, le_time, le_mode ) );
 
-        } else {
-
-            /* return index */
-            return( _LE_SIZE_NULL );
-
-        }
+        /* return index */
+        } else { return( _LE_SIZE_NULL ); }
 
     }
 

@@ -57,18 +57,21 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_STREAM_C       { NULL, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
+    # define LE_STREAM_C        { NULL, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_STREAM_UNIT_C  { _LE_TIME_NULL, { NULL } }
+    # define LE_STREAM_I(p,s,t) { p, s, t, 0, NULL, LE_ERROR_SUCCESS }
+
+    /* define pseudo-constructor */
+    # define LE_STREAM_UNIT_C   { _LE_TIME_NULL, { NULL } }
 
     /* define stream mode */
-    # define LE_STREAM_READ    ( 0 )
-    # define LE_STREAM_WRITE   ( 1 )
+    # define LE_STREAM_READ     ( 0 )
+    # define LE_STREAM_WRITE    ( 1 )
 
     /* define path model */
-    # define LE_STREAM_TIME    ( "%s/%" _LE_TIME_P )
-    # define LE_STREAM_FILE    ( "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin" )
+    # define LE_STREAM_TIME     ( "%s/%" _LE_TIME_P )
+    # define LE_STREAM_FILE     ( "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin" )
 
 /*
     header - preprocessor macros
