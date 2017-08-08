@@ -152,7 +152,7 @@
      *  Size, in bytes, of the data stored in the array
      *  \var le_array_struct::ar_vbyte
      *  Base pointer of the data stored in the array
-     *  \var le_array_struct::ar_cbyte
+     *  \var le_array_struct::ar_csize
      *  Size of the data in uncompressed form or zero
      */
 

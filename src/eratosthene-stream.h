@@ -125,20 +125,21 @@
      *  a sub-system to perform i/o operations on the server storage structure.
      *
      *  In the first place, this structure holds three fields that receive, at
-     *  structure creation, a copy of the server storage structure root path and
+     *  structure creation, a copy of the server storage structure path and
      *  a copy of the server space and time configuration values. These values
      *  are required to access the storage structure.
      *
-     *  The main structure fields are the stream unit size and stack. The stream
-     *  units stack is used to store the file descriptors of each temporal class
-     *  found in the storage structure. During structure creation, the storage
-     *  structure is scanned to detect all temporal classes and their directory.
-     *  A stream unit is created for each detected class. This allows the stream
-     *  module to perform i/o operations on the server storage structure without
-     *  having to constantly create and delete the required file descriptors.
+     *  The main structure fields are the stream units stack and its size. The
+     *  stream units stack is used to store the file descriptors of each
+     *  temporal class found in the storage structure. During the structure
+     *  creation, the storage structure is scanned to detect all the temporal
+     *  classes and their directory. A stream unit is created for each detected
+     *  class. This allows the stream module to perform i/o operations on the
+     *  server storage structure without having to constantly create and delete
+     *  the required file descriptors.
      *
-     *  A specific constraint is applied on the stream unit stack : it has to be
-     *  ordered from a temporal point of view :
+     *  A specific constraint is applied on the stream units stack : it has to
+     *  be ordered from a temporal point of view :
      *
      *      unit[i].su_time < unit[j].su_time
      *
@@ -164,7 +165,6 @@
     typedef struct le_stream_struct {
 
         le_char_t * sr_root;
-
         le_size_t   sr_scfg;
         le_time_t   sr_tcfg;
 
@@ -205,8 +205,9 @@
      *
      *  This function is used to deleted the provided stream structure. It reads
      *  the content of the stream units stack and deletes the stream units one
-     *  by one by closing their file descriptors. The stack itself is then
-     *  unallocated and the structure fields are cleared.
+     *  by one by closing their file descriptors. The stack memory itself is
+     *  then unallocated and the structure fields are cleared using default
+     *  values.
      *
      *  \param le_stream Stream structure
      */
@@ -279,7 +280,7 @@
      *  This function creates the stream unit related to the temporal class
      *  pointed by the provided time value.
      *
-     *  The function searches if the time value point to an existing storage
+     *  The function searches if the time value points to an existing storage
      *  structure temporal class. As the class is found, the function creates
      *  a new stream unit on the stack and initialises it for the found class.
      *
@@ -309,9 +310,8 @@
      *  This function writes the content of the incoming array in the server
      *  storage structure.
      *
-     *  The provided array is expect to have the "SD" format, that is a series
-     *  of records composed of a coordinates 3-vector and a colour 3-vector. See
-     *  array module for more information.
+     *  The provided array is expect to have the UF3 format, that is a series
+     *  of records composed of a coordinates 3-vector and a colour 3-vector.
      *
      *  For each array record, the function initiates an address structure using
      *  the record coordinates to compute the spatial index. The index is then
@@ -351,10 +351,8 @@
 
     /*! \brief i/o methods
      *
-     *  This function is used to gather spatial classes position and colour
-     *  information to build a array using the "SD" format. See documentation
-     *  of array module and \b le_stream_io_inject() function for more elements
-     *  on this format.
+     *  This function is used to gather spatial classes positions and colours
+     *  information to build a array using the UF3 format.
      *
      *  This function assume that the offset of the spatial class pointed by the
      *  address index is known (\b le_stream_io_offset()). Starting from the
