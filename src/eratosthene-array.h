@@ -111,7 +111,7 @@
      *
      *  More specifically, the structure holds an array in an array. The first
      *  array, corresponding to the allocated memory has a virtual size,
-     *  usually greater than the acutal data array contain in it. This size
+     *  usually greater than the actual data array contain in it. This size
      *  correspond to the available memory.
      *
      *  A second array is defined through its base pointer (\b ar_vbyte) and its
@@ -125,9 +125,9 @@
      *
      *  This is done so for two main reasons : the first one is the possibility
      *  to have a header in which the sizes and array mode can be packed and
-     *  send over TCP/IP without additionnal memory allocation and copy. The
+     *  send over TCP/IP without additional memory allocation and copy. The
      *  second reason is the possibility to only reallocate memory when the
-     *  real array is not sufficiant to holds the data array, again saving
+     *  real array is not sufficient to holds the data array, again saving
      *  memory allocation and copy.
      *
      *  A last field is available in the structure that is the compressed size
@@ -141,7 +141,7 @@
      *
      *      [ar_vsize][ar_csize][mode] ...
      *
-     *  As the array is revieved in the remote computer, the header contains
+     *  As the array is received in the remote computer, the header contains
      *  all the information needed to rebuild the array.
      *
      *  \var le_array_struct::ar_rsize
@@ -260,7 +260,7 @@
     /*! \brief serialisation methods
      *
      *  This function is used to pack or unpack variables in the data array
-     *  stored in the provided array structure. It recieves a variable and it
+     *  stored in the provided array structure. It receives a variable and it
      *  size and pack or unpack it in the array at the specified offset
      *  according to the provided mode.
      *
@@ -283,7 +283,7 @@
      *
      *  In addition to the data array size, the header also contains a mode
      *  value to indicate the type of data carried by the array. This mode
-     *  value is set accroding to the provided \b le_mode parameter.
+     *  value is set according to the provided \b le_mode parameter.
      *
      *  \param le_array  Array structure
      *  \param le_mode   Socket array mode

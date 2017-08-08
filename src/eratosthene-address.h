@@ -133,7 +133,7 @@
      *  represents the data located in Venice in 2000 and in 1740. The first
      *  number correspond to the times comparison mode. The two times are given
      *  next followed by the digits of the spatial address. The last number
-     *  gives the additionnal depth, from the scale point of view, where the
+     *  gives the additional depth, from the scale point of view, where the
      *  desired data have to be searched.
      *
      *  \var le_address_struct::as_size
@@ -306,7 +306,7 @@
      *  Sets the address additional depth.
      *
      *  \param le_address Address structure
-     *  \param le_span    Additionnal depth
+     *  \param le_span    Additional depth
      */
 
     le_void_t le_address_set_span( le_address_t * const le_address, le_byte_t const le_span );

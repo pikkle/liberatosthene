@@ -239,7 +239,7 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /*! \brief i/o methods - principale
+    /*! \brief i/o methods
      *
      *  With the structure constructor and destructor methods, the function is
      *  part of the main methods. As the structure is created, it starts an
@@ -257,7 +257,7 @@
 
     le_void_t le_server_io( le_server_t * const le_server );
 
-    /*! \brief i/o methods - ring
+    /*! \brief i/o methods
      *
      *  This function is executed by threads launched by the \b le_server_io()
      *  function to manage a client connection. Its role is to run an infinite
@@ -265,7 +265,7 @@
      *  analyse them and call the specific process that answer the request.
      *
      *  Before to start the infinite loop, this function creates and initialise
-     *  a stream structure towrard the server storage structure. This structure
+     *  a stream structure toward the server storage structure. This structure
      *  is needed by the other i/o methods to performs operation on the storage
      *  structure.
      *
@@ -276,7 +276,7 @@
 
     /*! \brief i/o methods
      *
-     *  This i/o method is reponsible of answering server configuration request
+     *  This i/o method is responsible of answering server configuration request
      *  from client. It simply packs the server configuration values, that are
      *  the number of space scale and the time equivalences classes length, in
      *  an array structure before to send it back to the remote client.
@@ -309,7 +309,7 @@
 
     /*! \brief i/o methods
      *
-     *  This i/o methods is repsonsible of data injection in the server stroage
+     *  This i/o methods is responsible of data injection in the server storage
      *  structure. It expects a time packed in the first client array that is
      *  used to access the storage structure. It then expects a data array that
      *  contains the geographic coordinates and colour of the points to inject
