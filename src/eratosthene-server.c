@@ -171,7 +171,7 @@
     }
 
 /*
-    source - i/o methods - principale
+    source - i/o methods
  */
 
     le_void_t le_server_io( le_server_t * const le_server ) {
@@ -209,13 +209,13 @@
             if ( le_ring[le_parse].rg_sock == _LE_SOCK_NULL ) continue;
 
             /* create client thread */
-            pthread_create( & le_ring[le_parse].rg_proc, NULL, & le_server_io_client, ( le_void_t * ) ( & le_ring[le_parse] ) );
+            pthread_create( & le_ring[le_parse].rg_proc, NULL, & le_server_io_ring, ( le_void_t * ) ( & le_ring[le_parse] ) );
 
         }
 
     }
 
-    le_void_t * le_server_io_client( le_void_t * le_ring_ ) {
+    le_void_t * le_server_io_ring( le_void_t * le_ring_ ) {
 
         /* server ring variables */
         le_ring_t * le_ring = ( le_ring_t * ) le_ring_;

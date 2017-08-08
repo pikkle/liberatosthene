@@ -72,7 +72,26 @@
     header - structures
  */
 
-    /* *** */
+    /*! \struct le_server_struct
+     *  \brief server ring structure
+     *
+     *  This structure describe a thread launch in the main server loop to
+     *  handle a client connection. It stores the required information needed
+     *  by the thread to perform answer to the client request.
+     *
+     *  The first field of the structure is related to the thread ID and is used
+     *  to manage the thread itself. The second thread holds the server socket
+     *  opened toward the client handle by the thread. The last fields stores
+     *  a pointer to the main server structure that is used to access server
+     *  configuration and storage.
+     *
+     *  \var le_server_ring_struct::rg_proc
+     *  Thread process ID
+     *  \var le_server_ring_struct::rg_sock
+     *  Server socket descriptor toward handled client
+     *  \var le_server_ring_struct::rg_srvp
+     *  Pointer to the main server structure
+     */
 
     typedef struct le_server_ring_struct {
 
@@ -86,7 +105,7 @@
      *  \brief server structure
      *
      *  This structure is the principal structure of the library as it holds
-     *  the descriptor of the servers.
+     *  the descriptor of a servers.
      *
      *  The server offers a 4D mapping service of the earth through to storage,
      *  access and network broadcasting of colorimetric point. Its storage
@@ -97,7 +116,7 @@
      *  A server is then responsible of receiving data from client during
      *  injection, data broadcasting during client query, broadcasting of its
      *  main parameter through client specific query and the storage management
-     *  of the data. This structure is then the heart allowing these operation
+     *  of the data. This structure is then the heart allowing these operations
      *  to be fulfilled.
      *
      *  A first field is dedicated to store the server socket descriptor. As any
@@ -106,7 +125,7 @@
      *  to listen to client queries.
      *
      *  Three fields are dedicated to the server configuration. The first one
-     *  holds a character array storing the main path of the storage structure.
+     *  holds a characters array storing the main path of the storage structure.
      *  This path is used to access storage structure files. The two remaining
      *  configuration fields are used to store the space and time parameters,
      *  The space parameter gives the number of scale engaged in the storage
@@ -115,11 +134,9 @@
      *  gives the size of the temporal equivalence classes. Both parameters fix
      *  the server resolution power in both space and time.
      *
-     *  The last field of the structure holds a sub-structure dedicated to the
-     *  management of i/o operation made on the storage structure. The server
-     *  has to give this structure to any i/o method accessing the storage
-     *  structure. More information on the stream structure can be found in the
-     *  stream module documentation.
+     *  A last field is used by the structure creation methods to specified the
+     *  creation status of the structure. This allows to creation methods to
+     *  return the structure instead of an error code.
      *
      *  As the server offers a 4D information system through the formalism of
      *  spatiotemporal index, one has to take into account geographic ranges
@@ -132,7 +149,7 @@
      *
      *  The server data storage and access are driven by the spatiotemporal
      *  index formalism. As any point is assumed to be referenced in space and
-     *  time, to equivalence relation are defined : one on the time range and
+     *  time, two equivalence relations are defined : one on the time range and
      *  the other along the spatial scales. The time relation simply establish
      *  homogeneous ranges along the time dimension collapsing all time in each
      *  range to a single equivalence class. It follow that two time falling in
@@ -146,7 +163,7 @@
      *  is set on each scale : each scale, in term of range, is split in 2^i
      *  ranges identified as equivalence classes. Any given point belong to a
      *  given class at each scale. Index are used, through their digits to
-     *  browse the spatial scales to find or store any point. Again, two point
+     *  browse the spatial scales to find or store any point. Again, two points
      *  falling in the same class in a specific scale cannot be separated after
      *  injection. In other words, index digits are the address allowing to go
      *  from a scale to another following the logic of octrees.
@@ -159,8 +176,6 @@
      *  Server spatial configuration value : number of scale
      *  \var le_server_struct::sv_tcfg
      *  Server temporal configuration value : size of temporal classes
-     *  \var le_server_struct::sv_stream
-     *  Server i/o stream sub-system
      */
 
     typedef struct le_server_struct {
@@ -179,13 +194,12 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function creates a server structure and initialises it contents
-     *  according to the provided parameters. It initialise the stream sub
-     *  system and reads the server configuration file hold in the storage
-     *  structure pointed by the provided path.
+     *  This function creates a server structure and initialises its content
+     *  according to the provided parameters. It reads the server configuration
+     *  file hold in the storage structure pointed by the provided path.
      *
      *  It also create the socket descriptor used by the server to listen to
-     *  client queries.
+     *  client connections.
      *
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
@@ -201,8 +215,8 @@
     /*! \brief constructor/destructor methods
      *
      *  This function deletes the server structure provided as parameter by
-     *  closing the socket descriptor and by deleting the stream sub system.
-     *  The function ends by clearing the structure fields.
+     *  closing the socket descriptor. The function ends by clearing the fields
+     *  of the structure.
      *
      *  \param le_server Server structure
      */
@@ -220,7 +234,7 @@
      *
      *  \param le_server Server structure
      *
-     * \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
@@ -231,60 +245,101 @@
      *  part of the main methods. As the structure is created, it starts an
      *  infinite loop waiting for client connections.
      *
-     *  As a client connects to the server, the function create a socket for the
-     *  incoming connection and analysis the client handshake. The connection
-     *  is then dispatch to the specific server sub-process according to the
-     *  handshake analysis.
-     *
-     *  As the client query is processed by the sub-process, the server closes
-     *  the dedicated socket and returns back to the listening loop.
+     *  As a client connects to the server, the function searches a free ring,
+     *  that is a thread descriptor structure (\b le_ring_t). The found ring
+     *  is initialised with the created socket toward the client and a thread
+     *  is created base on the ring descriptor. The created thread being
+     *  responsible of the client management, the function main loop continue
+     *  to listen to new incoming connections.
      *
      *  \param le_server Server structure
      */
 
     le_void_t le_server_io( le_server_t * const le_server );
 
-    /* *** */
+    /*! \brief i/o methods - ring
+     *
+     *  This function is executed by threads launched by the \b le_server_io()
+     *  function to manage a client connection. Its role is to run an infinite
+     *  loop waiting for client request. As requests arrive, the function
+     *  analyse them and call the specific process that answer the request.
+     *
+     *  Before to start the infinite loop, this function creates and initialise
+     *  a stream structure towrard the server storage structure. This structure
+     *  is needed by the other i/o methods to performs operation on the storage
+     *  structure.
+     *
+     *  \param le_ring_ Pointer to thread ring descriptor
+     */
 
-    le_void_t * le_server_io_client( le_void_t * le_box_ );
+    le_void_t * le_server_io_ring( le_void_t * le_ring_ );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This i/o method is reponsible of answering server configuration request
+     *  from client. It simply packs the server configuration values, that are
+     *  the number of space scale and the time equivalences classes length, in
+     *  an array structure before to send it back to the remote client.
+     *
+     *  \param le_server Server structure
+     *  \param le_stream Ring stream structure
+     *  \param le_stack  Ring array stack pointer
+     *  \param le_socket Socket to remote client
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
+     */
 
     le_enum_t le_server_io_auth( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function is used by the remote client to end the thread infinite
+     *  loop. The content of the sent array is not read and can so contain
+     *  anything. It is usually empty.
+     *
+     *  \param le_server Server structure
+     *  \param le_stream Ring stream structure
+     *  \param le_stack  Ring array stack pointer
+     *  \param le_socket Socket to remote client
+     *
+     *  \return Returns always _LE_FALSE
+     */
 
     le_enum_t le_server_io_resume( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
-     *  This function is a specific server sub-process.
-     *
-     *  It is called as the dispatcher receives an injection query from a remote
-     *  client. It reads the injection time and data array from the provided
-     *  socket and, after security checks, calls the stream injection function.
+     *  This i/o methods is repsonsible of data injection in the server stroage
+     *  structure. It expects a time packed in the first client array that is
+     *  used to access the storage structure. It then expects a data array that
+     *  contains the geographic coordinates and colour of the points to inject
+     *  in the server storage structure.
      *
      *  \param le_server Server structure
-     *  \param le_client Client socket descriptor - server-side
+     *  \param le_stream Ring stream structure
+     *  \param le_stack  Ring array stack pointer
+     *  \param le_socket Socket to remote client
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
     le_enum_t le_server_io_inject( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
-     *  This function is a specific server sub-process.
-     *
-     *  It is called as the dispatcher receive an data query from a remote
-     *  client. It reads the query address structure from the socket and gather
-     *  the relevant data through specific stream method according to the time
-     *  reduction (see \b le_server_io_reduce()) result and the address mode.
+     *  This function reads the query addresses packed in the client array and
+     *  gather the relevant data through specific stream method.
      *
      *  As the points are gathered from the storage structure, the function
-     *  writes back the time-reduced address and the gathered data array on the
-     *  on the client socket.
+     *  writes the resulting data array on the client socket after having
+     *  compressed the sent array.
      *
      *  \param le_server Server structure
-     *  \param le_client Client socket descriptor - server-side
+     *  \param le_stream Ring stream structure
+     *  \param le_stack  Ring array stack pointer
+     *  \param le_socket Socket to remote client
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
     le_enum_t le_server_io_query( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
