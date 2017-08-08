@@ -106,25 +106,54 @@
      *
      *  This structure holds the definition and content of a bytes array. These
      *  arrays are commonly used to transmit data through TCP/IP sockets. These
-     *  arrays of bytes are commonly interpreted through more complex types
-     *  using specific access marcos and pointers.
+     *  arrays of bytes are commonly interpreted through serialisation and
+     *  access macro and functions.
      *
-     *  The structure holds the byte array base pointer and two size fields. The
-     *  proper size field stores the actual size of the array, in bytes. The
-     *  virtual size holds the array memory allocation size, in bytes, usually
-     *  greater than the array proper size.
+     *  More specifically, the structure holds an array in an array. The first
+     *  array, corresponding to the allocated memory has a virtual size,
+     *  usually greater than the acutal data array contain in it. This size
+     *  correspond to the available memory.
      *
-     *  The size and virtual size are used to minimise the amount of memory
-     *  reallocation during elements appending, the size following the size of
-     *  the appended elements while the virtual size, driving the memory
-     *  allocation, follows much larger steps.
+     *  A second array is defined through its base pointer (\b ar_vbyte) and its
+     *  size (\b ar_vsize). This pseudo array contains the proper data. From
+     *  a memory point of view, one can represent the data array as follows :
      *
-     *  \var le_array_struct::ar_virt
-     *  Memory size of the bytes array, in bytes
-     *  \var le_array_struct::ar_size
-     *  Data size of the bytes array, in bytes
-     *  \var le_array_struct::ar_byte
-     *  Bytes array memory base pointer
+     *      R...RD...DR...R
+     *
+     *  where R designate first array bytes and D byte of the first array being
+     *  part of the data array.
+     *
+     *  This is done so for two main reasons : the first one is the possibility
+     *  to have a header in which the sizes and array mode can be packed and
+     *  send over TCP/IP without additionnal memory allocation and copy. The
+     *  second reason is the possibility to only reallocate memory when the
+     *  real array is not sufficiant to holds the data array, again saving
+     *  memory allocation and copy.
+     *
+     *  A last field is available in the structure that is the compressed size
+     *  \b ar_csize. This fields indicates, if not zero, that the data array
+     *  is compressed. The value of this fields gives the size of the array
+     *  in its uncompressed form, the compressed size being stored by the
+     *  \b ar_vsize fields.
+     *
+     *  When the array is written on TCP/IP socket, the header is filled as
+     *  follows :
+     *
+     *      [ar_vsize][ar_csize][mode] ...
+     *
+     *  As the array is revieved in the remote computer, the header contains
+     *  all the information needed to rebuild the array.
+     *
+     *  \var le_array_struct::ar_rsize
+     *  Array real memory size, in bytes
+     *  \var le_array_struct::ar_rbyte
+     *  Array real memory base pointer
+     *  \var le_array_struct::ar_vsize
+     *  Size, in bytes, of the data stored in the array
+     *  \var le_array_struct::ar_vbyte
+     *  Base pointer of the data stored in the array
+     *  \var le_array_struct::ar_cbyte
+     *  Size of the data in uncompressed form or zero
      */
 
     typedef struct le_array_struct {
@@ -175,7 +204,7 @@
 
     /*! \brief accessor methods
      *
-     *  This function returns the array memory base pointer.
+     *  This function returns the array data memory base pointer.
      *
      *  \param le_array Array structure
      *
@@ -186,13 +215,13 @@
 
     /*! \brief mutator methods
      *
-     *  This function checks if the virtual size of the provided array structure
+     *  This function checks if the memory size of the provided array structure
      *  allows the insertion of an element of size \b le_length.
      *
-     *  If the virtual size allows the insertion, the function update the array
-     *  size. Otherwise, it update the size of the array and also the virtual
+     *  If the memory size allows the insertion, the function update the array
+     *  data size. Otherwise, it updates the size of the array and also the data
      *  size. In this case, the array memory is reallocated by the function
-     *  according to the updated virtual size.
+     *  according to the updated memory size.
      *
      *  \param le_array  Array structure
      *  \param le_length Length, in bytes, of inserted element
@@ -204,11 +233,11 @@
 
     /*! \brief mutator methods
      *
-     *  This function is used to force the size of the provided array to a
-     *  specific value. The function checks if the virtual size remains greater
+     *  This function is used to force the data size of the provided array to a
+     *  specific value. The function checks if the memory size remains greater
      *  than the specified size. In this case, the array memory allocation is
-     *  not changed. Otherwise, the virtual size of the array is aligned on the
-     *  provided size and the function reallocate the array memory.
+     *  not changed. Otherwise, the memory size of the array is aligned on the
+     *  provided size and the function reallocates the array memory.
      *
      *  \param le_array  Array structure
      *  \param le_size   Size of the array
@@ -218,20 +247,46 @@
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function empty the provided array in terms of its data. It sets the
+     *  data size to zero and also resets the compressed size to zero.
+     *
+     *  \param le_array Array structure
+     */
 
     le_void_t le_array_set_reset( le_array_t * const le_array );
 
-    /* *** */
+    /*! \brief serialisation methods
+     *
+     *  This function is used to pack or unpack variables in the data array
+     *  stored in the provided array structure. It recieves a variable and it
+     *  size and pack or unpack it in the array at the specified offset
+     *  according to the provided mode.
+     *
+     *  \param le_array  Array structure
+     *  \param le_bytes  Pointer to the variable to pack/unpack
+     *  \param le_length Size, in bytes, of the variable to pack/unpack
+     *  \param le_offset Pack/unpack offset in the data array, in bytes
+     *  \param le_mode   Serialisation mode : _LE_SET or _LE_GET
+     *
+     *  \return Returns the variable length added to the provided offset
+     */
 
     le_size_t le_array_serial( le_array_t * const le_array, le_void_t * const le_bytes, le_size_t const le_length, le_size_t const le_offset, le_enum_t const le_mode );
 
     /*! \brief i/o methods
      *
      *  This function writes the provided array bytes in the socket pointed by
-     *  the provided socket descriptor.
+     *  the provided socket descriptor. This function also sets the array
+     *  structure header before to send the data over TCP/IP.
+     *
+     *  In addition to the data array size, the header also contains a mode
+     *  value to indicate the type of data carried by the array. This mode
+     *  value is set accroding to the provided \b le_mode parameter.
      *
      *  \param le_array  Array structure
+     *  \param le_mode   Socket array mode
      *  \param le_socket Socket descriptor
      *
      *  \return Return _LE_ERROR_SUCCESS on success, an error code otherwise
@@ -242,8 +297,8 @@
     /*! \brief i/o methods
      *
      *  This function reads the provided array bytes from the socket pointed by
-     *  the provided socket descriptor. It reads bytes until the connection is
-     *  closed or a timeout is reached.
+     *  the provided socket descriptor. The reading is based on the analysis
+     *  of the read array header.
      *
      *  \param le_array  Array structure
      *  \param le_socket Socket descriptor
@@ -253,11 +308,38 @@
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
 
-    /* *** */
+    /*! \brief uf3-specific methods
+     *
+     *  This function implements an entropic compression algorithm that can be
+     *  applied on array containing uf3 content, that is succession of records
+     *  of three doubles and three bytes.
+     *
+     *  The compressed size is set by the function according to the compression
+     *  results. If the compression succeed, the compressed size is set to the
+     *  original data array size. It is set to zero otherwise.
+     *
+     *  \param le_src Original array structure
+     *  \param le_dst Encoded array structure
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_array_uf3_encode( le_array_t * const le_src, le_array_t * const le_dst );
 
-    /* *** */
+    /*! \brief uf3-specific methods
+     *
+     *  This function is used to decompress data contained in the provided
+     *  array structure that are encoded using the \b le_array_uf3_encode()
+     *  algorithm.
+     *
+     *  The function checks the structure compressed size to determine if the
+     *  data array needs to be decoded. A simple swap is performed otherwise.
+     *
+     *  \param le_src Encoded array structure
+     *  \param le_dst Decoded array structure
+     *
+     * \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_array_uf3_decode( le_array_t * const le_src, le_array_t * const le_dst );
 
