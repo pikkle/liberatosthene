@@ -84,7 +84,7 @@
      *  is considered in the server storage structure. Such structure can be
      *  seen as the fundamental microstructure of the server storage structure.
      *
-     *  Formally, it simply consist in a bytes array storing the colorimetric
+     *  Formally, it simply consists in a bytes array storing the colorimetric
      *  information of the class representative and the offsets of the daughter
      *  classes that are considered in the storage structure.
      *
@@ -118,11 +118,11 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function initialise and returns a class structure. It uses the
+     *  This function initialises and returns a class structure. It uses the
      *  provided data as first element that initialise the class content. In
-     *  addition it initialise the class offset array using the NULL reference.
+     *  addition it initialises the class offset array using the NULL offsets.
      *
-     *  \param le_data  Data 3-vector (colour)
+     *  \param le_data Data 3-vector - single byte red, green and blue
      *
      *  \return Returns created class structure
      */
@@ -158,14 +158,15 @@
      *  colour of the provided class structure.
      *
      *  \param le_class Class structure
-     *  \param le_data  Data 3-vector (colour)
+     *  \param le_data  Data 3-vector - single byte red, green and blue
      */
 
     le_void_t le_class_get_data( le_class_t const * const le_class, le_data_t * const le_data );
 
     /*! \brief mutator methods
      *
-     *  This function set the offset of the daughter class pointed by the index.
+     *  This function sets the offset of the daughter class pointed by the
+     *  index using the provided offset.
      *
      *  \param le_class  Class structure
      *  \param le_index  Offset index
@@ -181,7 +182,7 @@
      *  taking into account the injected data through a pseudo-mean method.
      *
      *  \param le_class Class structure
-     *  \param le_data  Data 3-vector (colour)
+     *  \param le_data  Data 3-vector - single byte red, green and blue
      */
 
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data );
@@ -203,7 +204,7 @@
 
     /*! \brief i/o methods
      *
-     *  This function performs the invert operation of \b le_class_io_write
+     *  This function performs the invert operation of \b le_class_io_write()
      *  function. It creates the storage representation of the provided class
      *  in the stream that describes an already opened file in binary mode.
      *
