@@ -188,7 +188,7 @@
     /*! \brief accessor methods
      *
      *  Returns the desired time of the equivalence class stored in the address
-     *  structure.
+     *  structure. The provided offset has to be 0 or 1.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of time - zero based
@@ -201,6 +201,7 @@
     /*! \brief accessor methods
      *
      *  Returns the desired digit of the index stored in the address structure.
+     *  The provided offset has to be smaller to the address size.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of the digit - zero based
@@ -225,12 +226,12 @@
     /*! \brief accessor methods
      *
      *  This function compare the two provided address structures and returns a
-     *  Boolean value indicating their identity.
+     *  boolean value indicating their identity.
      *
-     *  \param le_addr1 First address structure
-     *  \param le_addr2 Second address structure
+     *  \param le_addra First address structure
+     *  \param le_addrb Second address structure
      *
-     *  \return Returns _LE_TRUE on identity, _LE_FALSE otherwise
+     *  \return Returns _LE_TRUE on addresses identity, _LE_FALSE otherwise
      */
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb );
@@ -240,12 +241,13 @@
      *  This function reads the digits of the index stored in the address
      *  structure and converts it into a geographic coordinates 3-vector.
      *
-     *  In other words, this function compute the geographic coordinates of the
+     *  In other words, this function computes the geographic coordinates of the
      *  equivalence class corner pointed by the index stored in the address
      *  structure.
      *
      *  This function expects the number of digits of the index to be provided
-     *  as parameter, discarding the size field of the address structure.
+     *  as parameter, discarding the size field of the address structure. This
+     *  allows optimisation to take place.
      *
      *  \param le_address Address structure
      *  \param le_size    Number of digits
@@ -256,8 +258,8 @@
 
     /*! \brief mutator methods
      *
-     *  Set the number of digits of the index stored in the provided address
-     *  structure.
+     *  Sets the number of digits, i.e. the address size of the index stored in
+     *  the provided address structure.
      *
      *  \param le_address Address structure
      *  \param le_size    Number of digits
@@ -267,7 +269,7 @@
 
     /*! \brief mutator methods
      *
-     *  Set the address time comparison mode.
+     *  Sets the address time comparison mode.
      *
      *  \param le_address Address structure
      *  \param le_mode    Times comparison mode
@@ -277,7 +279,7 @@
 
     /*! \brief mutator methods
      *
-     *  Set the address time.
+     *  Sets the address desired time. The provided offset has to be 0 or 1.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of time - zero based
@@ -288,7 +290,9 @@
 
     /*! \brief mutator methods
      *
-     *  Set the specified digit of the index stored in the address structure.
+     *  Sets the specified digit of the index stored in the address structure.
+     *  The provided offset has to be a whole number smaller that the address
+     *  size.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of the digit - zero based
@@ -299,7 +303,7 @@
 
     /*! \brief mutator methods
      *
-     *  Set the address additional depth (span).
+     *  Sets the address additional depth.
      *
      *  \param le_address Address structure
      *  \param le_span    Additionnal depth
@@ -320,7 +324,27 @@
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
 
-    /* *** */
+    /*! \brief serialisation method
+     *
+     *  This functions is used to pack and unpack an address structure in and
+     *  from the provided array. In other words, this function ensure the
+     *  translation between its structure representation and its packing in a
+     *  byte sequence.
+     *
+     *  The provided \b le_offset parameter indicates at which byte position the
+     *  packing or unpacking of the structure has to take place in the array.
+     *
+     *  The provided array, for both packing and unpacking, as to be already
+     *  allocated according to the parameters.
+     *
+     *  \param le_address Address structure
+     *  \param le_array   Array structure
+     *  \param le_offset  Serialisation offset, in bytes
+     *  \param le_mode    Serialisation mode : _LE_SET or _LE_GET
+     *
+     *  \return Returns the position in the array just after the serialised
+     *          structure
+     */
 
     le_size_t le_address_serial( le_address_t * const le_address, le_array_t * const le_array, le_size_t const le_offset, le_enum_t const le_mode );
 
