@@ -236,6 +236,10 @@
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb );
 
+    /* experimental */
+
+    le_enum_t le_address_get_share( le_address_t const * const le_addra, le_address_t const * const le_addrb );
+
     /*! \brief accessor methods
      *
      *  This function reads the digits of the index stored in the address
