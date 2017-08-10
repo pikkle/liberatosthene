@@ -150,7 +150,7 @@
         }
 
         /* mode comparison */
-        if ( le_addra->as_mode != le_addrb->as_size ) {
+        if ( le_addra->as_mode != le_addrb->as_mode ) {
 
             /* send message */
             return( _LE_FALSE );
