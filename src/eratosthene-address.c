@@ -142,7 +142,7 @@
         }
 
         /* size comparison */
-        if ( le_addra->as_size <= le_addrb->as_size ) {
+        if ( le_addra->as_size > le_addrb->as_size ) {
 
             /* send message */
             return( _LE_FALSE );
