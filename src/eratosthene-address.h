@@ -236,7 +236,25 @@
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb );
 
-    /* experimental */
+    /*! \brief accessor methods
+     *
+     *  This function compares the two provided addresses to checks if their
+     *  common digits are identical. To do so, the first address \b le_addra
+     *  is assumed to have a size smaller or equal to the \b le_addrb address.
+     *
+     *  The function checks for the identity of the n first digits of the two
+     *  addresses, n being the size of the first one (\b le_addra). The value
+     *  \b _LE_TRUE is returned in this case, \b _LE_FALSE otherwise.
+     *
+     *  This function is able to answer the question : is the second address
+     *  pointing to a cell that is a daughter of the cell pointed by the first
+     *  address.
+     *
+     *  \param le_addra Address structure (reference)
+     *  \param le_addrb Address structure
+     *
+     *  \return Returns _LE_TRUE on filiation, _LE_FALSE otherwise
+     */
 
     le_enum_t le_address_get_share( le_address_t const * const le_addra, le_address_t const * const le_addrb );
 
