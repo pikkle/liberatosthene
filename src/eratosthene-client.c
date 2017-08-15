@@ -101,3 +101,45 @@
 
     }
 
+/*
+    source - connection methods
+ */
+
+    le_sock_t le_client_accept( le_sock_t const le_listen ) {
+
+        /* socket option variables */
+        int le_option = 1;
+
+        /* client address variables */
+        struct sockaddr_in le_addr = LE_ADDRIN_C;
+
+        /* client address variables */
+        socklen_t le_length = sizeof( struct sockaddr_in );
+
+        /* returned value variables */
+        le_sock_t le_socket = _LE_SOCK_NULL;
+
+        /* accept client connection */
+        if ( ( le_socket = accept( le_listen, ( struct sockaddr * ) & le_addr, & le_length ) ) == _LE_SOCK_NULL ) {
+
+            /* send message */
+            return( _LE_SOCK_NULL );
+
+        }
+
+        /* socket option */
+        if ( setsockopt( le_socket, IPPROTO_TCP, TCP_NODELAY, & le_option, sizeof( int ) ) == _LE_SOCK_NULL ) {
+
+            /* close socket */
+            close( le_socket );
+
+            /* send message */
+            return( _LE_SOCK_NULL );
+
+        }
+
+        /* return socket */
+        return( le_socket );
+
+    }
+

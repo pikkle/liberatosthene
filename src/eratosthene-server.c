@@ -179,15 +179,6 @@
         /* thread boxes variables */
         le_ring_t le_ring[_LE_USE_PENDING];
 
-        /* socket option variables */
-        int le_option = 1;
-
-        /* client address variables */
-        struct sockaddr_in le_addr = LE_ADDRIN_C;
-
-        /* client address variables */
-        socklen_t le_len = sizeof( struct sockaddr_in );
-
         /* initialise rings */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
 
@@ -202,28 +193,16 @@
         /* server main loop */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse = ( le_parse + 1 ) % _LE_USE_PENDING ) {
 
-            /* select available box - resume */
-            if ( le_ring[le_parse].rg_sock != _LE_SOCK_NULL ) continue;
+            /* select available box */
+            if ( le_ring[le_parse].rg_sock == _LE_SOCK_NULL ) {
 
-            /* waiting connection */
-            le_ring[le_parse].rg_sock = accept( le_server->sv_sock, ( struct sockaddr * ) ( & le_addr ), & le_len );
+                /* waiting client connection */
+                if ( ( le_ring[le_parse].rg_sock = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
-            /* check connection - resume */
-            if ( le_ring[le_parse].rg_sock == _LE_SOCK_NULL ) continue;
+                    /* create client thread */
+                    pthread_create( & le_ring[le_parse].rg_proc, NULL, & le_server_io_ring, ( le_void_t * ) & le_ring[le_parse] );
 
-            /* socket option */
-            if ( setsockopt( le_ring[le_parse].rg_sock, IPPROTO_TCP, TCP_NODELAY, & le_option, sizeof( int ) ) == _LE_SOCK_NULL ) {
-
-                /* close client socket */
-                close( le_ring[le_parse].rg_sock );
-
-                /* reset server ring */
-                le_ring[le_parse].rg_sock = _LE_SOCK_NULL;
-
-            } else {
-
-                /* create client thread */
-                pthread_create( & le_ring[le_parse].rg_proc, NULL, & le_server_io_ring, ( le_void_t * ) ( & le_ring[le_parse] ) );
+                }
 
             }
 
