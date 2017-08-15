@@ -97,7 +97,20 @@
 
     le_sock_t le_client_delete( le_sock_t const le_socket );
 
-    /* *** */
+    /*! \brief connection methods
+     *
+     *  This function waits client connection and accept them as they arrive. In
+     *  addition to the creation of the server client socket, using the provided
+     *  server listen socket, the function also sets the server-side socket
+     *  options.
+     *
+     *  This function is typically used by the server to handle incoming client
+     *  connections.
+     *
+     *  \param le_listen Socket descriptor
+     *
+     * \return Created socket descriptor on success, _LE_SOCK_NULL otherwise
+     */
 
     le_sock_t le_client_accept( le_sock_t const le_listen );
 
