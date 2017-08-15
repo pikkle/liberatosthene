@@ -197,6 +197,48 @@
     le_byte_t le_array_io_write( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket ) {
 
         /* socket-array size variables */
+        le_size_t le_size = LE_ARRAY_HEADER + le_array->ar_vsize;
+
+        /* socket i/o variables */
+        le_size_t le_head = 0;
+        le_size_t le_sent = 0;
+        le_size_t le_fail = 0;
+
+        /* serialise sizes */
+        ( ( le_size_t * ) le_array->ar_rbyte )[0] = le_array->ar_vsize;
+        ( ( le_size_t * ) le_array->ar_rbyte )[1] = le_array->ar_csize;
+
+        /* serialise array mode */
+        le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] = le_mode;
+
+        /* socket-array writing */
+        while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
+
+            /* socket-array content */
+            if ( ( le_sent = write( le_socket, le_array->ar_rbyte, le_size - le_head ) ) > 0 ) {
+
+                /* update head */
+                le_head += le_sent;
+
+            /* update failure */
+            } else { le_fail ++; }
+
+        }
+
+        /* check failure */
+        if ( le_fail < _LE_USE_RETRY ) {
+
+            /* send message */
+            return( le_mode );
+
+        /* send message */
+        } else { return( LE_MODE_NULL ); }
+
+    }
+
+    le_byte_t le_array_io_write_( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket ) {
+
+        /* socket-array size variables */
         le_size_t le_size = le_array->ar_vsize + LE_ARRAY_HEADER;
 
         /* serialise array size */
