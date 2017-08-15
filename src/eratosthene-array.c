@@ -236,31 +236,6 @@
 
     }
 
-    le_byte_t le_array_io_write_( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket ) {
-
-        /* socket-array size variables */
-        le_size_t le_size = le_array->ar_vsize + LE_ARRAY_HEADER;
-
-        /* serialise array size */
-        ( ( le_size_t * ) le_array->ar_rbyte )[0] = le_array->ar_vsize;
-        ( ( le_size_t * ) le_array->ar_rbyte )[1] = le_array->ar_csize;
-
-        /* serialise array mode */
-        le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] = le_mode;
-
-        /* write array on socket */
-        if ( write( le_socket, le_array->ar_rbyte, le_size ) != le_size ) {
-
-            /* send message */
-            return( LE_MODE_NULL );
-
-        }
-
-        /* send message */
-        return( le_mode );
-
-    }
-
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
 
         /* reading size variables */
