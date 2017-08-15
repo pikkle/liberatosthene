@@ -293,22 +293,6 @@
 
     /*! \brief i/o methods
      *
-     *  This function is used by the remote client to end the thread infinite
-     *  loop. The content of the sent array is not read and can so contain
-     *  anything. It is usually empty.
-     *
-     *  \param le_server Server structure
-     *  \param le_stream Ring stream structure
-     *  \param le_stack  Ring array stack pointer
-     *  \param le_socket Socket to remote client
-     *
-     *  \return Returns always _LE_FALSE
-     */
-
-    le_enum_t le_server_io_resume( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
-
-    /*! \brief i/o methods
-     *
      *  This i/o methods is responsible of data injection in the server storage
      *  structure. It expects a time packed in the first client array that is
      *  used to access the storage structure. It then expects a data array that

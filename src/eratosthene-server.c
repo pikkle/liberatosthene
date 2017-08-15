@@ -239,60 +239,49 @@
         le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
 
         /* check ring stream */
-        if ( le_stream._status != LE_ERROR_SUCCESS ) {
+        if ( le_stream._status == LE_ERROR_SUCCESS ) {
 
-            /* update ring state */
-            le_active = _LE_FALSE;
+            /* server ring */
+            while ( le_active == _LE_TRUE ) {
 
-        }
+                /* waiting client socket-array */
+                switch( le_array_io_read( le_stack, le_ring->rg_sock ) ) {
 
-        /* server ring */
-        while ( le_active == _LE_TRUE ) {
+                    /* authentication */
+                    case ( LE_MODE_AUTH ) : {
 
-            /* waiting client socket-array */
-            switch( le_array_io_read( le_stack, le_ring->rg_sock ) ) {
+                        /* mode management - update ring state */
+                        le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
-                /* authentication */
-                case ( LE_MODE_AUTH ) : {
+                    } break;
 
-                    /* mode management - update ring state */
-                    le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_ring->rg_sock );
+                    /* injection */
+                    case ( LE_MODE_INJE ) : {
 
-                } break;
+                        /* mode management - update ring state */
+                        le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
-                /* resiliation */
-                case ( LE_MODE_RESI ) : {
+                    } break;
 
-                    /* mode management - update ring state */
-                    le_active = le_server_io_resume( le_server, & le_stream, le_stack, le_ring->rg_sock );
+                    /* query */
+                    case ( LE_MODE_QUER ) : {
 
-                } break;
+                        /* mode management - update ring state */
+                        le_active = le_server_io_query( le_server, & le_stream, le_stack, le_ring->rg_sock );
 
-                /* injection */
-                case ( LE_MODE_INJE ) : {
+                    } break;
 
-                    /* mode management - update ring state */
-                    le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_ring->rg_sock );
+                    /* resiliation or unexpected mode - update ring state */
+                    default : { le_active = _LE_FALSE; } break;
 
-                } break;
+                };
 
-                /* query */
-                case ( LE_MODE_QUER ) : {
+            }
 
-                    /* mode management - update ring state */
-                    le_active = le_server_io_query( le_server, & le_stream, le_stack, le_ring->rg_sock );
-
-                } break;
-
-                /* unexpected mode - update ring state */
-                default : { le_active = _LE_FALSE; } break;
-
-            };
+            /* delete ring stream */
+            le_stream_delete( & le_stream );
 
         }
-
-        /* delete ring stream */
-        le_stream_delete( & le_stream );
 
         /* close client socket */
         close( le_ring->rg_sock );
@@ -330,17 +319,15 @@
         le_serial = le_array_serial( le_stack, & le_server->sv_tcfg, sizeof( le_time_t ), le_serial, _LE_SET );
 
         /* write socket-array */
-        le_array_io_write( le_stack, LE_MODE_AUTH, le_socket );
+        if ( le_array_io_write( le_stack, LE_MODE_AUTH, le_socket ) != LE_MODE_AUTH ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
 
         /* send message */
         return( _LE_TRUE );
-
-    }
-
-    le_enum_t le_server_io_resume( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
-
-        /* send message */
-        return( _LE_FALSE );
 
     }
 
@@ -465,7 +452,12 @@
             };
 
             /* write socket-array */
-            le_array_io_write( le_stack + 1, LE_MODE_QUER, le_socket );
+            if ( le_array_io_write( le_stack + 1, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
 
         }
 
