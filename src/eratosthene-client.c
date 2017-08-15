@@ -26,6 +26,9 @@
 
     le_sock_t le_client_create( le_char_t const * const le_ip, le_sock_t const le_port ) {
 
+        /* socket option variables */
+        int le_option = 1;
+
         /* address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C_PORT( le_port );
 
@@ -50,6 +53,17 @@
 
         /* create socket */
         if ( ( le_socket = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) {
+
+            /* send message */
+            return( _LE_SOCK_NULL );
+
+        }
+
+        /* socket option */
+        if ( setsockopt( le_socket, IPPROTO_TCP, TCP_NODELAY, & le_option, sizeof( int ) ) == _LE_SOCK_NULL ) {
+
+            /* close socket */
+            close( le_socket );
 
             /* send message */
             return( _LE_SOCK_NULL );

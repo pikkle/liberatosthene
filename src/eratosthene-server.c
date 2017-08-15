@@ -179,6 +179,9 @@
         /* thread boxes variables */
         le_ring_t le_ring[_LE_USE_PENDING];
 
+        /* socket option variables */
+        int le_option = 1;
+
         /* client address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C;
 
@@ -208,8 +211,21 @@
             /* check connection - resume */
             if ( le_ring[le_parse].rg_sock == _LE_SOCK_NULL ) continue;
 
-            /* create client thread */
-            pthread_create( & le_ring[le_parse].rg_proc, NULL, & le_server_io_ring, ( le_void_t * ) ( & le_ring[le_parse] ) );
+            /* socket option */
+            if ( setsockopt( le_ring[le_parse].rg_sock, IPPROTO_TCP, TCP_NODELAY, & le_option, sizeof( int ) ) == _LE_SOCK_NULL ) {
+
+                /* close client socket */
+                close( le_ring[le_parse].rg_sock );
+
+                /* reset server ring */
+                le_ring[le_parse].rg_sock = _LE_SOCK_NULL;
+
+            } else {
+
+                /* create client thread */
+                pthread_create( & le_ring[le_parse].rg_proc, NULL, & le_server_io_ring, ( le_void_t * ) ( & le_ring[le_parse] ) );
+
+            }
 
         }
 
