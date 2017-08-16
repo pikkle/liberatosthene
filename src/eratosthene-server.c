@@ -347,6 +347,14 @@
 
         }
 
+        /* decode socket array */
+        if ( le_array_uf3_decode( le_stack, le_stack + 1 ) != LE_ERROR_SUCCESS ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
         /* create stream index */
         le_index = le_stream_get_strict( le_stream, le_time, LE_STREAM_WRITE );
 
@@ -359,7 +367,7 @@
         }
 
         /* inject array */
-        le_stream_io_inject( le_stream, le_index, le_stack );
+        le_stream_io_inject( le_stream, le_index, le_stack + 1 );
 
         /* send message */
         return( _LE_TRUE );
@@ -444,6 +452,14 @@
                 } break;
 
             };
+
+            /* encode socket-array */
+            if ( le_array_uf3_encode( le_stack + 1, le_stack + 2 ) != LE_ERROR_SUCCESS ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
 
             /* write socket-array */
             if ( le_array_io_write( le_stack + 1, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
