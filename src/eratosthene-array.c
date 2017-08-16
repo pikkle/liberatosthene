@@ -120,6 +120,9 @@
         /* memory size variables */
         le_size_t le_real = le_size + LE_ARRAY_HEADER;
 
+        /* reset entropic size */
+        le_array->ar_csize = 0;
+
         /* check requirements */
         if ( le_array->ar_rsize >= le_real ) {
 
@@ -153,16 +156,6 @@
 
         /* send message */
         return( _LE_TRUE );
-
-    }
-
-    le_void_t le_array_set_reset( le_array_t * const le_array ) {
-
-        /* reset array size */
-        le_array->ar_vsize = 0;
-
-        /* reset array compression */
-        le_array->ar_csize = 0;
 
     }
 

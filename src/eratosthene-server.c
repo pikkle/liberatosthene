@@ -308,9 +308,6 @@
 
         }
 
-        /* reset array */
-        le_array_set_reset( le_stack );
-
         /* update socket-array size */
         le_array_set_size( le_stack, LE_ARRAY_AUTH );
 
@@ -396,9 +393,6 @@
             /* retrieve address parameters */
             le_size = le_address_get_size( & le_addr );
             le_span = le_address_get_span( & le_addr ) + le_size;
-
-            /* reset arrays */
-            le_array_set_reset( le_stack + 1 );
 
             /* update array size */
             le_array_set_size( le_stack + 1, 0 );

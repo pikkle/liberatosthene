@@ -247,16 +247,6 @@
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
 
-    /*! \brief mutator methods
-     *
-     *  This function empty the provided array in terms of its data. It sets the
-     *  data size to zero and also resets the compressed size to zero.
-     *
-     *  \param le_array Array structure
-     */
-
-    le_void_t le_array_set_reset( le_array_t * const le_array );
-
     /*! \brief serialisation methods
      *
      *  This function is used to pack or unpack variables in the data array
