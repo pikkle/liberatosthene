@@ -85,7 +85,7 @@
  */
 
     /* define encoded size */
-    # define le_array_esize( s )        ( ( s / LE_ARRAY_UF3 ) * ( LE_ARRAY_UF3 + 3 ) )
+    # define le_array_entropy( a )      ( ( ( a )->ar_vsize / LE_ARRAY_UF3 ) * ( LE_ARRAY_UF3 + 3 ) )
 
     /* access macro for sd-records - array */
     # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )
@@ -314,7 +314,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_array_uf3_encode( le_array_t * const le_src, le_array_t * const le_dst );
+    le_enum_t le_array_uf3_encode( le_array_t const * const le_src, le_array_t * const le_dst );
 
     /*! \brief uf3-specific methods
      *
@@ -331,7 +331,7 @@
      * \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_array_uf3_decode( le_array_t * const le_src, le_array_t * const le_dst );
+    le_enum_t le_array_uf3_decode( le_array_t const * const le_src, le_array_t * const le_dst );
 
 /*
     header - C/C++ compatibility
