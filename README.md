@@ -12,6 +12,13 @@ The Eratosthene Project is designed to answer this question by implementing an s
 
 The space-time indexation formalism is designed to efficiently manage the storage of the incoming 4D models and to offer and simple and efficient ways of addressing queries to the server allowing models broadcasting. The space-time indexation also allows to perform queries to the server in a intuitive way giving the possibility to both address the questions of the earth structures levels of detail and time management. This allows to explore the entire earth surface in terms of 4D structures from large mountain chains in 2000 to very small details of cities in 1850.
 
+## Copyright and License
+
+**liberatosthene** - Nils Hamel <br >
+Copyright (c) 2016-2017 DHLAB, EPFL
+
+This program is licensed under the terms of the GNU GPLv3.
+
 ## Dependencies
 
 The _liberatosthene_ comes with the following package dependencies (Ubuntu 16.04 LTS) :
@@ -19,13 +26,6 @@ The _liberatosthene_ comes with the following package dependencies (Ubuntu 16.04
 * build-essential
 
 The code documentation is built using Doxygen.
-
-## Copyright and License
-
-**liberatosthene** - Nils Hamel <br >
-Copyright (c) 2016-2017 EPFL CDH DHLAB
-
-This program is licensed under the terms of the GNU GPLv3.
 
 ## Compilation
 
