@@ -284,6 +284,10 @@
 
     le_byte_t le_array_io_write( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket );
 
+    /*! experimental */
+
+    le_byte_t le_array_io_read_beta( le_array_t * const le_array, le_sock_t const le_socket );
+
     /*! \brief i/o methods
      *
      *  This function reads the provided array bytes from the socket pointed by

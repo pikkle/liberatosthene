@@ -221,8 +221,64 @@
         /* check failure */
         if ( le_fail < _LE_USE_RETRY ) {
 
-            /* send message */
+            /* return array mode */
             return( le_mode );
+
+        /* send message */
+        } else { return( LE_MODE_NULL ); }
+
+    }
+
+    le_byte_t le_array_io_read_beta( le_array_t * const le_array, le_sock_t const le_socket ) {
+
+        /* reading size variables */
+        le_size_t le_size = LE_ARRAY_HEADER;
+
+        /* reading head variables */
+        le_size_t le_head = 0;
+
+        /* socket i/o variables */
+        le_size_t le_read = 0;
+        le_size_t le_fail = 0;
+
+        le_enum_t le_flag = _LE_FALSE;
+
+        /* socket-array size */
+        le_array_set_size( le_array, LE_ARRAY_HEADER );
+
+        /* socket-array reading */
+        while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
+
+            /* read socket-array chunk */
+            if ( ( le_read = read( le_socket, le_array->ar_rbyte + le_head, le_size - le_head ) ) > 0 ) {
+
+                /* update head */
+                le_head += le_read;
+
+            /* update failure */
+            } else { le_fail ++; }
+
+            /* dynamic size management */
+            if ( ( le_flag == _LE_FALSE ) && ( le_head >= sizeof( le_size_t ) ) ) {
+
+                /* update reading size */
+                le_size += * ( ( le_size_t * ) le_array->ar_rbyte );
+
+                /* update array size */
+                le_array_set_size( le_array, * ( ( le_size_t * ) le_array->ar_rbyte ) );
+
+                /* update management flag */
+                le_flag = _LE_TRUE;
+
+            }
+
+        }
+
+        /* check failure */
+        if ( le_fail < _LE_USE_RETRY ) {
+
+            /* return array mode */
+            return( le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] );
 
         /* send message */
         } else { return( LE_MODE_NULL ); }
