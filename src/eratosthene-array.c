@@ -278,6 +278,9 @@
         /* check failure */
         if ( le_fail < _LE_USE_RETRY ) {
 
+            /* serialise array size */
+            le_array->ar_csize = ( ( le_size_t * ) le_array->ar_rbyte )[1];
+
             /* return array mode */
             return( le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] );
 
