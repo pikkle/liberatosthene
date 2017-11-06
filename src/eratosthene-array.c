@@ -187,7 +187,7 @@
     source - i/o methods
  */
 
-    le_byte_t le_array_io_write_previous( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket ) {
+    le_byte_t le_array_io_write( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket ) {
 
         /* socket-array size variables */
         le_size_t le_size = LE_ARRAY_HEADER + le_array->ar_vsize;
@@ -208,7 +208,7 @@
         while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
 
             /* socket-array content */
-            if ( ( le_sent = write( le_socket, le_array->ar_rbyte, le_size - le_head ) ) > 0 ) {
+            if ( ( le_sent = write( le_socket, le_array->ar_rbyte + le_head, le_size - le_head ) ) > 0 ) {
 
                 /* update head */
                 le_head += le_sent;
@@ -222,52 +222,6 @@
         if ( le_fail < _LE_USE_RETRY ) {
 
             /* return array mode */
-            return( le_mode );
-
-        /* send message */
-        } else { return( LE_MODE_NULL ); }
-
-    }
-
-    le_byte_t le_array_io_write( le_array_t * const le_array, le_byte_t const le_mode, le_sock_t const le_socket ) {
-
-        /* socket-array size variables */
-        le_size_t le_size = LE_ARRAY_HEADER + le_array->ar_vsize;
-
-        /* socket i/o variables */
-        le_size_t le_head = 0;
-        le_size_t le_sent = 0;
-        le_size_t le_fail = 0;
-        le_size_t le_part = 0;
-
-        /* serialise sizes */
-        ( ( le_size_t * ) le_array->ar_rbyte )[0] = le_array->ar_vsize;
-        ( ( le_size_t * ) le_array->ar_rbyte )[1] = le_array->ar_csize;
-
-        /* serialise mode */
-        le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] = le_mode;
-
-        /* socket array writing */
-        while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
-
-            /* compute segment size */
-            le_part = le_size - le_head;
-
-            /* socket-array content */
-            if ( ( le_sent = write( le_socket, le_array->ar_rbyte + le_head, ( le_part > _LE_USE_SEND ) ? _LE_USE_SEND : le_part ) ) > 0 ) {
-
-                /* update head */
-                le_head += le_sent;
-
-            /* update failure */
-            } else { le_fail ++; }
-
-        }
-
-        /* check failure */
-        if ( le_fail < _LE_USE_RETRY ) {
-
-            /* return socket-array mode */
             return( le_mode );
 
         /* send message */
