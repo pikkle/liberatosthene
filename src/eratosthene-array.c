@@ -254,7 +254,7 @@
             le_part = le_size - le_head;
 
             /* socket-array content */
-            if ( ( le_sent = write( le_socket, le_array->ar_rbyte, ( le_part > _LE_USE_SEND ) ? _LE_USE_SEND : le_part ) ) > 0 ) {
+            if ( ( le_sent = write( le_socket, le_array->ar_rbyte + le_head, ( le_part > _LE_USE_SEND ) ? _LE_USE_SEND : le_part ) ) > 0 ) {
 
                 /* update head */
                 le_head += le_sent;
