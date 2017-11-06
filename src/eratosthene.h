@@ -158,7 +158,7 @@
     # define _LE_USE_RETRY          ( 3 )
     # define _LE_USE_STRING         ( 256 )
     # define _LE_USE_ARRAY          ( 3 )
-    # define _LE_USE_SEND           ( 1024 )
+    # define _LE_USE_SEND           ( 16384 )
 
     /* define types */
     # define _LE_VOID               void
