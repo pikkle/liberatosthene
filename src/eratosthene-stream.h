@@ -160,6 +160,8 @@
      *  Stream units stack size
      *  \var le_stream_struct::sr_strm
      *  Stream units stack
+     *  \var le_stream_struct::_status
+     *  Status field
      */
 
     typedef struct le_stream_struct {

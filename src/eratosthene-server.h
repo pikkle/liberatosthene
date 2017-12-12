@@ -72,7 +72,7 @@
     header - structures
  */
 
-    /*! \struct le_server_struct
+    /*! \struct le_server_ring_struct
      *  \brief server ring structure
      *
      *  This structure describe a thread launch in the main server loop to
@@ -176,6 +176,8 @@
      *  Server spatial configuration value : number of scale
      *  \var le_server_struct::sv_tcfg
      *  Server temporal configuration value : size of temporal classes
+     *  \var le_server_struct::_status
+     *  Status field
      */
 
     typedef struct le_server_struct {
