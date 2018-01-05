@@ -15,7 +15,7 @@ The space-time indexation formalism is designed to efficiently manage the storag
 ## Copyright and License
 
 **liberatosthene** - Nils Hamel <br >
-Copyright (c) 2016-2017 DHLAB, EPFL
+Copyright (c) 2016-2018 DHLAB, EPFL
 
 This program is licensed under the terms of the GNU GPLv3.
 
