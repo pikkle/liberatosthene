@@ -176,55 +176,20 @@
 
     le_void_t le_server_io( le_server_t * const le_server ) {
 
-        /* thread boxes variables */
-        le_ring_t le_ring[_LE_USE_PENDING];
+        /* server client management */
+        # pragma omp parallel num_threads( _LE_USE_PENDING )
+        {
 
-        /* initialise rings */
-        for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
+        /* socket variable */
+        le_sock_t le_socket = _LE_SOCK_NULL;
 
-            /* initialise socket */
-            le_ring[le_parse].rg_sock = _LE_SOCK_NULL;
-
-            /* initialise reference */
-            le_ring[le_parse].rg_srvp = ( le_void_t * ) le_server;
-
-        }
-
-        /* server main loop */
-        for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse = ( le_parse + 1 ) % _LE_USE_PENDING ) {
-
-            /* select available box */
-            if ( le_ring[le_parse].rg_sock == _LE_SOCK_NULL ) {
-
-                /* waiting client connection */
-                if ( ( le_ring[le_parse].rg_sock = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
-
-                    /* create client thread */
-                    pthread_create( & le_ring[le_parse].rg_proc, NULL, & le_server_io_ring, ( le_void_t * ) & le_ring[le_parse] );
-
-                }
-
-            }
-
-        }
-
-    }
-
-    le_void_t * le_server_io_ring( le_void_t * le_ring_ ) {
-
-        /* server ring variables */
-        le_ring_t * le_ring = ( le_ring_t * ) le_ring_;
-
-        /* server variables */
-        le_server_t * le_server = ( le_server_t * ) le_ring->rg_srvp;
-
-        /* ring state variables */
+        /* state variables */
         le_enum_t le_active = _LE_TRUE;
 
-        /* ring stream variables */
+        /* stream variables */
         le_stream_t le_stream = LE_STREAM_C;
 
-        /* ring socket-array variables */
+        /* socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
 
         /* initialise socket-arrays */
@@ -235,59 +200,63 @@
 
         }
 
-        /* create ring stream */
-        le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
+        /* create client socket */
+        while ( ( le_socket = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
-        /* check ring stream */
-        if ( le_stream._status == LE_ERROR_SUCCESS ) {
+            /* create and check connection stream */
+            if ( ( le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) )._status == LE_ERROR_SUCCESS ) {
 
-            /* server ring */
-            while ( le_active == _LE_TRUE ) {
+                /* connection manager */
+                while ( le_active == _LE_TRUE ) {
 
-                /* waiting client socket-array */
-                switch( le_array_io_read( le_stack, le_ring->rg_sock ) ) {
+                    /* client socket-array */
+                    switch( le_array_io_read( le_stack, le_socket ) ) {
 
-                    /* authentication */
-                    case ( LE_MODE_AUTH ) : {
+                        /* authentication */
+                        case ( LE_MODE_AUTH ) : {
 
-                        /* mode management - update ring state */
-                        le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_ring->rg_sock );
+                            /* mode management - update state */
+                            le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_socket );
 
-                    } break;
+                        } break;
 
-                    /* injection */
-                    case ( LE_MODE_INJE ) : {
+                        /* injection */
+                        case ( LE_MODE_INJE ) : {
 
-                        /* mode management - update ring state */
-                        le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_ring->rg_sock );
+                            /* mode management - update state */
+                            le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_socket );
 
-                    } break;
+                        } break;
 
-                    /* query */
-                    case ( LE_MODE_QUER ) : {
+                        /* query */
+                        case ( LE_MODE_QUER ) : {
 
-                        /* mode management - update ring state */
-                        le_active = le_server_io_query( le_server, & le_stream, le_stack, le_ring->rg_sock );
+                            /* mode management - update state */
+                            le_active = le_server_io_query( le_server, & le_stream, le_stack, le_socket );
 
-                    } break;
+                        } break;
 
-                    /* resiliation or unexpected mode - update ring state */
-                    default : { le_active = _LE_FALSE; } break;
+                        /* unexpected mode - update state */
+                        default : { le_active = _LE_FALSE; } break;
 
-                };
+                    };
+
+                }
+
+                /* delete connection stream */
+                le_stream_delete( & le_stream );
 
             }
 
-            /* delete ring stream */
-            le_stream_delete( & le_stream );
+            /* close client socket */
+            close( le_socket );
+
+            /* update state */
+            le_active = _LE_TRUE;
 
         }
 
-        /* close client socket */
-        close( le_ring->rg_sock );
-
-        /* release thread */
-        return( le_ring->rg_sock = _LE_SOCK_NULL, NULL );
+        } /* openmp */
 
     }
 

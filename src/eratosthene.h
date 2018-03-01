@@ -122,6 +122,7 @@
     # include <stdlib.h>
     # include <string.h>
     # include <inttypes.h>
+    # include <omp.h>
     # include <dirent.h>
     # include <sys/stat.h>
     # include <sys/types.h>
@@ -130,7 +131,6 @@
     # include <netinet/tcp.h>
     # include <arpa/inet.h>
     # include <netdb.h>
-    # include <pthread.h>
 
 /*
     header - preprocessor definitions

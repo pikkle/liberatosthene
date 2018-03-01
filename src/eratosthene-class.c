@@ -86,15 +86,15 @@
 
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
 
-        /* corrected heap variables */
+        /* heap variable */
         le_real_t le_heap = ( le_real_t ) le_class->cs_data[3] + 1.0;
 
-        /* Data pseudo-accumulation */
+        /* data pseudo-accumulation */
         le_class->cs_data[0] = ( ( le_heap * le_class->cs_data[0] ) + le_data[0] ) / ( le_heap + 1.0 );
         le_class->cs_data[1] = ( ( le_heap * le_class->cs_data[1] ) + le_data[1] ) / ( le_heap + 1.0 );
         le_class->cs_data[2] = ( ( le_heap * le_class->cs_data[2] ) + le_data[2] ) / ( le_heap + 1.0 );
 
-        /* check heap value */
+        /* update heap value */
         if ( le_class->cs_data[3] < _LE_BYTE_MAX ) le_class->cs_data[3] ++;
 
     }

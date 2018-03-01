@@ -72,35 +72,6 @@
     header - structures
  */
 
-    /*! \struct le_server_ring_struct
-     *  \brief server ring structure
-     *
-     *  This structure describe a thread launch in the main server loop to
-     *  handle a client connection. It stores the required information needed
-     *  by the thread to perform answer to the client request.
-     *
-     *  The first field of the structure is related to the thread ID and is used
-     *  to manage the thread itself. The second thread holds the server socket
-     *  opened toward the client handle by the thread. The last fields stores
-     *  a pointer to the main server structure that is used to access server
-     *  configuration and storage.
-     *
-     *  \var le_server_ring_struct::rg_proc
-     *  Thread process ID
-     *  \var le_server_ring_struct::rg_sock
-     *  Server socket descriptor toward handled client
-     *  \var le_server_ring_struct::rg_srvp
-     *  Pointer to the main server structure
-     */
-
-    typedef struct le_server_ring_struct {
-
-        le_proc_t   rg_proc;
-        le_sock_t   rg_sock;
-        le_void_t * rg_srvp;
-
-    } le_server_ring_t, le_ring_t;
-
     /*! \struct le_server_struct
      *  \brief server structure
      *
@@ -241,7 +212,7 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  With the structure constructor and destructor methods, the function is
      *  part of the main methods. As the structure is created, it starts an
@@ -256,10 +227,7 @@
      *
      *  \param le_server Server structure
      */
-
-    le_void_t le_server_io( le_server_t * const le_server );
-
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This function is executed by threads launched by the \b le_server_io()
      *  function to manage a client connection. Its role is to run an infinite
@@ -274,7 +242,7 @@
      *  \param le_ring_ Pointer to thread ring descriptor
      */
 
-    le_void_t * le_server_io_ring( le_void_t * le_ring_ );
+    le_void_t le_server_io( le_server_t * const le_server );
 
     /*! \brief i/o methods
      *
