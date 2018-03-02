@@ -212,34 +212,26 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /*! \brief i/o methods (revoked)
+    /*! \brief i/o methods
      *
-     *  With the structure constructor and destructor methods, the function is
-     *  part of the main methods. As the structure is created, it starts an
-     *  infinite loop waiting for client connections.
+     *  With the server structure creation and deletion methods, this function
+     *  is part of the server main element. As a created structure is provided,
+     *  the function maintains the server service and address clients queries.
      *
-     *  As a client connects to the server, the function searches a free ring,
-     *  that is a thread descriptor structure (\b le_ring_t). The found ring
-     *  is initialised with the created socket toward the client and a thread
-     *  is created base on the ring descriptor. The created thread being
-     *  responsible of the client management, the function main loop continue
-     *  to listen to new incoming connections.
+     *  The function implements an openmp-based parallel sections all able to
+     *  address one client connection. As a client disconnect, the parallel
+     *  section is available for a new one.
+     *
+     *  The parallel sections all implement the main client query manager. Its
+     *  role is to read the client queries and to answer accordingly. The type
+     *  and content of the queries are set using socket-arrays, basis of the
+     *  communication between the server and the clients.
+     *
+     *  As a client connection is accepted by one parallel region, it starts by
+     *  creating a stream structure that is used to access the server storage
+     *  structure. The stream structure is deleted as the client disconnects.
      *
      *  \param le_server Server structure
-     */
-    /*! \brief i/o methods (revoked)
-     *
-     *  This function is executed by threads launched by the \b le_server_io()
-     *  function to manage a client connection. Its role is to run an infinite
-     *  loop waiting for client request. As requests arrive, the function
-     *  analyse them and call the specific process that answer the request.
-     *
-     *  Before to start the infinite loop, this function creates and initialise
-     *  a stream structure toward the server storage structure. This structure
-     *  is needed by the other i/o methods to performs operation on the storage
-     *  structure.
-     *
-     *  \param le_ring_ Pointer to thread ring descriptor
      */
 
     le_void_t le_server_io( le_server_t * const le_server );
