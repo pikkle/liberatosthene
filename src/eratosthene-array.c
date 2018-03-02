@@ -74,6 +74,38 @@
     source - mutator methods
  */
 
+    le_void_t le_array_set_header( le_array_t * const le_array, le_byte_t const le_mode ) {
+
+        /* serialisation variable */
+        le_size_t * le_base = ( le_size_t * ) le_array->ar_rbyte;
+
+        /* serialise size */
+        ( * le_base ++ ) = le_array->ar_vsize;
+
+        /* serialise size */
+        ( * le_base ++ ) = le_array->ar_csize;
+
+        /* serialise mode */
+        ( * ( ( le_byte_t * ) le_base ) ) = le_mode;
+
+    }
+
+    le_byte_t le_array_set_array( le_array_t * const le_array ) {
+
+        /* serialisation variable */
+        le_size_t * le_base = ( le_size_t * ) le_array->ar_rbyte;
+
+        /* serialise size */
+        le_array->ar_vsize = ( * le_base ++ );
+
+        /* serialise size */
+        le_array->ar_csize = ( * le_base ++ );
+
+        /* serialise and return mode */
+        return( * ( ( le_byte_t * ) le_base ) );
+
+    }
+
     le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length ) {
 
         /* swap pointer variables */
@@ -197,31 +229,37 @@
         le_size_t le_sent = 0;
         le_size_t le_fail = 0;
 
-        /* serialise sizes */
-        ( ( le_size_t * ) le_array->ar_rbyte )[0] = le_array->ar_vsize;
-        ( ( le_size_t * ) le_array->ar_rbyte )[1] = le_array->ar_csize;
-
-        /* serialise array mode */
-        le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] = le_mode;
+        /* create socket-array header */
+        le_array_set_header( le_array, le_mode );
 
         /* socket-array writing */
         while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
 
-            /* socket-array content */
+            /* send socket-array */
             if ( ( le_sent = write( le_socket, le_array->ar_rbyte + le_head, le_size - le_head ) ) > 0 ) {
 
                 /* update head */
                 le_head += le_sent;
 
-            /* update failure */
-            } else { le_fail ++; }
+            } else {
+
+                /* check write state */
+                if ( le_sent < 0 ) {
+
+                    /* update failure */
+                    le_fail ++;
+
+                /* return array mode */
+                } else { return( LE_MODE_NULL ); }
+
+            }
 
         }
 
         /* check failure */
         if ( le_fail < _LE_USE_RETRY ) {
 
-            /* return array mode */
+            /* return socket-array mode */
             return( le_mode );
 
         /* send message */
@@ -231,45 +269,52 @@
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
 
-        /* reading size variables */
+        /* socket-array size variables */
         le_size_t le_size = LE_ARRAY_HEADER;
 
-        /* reading head variables */
-        le_size_t le_head = 0;
-
         /* socket i/o variables */
+        le_size_t le_head = 0;
         le_size_t le_read = 0;
         le_size_t le_fail = 0;
 
-        /* management flag variables */
-        le_enum_t le_flag = _LE_FALSE;
+        /* array mode variable */
+        le_byte_t le_mode = LE_MODE_NULL;
 
         /* socket-array size */
-        le_array_set_size( le_array, LE_ARRAY_HEADER );
+        le_array_set_size( le_array, 0 );
 
         /* socket-array reading */
         while ( ( le_head < le_size ) && ( le_fail < _LE_USE_RETRY ) ) {
 
-            /* read socket-array chunk */
+            /* read socket-array */
             if ( ( le_read = read( le_socket, le_array->ar_rbyte + le_head, le_size - le_head ) ) > 0 ) {
 
                 /* update head */
                 le_head += le_read;
 
-            /* update failure */
-            } else { le_fail ++; }
+                /* socket socket-array size */
+                if ( ( le_mode == LE_MODE_NULL ) && ( le_head >= LE_ARRAY_HEADER ) ) {
 
-            /* dynamic size management */
-            if ( ( le_flag == _LE_FALSE ) && ( le_head >= sizeof( le_size_t ) ) ) {
+                    /* extract socket-array header */
+                    le_mode = le_array_set_array( le_array );
 
-                /* update array size */
-                le_array_set_size( le_array, * ( ( le_size_t * ) le_array->ar_rbyte ) );
+                    /* update socket-array size */
+                    le_array_set_size( le_array, le_array->ar_vsize );
 
-                /* update reading size */
-                le_size += * ( ( le_size_t * ) le_array->ar_rbyte );
+                    /* update read size */
+                    le_size += le_array->ar_vsize;
 
-                /* update management flag */
-                le_flag = _LE_TRUE;
+                }
+
+            } else {
+
+                /* check read state */
+                if ( le_read < 0 ) {
+
+                    /* update failure */
+                    le_fail ++;
+
+                } else { return( LE_MODE_NULL ); }
 
             }
 
@@ -278,11 +323,8 @@
         /* check failure */
         if ( le_fail < _LE_USE_RETRY ) {
 
-            /* serialise array size */
-            le_array->ar_csize = ( ( le_size_t * ) le_array->ar_rbyte )[1];
-
-            /* return array mode */
-            return( le_array->ar_rbyte[LE_ARRAY_HEADER_SIZE] );
+            /* return socket-array mode */
+            return( le_mode );
 
         /* send message */
         } else { return( LE_MODE_NULL ); }
