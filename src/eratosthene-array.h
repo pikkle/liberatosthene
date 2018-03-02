@@ -213,11 +213,36 @@
 
     le_byte_t * le_array_get_byte( le_array_t * const le_array );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function is used to build the socket-array header part. It packs
+     *  the array size and compressed size in the header reserved field. In
+     *  addition, the function also packs the array mode value in the header.
+     *
+     *  This function is usually used before to sent the array on the specific
+     *  device.
+     *
+     *  \param le_array Array structure
+     *  \param le_mode  Array mode
+     */
 
     le_void_t le_array_set_header( le_array_t * const le_array, le_byte_t const le_mode );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function extract the array size and compressed size from the header
+     *  of the provided socket array. It sets back the field of the array
+     *  structure accordingly to the values extracted from the header. In the
+     *  last place, the function returns the socket-array mode also extracted
+     *  from the header.
+     *
+     *  This function is usually used while a socket-array is read from a given
+     *  device to restore the array structure allowing to allocate its memory.
+     * 
+     *  \param le_array Array structure
+     *
+     *  \return Returns the read socket-array mode
+     */
 
     le_byte_t le_array_set_array( le_array_t * const le_array );
 
