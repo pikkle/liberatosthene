@@ -246,6 +246,10 @@
 
     le_byte_t le_array_set_array( le_array_t * const le_array );
 
+    /* *** */
+
+    le_void_t le_array_set_stack( le_array_t * const le_array, le_size_t const le_size );
+
     /*! \brief mutator methods
      *
      *  This function checks if the memory size of the provided array structure

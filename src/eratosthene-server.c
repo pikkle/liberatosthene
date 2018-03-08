@@ -192,13 +192,8 @@
         /* socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
 
-        /* initialise socket-arrays */
-        for ( le_size_t le_parse = 0; le_parse < _LE_USE_ARRAY; le_parse ++ ) {
-
-            /* create socket-array */
-            le_stack[le_parse] = le_array_create();
-
-        }
+        /* initialise socket-array stack */
+        le_array_set_stack( le_stack, _LE_USE_ARRAY );
 
         /* create client socket */
         while ( ( le_socket = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
@@ -323,12 +318,9 @@
             return( _LE_FALSE );
 
         }
-
-        /* create stream index */
-        le_index = le_stream_get_strict( le_stream, le_time, LE_STREAM_WRITE );
-
-        /* check stream index */
-        if ( le_index == _LE_SIZE_NULL ) {
+        
+        /* create and check stream index */
+        if ( ( le_index = le_stream_get_strict( le_stream, le_time, LE_STREAM_WRITE ) ) == _LE_SIZE_NULL ) {
 
             /* send message */
             return( _LE_FALSE );

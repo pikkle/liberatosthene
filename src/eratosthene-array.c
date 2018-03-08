@@ -106,6 +106,18 @@
 
     }
 
+    le_void_t le_array_set_stack( le_array_t * const le_array, le_size_t const le_size ) {
+
+        /* parsing array stack */
+        for ( le_size_t le_parse = 0; le_parse < le_size; le_parse ++ ) {
+
+            /* initialise array */
+            le_array[le_parse] = le_array_create();
+
+        }
+
+    }
+
     le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length ) {
 
         /* swap pointer variables */
