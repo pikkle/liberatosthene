@@ -423,7 +423,7 @@
             }
 
             /* write socket-array */
-            if ( le_array_io_write( le_stack + 1, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
+            if ( le_array_io_write( le_stack + 2, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
 
                 /* send message */
                 return( _LE_FALSE );

@@ -80,10 +80,10 @@
         le_size_t * le_base = ( le_size_t * ) le_array->ar_rbyte;
 
         /* serialise size */
-        ( * le_base ++ ) = le_array->ar_vsize;
+        ( * ( le_base ++ ) ) = le_array->ar_vsize;
 
         /* serialise size */
-        ( * le_base ++ ) = le_array->ar_csize;
+        ( * ( le_base ++ ) ) = le_array->ar_csize;
 
         /* serialise mode */
         ( * ( ( le_byte_t * ) le_base ) ) = le_mode;
@@ -96,10 +96,10 @@
         le_size_t * le_base = ( le_size_t * ) le_array->ar_rbyte;
 
         /* serialise size */
-        le_array->ar_vsize = ( * le_base ++ );
+        le_array->ar_vsize = ( * ( le_base ++ ) );
 
         /* serialise size */
-        le_array->ar_csize = ( * le_base ++ );
+        le_array->ar_csize = ( * ( le_base ++ ) );
 
         /* serialise and return mode */
         return( * ( ( le_byte_t * ) le_base ) );
@@ -165,7 +165,7 @@
         le_size_t le_real = le_size + LE_ARRAY_HEADER;
 
         /* reset entropic size */
-        le_array->ar_csize = 0;
+        //le_array->ar_csize = 0;
 
         /* check requirements */
         if ( le_array->ar_rsize >= le_real ) {
@@ -374,6 +374,9 @@
             /* update array content */
             memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, le_src->ar_vsize );
 
+            /* update array entropic size */
+            le_dst->ar_csize = 0;
+
         } else {
 
             /* update array size */
@@ -536,6 +539,9 @@
             }
 
         }
+
+        /* update array entropic size */
+        le_dst->ar_csize = 0;
 
         /* send message */
         return( LE_ERROR_SUCCESS );
