@@ -173,7 +173,7 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function initialise and returns an empty array structure.
+     *  This function initialise and returns an empty socket array structure.
      *
      *  \return Returns created structure
      */
@@ -232,12 +232,13 @@
      *
      *  This function extract the array size and compressed size from the header
      *  of the provided socket array. It sets back the field of the array
-     *  structure accordingly to the values extracted from the header. In the
-     *  last place, the function returns the socket-array mode also extracted
-     *  from the header.
+     *  structure accordingly to the values extracted from the header. It also
+     *  re-allocate the socket array memory according to the extracted size.
+     *  Finally, the function returns the socket-array mode also extracted from
+     *  the header.
      *
      *  This function is usually used while a socket-array is read from a given
-     *  device to restore the array structure allowing to allocate its memory.
+     *  device.
      * 
      *  \param le_array Array structure
      *
@@ -245,10 +246,6 @@
      */
 
     le_byte_t le_array_set_array( le_array_t * const le_array );
-
-    /* *** */
-
-    le_void_t le_array_set_stack( le_array_t * const le_array, le_size_t const le_size );
 
     /*! \brief mutator methods
      *
@@ -283,6 +280,17 @@
      */
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
+
+    /*! \brief mutator methods
+     *
+     *  This function is used to initialise stack of socket array. The function
+     *  parses the socket array and initialise each of them.
+     *
+     *  \param le_array Array structures stack
+     *  \param le_size  Size of the stack
+     */
+
+    le_void_t le_array_set_stack( le_array_t * const le_array, le_size_t const le_size );
 
     /*! \brief serialisation methods
      *
