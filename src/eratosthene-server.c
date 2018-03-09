@@ -264,7 +264,7 @@
 
     le_enum_t le_server_io_auth( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
-        /* serailisation variables */
+        /* serailisation variable */
         le_size_t le_serial = 0;
 
         /* check consistency */
@@ -297,10 +297,10 @@
 
     le_enum_t le_server_io_inject( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
-        /* time value variables */
+        /* time value variable */
         le_time_t le_time = _LE_TIME_NULL;
 
-        /* stream index variables */
+        /* stream index variable */
         le_size_t le_index = _LE_SIZE_NULL;
 
         /* check consistency */
@@ -348,82 +348,99 @@
 
     le_enum_t le_server_io_query( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
-        /* address variables */
+        /* address variable */
         le_address_t le_addr = LE_ADDRESS_C;
 
-        /* query-pack variables */
+        /* socket-array parsing variable */
         le_size_t le_parse = 0;
-        le_size_t le_count = le_array_get_size( le_stack );
 
-        /* address parameter variables */
+        /* socket-array size variable */
+        le_size_t le_length = le_array_get_size( le_stack );
+
+        /* address mode variable */
+        le_byte_t le_mode = 0;
+
+        /* address size variable */
         le_size_t le_size = 0;
-        le_size_t le_span = 0;
 
-        /* offset variables */
-        le_size_t le_ofsa = _LE_OFFS_NULL;
-        le_size_t le_ofsb = _LE_OFFS_NULL;
+        /* address depth variable */
+        le_size_t le_depth = 0;
 
-        /* stream variables */
+        /* offset variable */
+        le_size_t le_offa = _LE_OFFS_NULL;
+        le_size_t le_offb = _LE_OFFS_NULL;
+
+        /* stream variable */
         le_size_t le_stra = _LE_SIZE_NULL;
         le_size_t le_strb = _LE_SIZE_NULL;
 
-        /* reading query-pack */
-        while ( ( le_parse = le_address_serial( & le_addr, le_stack, le_parse, _LE_GET ) ) <= le_count ) {
+        /* check consistency */
+        if ( ( le_length % LE_ARRAY_ADDR ) != 0 ) {
 
-            /* retrieve address parameters */
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* parsing socket-array */
+        while ( ( le_parse = le_address_serial( & le_addr, le_stack, le_parse, _LE_GET ) ) <= le_length ) {
+
+            /* retrieve address mode */
+            le_mode = le_address_get_mode( & le_addr );
+
+            /* retrieve address size */
             le_size = le_address_get_size( & le_addr );
-            le_span = le_address_get_span( & le_addr ) + le_size;
 
-            /* update array size */
+            /* retrieve address span */
+            le_depth = le_address_get_span( & le_addr ) + le_size;
+
+            /* reset socket-array */
             le_array_set_size( le_stack + 1, 0 );
 
-            /* switch on mode */
-            switch ( le_address_get_mode( & le_addr ) ) {
+            /* check address mode */
+            if ( le_mode == 1 ) {
 
-                /* address mode */
-                case ( 1 ) : {
+                /* reduce address time */
+                le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_offa );
 
-                    /* reduce address */
-                    if ( ( le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_ofsa ) ) != _LE_SIZE_NULL ) {
+                /* reduce address time */
+                if ( le_stra != _LE_SIZE_NULL ) {
 
-                        /* gathering data */
-                        le_stream_io_gather( le_stream, le_stra, & le_addr, le_ofsa, le_size, le_span, le_stack + 1 );
+                    /* gathering process */
+                    le_stream_io_gather( le_stream, le_stra, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
 
-                    }
+                }
 
-                } break;
+            } else if ( le_mode == 2 ) {
 
-                /* address mode */
-                case ( 2 ) : {
+                /* reduce address time */
+                le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_offb );
 
-                    /* reduce address */
-                    if ( ( le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_ofsb ) ) != _LE_SIZE_NULL ) {
+                /* check address reduction */
+                if ( le_strb != _LE_SIZE_NULL ) {
 
-                        /* gathering data */
-                        le_stream_io_gather( le_stream, le_strb, & le_addr, le_ofsb, le_size, le_span, le_stack + 1 );
+                    /* gathering process */
+                    le_stream_io_gather( le_stream, le_strb, & le_addr, le_offb, le_size, le_depth, le_stack + 1 );
 
-                    }
+                }
 
-                } break;
+            } else {
 
-                /* address mode */
-                default : {
+                /* reduce address time */
+                le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_offa );
 
-                    /* reduce address */
-                    le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_ofsa );
-                    le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_ofsb );
+                /* reduce address time */
+                le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_offb );
 
-                    /* check reductions */
-                    if ( ( le_stra != _LE_SIZE_NULL ) || ( le_strb != _LE_SIZE_NULL ) ) {
+                /* check address reduction */
+                if ( ( le_stra != _LE_SIZE_NULL ) && ( le_strb != _LE_SIZE_NULL ) ) {
 
-                        /* gathering data */
-                        le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_ofsa, le_ofsb, le_size, le_span, le_stack + 1 );
+                    /* gathering process */
+                    le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
 
-                    }
+                }
 
-                } break;
-
-            };
+            }
 
             /* encode socket-array */
             if ( le_array_uf3_encode( le_stack + 1, le_stack + 2 ) != LE_ERROR_SUCCESS ) {
