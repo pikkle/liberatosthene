@@ -205,13 +205,29 @@
 
     }
 
-    le_void_t le_array_set_stack( le_array_t * const le_array, le_size_t const le_size ) {
+/*
+    source - stack methods
+ */
 
-        /* parsing array stack */
+    le_void_t le_array_stack_create( le_array_t * const le_array, le_size_t const le_size ) {
+
+        /* parsing socket-array stack */
         for ( le_size_t le_parse = 0; le_parse < le_size; le_parse ++ ) {
 
-            /* initialise array */
-            le_array[le_parse] = le_array_create();
+            /* create socket-array */
+            ( * ( le_array + le_parse ) ) = le_array_create();
+
+        }
+
+    }
+
+    le_void_t le_array_stack_delete( le_array_t * const le_array, le_size_t const le_size ) {
+
+        /* parsing socket-array stack */
+        for ( le_size_t le_parse = 0; le_parse < le_size; le_parse ++ ) {
+
+            /* delete socket-array */
+            le_array_delete( le_array + le_parse );
 
         }
 

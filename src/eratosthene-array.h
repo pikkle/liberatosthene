@@ -281,16 +281,27 @@
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
 
-    /*! \brief mutator methods
+    /*! \brief stack methods
      *
      *  This function is used to initialise stack of socket array. The function
-     *  parses the socket array and initialise each of them.
+     *  parses the socket array stack and create each of them.
      *
-     *  \param le_array Array structures stack
-     *  \param le_size  Size of the stack
+     *  \param le_array Array structure stack
+     *  \param le_size  Stack size
      */
 
-    le_void_t le_array_set_stack( le_array_t * const le_array, le_size_t const le_size );
+    le_void_t le_array_stack_create( le_array_t * const le_array, le_size_t const le_size );
+
+    /*! \brief stack methods
+     *
+     *  This function is used to delete stack of socket array. The function
+     *  parses the socket array stack and deletes each of them.
+     *
+     *  \param le_array Array structure stack
+     *  \param le_size  Stack size
+     */
+
+    le_void_t le_array_stack_delete( le_array_t * const le_array, le_size_t const le_size );
 
     /*! \brief serialisation methods
      *

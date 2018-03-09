@@ -192,8 +192,8 @@
         /* socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
 
-        /* initialise socket-array stack */
-        le_array_set_stack( le_stack, _LE_USE_ARRAY );
+        /* create socket-array stack */
+        le_array_stack_create( le_stack, _LE_USE_ARRAY );
 
         /* create client socket */
         while ( ( le_socket = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
@@ -251,6 +251,9 @@
 
         }
 
+        /* delete socket-array stack */
+        le_array_stack_delete( le_stack, _LE_USE_ARRAY );
+
         } /* openmp */
 
     }
@@ -299,6 +302,14 @@
 
         /* stream index variables */
         le_size_t le_index = _LE_SIZE_NULL;
+
+        /* check consistency */
+        if ( le_array_get_size( le_stack ) != sizeof( le_time_t ) ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
 
         /* serialise time */
         le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
