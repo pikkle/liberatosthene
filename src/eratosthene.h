@@ -146,9 +146,9 @@
 
     /* features configuration value */
     # define _LE_USE_BASE           ( 8 )
-    # define _LE_USE_OFFSET         ( 2 )
+    # define _LE_USE_OFFSET         ( 5 )
     # if ( _LE_USE_OFFSET < 2 ) ||  ( _LE_USE_OFFSET > 7 )
-    # error "offset range is [4,7]"
+    # error "offset range is [2,7]"
     # endif
     # define _LE_USE_DEPTH          ( 40 )
     # define _LE_USE_TIMES          ( 2 )
