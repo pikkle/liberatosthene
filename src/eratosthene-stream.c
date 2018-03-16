@@ -364,28 +364,30 @@
 
     le_void_t le_stream_io_inject( le_stream_t const * const le_stream, le_size_t const le_unit, le_array_t const * const le_array ) {
 
-        /* class variables */
+        /* class variable */
         le_class_t le_class = LE_CLASS_C;
 
-        /* address variables */
+        /* address variable */
         le_address_t le_addr = LE_ADDRESS_C_SIZE( le_stream->sr_scfg - 1 );
 
-        /* depth variables */
+        /* depth variable */
         le_size_t le_parse = 0;
         le_size_t le_panex = 0;
 
-        /* offset variables */
+        /* offset variable */
         le_size_t le_offset = 0;
         le_size_t le_offnex = 0;
 
-        /* array size variables */
+        /* array size variable */
         le_size_t le_size = le_array_get_size( le_array );
 
-        /* address size variables */
-        le_size_t le_span = le_address_get_size( & le_addr ) + 1;
+        /* check array size */
+        if ( ( le_size == 0 ) || ( ( le_size % LE_ARRAY_UF3 ) != 0 ) ) {
 
-        /* check consistency - abort injection */
-        if ( le_size == 0 ) return;
+            /* abort injection */
+            return;
+
+        }
 
         /* parsing array */
         for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_UF3 ) {
@@ -421,16 +423,18 @@
                 le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_parse ) );
 
                 /* check daughter state */
-                if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_span ) ) {
+                if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_stream->sr_scfg ) ) {
 
                     /* seek next scale eof */
                     fseek( le_stream->sr_strm[le_unit].su_file[le_panex], 0, SEEK_END );
 
-                    /* assign eof offset */
-                    le_offset = ftell( le_stream->sr_strm[le_unit].su_file[le_panex] );
+                    /* compute and check injection offset */
+                    if ( ( le_offset = ftell( le_stream->sr_strm[le_unit].su_file[le_panex] ) ) < _LE_OFFS_NULL ) {
 
-                    /* insert offset in class */
-                    le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
+                        /* insert offset in class */
+                        le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
+
+                    }
 
                 }
 
@@ -438,7 +442,7 @@
                 le_class_io_write( & le_class, le_offnex, le_stream->sr_strm[le_unit].su_file[le_parse] );
 
             /* injection process condition */
-            } while ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_span );
+            } while ( ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_stream->sr_scfg ) && ( le_offset < _LE_OFFS_NULL ) );
 
         }
 

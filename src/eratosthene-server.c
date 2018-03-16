@@ -338,7 +338,7 @@
 
         }
 
-        /* inject array */
+        /* inject socket-array */
         le_stream_io_inject( le_stream, le_index, le_stack + 1 );
 
         /* send message */
