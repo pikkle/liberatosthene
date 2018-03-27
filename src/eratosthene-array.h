@@ -58,6 +58,7 @@
 
     /* define array step */
     # define LE_ARRAY_STEP              ( 65536 )
+    # define LE_ARRAY_LIMIT             ( 32 )
 
     /* define array header size */
     # define LE_ARRAY_HEADER_SIZE       ( sizeof( le_size_t ) * 2 )
@@ -86,6 +87,8 @@
 
     /* define encoded size */
     # define le_array_entropy( a )      ( ( ( a )->ar_vsize / LE_ARRAY_UF3 ) * ( LE_ARRAY_UF3 + 3 ) )
+
+    # define le_array_entropy_2( a )    ( ( a )->ar_vsize * 1.5 )
 
     /* access macro for sd-records - array */
     # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )

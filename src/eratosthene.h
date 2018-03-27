@@ -131,6 +131,7 @@
     # include <netinet/tcp.h>
     # include <arpa/inet.h>
     # include <netdb.h>
+    # include <zlib.h>
 
 /*
     header - preprocessor definitions
