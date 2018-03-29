@@ -261,6 +261,62 @@
     source - i/o methods
  */
 
+    le_byte_t le_array_io_put( le_array_t * const le_array, le_array_t * const le_dual, le_byte_t le_mode, le_sock_t const le_socket ) {
+
+        /* check write mode */
+        if ( le_dual != NULL ) {
+
+            /* encode array */
+            if ( le_array_uf3_encode( le_array, le_dual ) != LE_ERROR_SUCCESS ) {
+
+                /* send message */
+                return( LE_MODE_NULL );
+
+            }
+
+            /* socket-array writing */
+            return( le_array_io_write( le_dual, le_mode, le_socket ) );
+
+        } else {
+
+            /* socket-array writing */
+            return( le_array_io_write( le_array, le_mode, le_socket ) );
+
+        }
+
+    }
+
+    le_byte_t le_array_io_get( le_array_t * const le_array, le_array_t * const le_dual, le_sock_t const le_socket ) {
+
+        /* array mode variable */
+        le_byte_t le_mode = LE_MODE_NULL;
+
+        /* check read mode */
+        if ( le_dual != NULL ) {
+
+            /* socket-array reading */
+            le_mode = le_array_io_read( le_dual, le_socket );
+
+            /* decode array */
+            if ( le_array_uf3_decode( le_dual, le_array ) != LE_ERROR_SUCCESS ) {
+
+                /* send message */
+                return( LE_MODE_NULL );
+
+            }
+
+        } else {
+
+            /* socket-array reading */
+            le_mode = le_array_io_read( le_array, le_socket );
+
+        }
+
+        /* return socket-array mode */
+        return( le_mode );
+
+    }
+
     le_byte_t le_array_io_write( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket ) {
 
         /* socket-array size variables */
@@ -623,7 +679,7 @@
             le_stream.next_out = ( Bytef * ) le_dst->ar_vbyte;
 
             /* initialise encoding */
-            deflateInit( & le_stream, Z_BEST_COMPRESSION );
+            deflateInit( & le_stream, Z_DEFAULT_COMPRESSION );
 
             /* encode array */
             deflate( & le_stream, Z_FINISH );

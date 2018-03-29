@@ -205,7 +205,7 @@
                 while ( le_active == _LE_TRUE ) {
 
                     /* client socket-array */
-                    switch( le_array_io_read( le_stack, le_socket ) ) {
+                    switch( le_array_io_get( le_stack, le_stack + 1, le_socket ) ) {
 
                         /* authentication */
                         case ( LE_MODE_AUTH ) : {
@@ -283,8 +283,8 @@
         le_serial = le_array_serial( le_stack, & le_server->sv_tcfg, sizeof( le_time_t ), le_serial, _LE_SET );
 
         /* write socket-array */
-        if ( le_array_io_write( le_stack, LE_MODE_AUTH, le_socket ) != LE_MODE_AUTH ) {
-
+        if ( le_array_io_put( le_stack, le_stack + 1, LE_MODE_AUTH, le_socket ) != LE_MODE_AUTH ) {
+        
             /* send message */
             return( _LE_FALSE );
 
@@ -315,15 +315,7 @@
         le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
 
         /* read socket-array */
-        if ( le_array_io_read( le_stack, le_socket ) != LE_MODE_INJE ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* decode socket array */
-        if ( le_array_uf3_decode( le_stack, le_stack + 1 ) != LE_ERROR_SUCCESS ) {
+        if ( le_array_io_get( le_stack, le_stack + 1, le_socket ) != LE_MODE_INJE ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -339,7 +331,7 @@
         }
 
         /* inject socket-array */
-        le_stream_io_inject( le_stream, le_index, le_stack + 1 );
+        le_stream_io_inject( le_stream, le_index, le_stack );
 
         /* send message */
         return( _LE_TRUE );
@@ -442,16 +434,8 @@
 
             }
 
-            /* encode socket-array */
-            if ( le_array_uf3_encode( le_stack + 1, le_stack + 2 ) != LE_ERROR_SUCCESS ) {
-
-                /* send message */
-                return( _LE_FALSE );
-
-            }
-
             /* write socket-array */
-            if ( le_array_io_write( le_stack + 2, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
+            if ( le_array_io_put( le_stack + 1, le_stack + 2, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
 
                 /* send message */
                 return( _LE_FALSE );

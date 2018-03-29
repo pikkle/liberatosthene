@@ -324,6 +324,14 @@
 
     le_size_t le_array_serial( le_array_t * const le_array, le_void_t * const le_bytes, le_size_t const le_length, le_size_t const le_offset, le_enum_t const le_mode );
 
+    /* *** */
+
+    le_byte_t le_array_io_put( le_array_t * const le_array, le_array_t * const le_dual, le_byte_t le_mode, le_sock_t const le_socket );
+
+    /* *** */
+
+    le_byte_t le_array_io_get( le_array_t * const le_array, le_array_t * const le_dual, le_sock_t const le_socket );
+
     /*! \brief i/o methods
      *
      *  This function writes the provided array bytes in the socket pointed by
