@@ -53,11 +53,8 @@
 
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_index ) {
 
-        /* offset pointer variables */
-        le_size_t * le_ptr = ( le_size_t * ) ( le_class_offset( le_class ) + le_index * _LE_USE_OFFSET );
-
         /* extract and return offset */
-        return( ( * le_ptr ) & _LE_OFFS_NULL );
+        return( ( * le_class_offset( le_class, le_index ) ) & _LE_OFFS_NULL );
 
     }
 
@@ -76,11 +73,11 @@
 
     le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_index, le_size_t const le_offset ) {
 
-        /* offset pointer variables */
-        le_size_t * le_ptr = ( le_size_t * ) ( le_class_offset( le_class ) + le_index * _LE_USE_OFFSET );
+        /* pointer variable */
+        le_size_t * le_base = le_class_offset( le_class, le_index );
 
-        /* insert offset */
-        ( * le_ptr ) = ( ( * le_ptr ) & ( ~ ( ( le_size_t ) _LE_OFFS_NULL ) ) ) | le_offset;
+        /* assign offset */
+        ( * le_base ) = ( ( * le_base ) & LE_CLASS_MASK ) | le_offset;
 
     }
 
@@ -94,8 +91,13 @@
         le_class->cs_data[1] = ( ( le_heap * le_class->cs_data[1] ) + le_data[1] ) / ( le_heap + 1.0 );
         le_class->cs_data[2] = ( ( le_heap * le_class->cs_data[2] ) + le_data[2] ) / ( le_heap + 1.0 );
 
-        /* update heap value */
-        if ( le_class->cs_data[3] < _LE_BYTE_MAX ) le_class->cs_data[3] ++;
+        /* check heap value */
+        if ( le_class->cs_data[3] < _LE_BYTE_MAX ) {
+
+            /* update heap value */
+            le_class->cs_data[3] ++;
+
+        }
 
     }
 

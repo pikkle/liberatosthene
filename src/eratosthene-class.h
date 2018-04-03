@@ -63,11 +63,15 @@
     /* define class memory */
     # define LE_CLASS_MEMORY        ( LE_CLASS_ARRAY + sizeof( le_size_t ) - _LE_USE_OFFSET )
 
+    /* define class offset mask */
+    # define LE_CLASS_MASK          ( ~ ( _LE_OFFS_NULL ) )
+
 /*
     header - preprocessor macros
  */
 
-    # define le_class_offset( c )   ( ( ( le_byte_t * ) ( c )->cs_data ) + _LE_USE_DATA )
+    /* define offset pointer */
+    # define le_class_offset(c,i)   ( ( le_size_t * ) ( ( ( le_byte_t * ) ( c )->cs_data ) + _LE_USE_DATA + _LE_USE_OFFSET * ( i ) ) )
 
 /*
     header - type definition
@@ -91,7 +95,7 @@
      *  Depending on the \b _LE_USE_OFFSET value, the structure of the bytes
      *  array of the class can be summarised as follow :
      *
-     *      [m][r][g][b][  off0  ][  off1  ]...[  off7  ]
+     *      [r][g][b][m][  off0  ][  off1  ]...[  off7  ]
      *
      *  where m, r, g and b are stored using one byte and where the offsets are
      *  whole numbers coded on _LE_USE_OFFSET bytes long integers.

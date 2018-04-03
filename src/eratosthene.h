@@ -171,6 +171,7 @@
     # define _LE_DATA               uint8_t
     # define _LE_SOCK               int
     # define _LE_FILE               FILE *
+    # define _LE_MASK               uint64_t
 
     /* define boundaries */
     # define _LE_BYTE_MIN           ( 0 )
@@ -184,6 +185,7 @@
     # define _LE_REAL_L(t)          ( t )
     # define _LE_SIZE_L(t)          ( INT64_C( t ) )
     # define _LE_TIME_L(t)          ( INT64_C( t ) )
+    # define _LE_MASK_L(t)          ( UINT64_C( t ) )
 
     /* define i/o specifiers */
     # define _LE_BYTE_P             PRIu8
@@ -206,7 +208,7 @@
     # define _LE_SIZE_NULL          ( _LE_SIZE_MIN )
     # define _LE_TIME_NULL          ( _LE_TIME_MIN )
     # define _LE_SOCK_NULL          ( -1 )
-    # define _LE_OFFS_NULL          ( ( _LE_SIZE_L( 1 ) << ( _LE_USE_BASE * _LE_USE_OFFSET ) ) - _LE_SIZE_L( 1 ) )
+    # define _LE_OFFS_NULL          ( ( _LE_MASK_L( 1 ) << ( _LE_USE_BASE * _LE_USE_OFFSET ) ) - _LE_MASK_L( 1 ) )
 
     /* define errors */
     # define LE_ERROR_SUCCESS       ( 0x0000 )
@@ -267,6 +269,7 @@
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;
     typedef _LE_FILE le_file_t;
+    typedef _LE_MASK le_mask_t;
 
 /*
     header - structures
