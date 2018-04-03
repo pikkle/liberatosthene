@@ -86,9 +86,7 @@
  */
 
     /* define encoded size */
-    # define le_array_entropy( a )      ( ( ( a )->ar_vsize / LE_ARRAY_UF3 ) * ( LE_ARRAY_UF3 + 3 ) )
-
-    # define le_array_entropy_2( a )    ( ( a )->ar_vsize * 1.5 )
+    # define le_array_entropy( a )      ( ( le_size_t ) ( ( a )->ar_vsize * 1.5 ) )
 
     /* access macro for sd-records - array */
     # define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )
@@ -214,7 +212,7 @@
      *  \return Returns array memory base pointer
      */
 
-    le_byte_t * le_array_get_byte( le_array_t * const le_array );
+    le_byte_t * le_array_get_byte( le_array_t const * const le_array );
 
     /*! \brief mutator methods
      *
@@ -422,7 +420,7 @@
      *  algorithm.
      *
      *  The function checks the structure compressed size to determine if the
-     *  data array needs to be decoded. A simple swap is performed otherwise.
+     *  data array needs to be decoded.
      *
      *  \param le_src Encoded array structure
      *  \param le_dst Decoded array structure

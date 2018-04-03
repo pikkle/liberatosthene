@@ -66,10 +66,10 @@
 
     }
 
-    le_byte_t * le_array_get_byte( le_array_t * const le_array ) {
+    le_byte_t * le_array_get_byte( le_array_t const * const le_array ) {
 
         /* return bytes pointer */
-        return( le_array->ar_vbyte );
+        return( ( le_byte_t * ) le_array->ar_vbyte );
 
     }
 
@@ -457,7 +457,7 @@
         } else {
 
             /* update array size */
-            if ( le_array_set_size( le_dst, le_array_entropy_2( le_src ) ) == _LE_FALSE ) {
+            if ( le_array_set_size( le_dst, le_array_entropy( le_src ) ) == _LE_FALSE ) {
 
                 /* send message */
                 return( LE_ERROR_MEMORY );
