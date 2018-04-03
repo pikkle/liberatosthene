@@ -143,26 +143,50 @@
             /* update dimension scale */
             le_scale[0] *= 0.5;
 
-            /* analyse address digit and coordinates update */
-            if ( ( le_address->as_digit[le_parse] & 0x01 ) != 0 ) le_pose[0] += le_scale[0];
+            /* analyse address digit */
+            if ( ( le_address->as_digit[le_parse] & 0x01 ) != 0 ) {
+
+                /* update coordinates */
+                le_pose[0] += le_scale[0];
+            }
 
             /* asynchronous dimension management */
-            if ( le_parse < LE_ADDRESS_DEPTH_P ) continue;
+            if ( le_parse < LE_ADDRESS_DEPTH_P ) {
+
+                /* break for loop */
+                continue;
+
+            }
 
             /* update dimension scale */
             le_scale[1] *= 0.5;
 
-            /* analyse address digit and coordinates update */
-            if ( ( le_address->as_digit[le_parse] & 0x02 ) != 0 ) le_pose[1] += le_scale[1];
+            /* analyse address digit */
+            if ( ( le_address->as_digit[le_parse] & 0x02 ) != 0 ) {
+
+                /* update coordinates */
+                le_pose[1] += le_scale[1];
+
+            }
 
             /* asynchronous dimension management */
-            if ( le_parse < LE_ADDRESS_DEPTH_A ) continue;
+            if ( le_parse < LE_ADDRESS_DEPTH_A ) {
+
+                /* break for loop */
+                continue;
+
+            }
 
             /* update dimension scale */
             le_scale[2] *= 0.5;
 
-            /* analyse address digit and coordinates update */
-            if ( ( le_address->as_digit[le_parse] & 0x04 ) != 0 ) le_pose[2] += le_scale[2];
+            /* analyse address digit */
+            if ( ( le_address->as_digit[le_parse] & 0x04 ) != 0 ) {
+
+                /* update coordinates */
+                le_pose[2] += le_scale[2];
+
+            }
 
         }
 
@@ -242,7 +266,12 @@
             }
 
             /* asynchronous dimension management */
-            if ( le_parse < LE_ADDRESS_DEPTH_P ) continue;
+            if ( le_parse < LE_ADDRESS_DEPTH_P ) {
+
+                /* break for loop */
+                continue;
+
+            }
 
             /* update dimension value */
             le_pose[1] *= 2.0;
@@ -259,7 +288,12 @@
             }
 
             /* asynchronous dimension management */
-            if ( le_parse < LE_ADDRESS_DEPTH_A ) continue;
+            if ( le_parse < LE_ADDRESS_DEPTH_A ) {
+
+                /* break for loop */
+                continue;
+
+            }
 
             /* update dimension value */
             le_pose[2] *= 2.0;
