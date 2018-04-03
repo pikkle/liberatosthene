@@ -68,18 +68,18 @@
     /* define array-size - authorise */
     # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
+    /* define array-size - inject */
+    # define LE_ARRAY_INJE_HEAD         ( sizeof( le_time_t ) )
+
     /* define array-size - address */
     # define LE_ARRAY_ADDR_TIME         ( sizeof( le_time_t ) * 2 )
     # define LE_ARRAY_ADDR_DESC         ( sizeof( le_byte_t ) * 3 )
     # define LE_ARRAY_ADDR              ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
 
-    /* define array-size - uf3/cu3 */
+    /* define array-size - uf3 */
     # define LE_ARRAY_UF3_POSE          ( 3 * sizeof( le_real_t ) )
     # define LE_ARRAY_UF3_DATA          ( 3 * sizeof( le_data_t ) )
     # define LE_ARRAY_UF3               ( LE_ARRAY_UF3_POSE + LE_ARRAY_UF3_DATA )
-
-    /* define array-size - inject */
-    # define LE_ARRAY_INJE_HEAD         ( sizeof( le_time_t ) )
 
 /*
     header - preprocessor macros

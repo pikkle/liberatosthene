@@ -304,7 +304,7 @@
         le_size_t le_index = _LE_SIZE_NULL;
 
         /* check consistency */
-        if ( le_array_get_size( le_stack ) != sizeof( le_time_t ) ) {
+        if ( le_array_get_size( le_stack ) != LE_ARRAY_INJE_HEAD ) {
 
             /* send message */
             return( _LE_FALSE );
