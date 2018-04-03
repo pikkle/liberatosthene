@@ -324,11 +324,44 @@
 
     le_size_t le_array_serial( le_array_t * const le_array, le_void_t * const le_bytes, le_size_t const le_length, le_size_t const le_offset, le_enum_t const le_mode );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function writes the provided array bytes in the socket pointed by
+     *  the provided descriptor.
+     *
+     *  Depending on if a dual array is provided, the function uses entropic
+     *  method to compress the content of the array before to write it on the
+     *  specified socket.
+     *
+     *  This function can be seen as a front-end to the \b le_array_io_write()
+     *  that allow usage of compression.
+     *
+     *  \param le_array  Array structure
+     *  \param le_dual   Array structure
+     *  \param le_mode   Socket-array mode
+     *  \param le_socket Socket descriptor
+     *
+     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_byte_t le_array_io_put( le_array_t * const le_array, le_array_t * const le_dual, le_byte_t le_mode, le_sock_t const le_socket );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function reads the provided array bytes from teh socket pointed by
+     *  the provided descriptor.
+     *
+     *  If a dual array is provided, the function uses entropic method to decode
+     *  the content of the array. If the incoming socket-array content has been
+     *  encoded by writing process, the dual array has to be provided.
+     *
+     *  This function can be seen as a front-end to the \b le_array_io_read()
+     *  that allow usage of compression.
+     *
+     *  \param le_array  Array structure
+     *  \param le_dual   Array structure
+     *  \param le_socket Socket descriptor
+     */
 
     le_byte_t le_array_io_get( le_array_t * const le_array, le_array_t * const le_dual, le_sock_t const le_socket );
 
@@ -365,11 +398,10 @@
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
 
-    /*! \brief uf3-specific methods
+    /*! \brief entropic methods
      *
      *  This function implements an entropic compression algorithm that can be
-     *  applied on array containing uf3 content, that is succession of records
-     *  of three doubles and three bytes.
+     *  applied on any type of array.
      *
      *  The compressed size is set by the function according to the compression
      *  results. If the compression succeed, the compressed size is set to the
@@ -381,12 +413,12 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_array_uf3_encode( le_array_t const * const le_src, le_array_t * const le_dst );
+    le_enum_t le_array_epc_encode( le_array_t const * const le_src, le_array_t * const le_dst );
 
-    /*! \brief uf3-specific methods
+    /*! \brief entropic methods
      *
      *  This function is used to decompress data contained in the provided
-     *  array structure that are encoded using the \b le_array_uf3_encode()
+     *  array structure that are encoded using the \b le_array_epc_encode()
      *  algorithm.
      *
      *  The function checks the structure compressed size to determine if the
@@ -398,7 +430,7 @@
      * \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_array_uf3_decode( le_array_t const * const le_src, le_array_t * const le_dst );
+    le_enum_t le_array_epc_decode( le_array_t const * const le_src, le_array_t * const le_dst );
 
 /*
     header - C/C++ compatibility

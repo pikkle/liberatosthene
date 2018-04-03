@@ -267,7 +267,7 @@
         if ( le_dual != NULL ) {
 
             /* encode array */
-            if ( le_array_uf3_encode( le_array, le_dual ) != LE_ERROR_SUCCESS ) {
+            if ( le_array_epc_encode( le_array, le_dual ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( LE_MODE_NULL );
@@ -298,7 +298,7 @@
             le_mode = le_array_io_read( le_dual, le_socket );
 
             /* decode array */
-            if ( le_array_uf3_decode( le_dual, le_array ) != LE_ERROR_SUCCESS ) {
+            if ( le_array_epc_decode( le_dual, le_array ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( LE_MODE_NULL );
@@ -429,211 +429,10 @@
     }
 
 /*
-    source - uf3-specific methods
+    source - entropic methods
  */
 
-    le_enum_t le_array_uf3_encode_( le_array_t const * const le_src, le_array_t * const le_dst ) {
-
-        /* bitmask variables */
-        le_mask_t le_mask = 0x0;
-
-        /* array pointer variables */
-        le_byte_t * le_head = NULL;
-        le_byte_t * le_line = NULL;
-
-        /* array pointer variables */
-        le_byte_t * le_tail = NULL;
-        le_byte_t * le_desc = NULL;
-
-        /* check array state */
-        if ( le_src->ar_vsize <= ( LE_ARRAY_UF3 * 2 ) ) {
-
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_src->ar_vsize ) != _LE_TRUE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* update array content */
-            memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, le_src->ar_vsize );
-
-            /* update array entropic size */
-            le_dst->ar_csize = 0;
-
-        } else {
-
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_array_entropy( le_src ) ) != _LE_TRUE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* update array content */
-            memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, LE_ARRAY_UF3 );
-
-            /* initialise array pointers */
-            le_line = ( le_head = le_src->ar_vbyte + LE_ARRAY_UF3 );
-
-            /* initialise array pointers */
-            le_tail = ( le_desc = le_dst->ar_vbyte + LE_ARRAY_UF3 );
-
-            /* array encoding */
-            while ( ( le_head - le_src->ar_vbyte ) < le_src->ar_vsize ) {
-
-                /* flags initialisation */
-                ( * le_tail ++ ) = 0;
-                ( * le_tail ++ ) = 0;
-                ( * le_tail ++ ) = 0;
-
-                /* reset bitmask */
-                le_mask = 0x1;
-
-                /* encode uf3 record - pose */
-                while ( ( le_head - le_line ) < LE_ARRAY_UF3_POSE ) {
-
-                    /* inequality detection */
-                    if ( ( * le_head ) != ( * ( le_head - LE_ARRAY_UF3 ) ) ) {
-
-                        /* encode byte */
-                        ( * le_tail ++ ) = ( * le_head );
-
-                        /* update flags */
-                        ( * ( le_mask_t * ) le_desc ) |= le_mask;
-
-                    }
-
-                    /* update bitmask and head */
-                    le_mask <<= 1, le_head ++;
-
-                }
-
-                /* encode uf3 record - data */
-                ( * le_tail ++ ) = ( * le_head ++ );
-                ( * le_tail ++ ) = ( * le_head ++ );
-                ( * le_tail ++ ) = ( * le_head ++ );
-
-                /* update array pointer */
-                le_desc = le_tail;
-
-                /* update array pointer */
-                le_line = le_head;
-
-            }
-
-            /* update array size */
-            le_dst->ar_vsize = le_tail - le_dst->ar_vbyte;
-
-            /* update array entropic size */
-            le_dst->ar_csize = le_src->ar_vsize;
-
-        }
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_enum_t le_array_uf3_decode_( le_array_t const * const le_src, le_array_t * const le_dst ) {
-
-        /* bitmask variables */
-        le_mask_t le_mask = 0x0;
-
-        /* array pointer variables */
-        le_byte_t * le_head = NULL;
-        le_byte_t * le_line = NULL;
-
-        /* array pointer variables */
-        le_byte_t * le_tail = NULL;
-        le_byte_t * le_desc = NULL;
-
-        /* check array state */
-        if ( le_src->ar_csize == 0 ) {
-
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_src->ar_vsize ) != _LE_TRUE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* update array content */
-            memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, le_src->ar_vsize );
-
-        } else {
-
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_src->ar_csize ) != _LE_TRUE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* update array content */
-            memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, LE_ARRAY_UF3 );
-
-            /* initialise array pointers */
-            le_line = ( le_head = le_dst->ar_vbyte + LE_ARRAY_UF3 );
-
-            /* initialise array pointers */
-            le_tail = ( le_desc = le_src->ar_vbyte + LE_ARRAY_UF3 );
-
-            /* array decoding */
-            while ( ( le_head - le_dst->ar_vbyte ) < le_dst->ar_vsize ) {
-
-                /* reset bitmask */
-                le_mask = 0x1, le_tail += 3;
-
-                /* decode uf3 record - pose */
-                while ( ( le_head - le_line ) < LE_ARRAY_UF3_POSE ) {
-
-                    /* flags analysis */
-                    if ( ( ( * ( le_mask_t * ) le_desc ) & le_mask ) != 0 ) {
-
-                        /* decode byte */
-                        ( * le_head ) = ( * le_tail ++ );
-
-                    } else {
-
-                        /* decode byte */
-                        ( * le_head ) = ( * ( le_head - LE_ARRAY_UF3 ) );
-
-                    }
-
-                    /* update bitmask and head */
-                    le_mask <<= 1, le_head ++;
-
-                }
-
-                /* decode uf3 record - data */
-                ( * le_head ++ ) = ( * le_tail ++ );
-                ( * le_head ++ ) = ( * le_tail ++ );
-                ( * le_head ++ ) = ( * le_tail ++ );
-
-                /* update array pointer */
-                le_desc = le_tail;
-
-                /* update array pointer */
-                le_line = le_head;
-
-            }
-
-        }
-
-        /* update array entropic size */
-        le_dst->ar_csize = 0;
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_enum_t le_array_uf3_encode( le_array_t const * const le_src, le_array_t * const le_dst ) {
+    le_enum_t le_array_epc_encode( le_array_t const * const le_src, le_array_t * const le_dst ) {
 
         /* stream variable */
         z_stream le_stream;
@@ -705,7 +504,7 @@
 
     }
 
-    le_enum_t le_array_uf3_decode( le_array_t const * const le_src, le_array_t * const le_dst ) {
+    le_enum_t le_array_epc_decode( le_array_t const * const le_src, le_array_t * const le_dst ) {
 
         /* stream variable */
         z_stream le_stream;
