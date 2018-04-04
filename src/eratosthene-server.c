@@ -321,6 +321,14 @@
             return( _LE_FALSE );
 
         }
+
+        /* check consistency */
+        if ( ( le_array_get_size( le_stack ) % LE_ARRAY_UF3 ) != 0 ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
         
         /* create and check stream index */
         if ( ( le_index = le_stream_get_strict( le_stream, le_time, LE_STREAM_WRITE ) ) == _LE_SIZE_NULL ) {

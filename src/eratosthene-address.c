@@ -253,7 +253,7 @@
             if ( le_pose[0] >= 1.0 ) {
 
                 /* assign address digit component */
-                le_address->as_digit[le_parse] = 1;
+                le_address->as_digit[le_parse] = 0x1;
 
                 /* update dimension value */
                 le_pose[0] -= 1.0;
@@ -261,7 +261,7 @@
             } else {
 
                 /* assign address digit component */
-                le_address->as_digit[le_parse] = 0;
+                le_address->as_digit[le_parse] = 0x0;
 
             }
 

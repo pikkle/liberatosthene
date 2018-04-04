@@ -348,6 +348,9 @@
 
             }
 
+            /* disable buffering */
+            setvbuf( le_stream->sr_strm[le_parse].su_file[le_index], NULL, _IONBF, 0);
+
         }
 
         /* validate stack update */
@@ -370,79 +373,80 @@
         /* address variable */
         le_address_t le_addr = LE_ADDRESS_C_SIZE( le_stream->sr_scfg - 1 );
 
-        /* depth variable */
-        le_size_t le_parse = 0;
-        le_size_t le_panex = 0;
+        /* stream variable */
+        le_file_t * le_stack = le_stream->sr_strm[le_unit].su_file;
+
+        /* digit variable */
+        le_size_t le_digit = 0;
+
+        /* scale variable */
+        le_size_t le_scale = 0;
+        le_size_t le_ahead = 0;
 
         /* offset variable */
-        le_size_t le_offset = 0;
-        le_size_t le_offnex = 0;
+        le_size_t le_forward = 0;
+        le_size_t le_current = 0;
 
         /* array size variable */
         le_size_t le_size = le_array_get_size( le_array );
 
-        /* check array size */
-        if ( ( le_size == 0 ) || ( ( le_size % LE_ARRAY_UF3 ) != 0 ) ) {
-
-            /* abort injection */
-            return;
-
-        }
-
         /* parsing array */
         for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_UF3 ) {
 
-            /* reset address digits */
-            le_address_set_pose( & le_addr, le_array_sd_pose_a( le_array, le_index ) );
+            /* compute address digits */
+            le_address_set_pose( & le_addr, le_array_mac_pose( le_array, le_index ) );
 
-            /* reset depth variables */
-            le_parse = 0;
-            le_panex = 1;
+            /* reset scale */
+            le_scale = 0;
+            le_ahead = 1;
 
-            /* reset offset variables */
-            le_offset = 0;
-            le_offnex = 0;
+            /* reset offset */
+            le_forward = 0;
+            le_current = 0;
 
             /* injection process */
             do {
 
                 /* class importation */
-                if ( le_class_io_read( & le_class, le_offnex, le_stream->sr_strm[le_unit].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
+                if ( le_class_io_read( & le_class, le_current, le_stack[le_scale] ) == LE_ERROR_SUCCESS ) {
 
                     /* inject element in class */
-                    le_class_set_push( & le_class, le_array_sd_data_a( le_array, le_index ) );
+                    le_class_set_push( & le_class, le_array_mac_data( le_array, le_index ) );
 
                 } else {
 
                     /* initialise class with element */
-                    le_class = le_class_create( le_array_sd_data_a( le_array, le_index ) );
+                    le_class = le_class_create( le_array_mac_data( le_array, le_index ) );
 
                 }
 
+                /* extract address digit */
+                le_digit = le_address_get_digit( & le_addr, le_scale );
+
                 /* retrieve daughter offset */
-                le_offset = le_class_get_offset( & le_class, le_address_get_digit( & le_addr, le_parse ) );
+                le_forward = le_class_get_offset( & le_class, le_digit );
 
                 /* check daughter state */
-                if ( ( le_offset == _LE_OFFS_NULL ) && ( ( le_panex ) != le_stream->sr_scfg ) ) {
+                if ( ( le_forward == _LE_OFFS_NULL ) && ( le_ahead != le_stream->sr_scfg ) ) {
 
                     /* seek next scale eof */
-                    fseek( le_stream->sr_strm[le_unit].su_file[le_panex], 0, SEEK_END );
+                    fseek( le_stack[le_ahead], 0, SEEK_END );
 
                     /* compute and check injection offset */
-                    if ( ( le_offset = ftell( le_stream->sr_strm[le_unit].su_file[le_panex] ) ) < _LE_OFFS_NULL ) {
+                    if ( ( le_forward = ftell( le_stack[le_ahead] ) ) < _LE_OFFS_NULL ) {
 
                         /* insert offset in class */
-                        le_class_set_offset( & le_class, le_address_get_digit( & le_addr, le_parse ), le_offset );
+                        le_class_set_offset( & le_class, le_digit, le_forward );
 
                     }
 
                 }
 
                 /* class exportation */
-                le_class_io_write( & le_class, le_offnex, le_stream->sr_strm[le_unit].su_file[le_parse] );
+                le_class_io_write( & le_class, le_current, le_stack[le_scale] );
 
             /* injection process condition */
-            } while ( ( ( le_offnex = le_offset, ++ le_panex, ++ le_parse ) < le_stream->sr_scfg ) && ( le_offset < _LE_OFFS_NULL ) );
+            } while ( ( ( le_current = le_forward, ++ le_ahead, ++ le_scale ) < le_stream->sr_scfg ) && ( le_forward < _LE_OFFS_NULL ) );
 
         }
 

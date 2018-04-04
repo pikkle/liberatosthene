@@ -133,6 +133,8 @@
     # include <netdb.h>
     # include <zlib.h>
 
+    # include <time.h>
+
 /*
     header - preprocessor definitions
  */
@@ -145,7 +147,7 @@
     # define _LE_GET                ( 0 )
     # define _LE_SET                ( 1 )
 
-    /* features configuration value */
+    /* features configuration values */
     # define _LE_USE_BASE           ( 8 )
     # define _LE_USE_OFFSET         ( 5 )
     # if ( _LE_USE_OFFSET < 2 ) ||  ( _LE_USE_OFFSET > 7 )
