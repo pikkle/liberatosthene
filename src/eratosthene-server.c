@@ -398,29 +398,16 @@
             le_array_set_size( le_stack + 1, 0 );
 
             /* check address mode */
-            if ( le_mode == 1 ) {
+            if ( le_mode < 3 ) {
 
                 /* reduce address time */
-                le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_offa );
+                le_stra = le_stream_get_reduct( le_stream, & le_addr, le_mode - 1, & le_offa );
 
-                /* reduce address time */
+                /* check address reduction */
                 if ( le_stra != _LE_SIZE_NULL ) {
 
                     /* gathering process */
                     le_stream_io_gather( le_stream, le_stra, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
-
-                }
-
-            } else if ( le_mode == 2 ) {
-
-                /* reduce address time */
-                le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_offb );
-
-                /* check address reduction */
-                if ( le_strb != _LE_SIZE_NULL ) {
-
-                    /* gathering process */
-                    le_stream_io_gather( le_stream, le_strb, & le_addr, le_offb, le_size, le_depth, le_stack + 1 );
 
                 }
 

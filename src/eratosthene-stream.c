@@ -466,16 +466,14 @@
         /* stream variable */
         le_file_t * le_stack = le_stream->sr_strm[le_unit].su_file;
 
-        /* following offsets */
-        while ( ( le_parse < le_size ) && ( le_offset != _LE_OFFS_NULL ) ) {
+        /* follow offsets */
+        do {
 
             /* read class offset */
             le_offset = le_class_det_offset( le_offset, le_address_get_digit( le_addr, le_parse ), le_stack[le_parse] );
 
-            /* update scale */
-            le_parse ++;
-
-        }
+        /* update index and condition */
+        } while ( ( ( ++ le_parse ) < le_size ) && ( le_offset != _LE_OFFS_NULL ) );
 
         /* return offset */
         return( le_offset );
@@ -502,21 +500,19 @@
         } else {
 
             /* read class */
-            if ( le_class_io_readf( & le_class, le_offset, le_stream->sr_strm[le_unit].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
+            le_class_io_readf( & le_class, le_offset, le_stream->sr_strm[le_unit].su_file[le_parse] );
 
-                /* enumerate daughter classes */
-                for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
+            /* enumerate daughter classes */
+            for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
 
-                    /* extract class offset */
-                    if ( ( le_offset = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
+                /* extract class offset */
+                if ( ( le_offset = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
 
-                        /* update address digit */
-                        le_address_set_digit( le_addr, le_parse, le_digit );
+                    /* update address digit */
+                    le_address_set_digit( le_addr, le_parse, le_digit );
 
-                        /* recursive enumeration */
-                        le_stream_io_gather( le_stream, le_unit, le_addr, le_offset, le_parse + 1, le_span, le_array );
-
-                    }
+                    /* recursive enumeration */
+                    le_stream_io_gather( le_stream, le_unit, le_addr, le_offset, le_parse + 1, le_span, le_array );
 
                 }
 
