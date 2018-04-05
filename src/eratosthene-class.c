@@ -58,15 +58,6 @@
 
     }
 
-    le_void_t le_class_get_data( le_class_t const * const le_class, le_data_t * const le_data ) { /* deleting */
-
-        /* assign class data to array */
-        le_data[0] = le_class->cs_data[0];
-        le_data[1] = le_class->cs_data[1];
-        le_data[2] = le_class->cs_data[2];
-
-    }
-
 /*
     source - mutator methods
  */

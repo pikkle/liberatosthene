@@ -398,6 +398,7 @@
      *  \param le_uni1   Stream unit stack index - time 1
      *  \param le_uni2   Stream unit stack index - time 2
      *  \param le_addr   Address structure
+     *  \param le_mode   Address mode
      *  \param le_off1   Spatial class offset - time 1
      *  \param le_off2   Spatial class offset - time 2
      *  \param le_parse  Spatial class scale

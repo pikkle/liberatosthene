@@ -159,17 +159,6 @@
 
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_index );
 
-    /*! \brief accessor methods
-     *
-     *  This function fills the provided data 3-vector using the representative
-     *  colour of the provided class structure.
-     *
-     *  \param le_class Class structure
-     *  \param le_data  Data 3-vector - single byte red, green and blue
-     */
-
-    le_void_t le_class_get_data( le_class_t const * const le_class, le_data_t * const le_data );
-
     /*! \brief mutator methods
      *
      *  This function sets the offset of the daughter class pointed by the
