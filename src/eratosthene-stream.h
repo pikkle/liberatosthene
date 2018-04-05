@@ -405,7 +405,7 @@
      *  \param le_array  Data array filled by the function
      */
 
-    le_void_t le_stream_io_parallel( le_stream_t const * const le_stream, le_size_t const le_uni1, le_size_t const le_uni2, le_address_t * const le_addr, le_size_t le_off1, le_size_t le_off2, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
+    le_void_t le_stream_io_parallel( le_stream_t const * const le_stream, le_size_t const le_unia, le_size_t const le_unib, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t le_offseta, le_size_t le_offsetb, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
 /*
     header - C/C++ compatibility

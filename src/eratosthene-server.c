@@ -436,7 +436,7 @@
                 if ( ( le_stra != _LE_SIZE_NULL ) && ( le_strb != _LE_SIZE_NULL ) ) {
 
                     /* gathering process */
-                    le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
+                    le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
 
                 }
 
