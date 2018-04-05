@@ -94,6 +94,12 @@
     /* array access */
     # define le_array_mac_data( a, i )  ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UF3_POSE ) )
 
+    /* array access */
+    # define le_array_mac_lpose( a )    ( ( le_real_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3 ) )
+
+    /* array access */
+    # define le_array_mac_ldata( a )    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3_DATA ) )
+
     /* access macro for sd-records - array */
     //# define le_array_sd_pose_a( a, o ) ( ( le_real_t * ) ( ( a )->ar_vbyte + o ) )
     //# define le_array_sd_data_a( a, o ) ( ( le_data_t * ) ( ( a )->ar_vbyte + o + sizeof( le_real_t ) * 3 ) )

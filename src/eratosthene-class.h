@@ -57,8 +57,11 @@
     # define LE_CLASS_C             { { 0, 0, 0, 0 } }
     # define LE_CLASS_C_DATA(r,g,b) { { r, g, b, 0 } }
 
+    /* define class offsets */
+    # define LE_CLASS_OFFSET        ( _LE_USE_OFFSET * _LE_USE_BASE )
+
     /* define class array */
-    # define LE_CLASS_ARRAY         ( _LE_USE_DATA + _LE_USE_OFFSET * _LE_USE_BASE )
+    # define LE_CLASS_ARRAY         ( _LE_USE_DATA + LE_CLASS_OFFSET )
 
     /* define class memory */
     # define LE_CLASS_MEMORY        ( LE_CLASS_ARRAY + sizeof( le_size_t ) - _LE_USE_OFFSET )
@@ -204,7 +207,11 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, FILE * const le_stream );
+    le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream );
+
+    /* *** */
+
+    le_enum_t le_class_io_readf( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods
      *
@@ -219,7 +226,15 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, FILE * const le_stream );
+    le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, le_file_t const le_stream );
+
+    /* *** */
+
+    le_size_t le_class_det_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
+
+    /* *** */
+
+    le_enum_t le_class_det_data( le_size_t const le_offset, le_data_t * const le_data, le_file_t const le_stream );
 
 /*
     header - C/C++ compatibility

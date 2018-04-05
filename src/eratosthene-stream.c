@@ -460,30 +460,20 @@
         /* parsing variables */
         le_size_t le_parse = 0;
 
-        /* class variables */
-        le_class_t le_class = LE_CLASS_C;
-
         /* address size variables */
         le_size_t le_size = le_address_get_size( le_addr );
+
+        /* stream variable */
+        le_file_t * le_stack = le_stream->sr_strm[le_unit].su_file;
 
         /* following offsets */
         while ( ( le_parse < le_size ) && ( le_offset != _LE_OFFS_NULL ) ) {
 
-            /* read class */
-            if ( le_class_io_read( & le_class, le_offset, le_stream->sr_strm[le_unit].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
+            /* read class offset */
+            le_offset = le_class_det_offset( le_offset, le_address_get_digit( le_addr, le_parse ), le_stack[le_parse] );
 
-                /* retrieve daughter offset */
-                le_offset = le_class_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) );
-
-                /* update follower */
-                le_parse ++;
-
-            } else {
-
-                /* return offset */
-                return( _LE_OFFS_NULL );
-
-            }
+            /* update scale */
+            le_parse ++;
 
         }
 
@@ -494,36 +484,36 @@
 
     le_void_t le_stream_io_gather( le_stream_t const * const le_stream, le_size_t const le_unit, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
-        /* class variables */
+        /* class variable */
         le_class_t le_class = LE_CLASS_C;
 
-        /* read class */
-        if ( le_class_io_read( & le_class, le_offset, le_stream->sr_strm[le_unit].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
+        /* enumeration boundary */
+        if ( le_parse == le_span ) {
 
-            /* check query span */
-            if ( le_parse == le_span ) {
+            /* update array size */
+            le_array_set( le_array, LE_ARRAY_UF3 );
 
-                /* pepare array for insertion */
-                le_array_set( le_array, LE_ARRAY_UF3 );
+            /* psuh element position */
+            le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
-                /* insert position coordinates */
-                le_address_get_pose_( le_addr, le_parse, ( le_real_t * ) le_array_sd_pose_al( le_array ) );
+            /* push element data */
+            le_class_det_data( le_offset, le_array_mac_ldata( le_array ), le_stream->sr_strm[le_unit].su_file[le_parse] );
 
-                /* insert color components */
-                le_class_get_data( & le_class, ( le_data_t * ) le_array_sd_data_al( le_array ) );
+        } else {
 
-            } else {
+            /* read class */
+            if ( le_class_io_readf( & le_class, le_offset, le_stream->sr_strm[le_unit].su_file[le_parse] ) == LE_ERROR_SUCCESS ) {
 
-                /* daughters classes enumeration */
+                /* enumerate daughter classes */
                 for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
 
-                    /* retreive daughter class offset */
+                    /* extract class offset */
                     if ( ( le_offset = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
 
-                        /* update address index digit */
+                        /* update address digit */
                         le_address_set_digit( le_addr, le_parse, le_digit );
 
-                        /* recursive query */
+                        /* recursive enumeration */
                         le_stream_io_gather( le_stream, le_unit, le_addr, le_offset, le_parse + 1, le_span, le_array );
 
                     }
