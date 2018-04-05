@@ -420,7 +420,7 @@
                 le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_offb );
 
                 /* check address reduction */
-                if ( ( le_stra != _LE_SIZE_NULL ) && ( le_strb != _LE_SIZE_NULL ) ) {
+                if ( ( le_stra != _LE_SIZE_NULL ) || ( le_strb != _LE_SIZE_NULL ) ) {
 
                     /* gathering process */
                     le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );

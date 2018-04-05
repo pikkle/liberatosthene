@@ -529,8 +529,8 @@
         le_class_t le_classb = LE_CLASS_C;
 
         /* message variable */
-        le_enum_t le_msga = LE_ERROR_SUCCESS;
-        le_enum_t le_msgb = LE_ERROR_SUCCESS;
+        le_enum_t le_msga = LE_ERROR_IO_READ;
+        le_enum_t le_msgb = LE_ERROR_IO_READ;
 
         /* enumeration boundary */
         if ( le_parse == le_span ) {
@@ -604,15 +604,19 @@
 
         } else {
 
-            /* read class */
-            le_msga = le_class_io_readf( & le_classa, le_offseta, le_stream->sr_strm[le_unia].su_file[le_parse] );
-            le_msgb = le_class_io_readf( & le_classb, le_offsetb, le_stream->sr_strm[le_unib].su_file[le_parse] );
+            /* check offset */
+            if ( le_offseta != _LE_OFFS_NULL ) {
 
-            /* check message */
-            if ( ( le_msga != LE_ERROR_SUCCESS ) && ( le_msgb != LE_ERROR_SUCCESS ) ) {
+                /* read class */
+                le_msga = le_class_io_readf( & le_classa, le_offseta, le_stream->sr_strm[le_unia].su_file[le_parse] );
 
-                /* abort enumeration */
-                return;
+            }
+
+            /* check offset */
+            if ( le_offsetb != _LE_OFFS_NULL ) {
+
+                /* read class */
+                le_msgb = le_class_io_readf( & le_classb, le_offsetb, le_stream->sr_strm[le_unib].su_file[le_parse] );
 
             }
 
