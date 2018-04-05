@@ -394,16 +394,16 @@
      *  spatial classes representative. The array is filled by pushing the
      *  gathered elements at its end, leaving the prior content unchanged.
      *
-     *  \param le_stream Stream structure
-     *  \param le_uni1   Stream unit stack index - time 1
-     *  \param le_uni2   Stream unit stack index - time 2
-     *  \param le_addr   Address structure
-     *  \param le_mode   Address mode
-     *  \param le_off1   Spatial class offset - time 1
-     *  \param le_off2   Spatial class offset - time 2
-     *  \param le_parse  Spatial class scale
-     *  \param le_span   Query additional depth
-     *  \param le_array  Data array filled by the function
+     *  \param le_stream  Stream structure
+     *  \param le_unia    Stream unit stack index - time 1
+     *  \param le_unib    Stream unit stack index - time 2
+     *  \param le_addr    Address structure
+     *  \param le_mode    Address mode
+     *  \param le_offseta Spatial class offset - time 1
+     *  \param le_offsetb Spatial class offset - time 2
+     *  \param le_parse   Spatial class scale
+     *  \param le_span    Query additional depth
+     *  \param le_array   Data array filled by the function
      */
 
     le_void_t le_stream_io_parallel( le_stream_t const * const le_stream, le_size_t const le_unia, le_size_t const le_unib, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t le_offseta, le_size_t le_offsetb, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );

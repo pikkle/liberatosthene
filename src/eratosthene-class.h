@@ -198,7 +198,19 @@
 
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function is a variation of the \b le_class_io_read(). It also reads
+     *  the storage structure of the pointed class but only reads the offset
+     *  array parts, discarding the class data. The \b le_stream has to contain
+     *  the descriptor of an already opened file in binary mode.
+     *
+     *  \param le_class  Class structure
+     *  \param le_offset Class storage offset
+     *  \param le_stream Stream to an opened file in binary read mode
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_class_io_readf( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream );
 
@@ -217,11 +229,49 @@
 
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, le_file_t const le_stream );
 
-    /* *** */
+    /*! \brief detached methods
+     *
+     *  Note :
+     *
+     *  Detached methods are specific function associated to a structure but
+     *  without operating directly on it. Such function are used in optimisation
+     *  strategies.
+     *
+     *  This function extract the offset of the class storage structure. The
+     *  offset is pointed by the provided class storage offset and its index.
+     *
+     *  This function allows to query a class offset without having to import
+     *  all its content and to extract the desired offset.
+     *
+     *  \param le_offset Class storage offset
+     *  \param le_index  Offset index
+     *  \param le_stream Stream to an opened file in binary read mode
+     *
+     *  \return Returns read offset value on success, _LE_OFFS_NULL otherwise
+     */
 
     le_size_t le_class_det_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
 
-    /* *** */
+    /*! \brief detached methods
+     *
+     *  Note :
+     *
+     *  Detached methods are specific function associated to a structure but
+     *  without operating directly on it. Such function are used in optimisation
+     *  strategies.
+     *
+     *  This function reads the class data in the provided data array. The class
+     *  is accessed through its provided storage offset.
+     *
+     *  This function allows to read a class data content without having to
+     *  import all its content and copy its data in an auxiliary array.
+     *
+     *  \param le_offset Class storage offset
+     *  \param le_data   Data array pointer
+     *  \param le_stream Stream to an opened file in binary read mode
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_class_det_data( le_size_t const le_offset, le_data_t * const le_data, le_file_t const le_stream );
 
