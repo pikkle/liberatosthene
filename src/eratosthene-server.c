@@ -385,9 +385,6 @@
         /* parsing socket-array */
         while ( ( le_parse = le_address_serial( & le_addr, le_stack, le_parse, _LE_GET ) ) <= le_length ) {
 
-            /* retrieve address mode */
-            le_mode = le_address_get_mode( & le_addr );
-
             /* retrieve address size */
             le_size = le_address_get_size( & le_addr );
 
@@ -398,7 +395,7 @@
             le_array_set_size( le_stack + 1, 0 );
 
             /* check address mode */
-            if ( le_mode < 3 ) {
+            if ( ( le_mode = le_address_get_mode( & le_addr ) ) < 3 ) {
 
                 /* reduce and check address */
                 if ( ( le_uia = le_tree_get_query( le_tree, & le_addr, le_mode - 1, & le_offa ) ) != NULL ) {
@@ -414,7 +411,7 @@
                 le_uia = le_tree_get_query( le_tree, & le_addr, 0, & le_offa );
 
                 /* reduce address */
-                le_uib = le_tree_get_query( le_tree, & le_addr, 1, & le_offa );
+                le_uib = le_tree_get_query( le_tree, & le_addr, 1, & le_offb );
 
                 /* check address */
                 if ( ( le_uia != NULL ) || ( le_uib != NULL ) ) {
