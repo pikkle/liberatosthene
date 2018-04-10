@@ -94,23 +94,80 @@
     header - function prototypes
  */
 
-    /* *** */
+    /*! \brief constructor/destructor methods
+     *
+     *  This function creates a unit structure according to the provided path
+     *  and to the provided mode.
+     *
+     *  Two modes are available : \b LE_UNIT_READ and \b LE_UNIT_WRITE. The
+     *  first mode triggers the creation of the unit structure according to an
+     *  existing storage structure. It assign the provided time value, in its
+     *  reduced form, before to create the stream descriptor to the scale files.
+     *
+     *  The second mode creates the storage structure directory if necessary and
+     *  creates the scale file while creating the streams to them.
+     *
+     *  If any stream is not accessible or of the directory creation fails, the
+     *  function returns the structure as it is a sets the \b _status field
+     *  accordingly.
+     *
+     *  \param le_path Path to the unit storage structure
+     *  \param le_mode Unit creation mode
+     *  \param le_time Unit time value, in reduced form
+     *  \param le_scfg Server spatial parameter (number of scales)
+     *
+     *  \return Returns the created unit
+     */
 
     le_unit_t le_unit_create( le_char_t const * const le_path, le_enum_t const le_mode, le_time_t const le_time, le_size_t const le_scfg );
 
-    /* *** */
+    /*! \brief constructor/destructor methods
+     *
+     *  This function deletes the provided unit structure. It parses the scales
+     *  of the unit and deletes each scale opened streams. It finally resets the
+     *  unit structure fields.
+     *
+     *  \param le_unit Unit structure
+     */
 
     le_void_t le_unit_delete( le_unit_t * const le_unit );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function returns the unit stream that corresponds to the provided
+     *  scale value.
+     *
+     *  \param le_unit  Unit structure
+     *  \param le_scale Scale value
+     *
+     *  \return Returns unit scale stream file descriptor
+     */
 
     le_file_t le_unit_get_stream( le_unit_t const * const le_unit, le_size_t const le_scale );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function simply returns the time of the provided unit. The returned
+     *  time is in reduce form.
+     *
+     *  \param le_unit Unit structure
+     *
+     *  \return Returns the unit time
+     */
 
     le_time_t le_unit_get_time( le_unit_t const * const le_unit );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function compares the provided unit and the provided candidate unit
+     *  and returns _LE_TRUE if the candidate is prior to the actual unit in
+     *  terms of time. It returns _LE_FASLE otherwise.
+     *
+     *  \param le_unit      Unit structure
+     *  \param le_candidate Unit structure
+     *
+     *  \return Returns _LE_TRUE on condition, _LE_FALSE otherwise
+     */
 
     le_enum_t le_unit_get_prior( le_unit_t const * const le_unit, le_unit_t const * const le_candidate );
 
