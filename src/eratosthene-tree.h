@@ -75,6 +75,8 @@
     header - structures
  */
 
+    /* *** */
+
     typedef struct le_tree_struct {
 
         le_char_t * tr_root;

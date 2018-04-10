@@ -81,6 +81,8 @@
     header - structures
  */
 
+    /* *** */
+
     typedef struct le_unit_struct {
 
         le_time_t un_time;

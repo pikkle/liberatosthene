@@ -74,7 +74,7 @@
         /* deleted structure variable */
         le_unit_t le_delete = LE_UNIT_C;
 
-        /* parsing unit stack */
+        /* parsing scale stream */
         for ( le_size_t le_parse = 0; le_parse < _LE_USE_DEPTH; le_parse ++ ) {
 
             /* check stream state */
