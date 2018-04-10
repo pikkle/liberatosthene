@@ -108,8 +108,10 @@
      *  creates the scale file while creating the streams to them.
      *
      *  If any stream is not accessible or of the directory creation fails, the
-     *  function returns the structure as it is a sets the \b _status field
-     *  accordingly.
+     *  function returns the structure as it is.
+     *
+     *  This function returning the created structure, the status is stored in
+     *  the structure itself using the reserved \b _status field.
      *
      *  \param le_path Path to the unit storage structure
      *  \param le_mode Unit creation mode

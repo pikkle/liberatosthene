@@ -246,13 +246,6 @@
 
     }
 
-    le_unit_t * le_tree_get_reduct( le_tree_t const * const le_tree, le_address_t * const le_addr, le_size_t const le_atime, le_size_t * const le_offset ) {
-
-        /* testing */
-        return( NULL );
-
-    }
-
 /*
     source - mutator methods
  */
