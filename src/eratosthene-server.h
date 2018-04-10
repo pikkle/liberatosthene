@@ -47,7 +47,8 @@
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
     # include "eratosthene-client.h"
-    # include "eratosthene-stream.h"
+    # include "eratosthene-tree.h"
+    # include "eratosthene-tree-service.h"
 
 /*
     header - external includes
@@ -212,7 +213,7 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /*! \brief i/o methods
+    /*! \brief service methods
      *
      *  With the server structure creation and deletion methods, this function
      *  is part of the server main element. As a created structure is provided,
@@ -234,9 +235,9 @@
      *  \param le_server Server structure
      */
 
-    le_void_t le_server_io( le_server_t * const le_server );
+    le_void_t le_server_srv( le_server_t * const le_server );
 
-    /*! \brief i/o methods
+    /*! \brief service methods
      *
      *  This i/o method is responsible of answering server configuration request
      *  from client. It simply packs the server configuration values, that are
@@ -244,16 +245,16 @@
      *  an array structure before to send it back to the remote client.
      *
      *  \param le_server Server structure
-     *  \param le_stream Ring stream structure
+     *  \param le_tree Ring stream structure
      *  \param le_stack  Ring array stack pointer
      *  \param le_socket Socket to remote client
      *
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_server_io_auth( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
+    le_enum_t le_server_srv_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /*! \brief i/o methods
+    /*! \brief service methods
      *
      *  This i/o methods is responsible of data injection in the server storage
      *  structure. It expects a time packed in the first client array that is
@@ -262,16 +263,16 @@
      *  in the server storage structure.
      *
      *  \param le_server Server structure
-     *  \param le_stream Ring stream structure
+     *  \param le_tree Ring stream structure
      *  \param le_stack  Ring array stack pointer
      *  \param le_socket Socket to remote client
      *
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_server_io_inject( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
+    le_enum_t le_server_srv_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /*! \brief i/o methods
+    /*! \brief service methods
      *
      *  This function reads the query addresses packed in the client array and
      *  gather the relevant data through specific stream method.
@@ -281,14 +282,14 @@
      *  compressed the sent array.
      *
      *  \param le_server Server structure
-     *  \param le_stream Ring stream structure
+     *  \param le_tree Ring stream structure
      *  \param le_stack  Ring array stack pointer
      *  \param le_socket Socket to remote client
      *
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_server_io_query( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket );
+    le_enum_t le_server_srv_query( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility

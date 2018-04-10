@@ -161,6 +161,7 @@
     # define _LE_USE_RETRY          ( 3 )
     # define _LE_USE_STRING         ( 256 )
     # define _LE_USE_ARRAY          ( 3 )
+    # define _LE_USE_COMB           ( 1576800000 )
 
     /* define types */
     # define _LE_VOID               void
@@ -249,6 +250,12 @@
 /*
     header - preprocessor macros
  */
+
+    /* define structure status */
+    # define le_get_status(x)       ( ( x )._status )
+
+    /* define structure status */
+    # define le_set_status(x,m)     ( ( x )._status = ( m ), ( x ) )
 
     /* define absolute values */
     # define le_time_abs(x)         ( ( le_time_t ) llabs( x ) )

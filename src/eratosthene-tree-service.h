@@ -18,18 +18,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    /*! \file   eratosthene-include.h
+    /*! \file   eratosthene-tree-service.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - inclusion module
+     *  liberatosthene - tree service module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_INCLUDE__
-    # define __LE_INCLUDE__
+    # ifndef __LE_TREE_SERVICE__
+    # define __LE_TREE_SERVICE__
 
 /*
     header - C/C++ compatibility
@@ -47,11 +47,7 @@
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
     # include "eratosthene-class.h"
-    # include "eratosthene-client.h"
-    # include "eratosthene-server.h"
-    # include "eratosthene-tree-unit.h"
     # include "eratosthene-tree.h"
-    # include "eratosthene-tree-service.h"
 
 /*
     header - external includes
@@ -76,6 +72,18 @@
 /*
     header - function prototypes
  */
+
+    /* *** */
+
+    le_void_t le_service_io_inject( le_unit_t * const le_unit, le_array_t const * const le_array, le_size_t const le_scfg );
+
+    /* *** */
+
+    le_void_t le_service_io_gather( le_unit_t * const le_unit, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
+
+    /* *** */
+
+    le_void_t le_service_io_parallel( le_unit_t * const le_unia, le_unit_t * const le_unib, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t le_offseta, le_size_t le_offsetb, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
 /*
     header - C/C++ compatibility

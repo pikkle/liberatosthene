@@ -108,13 +108,13 @@
     le_enum_t le_server_set_config( le_server_t * const le_server ) {
 
         /* stream variables */
-        FILE * le_stream = NULL;
+        FILE * le_tree = NULL;
 
         /* string length variables */
         le_size_t le_plen = strlen( ( char * ) le_server->sv_path );
 
         /* open configuration stream */
-        if ( ( le_stream = fopen( strcat( ( char * ) le_server->sv_path, "/system" ), "r" ) ) == NULL ) {
+        if ( ( le_tree = fopen( strcat( ( char * ) le_server->sv_path, "/system" ), "r" ) ) == NULL ) {
 
             /* send message */
             return( LE_ERROR_IO_ACCESS );
@@ -122,10 +122,10 @@
         }
 
         /* read configuration parameter */
-        if ( fscanf( le_stream, "%" _LE_SIZE_S, & le_server->sv_scfg ) != 1 ) {
+        if ( fscanf( le_tree, "%" _LE_SIZE_S, & le_server->sv_scfg ) != 1 ) {
 
             /* close stream */
-            fclose( le_stream );
+            fclose( le_tree );
 
             /* send message */
             return( LE_ERROR_IO_READ );
@@ -133,10 +133,10 @@
         }
 
         /* read configuration parameter */
-        if ( fscanf( le_stream, "%" _LE_TIME_S, & le_server->sv_tcfg ) != 1 ) {
+        if ( fscanf( le_tree, "%" _LE_TIME_S, & le_server->sv_tcfg ) != 1 ) {
 
             /* close stream */
-            fclose( le_stream );
+            fclose( le_tree );
 
             /* send message */
             return( LE_ERROR_IO_READ );
@@ -144,7 +144,7 @@
         }
 
         /* close stream */
-        fclose( le_stream );
+        fclose( le_tree );
 
         /* check consistency */
         if ( ( le_server->sv_scfg <= 0 ) || ( le_server->sv_scfg >= _LE_USE_DEPTH ) ) {
@@ -171,10 +171,10 @@
     }
 
 /*
-    source - i/o methods
+    source - service methods
  */
 
-    le_void_t le_server_io( le_server_t * const le_server ) {
+    le_void_t le_server_srv( le_server_t * const le_server ) {
 
         /* server client management */
         # pragma omp parallel num_threads( _LE_USE_PENDING )
@@ -187,7 +187,7 @@
         le_enum_t le_active = _LE_TRUE;
 
         /* stream variables */
-        le_stream_t le_stream = LE_STREAM_C;
+        le_tree_t le_tree = LE_TREE_C;
 
         /* socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
@@ -199,7 +199,7 @@
         while ( ( le_socket = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
             /* create and check connection stream */
-            if ( ( le_stream = le_stream_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) )._status == LE_ERROR_SUCCESS ) {
+            if ( ( le_tree = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) )._status == LE_ERROR_SUCCESS ) {
 
                 /* connection manager */
                 while ( le_active == _LE_TRUE ) {
@@ -211,7 +211,7 @@
                         case ( LE_MODE_AUTH ) : {
 
                             /* mode management - update state */
-                            le_active = le_server_io_auth( le_server, & le_stream, le_stack, le_socket );
+                            le_active = le_server_srv_auth( le_server, & le_tree, le_stack, le_socket );
 
                         } break;
 
@@ -219,7 +219,7 @@
                         case ( LE_MODE_INJE ) : {
 
                             /* mode management - update state */
-                            le_active = le_server_io_inject( le_server, & le_stream, le_stack, le_socket );
+                            le_active = le_server_srv_inject( le_server, & le_tree, le_stack, le_socket );
 
                         } break;
 
@@ -227,7 +227,7 @@
                         case ( LE_MODE_QUER ) : {
 
                             /* mode management - update state */
-                            le_active = le_server_io_query( le_server, & le_stream, le_stack, le_socket );
+                            le_active = le_server_srv_query( le_server, & le_tree, le_stack, le_socket );
 
                         } break;
 
@@ -239,7 +239,7 @@
                 }
 
                 /* delete connection stream */
-                le_stream_delete( & le_stream );
+                le_tree_delete( & le_tree );
 
             }
 
@@ -259,10 +259,10 @@
     }
 
 /*
-    source - i/o methods
+    source - service methods
  */
 
-    le_enum_t le_server_io_auth( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
+    le_enum_t le_server_srv_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
         /* serailisation variable */
         le_size_t le_serial = 0;
@@ -295,13 +295,13 @@
 
     }
 
-    le_enum_t le_server_io_inject( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
+    le_enum_t le_server_srv_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
         /* time value variable */
         le_time_t le_time = _LE_TIME_NULL;
 
-        /* stream index variable */
-        le_size_t le_index = _LE_SIZE_NULL;
+        /* unit variable */
+        le_unit_t * le_unit = NULL;
 
         /* check consistency */
         if ( le_array_get_size( le_stack ) != LE_ARRAY_INJE_HEAD ) {
@@ -329,9 +329,9 @@
             return( _LE_FALSE );
 
         }
-        
-        /* create and check stream index */
-        if ( ( le_index = le_stream_get_strict( le_stream, le_time, LE_STREAM_WRITE ) ) == _LE_SIZE_NULL ) {
+
+        /* retrieve and check unit */
+        if ( ( le_unit = le_tree_get_inject( le_tree, le_time ) ) == NULL ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -339,14 +339,14 @@
         }
 
         /* inject socket-array */
-        le_stream_io_inject( le_stream, le_index, le_stack );
+        le_service_io_inject( le_unit, le_stack, le_server->sv_scfg );
 
         /* send message */
         return( _LE_TRUE );
 
     }
 
-    le_enum_t le_server_io_query( le_server_t * const le_server, le_stream_t * const le_stream, le_array_t * const le_stack, le_sock_t const le_socket ) {
+    le_enum_t le_server_srv_query( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
         /* address variable */
         le_address_t le_addr = LE_ADDRESS_C;
@@ -370,9 +370,9 @@
         le_size_t le_offa = _LE_OFFS_NULL;
         le_size_t le_offb = _LE_OFFS_NULL;
 
-        /* stream variable */
-        le_size_t le_stra = _LE_SIZE_NULL;
-        le_size_t le_strb = _LE_SIZE_NULL;
+        /* unit variable */
+        le_unit_t * le_uia = NULL;
+        le_unit_t * le_uib = NULL;
 
         /* check consistency */
         if ( ( le_length % LE_ARRAY_ADDR ) != 0 ) {
@@ -400,30 +400,27 @@
             /* check address mode */
             if ( le_mode < 3 ) {
 
-                /* reduce address time */
-                le_stra = le_stream_get_reduct( le_stream, & le_addr, le_mode - 1, & le_offa );
-
-                /* check address reduction */
-                if ( le_stra != _LE_SIZE_NULL ) {
+                /* reduce and check address */
+                if ( ( le_uia = le_tree_get_query( le_tree, & le_addr, le_mode - 1, & le_offa ) ) != NULL ) {
 
                     /* gathering process */
-                    le_stream_io_gather( le_stream, le_stra, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
+                    le_service_io_gather( le_uia, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
 
                 }
 
             } else {
 
-                /* reduce address time */
-                le_stra = le_stream_get_reduct( le_stream, & le_addr, 0, & le_offa );
+                /* reduce address */
+                le_uia = le_tree_get_query( le_tree, & le_addr, 0, & le_offa );
 
-                /* reduce address time */
-                le_strb = le_stream_get_reduct( le_stream, & le_addr, 1, & le_offb );
+                /* reduce address */
+                le_uib = le_tree_get_query( le_tree, & le_addr, 1, & le_offa );
 
-                /* check address reduction */
-                if ( ( le_stra != _LE_SIZE_NULL ) || ( le_strb != _LE_SIZE_NULL ) ) {
+                /* check address */
+                if ( ( le_uia != NULL ) || ( le_uib != NULL ) ) {
 
                     /* gathering process */
-                    le_stream_io_parallel( le_stream, le_stra, le_strb, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
+                    le_service_io_parallel( le_uia, le_uib, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
 
                 }
 
