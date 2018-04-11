@@ -58,10 +58,10 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_TREE_C             { NULL, 0, 0, 0, NULL, LE_ERROR_SUCCESS }
+    # define LE_TREE_C             { NULL, 0, 0, _LE_USE_COMB, 0, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_TREE_C_CONF(r,s,t) { r, s, t, 0, NULL, LE_ERROR_SUCCESS }
+    # define LE_TREE_C_CONF(r,s,t) { r, s, t, _LE_USE_COMB, 0, NULL, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
@@ -82,6 +82,7 @@
         le_char_t * tr_root;
         le_size_t   tr_scfg;
         le_time_t   tr_tcfg;
+        le_time_t   tr_comb;
 
         le_size_t   tr_size;
         le_unit_t * tr_unit;

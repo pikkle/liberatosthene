@@ -43,6 +43,9 @@
 
         }
 
+        /* compute reduced comb */
+        le_tree.tr_comb /= le_tree.tr_tcfg;
+
         /* open and check directory */
         if ( ( le_directory = opendir( ( char * ) le_tree.tr_root ) ) == NULL ) {
 
@@ -153,14 +156,15 @@
         le_size_t le_dindex = le_tree->tr_size;
         le_size_t le_gindex = 0;
 
+        /* time variable */
+        le_time_t le_dtime = 0;
+        le_time_t le_gtime = 0;
+
         /* parsing variable */
         le_size_t le_select = _LE_SIZE_NULL;
 
         /* check tree state */
         if ( le_tree->tr_size == 0 ) {
-
-            /* assign offset */
-            ( * le_offset ) = _LE_OFFS_NULL;
 
             /* send message */
             return( NULL );
@@ -172,7 +176,6 @@
 
             /* initialise index */
             le_dindex = -1;
-            le_gindex = +0;
 
         } else {
 
@@ -180,8 +183,7 @@
             if ( le_time >= le_unit_get_time( le_tree->tr_unit + le_tree->tr_size - 1 ) ) {
 
                 /* initialise index */
-                le_dindex = le_tree->tr_size - 1;
-                le_gindex = le_tree->tr_size;
+                le_gindex = le_dindex --;
 
             } else {
 
@@ -204,6 +206,14 @@
                 /* push index */
                 le_select = le_gindex ++;
 
+                /* comb condition */
+                if ( ( le_unit_get_time( le_tree->tr_unit + le_select ) - le_time ) > le_tree->tr_comb ) {
+
+                    /* send message */
+                    return( NULL );
+
+                }
+
             } else {
 
                 /* case study */
@@ -212,18 +222,48 @@
                     /* push index */
                     le_select = le_dindex --;
 
+                    /* comb condition */
+                    if ( ( le_time - le_unit_get_time( le_tree->tr_unit + le_select ) ) > le_tree->tr_comb ) {
+
+                        /* send message */
+                        return( NULL );
+
+                    }
+
                 } else {
 
+                    /* decreasing index distance */
+                    le_dtime = le_time - le_unit_get_time( le_tree->tr_unit + le_dindex );
+
+                    /* growing index distance */
+                    le_gtime = le_unit_get_time( le_tree->tr_unit + le_gindex ) - le_time;
+
                     /* case study */
-                    if ( ( le_time - le_unit_get_time( le_tree->tr_unit + le_dindex ) ) < ( le_unit_get_time( le_tree->tr_unit + le_gindex ) - le_time ) ) {
+                    if ( le_dtime < le_gtime ) {
 
                         /* push index */
                         le_select = le_dindex --;
+
+                        /* comb condition */
+                        if ( le_dtime > le_tree->tr_comb ) {
+
+                            /* send message */
+                            return( NULL );
+
+                        }
 
                     } else {
 
                         /* push index */
                         le_select = le_gindex ++;
+
+                        /* comb condition */
+                        if ( le_gtime > le_tree->tr_comb ) {
+
+                            /* send message */
+                            return( NULL );
+
+                        }
 
                     }
 
