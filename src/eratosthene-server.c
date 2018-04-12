@@ -147,7 +147,7 @@
         fclose( le_tree );
 
         /* check consistency */
-        if ( ( le_server->sv_scfg <= 0 ) || ( le_server->sv_scfg >= _LE_USE_DEPTH ) ) {
+        if ( ( le_server->sv_scfg <= 1 ) || ( le_server->sv_scfg >= _LE_USE_DEPTH ) ) {
 
             /* send message */
             return( LE_ERROR_DEPTH );
