@@ -121,7 +121,7 @@
      *  \return Returns the created unit
      */
 
-    le_unit_t le_unit_create( le_char_t const * const le_path, le_enum_t const le_mode, le_time_t const le_time, le_size_t const le_scfg );
+    le_unit_t le_unit_create( le_char_t const * const le_path, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg );
 
     /*! \brief constructor/destructor methods
      *

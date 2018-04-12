@@ -295,9 +295,6 @@
         /* unit variable */
         le_unit_t le_unit = LE_UNIT_C;
 
-        /* unit path variable */
-        le_char_t le_path[_LE_USE_STRING] = { 0 };
-
         /* memory swap variable */
         le_unit_t * le_swap = NULL;
 
@@ -318,11 +315,8 @@
         /* swap memory allocation */
         le_tree->tr_unit = le_swap;
 
-        /* compose unit path */
-        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_tree->tr_root, le_reduce  );
-
         /* create unit */
-        if ( le_get_status( le_unit = le_unit_create( le_path, le_mode, le_reduce, le_tree->tr_scfg ) ) != LE_ERROR_SUCCESS ) {
+        if ( le_get_status( le_unit = le_unit_create( le_tree->tr_root, le_reduce, le_mode, le_tree->tr_scfg ) ) != LE_ERROR_SUCCESS ) {
 
             /* delete unit */
             le_unit_delete( & le_unit );

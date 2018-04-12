@@ -24,7 +24,7 @@
     source - constructor/destructor methods
  */
 
-    le_unit_t le_unit_create( le_char_t const * const le_path, le_enum_t const le_mode, le_time_t const le_time, le_size_t const le_scfg ) {
+    le_unit_t le_unit_create( le_char_t const * const le_path, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg ) {
 
         /* created structure variable */
         le_unit_t le_unit = LE_UNIT_C_TIME( le_time );
@@ -49,7 +49,7 @@
         for ( le_size_t le_parse = 0; le_parse < le_scfg; le_parse ++ ) {
 
             /* compose stream path */
-            sprintf( ( char * ) le_stream, "%s/scale-%03" _LE_SIZE_P ".bin", le_path, le_parse );
+            sprintf( ( char * ) le_stream, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_path, le_time, le_parse );
 
             /* create stream */
             if ( ( le_unit.un_pile[le_parse] = fopen( ( char * ) le_stream, le_unit_mode( le_mode ) ) ) == NULL ) {
