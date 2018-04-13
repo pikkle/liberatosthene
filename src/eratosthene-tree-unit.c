@@ -24,7 +24,7 @@
     source - constructor/destructor methods
  */
 
-    le_unit_t le_unit_create( le_char_t const * const le_path, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg ) {
+    le_unit_t le_unit_create( le_char_t const * const le_path, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg, le_enum_t const le_buffer ) {
 
         /* created structure variable */
         le_unit_t le_unit = LE_UNIT_C_TIME( le_time );
@@ -59,8 +59,13 @@
 
             }
 
-            /* disable stream buffer */
-            setvbuf( le_unit.un_pile[le_parse], NULL, _IONBF, 0);
+            /* check buffer mode */
+            if ( le_buffer == LE_UNIT_BIGN ) {
+
+                /* disable stream buffer */
+                setvbuf( le_unit.un_pile[le_parse], NULL, _IONBF, 0 );
+
+            }
 
         }
 
