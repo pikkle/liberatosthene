@@ -35,8 +35,11 @@
         /* check unit mode */
         if ( le_mode == LE_UNIT_WRITE ) {
 
+            /* compose directory path */
+            sprintf( ( char * ) le_stream, "%s/%" _LE_TIME_P, le_path, le_time );
+
             /* create unit directory */
-            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+            if ( mkdir( ( char * ) le_stream, 0755 ) != 0 ) {
 
                 /* send message */
                 return( le_set_status( le_unit, LE_ERROR_IO_WRITE ) );
@@ -129,6 +132,45 @@
             return( _LE_FALSE );
 
         }
+
+    }
+
+/*
+    source - mutator methods
+ */
+
+    le_void_t le_unit_set_optimise( le_unit_t * const le_src, le_unit_t * const le_dst, le_size_t const le_offset, le_size_t * const le_tracker, le_size_t const le_scale ) {
+
+        /* offset variable */
+        le_size_t le_enum = _LE_OFFS_NULL;
+
+        /* class variable */
+        le_class_t le_class = LE_CLASS_C;
+
+        /* read class - source unit */
+        le_class_io_read( & le_class, le_offset, le_src->un_pile[le_scale] );
+
+        /* parsing class offsets */
+        for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
+
+            /* retrieve offset */
+            if ( ( le_enum = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
+
+                /* update class offset */
+                le_class_set_offset( & le_class, le_digit, le_tracker[le_scale +1] );
+
+                /* recursive optimisation process */
+                le_unit_set_optimise( le_src, le_dst, le_enum, le_tracker, le_scale + 1 );
+
+            }
+
+        }
+
+        /* write class - destination unit */
+        le_class_io_write( & le_class, le_tracker[le_scale], le_dst->un_pile[le_scale] );
+
+        /* update offset tracker array */
+        le_tracker[le_scale] += LE_CLASS_ARRAY;
 
     }
 

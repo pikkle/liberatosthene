@@ -44,8 +44,6 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-address.h"
-    # include "eratosthene-array.h"
     # include "eratosthene-class.h"
 
 /*
@@ -180,6 +178,10 @@
      */
 
     le_enum_t le_unit_get_prior( le_unit_t const * const le_unit, le_unit_t const * const le_candidate );
+
+    /* *** */
+
+    le_void_t le_unit_set_optimise( le_unit_t * const le_src, le_unit_t * const le_dst, le_size_t const le_offset, le_size_t * const le_tracker, le_size_t const le_scale );
 
 /*
     header - C/C++ compatibility
