@@ -118,7 +118,7 @@
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
-     *  \param le_path   Path to the unit storage structure
+     *  \param le_path   Server storage path
      *  \param le_mode   Unit creation mode
      *  \param le_time   Unit time value, in reduced form
      *  \param le_scfg   Server spatial parameter (number of scales)
@@ -179,11 +179,49 @@
 
     le_enum_t le_unit_get_prior( le_unit_t const * const le_unit, le_unit_t const * const le_candidate );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to optimise the storage structure of the provided
+     *  unit structure. The function rewrites the storage structure of the unit
+     *  to allow faster read operation.
+     *
+     *  The function starts by creating "dual" files for each scales of the unit
+     *  in which the content of the current file is re-written in an optimised
+     *  fashion. At the end of the process, the "dual" files are move to over-
+     *  write the unit previous files.
+     *
+     *  This operation being heavy in terms of read and write operation, it can
+     *  be long on large unit storage structure.
+     *
+     *  \param le_unit Unit structure
+     *  \param le_root Server storage path
+     */
 
     le_void_t le_unit_set_optimise( le_unit_t * const le_unit, le_char_t const * const le_root );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This recursive function is the function used by the storage optimisation
+     *  procedure implemented in \b le_unit_set_optimise(). This function is
+     *  used to read the storage structure as the tree it defines. In the same
+     *  time, the read classes of the different scales are rewritten in their
+     *  "tree-reading" order in the provided "dual" files. The recursive process
+     *  ends as the tree is entirely read, and so, written in the "dual" files.
+     *
+     *  The "dual" stream array has to have, at least, a size equal to the
+     *  server space parameter. In addition, it as to contain already created
+     *  file descriptor toward the optimisation "dual" files.
+     * 
+     *  In the same way, the class writing offsets tracker array (\b le_head)
+     *  has the same constraint on its size. In addition, its content has to be
+     *  zero for each of it used elements.
+     *
+     *  \param le_unit Unit structure
+     *  \param le_dual Dual stream array
+     *  \param le_offset Class offset
+     *  \param le_head   Class writing offsets tracker
+     *  \param le_scale  Scale value
+     */
 
     le_void_t le_unit_set_arrange( le_unit_t * const le_unit, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
 

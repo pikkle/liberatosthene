@@ -163,7 +163,7 @@
             if ( le_unit->un_pile[le_parse] != NULL ) {
 
                 /* compose dual stream path */
-                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/dual-%03" _LE_SIZE_P ".bin", le_root, le_unit->un_time, le_parse );
+                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".dual", le_root, le_unit->un_time, le_parse );
 
                 /* create dual stream */
                 le_dual[le_parse] = fopen( ( char * ) le_path, le_unit_mode( LE_UNIT_WRITE ) );
@@ -192,7 +192,7 @@
                 le_unit->un_pile[le_parse] = le_dual[le_parse];
 
                 /* compose dual stream path */
-                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/dual-%03" _LE_SIZE_P ".bin", le_root, le_unit->un_time, le_parse );
+                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".dual", le_root, le_unit->un_time, le_parse );
 
                 /* compose stream path */
                 sprintf( ( char * ) le_over, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_root, le_unit->un_time, le_parse );
