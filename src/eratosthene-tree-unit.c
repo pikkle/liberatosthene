@@ -139,7 +139,74 @@
     source - mutator methods
  */
 
-    le_void_t le_unit_set_optimise( le_unit_t * const le_src, le_unit_t * const le_dst, le_size_t const le_offset, le_size_t * const le_tracker, le_size_t const le_scale ) {
+    le_void_t le_unit_set_optimise( le_unit_t * const le_unit, le_char_t const * const le_root ) {
+
+        /* string variable */
+        le_char_t le_path[_LE_USE_STRING] = { 0 };
+
+        /* string variable */
+        le_char_t le_over[_LE_USE_STRING] = { 0 };
+
+        /* dual stream variable */
+        le_file_t le_dual[_LE_USE_DEPTH] = { NULL };
+
+        /* offset array variable */
+        le_size_t le_head[_LE_USE_DEPTH] = { 0 };
+
+        /* parsing variable */
+        le_size_t le_parse = 0;
+
+        /* parsing scales */
+        while ( le_parse < _LE_USE_DEPTH ) {
+
+            /* check stream state */
+            if ( le_unit->un_pile[le_parse] != NULL ) {
+
+                /* compose dual stream path */
+                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/dual-%03" _LE_SIZE_P ".bin", le_root, le_unit->un_time, le_parse );
+
+                /* create dual stream */
+                le_dual[le_parse] = fopen( ( char * ) le_path, le_unit_mode( LE_UNIT_WRITE ) );
+
+                /* update index */
+                le_parse ++;
+
+            /* abort duplication */
+            } else { le_parse = _LE_USE_DEPTH; }
+
+        }
+
+        /* optimise unit storage */
+        le_unit_set_arrange( le_unit, le_dual, 0, le_head, 0 );
+
+        /* parsing scale */
+        while ( ( -- le_parse ) >= 0 ) {
+
+            /* check stream state */
+            if ( le_unit->un_pile[le_parse] != NULL ) {
+
+                /* close stream */
+                fclose( le_unit->un_pile[le_parse] );
+
+                /* replace stream */
+                le_unit->un_pile[le_parse] = le_dual[le_parse];
+
+                /* compose dual stream path */
+                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/dual-%03" _LE_SIZE_P ".bin", le_root, le_unit->un_time, le_parse );
+
+                /* compose stream path */
+                sprintf( ( char * ) le_over, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_root, le_unit->un_time, le_parse );
+
+                /* overwrite stream with dual stream */
+                rename( ( char * ) le_path, ( char * ) le_over );
+
+            }
+
+        }
+
+    }
+
+    le_void_t le_unit_set_arrange( le_unit_t * const le_unit, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale ) {
 
         /* offset variable */
         le_size_t le_enum = _LE_OFFS_NULL;
@@ -147,8 +214,8 @@
         /* class variable */
         le_class_t le_class = LE_CLASS_C;
 
-        /* read class - source unit */
-        le_class_io_read( & le_class, le_offset, le_src->un_pile[le_scale] );
+        /* read class - unit */
+        le_class_io_read( & le_class, le_offset, le_unit->un_pile[le_scale] );
 
         /* parsing class offsets */
         for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
@@ -157,20 +224,20 @@
             if ( ( le_enum = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
 
                 /* update class offset */
-                le_class_set_offset( & le_class, le_digit, le_tracker[le_scale +1] );
+                le_class_set_offset( & le_class, le_digit, le_head[le_scale + 1] );
 
                 /* recursive optimisation process */
-                le_unit_set_optimise( le_src, le_dst, le_enum, le_tracker, le_scale + 1 );
+                le_unit_set_arrange( le_unit, le_dual, le_enum, le_head, le_scale + 1 );
 
             }
 
         }
 
-        /* write class - destination unit */
-        le_class_io_write( & le_class, le_tracker[le_scale], le_dst->un_pile[le_scale] );
+        /* write class - dual */
+        le_class_io_write( & le_class, le_head[le_scale], le_dual[le_scale] );
 
-        /* update offset tracker array */
-        le_tracker[le_scale] += LE_CLASS_ARRAY;
+        /* update head array */
+        le_head[le_scale] += LE_CLASS_ARRAY;
 
     }
 

@@ -181,7 +181,11 @@
 
     /* *** */
 
-    le_void_t le_unit_set_optimise( le_unit_t * const le_src, le_unit_t * const le_dst, le_size_t const le_offset, le_size_t * const le_tracker, le_size_t const le_scale );
+    le_void_t le_unit_set_optimise( le_unit_t * const le_unit, le_char_t const * const le_root );
+
+    /* *** */
+
+    le_void_t le_unit_set_arrange( le_unit_t * const le_unit, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
 
 /*
     header - C/C++ compatibility
