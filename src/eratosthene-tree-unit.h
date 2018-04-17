@@ -118,7 +118,7 @@
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
-     *  \param le_path   Server storage path
+     *  \param le_root   Server storage path
      *  \param le_mode   Unit creation mode
      *  \param le_time   Unit time value, in reduced form
      *  \param le_scfg   Server spatial parameter (number of scales)
@@ -127,7 +127,7 @@
      *  \return Returns the created unit
      */
 
-    le_unit_t le_unit_create( le_char_t const * const le_path, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg, le_enum_t const le_buffer );
+    le_unit_t le_unit_create( le_char_t const * const le_root, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg, le_enum_t const le_buffer );
 
     /*! \brief constructor/destructor methods
      *
@@ -216,8 +216,8 @@
      *  has the same constraint on its size. In addition, its content has to be
      *  zero for each of it used elements.
      *
-     *  \param le_unit Unit structure
-     *  \param le_dual Dual stream array
+     *  \param le_unit   Unit structure
+     *  \param le_dual   Dual stream array
      *  \param le_offset Class offset
      *  \param le_head   Class writing offsets tracker
      *  \param le_scale  Scale value

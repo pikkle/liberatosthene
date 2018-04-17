@@ -24,22 +24,22 @@
     source - constructor/destructor methods
  */
 
-    le_unit_t le_unit_create( le_char_t const * const le_path, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg, le_enum_t const le_buffer ) {
+    le_unit_t le_unit_create( le_char_t const * const le_root, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg, le_enum_t const le_buffer ) {
 
         /* created structure variable */
         le_unit_t le_unit = LE_UNIT_C_TIME( le_time );
 
         /* stream path variable */
-        le_char_t le_stream[_LE_USE_STRING] = { 0 };
+        le_char_t le_path[_LE_USE_STRING] = { 0 };
 
         /* check unit mode */
         if ( le_mode == LE_UNIT_WRITE ) {
 
             /* compose directory path */
-            sprintf( ( char * ) le_stream, "%s/%" _LE_TIME_P, le_path, le_time );
+            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_root, le_time );
 
             /* create unit directory */
-            if ( mkdir( ( char * ) le_stream, 0755 ) != 0 ) {
+            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
 
                 /* send message */
                 return( le_set_status( le_unit, LE_ERROR_IO_WRITE ) );
@@ -52,10 +52,10 @@
         for ( le_size_t le_parse = 0; le_parse < le_scfg; le_parse ++ ) {
 
             /* compose stream path */
-            sprintf( ( char * ) le_stream, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_path, le_time, le_parse );
+            sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/scale-%03" _LE_SIZE_P ".bin", le_root, le_time, le_parse );
 
             /* create stream */
-            if ( ( le_unit.un_pile[le_parse] = fopen( ( char * ) le_stream, le_unit_mode( le_mode ) ) ) == NULL ) {
+            if ( ( le_unit.un_pile[le_parse] = fopen( ( char * ) le_path, le_unit_mode( le_mode ) ) ) == NULL ) {
 
                 /* send message */
                 return( le_set_status( le_unit, LE_ERROR_IO_ACCESS ) );
