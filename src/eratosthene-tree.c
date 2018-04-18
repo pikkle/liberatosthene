@@ -316,7 +316,7 @@
         le_tree->tr_unit = le_swap;
 
         /* create unit */
-        if ( le_get_status( le_unit = le_unit_create( le_tree->tr_root, le_reduce, le_mode, le_tree->tr_scfg, LE_UNIT_BIGN ) ) != LE_ERROR_SUCCESS ) {
+        if ( le_get_status( le_unit = le_unit_create( le_tree->tr_root, le_reduce, le_mode, le_tree->tr_scfg ) ) != LE_ERROR_SUCCESS ) {
 
             /* delete unit */
             le_unit_delete( & le_unit );

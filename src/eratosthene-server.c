@@ -215,11 +215,19 @@
 
                         } break;
 
-                        /* injection */
+                        /* inject */
                         case ( LE_MODE_INJE ) : {
 
                             /* mode management - update state */
                             le_active = le_server_srv_inject( le_server, & le_tree, le_stack, le_socket );
+
+                        } break;
+
+                        /* optimise */
+                        case ( LE_MODE_OPTM ) : {
+
+                            /* mode management - update state */
+                            le_active = le_server_srv_optm( le_server, & le_tree, le_stack, le_socket );
 
                         } break;
 
@@ -340,6 +348,41 @@
 
         /* inject socket-array */
         le_service_io_inject( le_unit, le_stack, le_server->sv_scfg );
+
+        /* send message */
+        return( _LE_TRUE );
+
+    }
+
+    le_enum_t le_server_srv_optm( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
+
+        /* time value variable */
+        le_time_t le_time = _LE_TIME_NULL;
+
+        /* unit variable */
+        le_unit_t * le_unit = NULL;
+
+        /* check consistency */
+        if ( le_array_get_size( le_stack ) != LE_ARRAY_OPTM ) {
+
+            /* send message */
+            return( _LE_TRUE );
+
+        }
+
+        /* serialise time */
+        le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
+
+        /* retrieve and check unit */
+        if ( ( le_unit = le_tree_get_inject( le_tree, le_time ) ) == NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* optimise unit storage */
+        le_unit_set_optimise( le_unit, le_server->sv_path );
 
         /* send message */
         return( _LE_TRUE );

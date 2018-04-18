@@ -71,6 +71,9 @@
     /* define array-size - inject */
     # define LE_ARRAY_INJE_HEAD         ( sizeof( le_time_t ) )
 
+    /* define array-size - optimise */
+    # define LE_ARRAY_OPTM              ( sizeof( le_time_t ) ) /**/
+
     /* define array-size - address */
     # define LE_ARRAY_ADDR_TIME         ( sizeof( le_time_t ) * 2 )
     # define LE_ARRAY_ADDR_DESC         ( sizeof( le_byte_t ) * 3 )

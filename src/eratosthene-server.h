@@ -272,6 +272,10 @@
 
     le_enum_t le_server_srv_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
+    /* *** */
+
+    le_enum_t le_server_srv_optm( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
+
     /*! \brief service methods
      *
      *  This function reads the query addresses packed in the client array and

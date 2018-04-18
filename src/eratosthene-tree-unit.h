@@ -64,10 +64,6 @@
     # define LE_UNIT_READ       ( 0 )
     # define LE_UNIT_WRITE      ( 1 )
 
-    /* define buffer mode */
-    # define LE_UNIT_BDEF       ( 0 )
-    # define LE_UNIT_BIGN       ( 1 )
-
 /*
     header - preprocessor macros
  */
@@ -112,9 +108,6 @@
      *  If any stream is not accessible or of the directory creation fails, the
      *  function returns the structure as it is.
      *
-     *  The stream buffer can be disabled by passing \b LE_UNIT_BIGN constant as
-     *  buffer mode, more efficient for purely and massive small random access.
-     *
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
@@ -122,12 +115,11 @@
      *  \param le_mode   Unit creation mode
      *  \param le_time   Unit time value, in reduced form
      *  \param le_scfg   Server spatial parameter (number of scales)
-     *  \param le_buffer Stream buffer mode
      *
      *  \return Returns the created unit
      */
 
-    le_unit_t le_unit_create( le_char_t const * const le_root, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg, le_enum_t const le_buffer );
+    le_unit_t le_unit_create( le_char_t const * const le_root, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg );
 
     /*! \brief constructor/destructor methods
      *
