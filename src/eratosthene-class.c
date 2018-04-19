@@ -54,7 +54,7 @@
     le_size_t le_class_get_offset( le_class_t const * const le_class, le_size_t const le_index ) {
 
         /* extract and return offset */
-        return( ( * le_class_offset( le_class, le_index ) ) & _LE_OFFS_NULL );
+        return( ( * le_class_mac_offset( le_class, le_index ) ) & _LE_OFFS_NULL );
 
     }
 
@@ -65,7 +65,7 @@
     le_void_t le_class_set_offset( le_class_t * const le_class, le_size_t const le_index, le_size_t const le_offset ) {
 
         /* pointer variable */
-        le_size_t * le_base = le_class_offset( le_class, le_index );
+        le_size_t * le_base = le_class_mac_offset( le_class, le_index );
 
         /* assign offset */
         ( * le_base ) = ( ( * le_base ) & LE_CLASS_MASK ) | le_offset;
@@ -75,12 +75,12 @@
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data ) {
 
         /* heap variable */
-        le_real_t le_heap = ( le_real_t ) le_class->cs_data[3] + 1.0;
+        le_real_t le_heap = ( ( le_real_t ) le_class->cs_data[3] ) + 1.0;
 
         /* data pseudo-accumulation */
-        le_class->cs_data[0] = ( ( le_heap * le_class->cs_data[0] ) + le_data[0] ) / ( le_heap + 1.0 );
-        le_class->cs_data[1] = ( ( le_heap * le_class->cs_data[1] ) + le_data[1] ) / ( le_heap + 1.0 );
-        le_class->cs_data[2] = ( ( le_heap * le_class->cs_data[2] ) + le_data[2] ) / ( le_heap + 1.0 );
+        le_class->cs_data[0] = ( ( le_heap * le_class->cs_data[0] ) + le_data[0] ) / ( le_heap + 1.0 ) + 0.5;
+        le_class->cs_data[1] = ( ( le_heap * le_class->cs_data[1] ) + le_data[1] ) / ( le_heap + 1.0 ) + 0.5;
+        le_class->cs_data[2] = ( ( le_heap * le_class->cs_data[2] ) + le_data[2] ) / ( le_heap + 1.0 ) + 0.5;
 
         /* check heap value */
         if ( le_class->cs_data[3] < _LE_BYTE_MAX ) {

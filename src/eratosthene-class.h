@@ -54,27 +54,27 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_CLASS_C             { { 0, 0, 0, 0 } }
-    # define LE_CLASS_C_DATA(r,g,b) { { r, g, b, 0 } }
+    # define LE_CLASS_C               { { 0, 0, 0, 0, 0 } }
+    # define LE_CLASS_C_DATA(r,g,b)   { { r, g, b, 0, 0 } }
 
     /* define class offsets */
-    # define LE_CLASS_OFFSET        ( _LE_USE_OFFSET * _LE_USE_BASE )
+    # define LE_CLASS_OFFSET          ( _LE_USE_OFFSET * _LE_USE_BASE )
 
     /* define class array */
-    # define LE_CLASS_ARRAY         ( _LE_USE_DATA + LE_CLASS_OFFSET )
+    # define LE_CLASS_ARRAY           ( _LE_USE_DATA + LE_CLASS_OFFSET )
 
     /* define class memory */
-    # define LE_CLASS_MEMORY        ( LE_CLASS_ARRAY + sizeof( le_size_t ) - _LE_USE_OFFSET )
+    # define LE_CLASS_MEMORY          ( LE_CLASS_ARRAY + sizeof( le_size_t ) - _LE_USE_OFFSET )
 
     /* define class offset mask */
-    # define LE_CLASS_MASK          ( ~ ( _LE_OFFS_NULL ) )
+    # define LE_CLASS_MASK            ( ~ ( _LE_OFFS_NULL ) )
 
 /*
     header - preprocessor macros
  */
 
     /* define offset pointer */
-    # define le_class_offset(c,i)   ( ( le_size_t * ) ( ( ( le_byte_t * ) ( c )->cs_data ) + _LE_USE_DATA + _LE_USE_OFFSET * ( i ) ) )
+    # define le_class_mac_offset(c,i) ( ( le_size_t * ) ( ( ( le_byte_t * ) ( c )->cs_data ) + _LE_USE_DATA + _LE_USE_OFFSET * ( i ) ) )
 
 /*
     header - type definition
