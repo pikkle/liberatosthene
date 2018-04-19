@@ -443,6 +443,14 @@
             /* socket-array reading */
             le_mode = le_array_io_read( le_array, le_socket );
 
+            /* check array state */
+            if ( le_array->ar_csize != 0 ) {
+
+                /* send message */
+                return( LE_MODE_NULL );
+
+            }
+
         }
 
         /* return socket-array mode */
