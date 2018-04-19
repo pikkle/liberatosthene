@@ -118,22 +118,18 @@
 
     # include <stdio.h>
     # include <stdint.h>
-    # include <unistd.h>
     # include <stdlib.h>
     # include <string.h>
+    # include <limits.h>
     # include <inttypes.h>
     # include <omp.h>
     # include <dirent.h>
     # include <sys/stat.h>
-    # include <sys/types.h>
     # include <sys/socket.h>
     # include <netinet/in.h>
     # include <netinet/tcp.h>
     # include <arpa/inet.h>
-    # include <netdb.h>
     # include <zlib.h>
-
-    # include <time.h>
 
 /*
     header - preprocessor definitions
@@ -159,9 +155,9 @@
     # define _LE_USE_PORT           ( 11027 )
     # define _LE_USE_PENDING        ( 16 )
     # define _LE_USE_RETRY          ( 3 )
-    # define _LE_USE_STRING         ( 256 )
     # define _LE_USE_ARRAY          ( 3 )
     # define _LE_USE_COMB           ( 1576800000 )
+    # define _LE_USE_PATH           ( PATH_MAX )
 
     /* define types */
     # define _LE_VOID               void
@@ -231,7 +227,7 @@
     # define LE_MODE_AUTH           ( 0x01 )
     # define LE_MODE_QUER           ( 0x03 )
     # define LE_MODE_INJE           ( 0x04 )
-    # define LE_MODE_OPTM           ( 0x05 ) /**/
+    # define LE_MODE_OPTM           ( 0x05 )
 
     /* define mathematical constants */
     # define LE_PI                  ( 3.1415926535897932384626433832795029 )

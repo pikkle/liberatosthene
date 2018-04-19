@@ -36,7 +36,7 @@
         if ( ( le_server.sv_path = le_path ) == NULL ) {
 
             /* send message */
-            return( le_server._status = LE_ERROR_IO_ACCESS, le_server );
+            return( le_set_status( le_server, LE_ERROR_IO_ACCESS ) );
 
         }
 
@@ -52,7 +52,7 @@
         if ( ( le_server.sv_sock = socket( AF_INET, SOCK_STREAM, 0 ) ) == _LE_SOCK_NULL ) {
 
             /* send message */
-            return( le_server._status = LE_ERROR_IO_SOCKET, le_server );
+            return( le_set_status( le_server, LE_ERROR_IO_SOCKET ) );
 
         }
 
@@ -63,7 +63,7 @@
             close( le_server.sv_sock );
 
             /* send message */
-            return( le_server._status = LE_ERROR_IO_BIND, le_server );
+            return( le_set_status( le_server, LE_ERROR_IO_BIND ) );
 
         }
 
@@ -74,7 +74,7 @@
             close( le_server.sv_sock );
 
             /* send message */
-            return( le_server._status = LE_ERROR_IO_LISTEN, le_server );
+            return( le_set_status( le_server, LE_ERROR_IO_LISTEN ) );
 
         }
 
@@ -312,7 +312,7 @@
         le_unit_t * le_unit = NULL;
 
         /* check consistency */
-        if ( le_array_get_size( le_stack ) != LE_ARRAY_INJE_HEAD ) {
+        if ( le_array_get_size( le_stack ) != LE_ARRAY_INJE ) {
 
             /* send message */
             return( _LE_FALSE );

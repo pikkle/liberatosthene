@@ -30,7 +30,7 @@
         le_unit_t le_unit = LE_UNIT_C_TIME( le_time );
 
         /* stream path variable */
-        le_char_t le_path[_LE_USE_STRING] = { 0 };
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
 
         /* check unit mode */
         if ( le_mode == LE_UNIT_WRITE ) {
@@ -134,10 +134,10 @@
     le_void_t le_unit_set_optimise( le_unit_t * const le_unit, le_char_t const * const le_root ) {
 
         /* string variable */
-        le_char_t le_path[_LE_USE_STRING] = { 0 };
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
 
         /* string variable */
-        le_char_t le_over[_LE_USE_STRING] = { 0 };
+        le_char_t le_over[_LE_USE_PATH] = { 0 };
 
         /* dual stream variable */
         le_file_t le_dual[_LE_USE_DEPTH] = { NULL };

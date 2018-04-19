@@ -205,6 +205,139 @@
 
     }
 
+    le_enum_t le_array_set_encode( le_array_t const * const le_src, le_array_t * const le_dst ) {
+
+        /* stream variable */
+        z_stream le_stream;
+
+        /* check array state */
+        if ( le_src->ar_vsize < LE_ARRAY_LIMIT ) {
+
+            /* update array size */
+            if ( le_array_set_size( le_dst, le_src->ar_vsize ) == _LE_FALSE ) {
+
+                /* send message */
+                return( LE_ERROR_MEMORY );
+
+            }
+
+            /* copy array content */
+            memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, le_src->ar_vsize );
+
+            /* update state */
+            le_dst->ar_csize = 0;
+
+        } else {
+
+            /* update array size */
+            if ( le_array_set_size( le_dst, le_array_entropy( le_src ) ) == _LE_FALSE ) {
+
+                /* send message */
+                return( LE_ERROR_MEMORY );
+
+            }
+
+            /* initialise stream */
+            le_stream.zalloc = Z_NULL;
+            le_stream.zfree  = Z_NULL;
+            le_stream.opaque = Z_NULL;
+
+            /* assign stream size */
+            le_stream.avail_in  = ( uInt ) le_src->ar_vsize;
+            le_stream.avail_out = ( uInt ) le_dst->ar_vsize;
+
+            /* assign stream reference */
+            le_stream.next_in  = ( Bytef * ) le_src->ar_vbyte;
+            le_stream.next_out = ( Bytef * ) le_dst->ar_vbyte;
+
+            /* initialise encoding */
+            deflateInit( & le_stream, Z_DEFAULT_COMPRESSION );
+
+            /* encode array */
+            deflate( & le_stream, Z_FINISH );
+
+            /* terminate encoding */
+            deflateEnd( & le_stream );
+
+            /* update array size */
+            if ( le_array_set_size( le_dst, le_stream.total_out ) == _LE_FALSE ) {
+
+                /* send message */
+                return( LE_ERROR_MEMORY );
+
+            }
+
+            /* update state */
+            le_dst->ar_csize = le_src->ar_vsize;
+
+        }
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
+    le_enum_t le_array_set_decode( le_array_t const * const le_src, le_array_t * const le_dst ) {
+
+        /* stream variable */
+        z_stream le_stream;
+
+        /* check array state */
+        if ( le_src->ar_csize == 0 ) {
+   
+            /* update array size */
+            if ( le_array_set_size( le_dst, le_src->ar_vsize ) == _LE_FALSE ) {
+
+                /* send message */
+                return( LE_ERROR_MEMORY );
+
+            }
+
+            /* copy array content */
+            memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, le_src->ar_vsize );
+
+        } else {
+
+            /* update array size */
+            if ( le_array_set_size( le_dst, le_src->ar_csize ) == _LE_FALSE ) {
+
+                /* send message */
+                return( LE_ERROR_MEMORY );
+
+            }
+
+            /* initialise stream */
+            le_stream.zalloc = Z_NULL;
+            le_stream.zfree  = Z_NULL;
+            le_stream.opaque = Z_NULL;
+
+            /* assign stream size */
+            le_stream.avail_in  = ( uInt ) le_src->ar_vsize;
+            le_stream.avail_out = ( uInt ) le_dst->ar_vsize;
+
+            /* assign stream reference */
+            le_stream.next_in  = ( Bytef * ) le_src->ar_vbyte;
+            le_stream.next_out = ( Bytef * ) le_dst->ar_vbyte;
+
+            /* initialise decoding */
+            inflateInit( & le_stream );
+
+            /* decode array */
+            inflate( & le_stream, Z_NO_FLUSH );
+
+            /* terminate decoding */
+            inflateEnd( & le_stream );
+
+        }
+
+        /* update state */
+        le_dst->ar_csize = 0;
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
 /*
     source - stack methods
  */
@@ -267,7 +400,7 @@
         if ( le_dual != NULL ) {
 
             /* encode array */
-            if ( le_array_epc_encode( le_array, le_dual ) != LE_ERROR_SUCCESS ) {
+            if ( le_array_set_encode( le_array, le_dual ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( LE_MODE_NULL );
@@ -298,7 +431,7 @@
             le_mode = le_array_io_read( le_dual, le_socket );
 
             /* decode array */
-            if ( le_array_epc_decode( le_dual, le_array ) != LE_ERROR_SUCCESS ) {
+            if ( le_array_set_decode( le_dual, le_array ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( LE_MODE_NULL );
@@ -425,143 +558,6 @@
 
         /* return socket-array mode */
         return( le_mode );
-
-    }
-
-/*
-    source - entropic methods
- */
-
-    le_enum_t le_array_epc_encode( le_array_t const * const le_src, le_array_t * const le_dst ) {
-
-        /* stream variable */
-        z_stream le_stream;
-
-        /* check array state */
-        if ( le_src->ar_vsize < LE_ARRAY_LIMIT ) {
-
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_src->ar_vsize ) == _LE_FALSE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* copy array content */
-            memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, le_src->ar_vsize );
-
-            /* update state */
-            le_dst->ar_csize = 0;
-
-        } else {
-
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_array_entropy( le_src ) ) == _LE_FALSE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* initialise stream */
-            le_stream.zalloc = Z_NULL;
-            le_stream.zfree  = Z_NULL;
-            le_stream.opaque = Z_NULL;
-
-            /* assign stream size */
-            le_stream.avail_in  = ( uInt ) le_src->ar_vsize;
-            le_stream.avail_out = ( uInt ) le_dst->ar_vsize;
-
-            /* assign stream reference */
-            le_stream.next_in  = ( Bytef * ) le_src->ar_vbyte;
-            le_stream.next_out = ( Bytef * ) le_dst->ar_vbyte;
-
-            /* initialise encoding */
-            deflateInit( & le_stream, Z_DEFAULT_COMPRESSION );
-
-            /* encode array */
-            deflate( & le_stream, Z_FINISH );
-
-            /* terminate encoding */
-            deflateEnd( & le_stream );
-
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_stream.total_out ) == _LE_FALSE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* update state */
-            le_dst->ar_csize = le_src->ar_vsize;
-
-        }
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_enum_t le_array_epc_decode( le_array_t const * const le_src, le_array_t * const le_dst ) {
-
-        /* stream variable */
-        z_stream le_stream;
-
-        /* check array state */
-        if ( le_src->ar_csize == 0 ) {
-   
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_src->ar_vsize ) == _LE_FALSE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* copy array content */
-            memcpy( le_dst->ar_vbyte, le_src->ar_vbyte, le_src->ar_vsize );
-
-        } else {
-
-            /* update array size */
-            if ( le_array_set_size( le_dst, le_src->ar_csize ) == _LE_FALSE ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-            /* initialise stream */
-            le_stream.zalloc = Z_NULL;
-            le_stream.zfree  = Z_NULL;
-            le_stream.opaque = Z_NULL;
-
-            /* assign stream size */
-            le_stream.avail_in  = ( uInt ) le_src->ar_vsize;
-            le_stream.avail_out = ( uInt ) le_dst->ar_vsize;
-
-            /* assign stream reference */
-            le_stream.next_in  = ( Bytef * ) le_src->ar_vbyte;
-            le_stream.next_out = ( Bytef * ) le_dst->ar_vbyte;
-
-            /* initialise decoding */
-            inflateInit( & le_stream );
-
-            /* decode array */
-            inflate( & le_stream, Z_NO_FLUSH );
-
-            /* terminate decoding */
-            inflateEnd( & le_stream );
-
-        }
-
-        /* update state */
-        le_dst->ar_csize = 0;
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
 
     }
 

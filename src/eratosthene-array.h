@@ -69,10 +69,10 @@
     # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
     /* define array-size - inject */
-    # define LE_ARRAY_INJE_HEAD         ( sizeof( le_time_t ) )
+    # define LE_ARRAY_INJE              ( sizeof( le_time_t ) )
 
     /* define array-size - optimise */
-    # define LE_ARRAY_OPTM              ( sizeof( le_time_t ) ) /**/
+    # define LE_ARRAY_OPTM              ( sizeof( le_time_t ) )
 
     /* define array-size - address */
     # define LE_ARRAY_ADDR_TIME         ( sizeof( le_time_t ) * 2 )
@@ -291,6 +291,40 @@
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
 
+    /*! \brief mutator methods
+     *
+     *  This function implements an entropic compression algorithm that can be
+     *  applied on any type of array.
+     *
+     *  The compressed size is set by the function according to the compression
+     *  results. If the compression succeed, the compressed size is set to the
+     *  original data array size. It is set to zero otherwise.
+     *
+     *  \param le_src Original array structure
+     *  \param le_dst Encoded array structure
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
+
+    le_enum_t le_array_set_encode( le_array_t const * const le_src, le_array_t * const le_dst );
+
+    /*! \brief mutator methods
+     *
+     *  This function is used to decompress data contained in the provided
+     *  array structure that are encoded using the \b le_array_epc_encode()
+     *  algorithm.
+     *
+     *  The function checks the structure compressed size to determine if the
+     *  data array needs to be decoded.
+     *
+     *  \param le_src Encoded array structure
+     *  \param le_dst Decoded array structure
+     *
+     * \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
+
+    le_enum_t le_array_set_decode( le_array_t const * const le_src, le_array_t * const le_dst );
+
     /*! \brief stack methods
      *
      *  This function is used to initialise stack of socket array. The function
@@ -404,40 +438,6 @@
      */
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
-
-    /*! \brief entropic methods
-     *
-     *  This function implements an entropic compression algorithm that can be
-     *  applied on any type of array.
-     *
-     *  The compressed size is set by the function according to the compression
-     *  results. If the compression succeed, the compressed size is set to the
-     *  original data array size. It is set to zero otherwise.
-     *
-     *  \param le_src Original array structure
-     *  \param le_dst Encoded array structure
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
-     */
-
-    le_enum_t le_array_epc_encode( le_array_t const * const le_src, le_array_t * const le_dst );
-
-    /*! \brief entropic methods
-     *
-     *  This function is used to decompress data contained in the provided
-     *  array structure that are encoded using the \b le_array_epc_encode()
-     *  algorithm.
-     *
-     *  The function checks the structure compressed size to determine if the
-     *  data array needs to be decoded.
-     *
-     *  \param le_src Encoded array structure
-     *  \param le_dst Decoded array structure
-     *
-     * \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
-     */
-
-    le_enum_t le_array_epc_decode( le_array_t const * const le_src, le_array_t * const le_dst );
 
 /*
     header - C/C++ compatibility
