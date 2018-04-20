@@ -47,6 +47,7 @@
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
     # include "eratosthene-client.h"
+    # include "eratosthene-pool.h"
     # include "eratosthene-tree.h"
     # include "eratosthene-tree-service.h"
 

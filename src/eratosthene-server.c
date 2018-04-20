@@ -176,6 +176,9 @@
 
     le_void_t le_server_srv( le_server_t * const le_server ) {
 
+        /* pooling variable */
+        le_pool_t le_pool = LE_POOL_C;
+
         /* server client management */
         # pragma omp parallel num_threads( _LE_USE_PENDING )
         {
@@ -183,8 +186,8 @@
         /* socket variable */
         le_sock_t le_socket = _LE_SOCK_NULL;
 
-        /* state variables */
-        le_enum_t le_active = _LE_TRUE;
+        /* process variable */
+        le_enum_t le_tid = omp_get_thread_num();
 
         /* stream variables */
         le_tree_t le_tree = LE_TREE_C;
@@ -198,11 +201,34 @@
         /* create client socket */
         while ( ( le_socket = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
-            /* create and check connection stream */
-            if ( ( le_tree = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) )._status == LE_ERROR_SUCCESS ) {
+            /* initialise thread pool */
+            le_pool_set( & le_pool, le_tid, LE_POOL_S0 | LE_POOL_S3 );
 
-                /* connection manager */
-                while ( le_active == _LE_TRUE ) {
+            /* connection manager */
+            while ( le_pool_get( & le_pool, le_tid, LE_POOL_S0 ) != 0 ) {
+
+                /* check pool message */
+                if ( le_pool_get( & le_pool, le_tid, LE_POOL_S3 ) != 0 ) {
+
+                    /* delete tree structure */
+                    le_tree_delete( & le_tree );
+
+                    /* create tree structure */
+                    if ( le_get_status( le_tree = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) != LE_ERROR_SUCCESS ) {
+
+                        /* reset pool activity */
+                        le_pool_set_clear( & le_pool, le_tid, LE_POOL_C0 );
+
+                    } else {
+
+                        /* reset pool message */
+                        le_pool_set_clear( & le_pool, le_tid, LE_POOL_C3 );
+
+                    }
+
+                }
+
+                if ( le_pool_get( & le_pool, le_tid, LE_POOL_S0 ) != 0 ) {
 
                     /* client socket-array */
                     switch( le_array_io_get( le_stack, le_stack + 1, le_socket ) ) {
@@ -211,7 +237,12 @@
                         case ( LE_MODE_AUTH ) : {
 
                             /* mode management - update state */
-                            le_active = le_server_srv_auth( le_server, & le_tree, le_stack, le_socket );
+                            if ( le_server_srv_auth( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+
+                                /* reset pool activity */
+                                le_pool_set_clear( & le_pool, le_tid, LE_POOL_C0 );
+
+                            }
 
                         } break;
 
@@ -219,7 +250,17 @@
                         case ( LE_MODE_INJE ) : {
 
                             /* mode management - update state */
-                            le_active = le_server_srv_inject( le_server, & le_tree, le_stack, le_socket );
+                            if ( le_server_srv_inject( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+
+                                /* reset pool activity */
+                                le_pool_set_clear( & le_pool, le_tid, LE_POOL_C0 );
+
+                            } else {
+
+                                /* broadcast message */
+                                le_pool_set_broadcast( & le_pool, le_tid, LE_POOL_S3 );
+
+                            }
 
                         } break;
 
@@ -227,7 +268,17 @@
                         case ( LE_MODE_OPTM ) : {
 
                             /* mode management - update state */
-                            le_active = le_server_srv_optm( le_server, & le_tree, le_stack, le_socket );
+                            if ( le_server_srv_optm( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+
+                                /* reset pool activity */
+                                le_pool_set_clear( & le_pool, le_tid, LE_POOL_C0 );
+
+                            } else {
+
+                                /* broadcast message */
+                                le_pool_set_broadcast( & le_pool, le_tid, LE_POOL_S3 );
+
+                            }
 
                         } break;
 
@@ -235,27 +286,34 @@
                         case ( LE_MODE_QUER ) : {
 
                             /* mode management - update state */
-                            le_active = le_server_srv_query( le_server, & le_tree, le_stack, le_socket );
+                            if ( le_server_srv_query( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+
+                                /* reset pool activity */
+                                le_pool_set_clear( & le_pool, le_tid, LE_POOL_C0 );
+
+                            }
 
                         } break;
 
                         /* unexpected mode - update state */
-                        default : { le_active = _LE_FALSE; } break;
+                        default : {
+
+                            /* reset pool activity */
+                            le_pool_set_clear( & le_pool, le_tid, LE_POOL_C0 );
+
+                        } break;
 
                     };
 
                 }
 
-                /* delete connection stream */
-                le_tree_delete( & le_tree );
-
             }
+
+            /* delete connection stream */
+            le_tree_delete( & le_tree );
 
             /* close client socket */
             close( le_socket );
-
-            /* update state */
-            le_active = _LE_TRUE;
 
         }
 
