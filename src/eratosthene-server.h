@@ -47,7 +47,6 @@
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
     # include "eratosthene-client.h"
-    # include "eratosthene-pool.h"
     # include "eratosthene-tree.h"
     # include "eratosthene-tree-service.h"
 
@@ -60,7 +59,13 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C { _LE_SOCK_NULL, NULL, 0, 0, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C    { _LE_SOCK_NULL, NULL, 0, 0, { 0 }, LE_ERROR_SUCCESS }
+
+    /* define pool messsage */
+    # define LE_SERVER_PSA   ( 0x01 )
+    # define LE_SERVER_PCA   ( 0xfe )
+    # define LE_SERVER_PSR   ( 0x02 )
+    # define LE_SERVER_PCR   ( 0xfd )
 
 /*
     header - preprocessor macros
@@ -161,6 +166,8 @@
         le_size_t   sv_scfg;
         le_time_t   sv_tcfg;
 
+        le_byte_t   sv_pool[_LE_USE_PENDING];
+
     le_enum_t _status; } le_server_t;
 
 /*
@@ -198,6 +205,10 @@
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
+    /* *** */
+
+    le_byte_t le_server_get_pool( le_server_t const * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
+
     /*! \brief mutator methods
      *
      *  This function reads the configuration file at the root of the server
@@ -214,7 +225,19 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /*! \brief service methods
+    /* *** */
+
+    le_void_t le_server_set_pool( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
+
+    /* *** */
+
+    le_void_t le_server_set_clear( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
+
+    /* *** */
+
+    le_void_t le_server_set_broadcast( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
+
+    /*! \brief i/o methods
      *
      *  With the server structure creation and deletion methods, this function
      *  is part of the server main element. As a created structure is provided,
@@ -236,9 +259,9 @@
      *  \param le_server Server structure
      */
 
-    le_void_t le_server_srv( le_server_t * const le_server );
+    le_void_t le_server_io( le_server_t * const le_server );
 
-    /*! \brief service methods
+    /*! \brief i/o methods
      *
      *  This i/o method is responsible of answering server configuration request
      *  from client. It simply packs the server configuration values, that are
@@ -253,9 +276,9 @@
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_server_srv_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
+    le_enum_t le_server_io_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /*! \brief service methods
+    /*! \brief i/o methods
      *
      *  This i/o methods is responsible of data injection in the server storage
      *  structure. It expects a time packed in the first client array that is
@@ -271,13 +294,13 @@
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_server_srv_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
+    le_enum_t le_server_io_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
     /* *** */
 
-    le_enum_t le_server_srv_optm( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
+    le_enum_t le_server_io_optm( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /*! \brief service methods
+    /*! \brief i/o methods
      *
      *  This function reads the query addresses packed in the client array and
      *  gather the relevant data through specific stream method.
@@ -294,7 +317,7 @@
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_server_srv_query( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
+    le_enum_t le_server_io_query( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
 /*
     header - C/C++ compatibility
