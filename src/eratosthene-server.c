@@ -438,6 +438,14 @@
         /* serialise time */
         le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
 
+        /* check consistency */
+        if ( le_time == _LE_TIME_NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
         /* read socket-array */
         if ( le_array_io_get( le_stack, le_stack + 1, le_socket ) != LE_MODE_INJE ) {
 
@@ -455,7 +463,7 @@
         }
 
         /* retrieve and check unit */
-        if ( ( le_unit = le_tree_get_inject( le_tree, le_time ) ) == NULL ) {
+        if ( ( le_unit = le_tree_get_unit( le_tree, le_time, LE_UNIT_WRITE ) ) == NULL ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -464,6 +472,17 @@
 
         /* inject socket-array */
         le_tree_io_inject( le_unit, le_stack, le_server->sv_scfg );
+
+        /* update array size */
+        le_array_set_size( le_stack , 0 );
+
+        /* write socket-array */
+        if ( le_array_io_put( le_stack, NULL, LE_MODE_INJE, le_socket ) != LE_MODE_INJE ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
 
         /* send message */
         return( _LE_TRUE );
@@ -482,15 +501,23 @@
         if ( le_array_get_size( le_stack ) != LE_ARRAY_OPTM ) {
 
             /* send message */
-            return( _LE_TRUE );
+            return( _LE_FALSE );
 
         }
 
         /* serialise time */
         le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
 
+        /* check consistency */
+        if ( le_time == _LE_TIME_NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
         /* retrieve and check unit */
-        if ( ( le_unit = le_tree_get_inject( le_tree, le_time ) ) == NULL ) {
+        if ( ( le_unit = le_tree_get_unit( le_tree, le_time, LE_UNIT_READ ) ) == NULL ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -499,6 +526,17 @@
 
         /* optimise unit storage */
         le_unit_set_optimise( le_unit, le_server->sv_path );
+
+        /* update array size */
+        le_array_set_size( le_stack, 0 );
+
+        /* write socket-array */
+        if ( le_array_io_put( le_stack, NULL, LE_MODE_OPTM, le_socket ) != LE_MODE_OPTM ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
 
         /* send message */
         return( _LE_TRUE );

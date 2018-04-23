@@ -121,7 +121,7 @@
     source - accessor methods
  */
 
-    le_unit_t * le_tree_get_inject( le_tree_t * const le_tree, le_time_t const le_time ) {
+    le_unit_t * le_tree_get_unit( le_tree_t * const le_tree, le_time_t const le_time, le_enum_t const le_mode ) {
 
         /* reduced time variable */
         le_time_t le_reduce = le_time / le_tree->tr_tcfg;
@@ -132,7 +132,7 @@
         /* parsing tree units */
         while ( ( -- le_parse ) >= 0 ) {
 
-            /* check time */
+            /* compare times */
             if ( le_unit_get_time( le_tree->tr_unit + le_parse ) == le_reduce ) {
 
                 /* return unit */
@@ -141,9 +141,15 @@
             }
 
         }
-        
-        /* create and push unit */
-        return( le_tree_set_push( le_tree, le_time, LE_UNIT_WRITE ) );
+
+        /* check mode */
+        if ( le_mode == LE_UNIT_WRITE ) {
+
+            /* create and push unit */
+            return( le_tree_set_push( le_tree, le_time, LE_UNIT_WRITE ) );
+
+        /* return unit */
+        } else { return( NULL ); }
 
     }
 

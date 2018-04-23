@@ -131,7 +131,7 @@
 
     le_void_t le_tree_delete( le_tree_t * const le_tree );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods (revoked)
      * 
      *  This function search in the provided tree structure stack the unit
      *  structure that matches exactly the provided time value.
@@ -146,7 +146,7 @@
      *  \return Returns the unit structure on success, NULL otherwise
      */
 
-    le_unit_t * le_tree_get_inject( le_tree_t * const le_tree, le_time_t const le_time );
+    le_unit_t * le_tree_get_unit( le_tree_t * const le_tree, le_time_t const le_time, le_enum_t const le_mode );
 
     /*! \brief accessor methods
      *
