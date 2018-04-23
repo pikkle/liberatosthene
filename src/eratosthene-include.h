@@ -49,9 +49,8 @@
     # include "eratosthene-class.h"
     # include "eratosthene-client.h"
     # include "eratosthene-server.h"
-    # include "eratosthene-tree-unit.h"
     # include "eratosthene-tree.h"
-    # include "eratosthene-tree-service.h"
+    # include "eratosthene-tree-unit.h"
 
 /*
     header - external includes

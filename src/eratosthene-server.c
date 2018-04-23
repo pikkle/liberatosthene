@@ -463,7 +463,7 @@
         }
 
         /* inject socket-array */
-        le_service_io_inject( le_unit, le_stack, le_server->sv_scfg );
+        le_tree_io_inject( le_unit, le_stack, le_server->sv_scfg );
 
         /* send message */
         return( _LE_TRUE );
@@ -560,7 +560,7 @@
                 if ( ( le_uia = le_tree_get_query( le_tree, & le_addr, le_mode - 1, & le_offa ) ) != NULL ) {
 
                     /* gathering process */
-                    le_service_io_gather( le_uia, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
+                    le_tree_io_gather( le_uia, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
 
                 }
 
@@ -576,7 +576,7 @@
                 if ( ( le_uia != NULL ) || ( le_uib != NULL ) ) {
 
                     /* gathering process */
-                    le_service_io_parallel( le_uia, le_uib, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
+                    le_tree_io_parallel( le_uia, le_uib, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
 
                 }
 
