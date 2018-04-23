@@ -107,7 +107,7 @@
 
     le_byte_t le_server_get_pool( le_server_t const * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
 
-        /* get pool bit */
+        /* get pool message */
         return( le_server->sv_pool[le_tid] & le_message );
 
     }
@@ -183,15 +183,22 @@
 
     le_void_t le_server_set_pool( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
 
-        /* set pool bit */
+        /* set pool message */
         le_server->sv_pool[le_tid] |= le_message;
 
     }
 
     le_void_t le_server_set_clear( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
 
-        /* clear pool bit */
+        /* clear pool message */
         le_server->sv_pool[le_tid] &= le_message;        
+
+    }
+
+    le_void_t le_server_set_reset( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
+
+        /* reset pool message */
+        le_server->sv_pool[le_tid] = le_message;
 
     }
 
@@ -205,6 +212,42 @@
 
                 /* broadcast message */
                 le_server->sv_pool[le_parse] |= le_message;
+
+            }
+
+        }
+
+    }
+
+    le_enum_t le_server_set_tree( le_server_t * const le_server, le_enum_t const le_tid, le_tree_t * const le_tree ) {
+
+        /* check pool message */
+        if ( le_server_get_pool( le_server, le_tid, LE_SERVER_PSR ) == 0 ) {
+
+            /* send message */
+            return( _LE_TRUE );
+
+        } else {
+
+            /* delete tree structure */
+            le_tree_delete( le_tree );
+
+            /* create tree structure */
+            if ( le_get_status( ( * le_tree ) = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) == LE_ERROR_SUCCESS ) {
+
+                /* clear pool message */
+                le_server_set_clear( le_server, le_tid, LE_SERVER_PCR );
+
+                /* send message */
+                return( _LE_TRUE );
+
+            } else {
+
+                /* clear pool message */
+                le_server_set_clear( le_server, le_tid, LE_SERVER_PCA );
+
+                /* send message */
+                return( _LE_FALSE );
 
             }
 
@@ -241,33 +284,13 @@
         while ( ( le_socket = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
             /* initialise thread pool */
-            le_server_set_pool( le_server, le_tid, LE_SERVER_PSA | LE_SERVER_PSR );
+            le_server_set_reset( le_server, le_tid, LE_SERVER_PSA | LE_SERVER_PSR );
 
             /* connection manager */
             while ( le_server_get_pool( le_server, le_tid, LE_SERVER_PSA ) != 0 ) {
 
-                /* check pool message */
-                if ( le_server_get_pool( le_server, le_tid, LE_SERVER_PSR ) != 0 ) {
-
-                    /* delete tree structure */
-                    le_tree_delete( & le_tree );
-
-                    /* create tree structure */
-                    if ( le_get_status( le_tree = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) != LE_ERROR_SUCCESS ) {
-
-                        /* reset pool activity */
-                        le_server_set_clear( le_server, le_tid, LE_SERVER_PCA );
-
-                    } else {
-
-                        /* reset pool message */
-                        le_server_set_clear( le_server, le_tid, LE_SERVER_PCR );
-
-                    }
-
-                }
-
-                if ( le_server_get_pool( le_server, le_tid, LE_SERVER_PSA ) != 0 ) {
+                /* thread pooling */
+                if ( le_server_set_tree( le_server, le_tid, & le_tree ) == _LE_TRUE ) {
 
                     /* client socket-array */
                     switch( le_array_io_get( le_stack, le_stack + 1, le_socket ) ) {

@@ -62,10 +62,10 @@
     # define LE_SERVER_C    { _LE_SOCK_NULL, NULL, 0, 0, { 0 }, LE_ERROR_SUCCESS }
 
     /* define pool messsage */
-    # define LE_SERVER_PSA   ( 0x01 )
-    # define LE_SERVER_PCA   ( 0xfe )
-    # define LE_SERVER_PSR   ( 0x02 )
-    # define LE_SERVER_PCR   ( 0xfd )
+    # define LE_SERVER_PSA  ( 0x01 )
+    # define LE_SERVER_PCA  ( 0xfe )
+    # define LE_SERVER_PSR  ( 0x02 )
+    # define LE_SERVER_PCR  ( 0xfd )
 
 /*
     header - preprocessor macros
@@ -236,6 +236,10 @@
     /* *** */
 
     le_void_t le_server_set_broadcast( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
+
+    /* *** */
+
+    le_enum_t le_server_set_tree( le_server_t * const le_server, le_enum_t const le_tid, le_tree_t * const le_tree );
 
     /*! \brief i/o methods
      *
