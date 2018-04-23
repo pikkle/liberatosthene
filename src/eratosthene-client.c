@@ -102,10 +102,10 @@
     }
 
 /*
-    source - connection methods
+    source - i/o methods
  */
 
-    le_sock_t le_client_accept( le_sock_t const le_listen ) {
+    le_sock_t le_client_io_accept( le_sock_t const le_listen ) {
 
         /* socket option variables */
         int le_option = 1;

@@ -229,7 +229,7 @@
 
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief detached methods
+    /*! \brief i/o methods (detached)
      *
      *  Note :
      *
@@ -250,9 +250,9 @@
      *  \return Returns read offset value on success, _LE_OFFS_NULL otherwise
      */
 
-    le_size_t le_class_det_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
+    le_size_t le_class_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
 
-    /*! \brief detached methods
+    /*! \brief i/o methods (detached)
      *
      *  Note :
      *
@@ -273,7 +273,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_class_det_data( le_size_t const le_offset, le_data_t * const le_data, le_file_t const le_stream );
+    le_enum_t le_class_io_data( le_size_t const le_offset, le_data_t * const le_data, le_file_t const le_stream );
 
 /*
     header - C/C++ compatibility

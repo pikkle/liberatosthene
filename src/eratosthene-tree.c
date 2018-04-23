@@ -367,7 +367,7 @@
         do {
 
             /* read class offset */
-            le_offset = le_class_det_offset( le_offset, le_address_get_digit( le_addr, le_parse ), le_unit_get_stream( le_unit, le_parse ) );
+            le_offset = le_class_io_offset( le_offset, le_address_get_digit( le_addr, le_parse ), le_unit_get_stream( le_unit, le_parse ) );
 
         /* update index and condition */
         } while ( ( ( ++ le_parse ) < le_size ) && ( le_offset != _LE_OFFS_NULL ) );
@@ -476,7 +476,7 @@
             le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
             /* push element data */
-            le_class_det_data( le_offset, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unit, le_parse ) );
+            le_class_io_data( le_offset, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unit, le_parse ) );
 
         } else {
 
@@ -529,12 +529,12 @@
                 if ( le_offseta != _LE_OFFS_NULL ) {
 
                     /* push element data */
-                    le_class_det_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
+                    le_class_io_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
 
                 } else {
 
                     /* push element data */
-                    le_class_det_data( le_offsetb, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unib, le_parse ) );
+                    le_class_io_data( le_offsetb, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unib, le_parse ) );
 
                 }
 
@@ -550,7 +550,7 @@
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
                     /* push element data */
-                    le_class_det_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
+                    le_class_io_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
 
                 }
 
@@ -566,7 +566,7 @@
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
                     /* push element data */
-                    le_class_det_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
+                    le_class_io_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
 
                 } else if ( ( le_offseta == _LE_OFFS_NULL ) && ( le_offsetb != _LE_OFFS_NULL ) ) {
 
@@ -577,7 +577,7 @@
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
                     /* push element data */
-                    le_class_det_data( le_offsetb, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unib, le_parse ) );
+                    le_class_io_data( le_offsetb, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unib, le_parse ) );
 
                 }
 

@@ -97,7 +97,7 @@
 
     le_sock_t le_client_delete( le_sock_t const le_socket );
 
-    /*! \brief connection methods
+    /*! \brief i/o methods
      *
      *  This function waits client connection and accept them as they arrive. In
      *  addition to the creation of the server client socket, using the provided
@@ -112,7 +112,7 @@
      * \return Created socket descriptor on success, _LE_SOCK_NULL otherwise
      */
 
-    le_sock_t le_client_accept( le_sock_t const le_listen );
+    le_sock_t le_client_io_accept( le_sock_t const le_listen );
 
 /*
     header - C/C++ compatibility

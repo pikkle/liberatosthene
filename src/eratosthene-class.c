@@ -171,11 +171,7 @@
 
     }
 
-/*
-    source - detached methods
- */
-
-    le_size_t le_class_det_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream ) {
+    le_size_t le_class_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream ) {
 
         /* returned value variable */
         le_size_t le_return = _LE_OFFS_NULL;
@@ -201,7 +197,7 @@
 
     }
 
-    le_enum_t le_class_det_data( le_size_t const le_offset, le_data_t * const le_data, le_file_t const le_stream ) {
+    le_enum_t le_class_io_data( le_size_t const le_offset, le_data_t * const le_data, le_file_t const le_stream ) {
 
         /* set stream position */
         if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {

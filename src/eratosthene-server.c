@@ -277,11 +277,11 @@
         /* socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
 
-        /* create socket-array stack */
-        le_array_stack_create( le_stack, _LE_USE_ARRAY );
+        /* create thread socket-array */
+        le_array_mac_create( le_stack, _LE_USE_ARRAY );
 
         /* create client socket */
-        while ( ( le_socket = le_client_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
+        while ( ( le_socket = le_client_io_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
             /* initialise thread pool */
             le_server_set_reset( le_server, le_tid, LE_SERVER_PSA | LE_SERVER_PSR );
@@ -379,8 +379,8 @@
 
         }
 
-        /* delete socket-array stack */
-        le_array_stack_delete( le_stack, _LE_USE_ARRAY );
+        /* delete thread socket-array */
+        le_array_mac_delete( le_stack, _LE_USE_ARRAY );
 
         } /* openmp */
 
