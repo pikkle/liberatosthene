@@ -478,7 +478,7 @@
             /* update array size */
             le_array_set( le_array, LE_ARRAY_UF3 );
 
-            /* psuh element position */
+            /* push element position */
             le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
             /* push element data */
@@ -528,7 +528,7 @@
                 /* update array size */
                 le_array_set( le_array, LE_ARRAY_UF3 );
 
-                /* psuh element position */
+                /* push element position */
                 le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
                 /* logical or operator */
@@ -552,7 +552,7 @@
                     /* update array size */
                     le_array_set( le_array, LE_ARRAY_UF3 );
 
-                    /* psuh element position */
+                    /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
                     /* push element data */
@@ -568,7 +568,7 @@
                     /* update array size */
                     le_array_set( le_array, LE_ARRAY_UF3 );
 
-                    /* psuh element position */
+                    /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
                     /* push element data */
@@ -579,7 +579,7 @@
                     /* update array size */
                     le_array_set( le_array, LE_ARRAY_UF3 );
 
-                    /* psuh element position */
+                    /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
                     /* push element data */

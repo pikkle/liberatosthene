@@ -165,7 +165,7 @@
      *  \var le_server_struct::sv_pool
      *  Server thread pooling message
      *  \var le_server_struct::_status
-     *  Status field
+     *  Standard status field
      */
 
     typedef struct le_server_struct {
