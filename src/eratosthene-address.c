@@ -190,7 +190,7 @@
 
         }
 
-        /* coordinates denormalisation */
+        /* coordinates de-normalisation */
         le_pose[0] = LE_ADDRESS_MIN_L + le_pose[0] * LE_ADDRESS_RAN_L;
         le_pose[1] = LE_ADDRESS_MIN_A + le_pose[1] * LE_ADDRESS_RAN_A;
         le_pose[2] = LE_ADDRESS_MIN_H + le_pose[2] * LE_ADDRESS_RAN_H;
@@ -335,7 +335,7 @@
             /* update serial base */
             le_base += LE_ARRAY_ADDR_TIME;
 
-            /* serialise address configration */
+            /* serialise address configuration */
             le_address->as_size = le_base[0];
             le_address->as_mode = le_base[1];
             le_address->as_span = le_base[2];

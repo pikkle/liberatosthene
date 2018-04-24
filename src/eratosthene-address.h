@@ -62,9 +62,9 @@
     # define LE_ADDRESS_WGS_A         ( 6378137.0 )
     # define LE_ADDRESS_WGS_F         ( 298.257223563 )
 
-    /* asynchronous dimension edges */
+    /* asynchronous dimension attachment */
     # define LE_ADDRESS_DEPTH_P       ( 1 )
-    # define LE_ADDRESS_DEPTH_A       ( 10 )
+    # define LE_ADDRESS_DEPTH_A       ( 10 ) 
 
     /* define ellispoidal coordinates boundaries */
     # define LE_ADDRESS_MIN_L         ( - LE_PI )
@@ -102,7 +102,7 @@
      *
      *  This structure holds the address, or the index, of an equivalence class
      *  defined on the geodetic and time parameter spaces. These addresses are
-     *  used to store and access data linked to spatiotemporal references.
+     *  used to store and access data linked to spatio-temporal references.
      *
      *  The structure holds two distinct times in order to allows comparison
      *  methods between different times to take place. Then, the mode parameter
@@ -118,9 +118,10 @@
      *  in an array holding the digits of the address. The amount of digits is
      *  provided by the size field.
      *
-     *  In the last place, the structure holds an depth parameter that gives,
+     *  In the last place the structure holds an depth parameter that gives,
      *  usually in case of data query, the additional scale depth where the
-     *  desired data have to be gathered.
+     *  desired data have to be gathered as an equivalence class contains only
+     *  a single element.
      *
      *  Times are understood under the UTC standard in the way they give the
      *  amount of seconds elapsed since EPOCH (UTC) with consideration of leap
@@ -153,6 +154,7 @@
         le_byte_t as_size;
         le_byte_t as_mode;
         le_byte_t as_span;
+
         le_time_t as_times[_LE_USE_TIMES];
         le_byte_t as_digit[_LE_USE_DEPTH];
 
@@ -188,12 +190,13 @@
     /*! \brief accessor methods
      *
      *  Returns the desired time of the equivalence class stored in the address
-     *  structure. The provided offset has to be 0 or 1.
+     *  structure. The provided offset has to be 0 or 1 to retrieve the first
+     *  and second time, respectively.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of time - zero based
      *
-     *  \return Address time
+     *  \return Desired address time
      */
 
     le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset );
@@ -213,12 +216,12 @@
 
     /*! \brief accessor methods
      *
-     *  Returns query additional depth parameter of the class stored in the
+     *  Returns the additional depth parameter of the class stored in the
      *  address structure.
      *
      *  \param le_address Address structure
      *
-     *  \return Query additional depth
+     *  \return Address additional depth
      */
 
     le_byte_t le_address_get_span( le_address_t const * const le_address );
@@ -228,8 +231,8 @@
      *  This function compare the two provided address structures and returns a
      *  boolean value indicating their identity.
      *
-     *  \param le_addra First address structure
-     *  \param le_addrb Second address structure
+     *  \param le_addra Address structure
+     *  \param le_addrb Address structure
      *
      *  \return Returns _LE_TRUE on addresses identity, _LE_FALSE otherwise
      */
@@ -249,8 +252,11 @@
      *  as parameter, discarding the size field of the address structure. This
      *  allows optimisation to take place.
      *
+     *  The \b le_address_get_pose() macro provides a way to invoke the function
+     *  without having to explicitly pass the address size as parameter.
+     *
      *  \param le_address Address structure
-     *  \param le_size    Number of digits
+     *  \param le_size    Number of digits to consider
      *  \param le_pose    3-vector receiving the coordinates
      */
 
@@ -279,7 +285,8 @@
 
     /*! \brief mutator methods
      *
-     *  Sets the address desired time. The provided offset has to be 0 or 1.
+     *  Sets the address desired time. The provided offset has to be 0 or 1 to
+     *  set the first or second time, respectively.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of time - zero based
@@ -315,8 +322,10 @@
      *
      *  This function sets the digits of the index stored in the address
      *  structure induced by the provided 3-vector expressed in geographic
-     *  coordinates. The number of digits is read in the structure itself and
-     *  has to be set before any call to this function.
+     *  coordinates.
+     *
+     *  The number of digits is read in the structure itself and has to be set
+     *  before any call to this function.
      *
      *  \param le_address Address structure
      *  \param le_pose    3-vector containing the coordinates
@@ -334,16 +343,15 @@
      *  The provided \b le_offset parameter indicates at which byte position the
      *  packing or unpacking of the structure has to take place in the array.
      *
-     *  The provided array, for both packing and unpacking, as to be already
-     *  allocated according to the parameters.
+     *  The provided array, for both packing and unpacking, as to be an already
+     *  allocated array allowing the packing and unpacking to take place.
      *
      *  \param le_address Address structure
      *  \param le_array   Array structure
      *  \param le_offset  Serialisation offset, in bytes
      *  \param le_mode    Serialisation mode : _LE_SET or _LE_GET
      *
-     *  \return Returns the position in the array just after the serialised
-     *          structure
+     *  \return Offset of the byte following the structure in the array
      */
 
     le_size_t le_address_serial( le_address_t * const le_address, le_array_t * const le_array, le_size_t const le_offset, le_enum_t const le_mode );
@@ -368,7 +376,7 @@
     /*! \brief conversion methods
      *
      *  This function inverts the conversion made by \b le_address_ct_string()
-     *  function. It expects address in human readable text string structured
+     *  function. It expects an address in human readable text string structured
      *  as defined by this last function :
      *
      *      /m/t1,t2/ddd...d/q

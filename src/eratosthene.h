@@ -172,7 +172,7 @@
     # define _LE_FILE               FILE *
     # define _LE_MASK               uint64_t
 
-    /* define boundaries */
+    /* define type boundaries */
     # define _LE_BYTE_MIN           ( 0 )
     # define _LE_BYTE_MAX           ( UINT8_MAX )
     # define _LE_SIZE_MIN           ( INT64_MIN )
@@ -180,13 +180,20 @@
     # define _LE_TIME_MIN           ( INT64_MIN )
     # define _LE_TIME_MAX           ( INT64_MAX )
 
-    /* define litteral suffix */
+    /* define type nulls */
+    # define _LE_BYTE_NULL          ( _LE_BYTE_MAX )
+    # define _LE_SIZE_NULL          ( _LE_SIZE_MIN )
+    # define _LE_TIME_NULL          ( _LE_TIME_MIN )
+    # define _LE_SOCK_NULL          ( -1 )
+    # define _LE_OFFS_NULL          ( ( _LE_MASK_L( 1 ) << ( _LE_USE_BASE * _LE_USE_OFFSET ) ) - _LE_MASK_L( 1 ) )
+
+    /* define type litteral suffix */
     # define _LE_REAL_L(t)          ( t )
     # define _LE_SIZE_L(t)          ( INT64_C( t ) )
     # define _LE_TIME_L(t)          ( INT64_C( t ) )
     # define _LE_MASK_L(t)          ( UINT64_C( t ) )
 
-    /* define i/o specifiers */
+    /* define type i/o specifiers */
     # define _LE_BYTE_P             PRIu8
     # define _LE_BYTE_S             SCNu8
     # define _LE_CHAR_P             "u"
@@ -201,13 +208,6 @@
     # define _LE_TIME_S             SCNi64
     # define _LE_DATA_P             PRIu8
     # define _LE_DATA_S             SCNu8
-
-    /* define type nulls */
-    # define _LE_BYTE_NULL          ( _LE_BYTE_MAX )
-    # define _LE_SIZE_NULL          ( _LE_SIZE_MIN )
-    # define _LE_TIME_NULL          ( _LE_TIME_MIN )
-    # define _LE_SOCK_NULL          ( -1 )
-    # define _LE_OFFS_NULL          ( ( _LE_MASK_L( 1 ) << ( _LE_USE_BASE * _LE_USE_OFFSET ) ) - _LE_MASK_L( 1 ) )
 
     /* define errors */
     # define LE_ERROR_SUCCESS       ( 0x0000 )
@@ -263,7 +263,7 @@
     header - type definition
  */
 
-    /* internal types */
+    /* standard types definition */
     typedef _LE_VOID le_void_t;
     typedef _LE_BYTE le_byte_t;
     typedef _LE_CHAR le_char_t;
@@ -274,7 +274,6 @@
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;
     typedef _LE_FILE le_file_t;
-    typedef _LE_MASK le_mask_t;
 
 /*
     header - structures
