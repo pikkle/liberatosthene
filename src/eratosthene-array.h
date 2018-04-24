@@ -95,7 +95,7 @@
     # define le_array_mac_delete( p, s ) { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ ); }
 
     /* define encoded size */
-    # define le_array_entropy( a )       ( ( le_size_t ) ( ( a )->ar_vsize * 1.5 ) )
+    # define le_array_mac_entropy( a )       ( ( le_size_t ) ( ( a )->ar_vsize * 1.5 ) )
 
     /* define array access macro */
     # define le_array_mac_pose( a, i )   ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )
@@ -126,7 +126,7 @@
      *  access macro and functions.
      *
      *  More specifically, the structure holds an array in an array. The first
-     *  array, corresponding to the allocated memory has a virtual size,
+     *  array, corresponding to the allocated memory, has a virtual size,
      *  usually greater than the actual data array contain in it. This size
      *  correspond to the available memory.
      *
@@ -136,12 +136,12 @@
      *
      *      R...RD...DR...R
      *
-     *  where R designate first array bytes and D byte of the first array being
-     *  part of the data array.
+     *  with R designating bytes of the memory array and D the bytes of the data
+     *  array contained in it.
      *
      *  This is done so for two main reasons : the first one is the possibility
      *  to have a header in which the sizes and array mode can be packed and
-     *  send over TCP/IP without additional memory allocation and copy. The
+     *  sent over TCP/IP without additional memory allocation and copy. The
      *  second reason is the possibility to only reallocate memory when the
      *  real array is not sufficient to holds the data array, again saving
      *  memory allocation and copy.
@@ -190,8 +190,11 @@
     /*! \brief constructor/destructor methods
      *
      *  This function initialise and returns an empty socket array structure.
+     *  This function is mandatory before usage of array method on any array
+     *  structure. Indeed, the pseudo-constructor does not allocate the memory
+     *  of the array initial state.
      *
-     *  \return Returns created structure
+     *  \return Returns the created structure
      */
 
     le_array_t le_array_create( le_void_t );
@@ -231,11 +234,11 @@
 
     /*! \brief mutator methods
      *
-     *  This function is used to build the socket-array header part. It packs
-     *  the array size and compressed size in the header reserved field. In
-     *  addition, the function also packs the array mode value in the header.
+     *  This function is used to build the array header part. It packs the array
+     *  size and compressed size in the header reserved field. In addition, the
+     *  function also packs the array mode value in the header.
      *
-     *  This function is usually used before to sent the array on the specific
+     *  This function is usually used before to write the array on the specific
      *  device.
      *
      *  \param le_array Array structure
@@ -250,8 +253,8 @@
      *  of the provided socket array. It sets back the field of the array
      *  structure accordingly to the values extracted from the header. It also
      *  re-allocate the socket array memory according to the extracted size.
-     *  Finally, the function returns the socket-array mode also extracted from
-     *  the header.
+     *  Finally, the function returns the array mode also extracted from the
+     *  header.
      *
      *  This function is usually used while a socket-array is read from a given
      *  device.
@@ -317,7 +320,7 @@
     /*! \brief mutator methods
      *
      *  This function is used to decompress data contained in the provided
-     *  array structure that are encoded using the \b le_array_epc_encode()
+     *  array structure that are encoded using the \b le_array_set_encode()
      *  algorithm.
      *
      *  The function checks the structure compressed size to determine if the
@@ -334,7 +337,7 @@
     /*! \brief serialisation methods
      *
      *  This function is used to pack or unpack variables in the data array
-     *  stored in the provided array structure. It receives a variable and it
+     *  stored in the provided array structure. It receives a variable and its
      *  size and pack or unpack it in the array at the specified offset
      *  according to the provided mode.
      *
@@ -344,7 +347,7 @@
      *  \param le_offset Pack/unpack offset in the data array, in bytes
      *  \param le_mode   Serialisation mode : _LE_SET or _LE_GET
      *
-     *  \return Returns the variable length added to the provided offset
+     *  \return Offset of the byte following the variable in the array
      */
 
     le_size_t le_array_serial( le_array_t * const le_array, le_void_t * const le_bytes, le_size_t const le_length, le_size_t const le_offset, le_enum_t const le_mode );
@@ -354,31 +357,31 @@
      *  This function writes the provided array bytes in the socket pointed by
      *  the provided descriptor.
      *
-     *  Depending on if a dual array is provided, the function uses entropic
-     *  method to compress the content of the array before to write it on the
-     *  specified socket.
+     *  Depending if a dual array is provided, the function uses entropic method
+     *  to compress the content of the array before to write it on the specified
+     *  socket.
      *
      *  This function can be seen as a front-end to the \b le_array_io_write()
      *  that allow usage of compression.
      *
      *  \param le_array  Array structure
      *  \param le_dual   Array structure
-     *  \param le_mode   Socket-array mode
+     *  \param le_mode   Array mode
      *  \param le_socket Socket descriptor
      *
-     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
+     *  \return Returns the array mode on success, LE_MODE_NULL otherwise
      */
 
     le_byte_t le_array_io_put( le_array_t * const le_array, le_array_t * const le_dual, le_byte_t le_mode, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
-     *  This function reads the provided array bytes from teh socket pointed by
+     *  This function reads the provided array bytes from the socket pointed by
      *  the provided descriptor.
      *
      *  If a dual array is provided, the function uses entropic method to decode
-     *  the content of the array. If the incoming socket-array content has been
-     *  encoded by writing process, the dual array has to be provided.
+     *  the content of the array. If the incoming array content has been encoded
+     *  by writing process, the dual array has to be provided.
      *
      *  This function can be seen as a front-end to the \b le_array_io_read()
      *  that allow usage of compression.
@@ -386,6 +389,8 @@
      *  \param le_array  Array structure
      *  \param le_dual   Array structure
      *  \param le_socket Socket descriptor
+     *
+     *  \return Returns the array mode on success, LE_MODE_NULL otherwise
      */
 
     le_byte_t le_array_io_get( le_array_t * const le_array, le_array_t * const le_dual, le_sock_t const le_socket );
@@ -394,17 +399,17 @@
      *
      *  This function writes the provided array bytes in the socket pointed by
      *  the provided socket descriptor. This function also sets the array
-     *  structure header before to send the data over TCP/IP.
+     *  structure header before to send it over TCP/IP.
      *
      *  In addition to the data array size, the header also contains a mode
      *  value to indicate the type of data carried by the array. This mode
      *  value is set according to the provided \b le_mode parameter.
      *
      *  \param le_array  Array structure
-     *  \param le_mode   Socket array mode
+     *  \param le_mode   Array mode
      *  \param le_socket Socket descriptor
      *
-     *  \return Return _LE_ERROR_SUCCESS on success, an error code otherwise
+     *  \return Returns the array mode on success, LE_MODE_NULL otherwise
      */
 
     le_byte_t le_array_io_write( le_array_t * const le_array, le_byte_t le_mode, le_sock_t const le_socket );
@@ -418,7 +423,7 @@
      *  \param le_array  Array structure
      *  \param le_socket Socket descriptor
      *
-     *  \return Returns _LE_ERROR_SUCCESS on success, an error code otherwise
+     *  \return Returns the array mode on success, LE_MODE_NULL otherwise
      */
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket );
