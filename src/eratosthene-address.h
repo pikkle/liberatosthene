@@ -56,7 +56,7 @@
 
     /* define pseudo-constructor */
     # define LE_ADDRESS_C             { 0, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
-    # define LE_ADDRESS_C_SIZE( s )   { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
+    # define LE_ADDRESS_C_SIZE(s)     { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
 
     /* define WGS84 ellipsoid parameters */
     # define LE_ADDRESS_WGS_A         ( 6378137.0 )
@@ -84,7 +84,7 @@
  */
 
     /* base according to scale */
-    # define le_address_base( s )     ( ( s ) < LE_ADDRESS_DEPTH_P ) ? ( _LE_USE_BASE >> 2 ) : ( ( ( s ) < LE_ADDRESS_DEPTH_A ) ? ( _LE_USE_BASE >> 1 ) : ( _LE_USE_BASE ) )
+    # define le_address_base(s)       ( ( s ) < LE_ADDRESS_DEPTH_P ) ? ( _LE_USE_BASE >> 2 ) : ( ( ( s ) < LE_ADDRESS_DEPTH_A ) ? ( _LE_USE_BASE >> 1 ) : ( _LE_USE_BASE ) )
 
     /* method alias */
     # define le_address_get_pose(a,p) ( le_address_get_pose_( ( a ), ( a )->as_size, ( p ) ) )

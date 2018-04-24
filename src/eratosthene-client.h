@@ -101,8 +101,7 @@
      *
      *  This function waits client connection and accept them as they arrive. In
      *  addition to the creation of the server client socket, using the provided
-     *  server listen socket, the function also sets the server-side socket
-     *  options.
+     *  server socket, the function also sets the server-side socket options.
      *
      *  This function is typically used by the server to handle incoming client
      *  connections.

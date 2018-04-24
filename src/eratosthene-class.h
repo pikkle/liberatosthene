@@ -105,9 +105,7 @@
      *
      *  The colour components gives the class representative colour, the m value
      *  being used as a pseudo-mean variable. The offsets i gives the position,
-     *  in the next scale storage file, of the daughter class i. Usually,
-     *  address digits are used to access the offsets 8-array of this class
-     *  structure.
+     *  in the next scale storage file, of the daughter class i.
      *
      *  \var le_class_struct::cs_data
      *  Bytes array containing the equivalence class storage data
@@ -129,9 +127,9 @@
      *  provided data as first element that initialise the class content. In
      *  addition it initialises the class offset array using the NULL offsets.
      *
-     *  \param le_data Data 3-vector - single byte red, green and blue
+     *  \param le_data Data 3-vector (RGB8 format)
      *
-     *  \return Returns created class structure
+     *  \return Returns created structure
      */
 
     le_class_t le_class_create( le_data_t const * const le_data );
@@ -178,7 +176,7 @@
      *  taking into account the injected data through a pseudo-mean method.
      *
      *  \param le_class Class structure
-     *  \param le_data  Data 3-vector - single byte red, green and blue
+     *  \param le_data  Data 3-vector (RGB8 format)
      */
 
     le_void_t le_class_set_push( le_class_t * const le_class, le_data_t const * const le_data );
@@ -201,7 +199,7 @@
     /*! \brief i/o methods
      *
      *  This function is a variation of the \b le_class_io_read(). It also reads
-     *  the storage structure of the pointed class but only reads the offset
+     *  the storage structure of the pointed class but it only reads the offset
      *  array parts, discarding the class data. The \b le_stream has to contain
      *  the descriptor of an already opened file in binary mode.
      *

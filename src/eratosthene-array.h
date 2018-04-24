@@ -54,60 +54,60 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_ARRAY_C                  { 0, NULL, 0, 0, NULL }
+    # define LE_ARRAY_C                 { 0, NULL, 0, 0, NULL }
 
     /* define array step */
-    # define LE_ARRAY_STEP               ( 65536 )
-    # define LE_ARRAY_LIMIT              ( 32 )
+    # define LE_ARRAY_STEP              ( 65536 )
+    # define LE_ARRAY_LIMIT             ( 32 )
 
     /* define array header size */
-    # define LE_ARRAY_HEADER_SIZE        ( sizeof( le_size_t ) * 2 )
-    # define LE_ARRAY_HEADER_MODE        ( sizeof( le_byte_t ) )
-    # define LE_ARRAY_HEADER             ( LE_ARRAY_HEADER_SIZE + LE_ARRAY_HEADER_MODE )
+    # define LE_ARRAY_HEADER_SIZE       ( sizeof( le_size_t ) * 2 )
+    # define LE_ARRAY_HEADER_MODE       ( sizeof( le_byte_t ) )
+    # define LE_ARRAY_HEADER            ( LE_ARRAY_HEADER_SIZE + LE_ARRAY_HEADER_MODE )
 
     /* define array-size - authorise */
-    # define LE_ARRAY_AUTH               ( sizeof( le_size_t ) + sizeof( le_time_t ) )
+    # define LE_ARRAY_AUTH              ( sizeof( le_size_t ) + sizeof( le_time_t ) )
 
     /* define array-size - inject */
-    # define LE_ARRAY_INJE               ( sizeof( le_time_t ) )
+    # define LE_ARRAY_INJE              ( sizeof( le_time_t ) )
 
     /* define array-size - optimise */
-    # define LE_ARRAY_OPTM               ( sizeof( le_time_t ) )
+    # define LE_ARRAY_OPTM              ( sizeof( le_time_t ) )
 
     /* define array-size - address */
-    # define LE_ARRAY_ADDR_TIME          ( sizeof( le_time_t ) * 2 )
-    # define LE_ARRAY_ADDR_DESC          ( sizeof( le_byte_t ) * 3 )
-    # define LE_ARRAY_ADDR               ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
+    # define LE_ARRAY_ADDR_TIME         ( sizeof( le_time_t ) * 2 )
+    # define LE_ARRAY_ADDR_DESC         ( sizeof( le_byte_t ) * 3 )
+    # define LE_ARRAY_ADDR              ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
 
     /* define array-size - uf3 */
-    # define LE_ARRAY_UF3_POSE           ( 3 * sizeof( le_real_t ) )
-    # define LE_ARRAY_UF3_DATA           ( 3 * sizeof( le_data_t ) )
-    # define LE_ARRAY_UF3                ( LE_ARRAY_UF3_POSE + LE_ARRAY_UF3_DATA )
+    # define LE_ARRAY_UF3_POSE          ( 3 * sizeof( le_real_t ) )
+    # define LE_ARRAY_UF3_DATA          ( 3 * sizeof( le_data_t ) )
+    # define LE_ARRAY_UF3               ( LE_ARRAY_UF3_POSE + LE_ARRAY_UF3_DATA )
 
 /*
     header - preprocessor macros
  */
 
     /* define stack macro */
-    # define le_array_mac_create( p, s ) { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) p[_i_] = le_array_create(); }
+    # define le_array_mac_create(p,s)   { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) p[_i_] = le_array_create(); }
 
     /* define stack macro */
-    # define le_array_mac_delete( p, s ) { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ ); }
+    # define le_array_mac_delete(p,s)   { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ ); }
 
     /* define encoded size */
-    # define le_array_mac_entropy( a )       ( ( le_size_t ) ( ( a )->ar_vsize * 1.5 ) )
+    # define le_array_mac_entropy(a)    ( ( le_size_t ) ( ( a )->ar_vsize * 1.5 ) )
 
     /* define array access macro */
-    # define le_array_mac_pose( a, i )   ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )
+    # define le_array_mac_pose(a,i)     ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )
 
     /* define array access macro */
-    # define le_array_mac_data( a, i )   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UF3_POSE ) )
+    # define le_array_mac_data(a,i)     ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UF3_POSE ) )
 
     /* define array access macro */
-    # define le_array_mac_lpose( a )     ( ( le_real_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3 ) )
+    # define le_array_mac_lpose(a)      ( ( le_real_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3 ) )
 
     /* define array access macro */
-    # define le_array_mac_ldata( a )     ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3_DATA ) )
+    # define le_array_mac_ldata(a)      ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3_DATA ) )
 
 /*
     header - type definition

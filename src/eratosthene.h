@@ -237,10 +237,10 @@
     /* define pseudo-constructor */
     # if defined ( __APPLE__ ) && defined ( __MACH__ )
     # define LE_ADDRIN_C            { AF_INET, 0         , INADDR_ANY, { 0 } }
-    # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), INADDR_ANY, { 0 } }
+    # define LE_ADDRIN_C_PORT(p)    { AF_INET, htons( p ), INADDR_ANY, { 0 } }
     # else
     # define LE_ADDRIN_C            { AF_INET, 0         , { INADDR_ANY }, { 0 } }
-    # define LE_ADDRIN_C_PORT( p )  { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
+    # define LE_ADDRIN_C_PORT(p)    { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
     # endif
 
 /*
