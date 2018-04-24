@@ -79,7 +79,35 @@
     header - structures
  */
 
-    /* *** */
+    /*! \struct le_unit_struct
+     *  \brief unit structure
+     *
+     *  This structure holds the required information to manage and access a
+     *  specific storage structure of a temporal unit.
+     *
+     *  The first field is used to store the time associated to the unit. The
+     *  value stored in this field is according to the equivalence classes point
+     *  of view :
+     *
+     *      time_unit = time_utc / server_temporal_parameter
+     *
+     *  The unit time is then called "reduced".
+     *
+     *  The next field of the structure holds the stack of stream opened
+     *  toward the file of the unit storage structure. Each scale file is then
+     *  described by its corresponding stream in the pile.
+     *
+     *  A last field is used by the structure creation methods to specified the
+     *  creation status of the structure. This allows to creation methods to
+     *  return the structure instead of an error code.
+     *
+     *  \var le_unit_struct::un_time
+     *  Unit time in reduced form
+     *  \var le_unit_struct::un_pile
+     *  Unit stream pile
+     *  \var le_unit_struct::_status
+     *  Standard status field
+     */
 
     typedef struct le_unit_struct {
 
@@ -103,18 +131,18 @@
      *  reduced form, before to create the stream descriptor to the scale files.
      *
      *  The second mode creates the storage structure directory if necessary and
-     *  creates the scale file while creating the streams to them.
+     *  creates the scale files while creating the streams to them.
      *
-     *  If any stream is not accessible or of the directory creation fails, the
+     *  If any stream is not accessible or if the directory creation fails, the
      *  function returns the structure as it is.
      *
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
-     *  \param le_root   Server storage path
-     *  \param le_mode   Unit creation mode
+     *  \param le_root   Server storage structure path
+     *  \param le_mode   Access mode value
      *  \param le_time   Unit time value, in reduced form
-     *  \param le_scfg   Server spatial parameter (number of scales)
+     *  \param le_scfg   Server spatial configuration value
      *
      *  \return Returns the created unit
      */
@@ -124,7 +152,7 @@
     /*! \brief constructor/destructor methods
      *
      *  This function deletes the provided unit structure. It parses the scales
-     *  of the unit and deletes each scale opened streams. It finally resets the
+     *  of the unit and deletes each scale opened stream. It finally resets the
      *  unit structure fields.
      *
      *  \param le_unit Unit structure
@@ -138,7 +166,7 @@
      *  scale value.
      *
      *  \param le_unit  Unit structure
-     *  \param le_scale Scale value
+     *  \param le_scale Scale offset
      *
      *  \return Returns unit scale stream file descriptor
      */
@@ -148,11 +176,11 @@
     /*! \brief accessor methods
      *
      *  This function simply returns the time of the provided unit. The returned
-     *  time is in reduce form.
+     *  time is in reduced form.
      *
      *  \param le_unit Unit structure
      *
-     *  \return Returns the unit time
+     *  \return Returns the unit time, in reduced form
      */
 
     le_time_t le_unit_get_time( le_unit_t const * const le_unit );
@@ -166,7 +194,7 @@
      *  \param le_unit      Unit structure
      *  \param le_candidate Unit structure
      *
-     *  \return Returns _LE_TRUE on condition, _LE_FALSE otherwise
+     *  \return Returns _LE_TRUE on unit anteriority, _LE_FALSE otherwise
      */
 
     le_enum_t le_unit_get_prior( le_unit_t const * const le_unit, le_unit_t const * const le_candidate );
@@ -175,7 +203,7 @@
      *
      *  This function allows to optimise the storage structure of the provided
      *  unit structure. The function rewrites the storage structure of the unit
-     *  to allow faster read operation.
+     *  to allow faster read operations.
      *
      *  The function starts by creating "dual" files for each scales of the unit
      *  in which the content of the current file is re-written in an optimised
@@ -186,7 +214,7 @@
      *  be long on large unit storage structure.
      *
      *  \param le_unit Unit structure
-     *  \param le_root Server storage path
+     *  \param le_root Server storage structure path
      */
 
     le_void_t le_unit_set_optimise( le_unit_t * const le_unit, le_char_t const * const le_root );
@@ -212,7 +240,7 @@
      *  \param le_dual   Dual stream array
      *  \param le_offset Class offset
      *  \param le_head   Class writing offsets tracker
-     *  \param le_scale  Scale value
+     *  \param le_scale  Scale number
      */
 
     le_void_t le_unit_set_arrange( le_unit_t * const le_unit, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
