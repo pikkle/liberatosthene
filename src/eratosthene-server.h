@@ -48,6 +48,7 @@
     # include "eratosthene-array.h"
     # include "eratosthene-client.h"
     # include "eratosthene-tree.h"
+    # include "eratosthene-unit.h"
 
 /*
     header - external includes

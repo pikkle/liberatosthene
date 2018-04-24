@@ -18,18 +18,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    /*! \file   eratosthene-tree-unit.h
+    /*! \file   eratosthene-unit.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - tree unit module
+     *  liberatosthene - unit module
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_TREE_UNIT__
-    # define __LE_TREE_UNIT__
+    # ifndef __LE_UNIT__
+    # define __LE_UNIT__
 
 /*
     header - C/C++ compatibility
