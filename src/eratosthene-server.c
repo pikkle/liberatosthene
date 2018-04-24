@@ -102,17 +102,6 @@
     }
 
 /*
-    source - accessor methods
- */
-
-    le_byte_t le_server_get_pool( le_server_t const * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
-
-        /* get pool message */
-        return( le_server->sv_pool[le_tid] & le_message );
-
-    }
-
-/*
     source - mutator methods
  */
 
@@ -181,27 +170,6 @@
 
     }
 
-    le_void_t le_server_set_pool( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
-
-        /* set pool message */
-        le_server->sv_pool[le_tid] |= le_message;
-
-    }
-
-    le_void_t le_server_set_clear( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
-
-        /* clear pool message */
-        le_server->sv_pool[le_tid] &= le_message;        
-
-    }
-
-    le_void_t le_server_set_reset( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
-
-        /* reset pool message */
-        le_server->sv_pool[le_tid] = le_message;
-
-    }
-
     le_void_t le_server_set_broadcast( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
 
         /* parsing pool */
@@ -222,7 +190,7 @@
     le_enum_t le_server_set_tree( le_server_t * const le_server, le_enum_t const le_tid, le_tree_t * const le_tree ) {
 
         /* check pool message */
-        if ( le_server_get_pool( le_server, le_tid, LE_SERVER_PSR ) == 0 ) {
+        if ( ( le_server->sv_pool[le_tid] & LE_SERVER_PSR ) == 0 ) {
 
             /* send message */
             return( _LE_TRUE );
@@ -236,7 +204,7 @@
             if ( le_get_status( ( * le_tree ) = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) == LE_ERROR_SUCCESS ) {
 
                 /* clear pool message */
-                le_server_set_clear( le_server, le_tid, LE_SERVER_PCR );
+                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSR );
 
                 /* send message */
                 return( _LE_TRUE );
@@ -244,7 +212,7 @@
             } else {
 
                 /* clear pool message */
-                le_server_set_clear( le_server, le_tid, LE_SERVER_PCA );
+                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
 
                 /* send message */
                 return( _LE_FALSE );
@@ -284,10 +252,10 @@
         while ( ( le_socket = le_client_io_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
             /* initialise thread pool */
-            le_server_set_reset( le_server, le_tid, LE_SERVER_PSA | LE_SERVER_PSR );
+            le_server->sv_pool[le_tid] = LE_SERVER_PSA | LE_SERVER_PSR;
 
             /* connection manager */
-            while ( le_server_get_pool( le_server, le_tid, LE_SERVER_PSA ) != 0 ) {
+            while ( ( le_server->sv_pool[le_tid] & LE_SERVER_PSA ) != 0 ) {
 
                 /* thread pooling */
                 if ( le_server_set_tree( le_server, le_tid, & le_tree ) == _LE_TRUE ) {
@@ -302,7 +270,7 @@
                             if ( le_server_io_auth( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
                                 /* reset pool activity */
-                                le_server_set_clear( le_server, le_tid, LE_SERVER_PCA );
+                                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
 
                             }
 
@@ -315,7 +283,7 @@
                             if ( le_server_io_inject( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
                                 /* reset pool activity */
-                                le_server_set_clear( le_server, le_tid, LE_SERVER_PCA );
+                                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
 
                             } else {
 
@@ -333,7 +301,7 @@
                             if ( le_server_io_optm( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
                                 /* reset pool activity */
-                                le_server_set_clear( le_server, le_tid, LE_SERVER_PCA );
+                                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
 
                             } else {
 
@@ -351,7 +319,7 @@
                             if ( le_server_io_query( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
                                 /* reset pool activity */
-                                le_server_set_clear( le_server, le_tid, LE_SERVER_PCA );
+                                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
 
                             }
 
@@ -361,7 +329,7 @@
                         default : {
 
                             /* reset pool activity */
-                            le_server_set_clear( le_server, le_tid, LE_SERVER_PCA );
+                            le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
 
                         } break;
 

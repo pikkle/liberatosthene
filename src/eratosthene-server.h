@@ -216,21 +216,6 @@
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
-    /*! \brief accessor methods
-     *
-     *  This function allows to checks the state of the pooling element of the
-     *  thread pointed by the provided thread ID. The element is convoluted with
-     *  the provided message mask using a logical and operator.
-     *
-     *  \param le_server  Server structure
-     *  \param le_tid     Thread ID
-     *  \param le_message Message mask
-     *
-     *  \return And-convolution of the pooling element and the message mask
-     */
-
-    le_byte_t le_server_get_pool( le_server_t const * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
-
     /*! \brief mutator methods
      *
      *  This function reads the configuration file at the root of the server
@@ -246,32 +231,6 @@
      */
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
-
-    /*! \brief mutator methods
-     *
-     *  This function allows to change the state of the pooling element of the
-     *  thread given by its ID. The element is convoluted with the provided
-     *  message mask using a logical or operator.
-     *
-     *  \param le_server  Server structure
-     *  \param le_tid     Thread ID
-     *  \param le_message Message mask
-     */
-
-    le_void_t le_server_set_pool( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
-
-    /*! \brief mutator methods
-     *
-     *  This function allows to reset the state of the pooling element of the
-     *  thread pointed by its ID. The element is convoluted with the provided
-     *  message mask using a logical and operator.
-     *
-     *  \param le_server  Server structure
-     *  \param le_tid     Thread ID
-     *  \param le_message Message mask
-     */
-
-    le_void_t le_server_set_clear( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
 
     /*! \brief mutator methods
      *
