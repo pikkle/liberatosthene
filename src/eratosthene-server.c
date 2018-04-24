@@ -388,7 +388,7 @@
 
     le_enum_t le_server_io_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
 
-        /* serailisation variable */
+        /* serialisation variable */
         le_size_t le_serial = 0;
 
         /* check consistency */

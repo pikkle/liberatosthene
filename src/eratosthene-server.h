@@ -61,9 +61,9 @@
     # define LE_SERVER_C    { _LE_SOCK_NULL, NULL, 0, 0, { 0 }, LE_ERROR_SUCCESS }
 
     /* define pool messsage */
-    # define LE_SERVER_PSA  ( 0x01 )
+    # define LE_SERVER_PSA  ( 0x01 ) /* activity message */
     # define LE_SERVER_PCA  ( 0xfe )
-    # define LE_SERVER_PSR  ( 0x02 )
+    # define LE_SERVER_PSR  ( 0x02 ) /* reload directive */
     # define LE_SERVER_PCR  ( 0xfd )
 
 /*
@@ -81,11 +81,11 @@
     /*! \struct le_server_struct
      *  \brief server structure
      *
-     *  This structure is the principal structure of the library as it holds
-     *  the descriptor of a servers.
+     *  This structure is the principal structure of the library as it holds the
+     *  server main elements.
      *
-     *  The server offers a 4D mapping service of the earth through to storage,
-     *  access and network broadcasting of colorimetric point. Its storage
+     *  The server offers a 4D mapping service of the earth through storage,
+     *  access and network broadcasting of colorimetric points. Its storage
      *  structure, data injection and data query are driven by the formalism
      *  of spatiotemporal index. In other words, the server can be seen as a
      *  4D tile server based on the theoretical framework of index.
@@ -99,7 +99,7 @@
      *  A first field is dedicated to store the server socket descriptor. As any
      *  server, an eratosthene server maintain a service on a computer available
      *  through a predefined port. This field store the socket descriptor set
-     *  to listen to client queries.
+     *  to listen to client connections.
      *
      *  Three fields are dedicated to the server configuration. The first one
      *  holds a characters array storing the main path of the storage structure.
@@ -110,6 +110,14 @@
      *  has to contain less digit than this configuration value. The time value
      *  gives the size of the temporal equivalence classes. Both parameters fix
      *  the server resolution power in both space and time.
+     *
+     *  The next field, an array of the size corresponding to the amount of
+     *  thread used by the server to handle client connection, is used for
+     *  the communication between the threads. Its elements are used as bit
+     *  container to broadcast specific messages. For example, as a new time
+     *  unit storage has been created by a thread, a message is sent through
+     *  this array to tell the other threads to take into account this new
+     *  data.
      *
      *  A last field is used by the structure creation methods to specified the
      *  creation status of the structure. This allows to creation methods to
@@ -138,12 +146,13 @@
      *  scales (files) in amount given by the structure spatial configuration
      *  value. On the model of the relation defined on time, a similar relation
      *  is set on each scale : each scale, in term of range, is split in 2^i
-     *  ranges identified as equivalence classes. Any given point belong to a
-     *  given class at each scale. Index are used, through their digits to
-     *  browse the spatial scales to find or store any point. Again, two points
-     *  falling in the same class in a specific scale cannot be separated after
-     *  injection. In other words, index digits are the address allowing to go
-     *  from a scale to another following the logic of octrees.
+     *  ranges identified as equivalence classes, i being the scale number. Any
+     *  given point then belong to a given class at each scale. Index are used,
+     *  through their digits, to browse the spatial scales to find or store any
+     *  point. Again, two points falling in the same class in a specific scale
+     *  cannot be separated after injection. In other words, index digits are
+     *  the address allowing to go from a scale to another following the logic
+     *  of octrees.
      *
      *  \var le_server_struct::sv_sock
      *  Server socket descriptor
@@ -153,6 +162,8 @@
      *  Server spatial configuration value : number of scale
      *  \var le_server_struct::sv_tcfg
      *  Server temporal configuration value : size of temporal classes
+     *  \var le_server_struct::sv_pool
+     *  Server thread pooling message
      *  \var le_server_struct::_status
      *  Status field
      */
@@ -204,7 +215,18 @@
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function allows to checks the state of the pooling element of the
+     *  thread pointed by the provided thread ID. The element is convoluted with
+     *  the provided message mask using a logical and operator.
+     *
+     *  \param le_server  Server structure
+     *  \param le_tid     Thread ID
+     *  \param le_message Message mask
+     *
+     *  \return And-convolution of the pooling element and the message mask
+     */
 
     le_byte_t le_server_get_pool( le_server_t const * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
 
@@ -224,19 +246,60 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to change the state of the pooling element of the
+     *  thread given by its ID. The element is convoluted with the provided
+     *  message mask using a logical or operator.
+     *
+     *  \param le_server  Server structure
+     *  \param le_tid     Thread ID
+     *  \param le_message Message mask
+     */
 
     le_void_t le_server_set_pool( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to reset the state of the pooling element of the
+     *  thread pointed by its ID. The element is convoluted with the provided
+     *  message mask using a logical and operator.
+     *
+     *  \param le_server  Server structure
+     *  \param le_tid     Thread ID
+     *  \param le_message Message mask
+     */
 
     le_void_t le_server_set_clear( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to broadcast a modification of the state of the
+     *  thread pooling element to all thread except the provided one.
+     *
+     *  \param le_server  Server structure
+     *  \param le_tid     Thread ID
+     *  \param le_message Message mask
+     */
 
     le_void_t le_server_set_broadcast( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function is used to check if the specified thread need to reload
+     *  its tree structure by looking if such a pooling message have been
+     *  broadcasted.
+     *
+     *  In such a case, the function deletes the provided tree structure before
+     *  to re-create it, taking into account the changes responsible of the
+     *  message broadcast.
+     *
+     *  \param le_server  Server structure
+     *  \param le_tid     Thread ID
+     *  \param le_tree    Tree structure
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
+     */
 
     le_enum_t le_server_set_tree( le_server_t * const le_server, le_enum_t const le_tid, le_tree_t * const le_tree );
 
@@ -244,9 +307,9 @@
      *
      *  With the server structure creation and deletion methods, this function
      *  is part of the server main element. As a created structure is provided,
-     *  the function maintains the server service and address clients queries.
+     *  the function maintains the server service and addresses clients queries.
      *
-     *  The function implements an openmp-based parallel sections all able to
+     *  The function implements an openmp-based parallel section all able to
      *  address one client connection. As a client disconnect, the parallel
      *  section is available for a new one.
      *
@@ -256,8 +319,10 @@
      *  communication between the server and the clients.
      *
      *  As a client connection is accepted by one parallel region, it starts by
-     *  creating a stream structure that is used to access the server storage
-     *  structure. The stream structure is deleted as the client disconnects.
+     *  creating a tree structure that is used to access the server storage
+     *  structure. Before any new client query, the pooling message are checked
+     *  and the tree structure is re-created accordingly. The tree structure is
+     *  deleted as the client disconnects.
      *
      *  \param le_server Server structure
      */
@@ -272,9 +337,9 @@
      *  an array structure before to send it back to the remote client.
      *
      *  \param le_server Server structure
-     *  \param le_tree Ring stream structure
-     *  \param le_stack  Ring array stack pointer
-     *  \param le_socket Socket to remote client
+     *  \param le_tree   Tree structure
+     *  \param le_stack  Socket-array stack
+     *  \param le_socket Client socket descriptor
      *
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
@@ -290,32 +355,44 @@
      *  in the server storage structure.
      *
      *  \param le_server Server structure
-     *  \param le_tree Ring stream structure
-     *  \param le_stack  Ring array stack pointer
-     *  \param le_socket Socket to remote client
+     *  \param le_tree   Tree structure
+     *  \param le_stack  Socket-array stack
+     *  \param le_socket Client socket descriptor
      *
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
     le_enum_t le_server_io_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function allows client to query a specific time storage allocation
+     *  optimisation. The function reads the time packed in the socket-array and
+     *  search for the corresponding storage unit. It then runs the optimisation
+     *  process on the found unit.
+     *
+     *  \param le_server Server structure
+     *  \param le_tree   Tree structure
+     *  \param le_stack  Socket-array stack
+     *  \param le_socket Client socket descriptor
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
+     */
 
     le_enum_t le_server_io_optm( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
      *  This function reads the query addresses packed in the client array and
-     *  gather the relevant data through specific stream method.
+     *  gather the relevant data through specific tree method.
      *
      *  As the points are gathered from the storage structure, the function
-     *  writes the resulting data array on the client socket after having
-     *  compressed the sent array.
+     *  writes the resulting data array on the client socket.
      *
      *  \param le_server Server structure
-     *  \param le_tree Ring stream structure
-     *  \param le_stack  Ring array stack pointer
-     *  \param le_socket Socket to remote client
+     *  \param le_tree   Tree structure
+     *  \param le_stack  Socket-array stack
+     *  \param le_socket Client socket descriptor
      *
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
