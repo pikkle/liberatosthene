@@ -233,11 +233,11 @@
         # pragma omp parallel num_threads( _LE_USE_PENDING )
         {
 
-        /* socket variable */
-        le_sock_t le_socket = _LE_SOCK_NULL;
-
         /* process variable */
         le_enum_t le_tid = omp_get_thread_num();
+
+        /* socket variable */
+        le_sock_t le_socket = _LE_SOCK_NULL;
 
         /* stream variables */
         le_tree_t le_tree = LE_TREE_C;
@@ -245,7 +245,7 @@
         /* socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
 
-        /* create thread socket-array */
+        /* create thread socket-array stack */
         le_array_mac_create( le_stack, _LE_USE_ARRAY );
 
         /* create client socket */
@@ -261,7 +261,7 @@
                 if ( le_server_set_tree( le_server, le_tid, & le_tree ) == _LE_TRUE ) {
 
                     /* client socket-array */
-                    switch( le_array_io_get( le_stack, le_stack + 1, le_socket ) ) {
+                    switch( le_array_io_read( le_stack, le_socket ) ) {
 
                         /* authentication */
                         case ( LE_MODE_AUTH ) : {
@@ -375,7 +375,7 @@
         le_serial = le_array_serial( le_stack, & le_server->sv_tcfg, sizeof( le_time_t ), le_serial, _LE_SET );
 
         /* write socket-array */
-        if ( le_array_io_put( le_stack, le_stack + 1, LE_MODE_AUTH, le_socket ) != LE_MODE_AUTH ) {
+        if ( le_array_io_write( le_stack, LE_MODE_AUTH, le_socket ) != LE_MODE_AUTH ) {
         
             /* send message */
             return( _LE_FALSE );
@@ -415,7 +415,7 @@
         }
 
         /* read socket-array */
-        if ( le_array_io_get( le_stack, le_stack + 1, le_socket ) != LE_MODE_INJE ) {
+        if ( le_array_io_read( le_stack, le_socket ) != LE_MODE_INJE ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -445,7 +445,7 @@
         le_array_set_size( le_stack , 0 );
 
         /* write socket-array */
-        if ( le_array_io_put( le_stack, NULL, LE_MODE_INJE, le_socket ) != LE_MODE_INJE ) {
+        if ( le_array_io_write( le_stack, LE_MODE_INJE, le_socket ) != LE_MODE_INJE ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -499,7 +499,7 @@
         le_array_set_size( le_stack, 0 );
 
         /* write socket-array */
-        if ( le_array_io_put( le_stack, NULL, LE_MODE_OPTM, le_socket ) != LE_MODE_OPTM ) {
+        if ( le_array_io_write( le_stack, LE_MODE_OPTM, le_socket ) != LE_MODE_OPTM ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -589,7 +589,7 @@
             }
 
             /* write socket-array */
-            if ( le_array_io_put( le_stack + 1, le_stack + 2, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
+            if ( le_array_io_write( le_stack + 1, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
 
                 /* send message */
                 return( _LE_FALSE );
