@@ -94,9 +94,6 @@
     /* define stack macro */
     # define le_array_mac_delete(p,s)   { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ ); }
 
-    /* define encoded size */
-    # define le_array_mac_entropy(a)    ( ( le_size_t ) ( ( a )->ar_vsize * 1.5 ) )
-
     /* define array access macro */
     # define le_array_mac_pose(a,i)     ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )
 
@@ -300,6 +297,10 @@
 
     le_enum_t le_array_set_size( le_array_t * const le_array, le_size_t const le_size );
 
+    /* *** */
+
+    le_enum_t le_array_set_copy( le_array_t const * const le_src, le_array_t * const le_dst );
+
     /*! \brief mutator methods
      *
      *  This function implements an entropic compression algorithm that can be
@@ -359,7 +360,8 @@
      *
      *  Depending if a dual array is provided, the function uses entropic method
      *  to compress the content of the array before to write it on the specified
-     *  socket.
+     *  socket. If a dual array is provided and the compression fails, the array
+     *  is not written on the socket.
      *
      *  This function can be seen as a front-end to the \b le_array_io_write()
      *  that allow usage of compression.
