@@ -188,6 +188,8 @@
 
     le_enum_t _status; } le_server_t;
 
+    /* *** */
+
     typedef struct le_pack_struct {
 
         le_server_t     * p_s;

@@ -107,21 +107,24 @@
 
     le_size_t le_server_get_thread( le_server_t * const le_server ) {
 
+        /* parsing variable */
+        le_size_t le_parse = 0;
+
         /* searching available thread */
-        for ( le_size_t le_parse = 1; le_parse < _LE_USE_PENDING; le_parse ++ ) {
+        while ( ( ++ le_parse ) < _LE_USE_PENDING ) {
 
             /* check thread availability */
             if ( le_server_mac_pool( le_server, le_parse, LE_SERVER_ACTIVE ) == 0 ) {
 
-                /* return available thread */
+                /* return thread index */
                 return( le_parse );
 
             }
 
         }
 
-        /* send message */
-        return( _LE_USE_PENDING );
+        /* return thread index */
+        return( le_parse );
 
     }
 
@@ -196,54 +199,48 @@
 
     le_void_t le_server_set_broadcast( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
 
-        /* parsing pool */
-        for ( le_size_t le_parse = 0; le_parse < _LE_USE_PENDING; le_parse ++ ) {
+        /* parsing variable */
+        le_size_t le_parse = 0;
 
-            /* avoid self-message */
-            if ( le_parse != le_tid ) {
+        /* parsing thread pool */
+        while ( ( ++ le_parse ) < _LE_USE_PENDING ) {
 
-                /* broadcast message */
-                le_server->sv_pool[le_parse] |= le_message;
-
-            }
+            /* broadcast message */
+            le_server_mac_set( le_server, le_parse, le_message );
 
         }
+
+        /* reset thread self-message */
+        le_server_mac_clear( le_server, le_tid, le_message );
 
     }
 
     le_enum_t le_server_set_tree( le_server_t * const le_server, le_enum_t const le_tid, le_tree_t * const le_tree ) {
 
-        /* check pool message */
-        if ( ( le_server->sv_pool[le_tid] & LE_SERVER_RELOAD ) == 0 ) {
+        /* check thread message */
+        if ( le_server_mac_pool( le_server, le_tid, LE_SERVER_RELOAD ) == 0 ) {
 
             /* send message */
             return( _LE_TRUE );
 
-        } else {
+        }
 
-            /* delete tree structure */
-            le_tree_delete( le_tree );
+        /* delete tree structure */
+        le_tree_delete( le_tree );
 
-            /* create tree structure */
-            if ( le_get_status( ( * le_tree ) = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) == LE_ERROR_SUCCESS ) {
+        /* create tree structure */
+        if ( le_get_status( ( * le_tree ) = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) != LE_ERROR_SUCCESS ) {
 
-                /* clear pool message */
-                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_RELOAD );
-
-                /* send message */
-                return( _LE_TRUE );
-
-            } else {
-
-                /* clear pool message */
-                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_ACTIVE );
-
-                /* send message */
-                return( _LE_FALSE );
-
-            }
+            /* send message */
+            return( _LE_FALSE );
 
         }
+
+        /* reset thread message */
+        le_server_mac_clear( le_server, le_tid, LE_SERVER_RELOAD );
+
+        /* send message */
+        return( _LE_TRUE );
 
     }
 
@@ -317,16 +314,16 @@
         le_server_t * le_server = ( ( _pck ) le_pack )->p_s;
 
         /* process variable */
-        le_enum_t le_tid = ( ( _pck ) le_pack )->p_t;
+        le_size_t le_tid = ( ( _pck ) le_pack )->p_t;
 
         /* socket variable */
         le_sock_t le_socket = ( ( _pck ) le_pack )->p_c;
 
-        /* stream variables */
-        le_tree_t le_tree = LE_TREE_C;
-
         /* socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
+
+        /* stream variables */
+        le_tree_t le_tree = LE_TREE_C;
 
         /* thread critical region */
         pthread_mutex_lock( & ( ( _pck ) le_pack )->p_m );
@@ -527,17 +524,6 @@
         /* inject socket-array */
         le_tree_io_inject( le_unit, le_stack, le_server->sv_scfg );
 
-        /* update array size */
-        le_array_set_size( le_stack , 0 );
-
-        /* write socket-array */
-        if ( le_array_io_write( le_stack, LE_MODE_INJE, le_socket ) != LE_MODE_INJE ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
         /* send message */
         return( _LE_TRUE );
 
@@ -580,17 +566,6 @@
 
         /* optimise unit storage */
         le_unit_set_optimise( le_unit, le_server->sv_path );
-
-        /* update array size */
-        le_array_set_size( le_stack, 0 );
-
-        /* write socket-array */
-        if ( le_array_io_write( le_stack, LE_MODE_OPTM, le_socket ) != LE_MODE_OPTM ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
 
         /* send message */
         return( _LE_TRUE );
