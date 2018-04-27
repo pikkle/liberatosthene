@@ -9,6 +9,8 @@
     CONFIG_CODE:=c
     CONFIG_TYPE:=libstatic
 
+    OPENMP=false
+
     MAKE_BINARY:=bin
     MAKE_DOCUME:=doc
     MAKE_LIBRAR:=lib
@@ -27,7 +29,7 @@
     MAKE_DOCBLD:=doxygen
 
     BUILD_FLAGS:=-Wall -funsigned-char -pedantic -O3 -D _BSD_SOURCE -flto
-    BUILD_LINKD:=-lm -lz -flto
+    BUILD_LINKD:=-lm -lz -flto -lpthread
     BUILD_SUBMD:=
 
 #

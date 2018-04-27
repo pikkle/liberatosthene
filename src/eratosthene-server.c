@@ -102,6 +102,30 @@
     }
 
 /*
+    source - accessor methods
+ */
+
+    le_size_t le_server_get_thread( le_server_t * const le_server ) {
+
+        /* searching available thread */
+        for ( le_size_t le_parse = 1; le_parse < _LE_USE_PENDING; le_parse ++ ) {
+
+            /* check thread availability */
+            if ( ( le_server->sv_pool[le_parse] & LE_SERVER_PSA ) == 0 ) {
+
+                /* return available thread */
+                return( le_parse );
+
+            }
+
+        }
+
+        /* send message */
+        return( _LE_USE_PENDING );
+
+    }
+
+/*
     source - mutator methods
  */
 
@@ -229,15 +253,74 @@
 
     le_void_t le_server_io( le_server_t * const le_server ) {
 
-        /* server client management */
-        # pragma omp parallel num_threads( _LE_USE_PENDING )
-        {
-
-        /* process variable */
-        le_enum_t le_tid = omp_get_thread_num();
-
         /* socket variable */
         le_sock_t le_socket = _LE_SOCK_NULL;
+
+        /* process variable */
+        le_proc_t le_thread;
+
+        /* process variable */
+        le_size_t le_tid = 0;
+
+        /* principal server loop */
+        while ( ( ( * le_server->sv_pool ) & LE_SERVER_PSA ) != 0 ) {
+
+            /* client connection */
+            if ( ( le_socket = le_client_io_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
+
+                /* search available thread */
+                if ( ( le_tid = le_server_get_thread( le_server ) ) < _LE_USE_PENDING ) {
+
+                    /* client thread pack variable */
+                    le_pack_t le_pack = { le_server, le_tid, le_socket, PTHREAD_MUTEX_INITIALIZER };
+
+                    /* initialise thread pool */
+                    le_server->sv_pool[le_tid] = LE_SERVER_PSR;
+
+                    /* create client thread */
+                    if ( pthread_create( & le_thread, NULL, le_server_io_client, ( void * ) ( & le_pack ) ) == 0 ) {
+
+                        /* wait thread confirmation */
+                        while ( le_tid != 0 ) {
+
+                            /* thread critical region */
+                            pthread_mutex_lock( & le_pack.p_m );
+
+                            /* check thread confirmation */
+                            if ( ( le_server->sv_pool[le_tid] & LE_SERVER_PSA ) != 0 ) {
+
+                                /* thread confirmed */
+                                le_tid = 0;    
+
+                            }
+
+                            /* thread critical region */
+                            pthread_mutex_unlock( & le_pack.p_m );
+
+                        }
+
+                    /* refuse connection */
+                    } else { close( le_socket ); }
+
+                /* refuse connection */
+                } else { close( le_socket ); }
+
+            }
+
+        }
+
+    }
+
+    le_void_t * le_server_io_client( le_void_t * le_pack ) {
+
+        /* server variable */
+        le_server_t * le_server = ( ( _pck ) le_pack )->p_s;
+
+        /* process variable */
+        le_enum_t le_tid = ( ( _pck ) le_pack )->p_t;
+
+        /* socket variable */
+        le_sock_t le_socket = ( ( _pck ) le_pack )->p_c;
 
         /* stream variables */
         le_tree_t le_tree = LE_TREE_C;
@@ -248,109 +331,111 @@
         /* create thread socket-array stack */
         le_array_mac_create( le_stack, _LE_USE_ARRAY );
 
-        /* create client socket */
-        while ( ( le_socket = le_client_io_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
+        /* thread critical region */
+        pthread_mutex_lock( & ( ( _pck ) le_pack )->p_m );
 
-            /* initialise thread pool */
-            le_server->sv_pool[le_tid] = LE_SERVER_PSA | LE_SERVER_PSR;
+        /* thread activity confirmation */
+        le_server->sv_pool[le_tid] |= LE_SERVER_PSA;
 
-            /* connection manager */
-            while ( ( le_server->sv_pool[le_tid] & LE_SERVER_PSA ) != 0 ) {
+        /* thread critical region */
+        pthread_mutex_unlock( & ( ( _pck ) le_pack )->p_m );
 
-                /* thread pooling */
-                if ( le_server_set_tree( le_server, le_tid, & le_tree ) == _LE_TRUE ) {
+        /* connection manager */
+        while ( ( le_server->sv_pool[le_tid] & LE_SERVER_PSA ) != 0 ) {
 
-                    /* client socket-array */
-                    switch( le_array_io_read( le_stack, le_socket ) ) {
+            /* thread pooling */
+            if ( le_server_set_tree( le_server, le_tid, & le_tree ) == _LE_TRUE ) {
 
-                        /* authentication */
-                        case ( LE_MODE_AUTH ) : {
+                /* client socket-array */
+                switch( le_array_io_read( le_stack, le_socket ) ) {
 
-                            /* mode management - update state */
-                            if ( le_server_io_auth( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+                    /* authentication */
+                    case ( LE_MODE_AUTH ) : {
 
-                                /* reset pool activity */
-                                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
-
-                            }
-
-                        } break;
-
-                        /* inject */
-                        case ( LE_MODE_INJE ) : {
-
-                            /* mode management - update state */
-                            if ( le_server_io_inject( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
-
-                                /* reset pool activity */
-                                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
-
-                            } else {
-
-                                /* broadcast message */
-                                le_server_set_broadcast( le_server, le_tid, LE_SERVER_PSR );
-
-                            }
-
-                        } break;
-
-                        /* optimise */
-                        case ( LE_MODE_OPTM ) : {
-
-                            /* mode management - update state */
-                            if ( le_server_io_optm( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
-
-                                /* reset pool activity */
-                                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
-
-                            } else {
-
-                                /* broadcast message */
-                                le_server_set_broadcast( le_server, le_tid, LE_SERVER_PSR );
-
-                            }
-
-                        } break;
-
-                        /* query */
-                        case ( LE_MODE_QUER ) : {
-
-                            /* mode management - update state */
-                            if ( le_server_io_query( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
-
-                                /* reset pool activity */
-                                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
-
-                            }
-
-                        } break;
-
-                        /* unexpected mode - update state */
-                        default : {
+                        /* mode management - update state */
+                        if ( le_server_io_auth( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
                             /* reset pool activity */
                             le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
 
-                        } break;
+                        }
 
-                    };
+                    } break;
 
-                }
+                    /* inject */
+                    case ( LE_MODE_INJE ) : {
+
+                        /* mode management - update state */
+                        if ( le_server_io_inject( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+
+                            /* reset pool activity */
+                            le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+
+                        } else {
+
+                            /* broadcast message */
+                            le_server_set_broadcast( le_server, le_tid, LE_SERVER_PSR );
+
+                        }
+
+                    } break;
+
+                    /* optimise */
+                    case ( LE_MODE_OPTM ) : {
+
+                        /* mode management - update state */
+                        if ( le_server_io_optm( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+
+                            /* reset pool activity */
+                            le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+
+                        } else {
+
+                            /* broadcast message */
+                            le_server_set_broadcast( le_server, le_tid, LE_SERVER_PSR );
+
+                        }
+
+                    } break;
+
+                    /* query */
+                    case ( LE_MODE_QUER ) : {
+
+                        /* mode management - update state */
+                        if ( le_server_io_query( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+
+                            /* reset pool activity */
+                            le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+
+                        }
+
+                    } break;
+
+                    /* unexpected mode - update state */
+                    default : {
+
+                        /* reset pool activity */
+                        le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+
+                    } break;
+
+                };
 
             }
 
-            /* delete connection stream */
-            le_tree_delete( & le_tree );
-
-            /* close client socket */
-            close( le_socket );
-
         }
+
+        /* delete thread stream */
+        le_tree_delete( & le_tree );
 
         /* delete thread socket-array */
         le_array_mac_delete( le_stack, _LE_USE_ARRAY );
 
-        } /* openmp */
+        /* close connection */
+        close( le_socket );
+
+        /* thread exit */
+        return( NULL );
 
     }
 

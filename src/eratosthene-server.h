@@ -59,13 +59,11 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C    { _LE_SOCK_NULL, NULL, 0, 0, { 0 }, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C    { _LE_SOCK_NULL, NULL, 0, 0, { LE_SERVER_PSA, 0 }, LE_ERROR_SUCCESS }
 
     /* define pool messsage */
-    # define LE_SERVER_PSA  ( 0x01 ) /* activity message */
-    # define LE_SERVER_PCA  ( 0xfe )
-    # define LE_SERVER_PSR  ( 0x02 ) /* reload directive */
-    # define LE_SERVER_PCR  ( 0xfd )
+    # define LE_SERVER_PSA  ( 0x01 )
+    # define LE_SERVER_PSR  ( 0x02 )
 
 /*
     header - preprocessor macros
@@ -181,6 +179,15 @@
 
     le_enum_t _status; } le_server_t;
 
+    typedef struct le_pack_struct {
+
+        le_server_t     * p_s;
+        le_size_t         p_t;
+        le_sock_t         p_c;
+        pthread_mutex_t   p_m;
+
+    } * _pck, le_pack_t;
+
 /*
     header - function prototypes
  */
@@ -215,6 +222,10 @@
      */
 
     le_void_t le_server_delete( le_server_t * const le_server );
+
+    /* *** */
+
+    le_size_t le_server_get_thread( le_server_t * const le_server );
 
     /*! \brief mutator methods
      *
@@ -288,6 +299,11 @@
      */
 
     le_void_t le_server_io( le_server_t * const le_server );
+
+    /* *** */
+
+    le_void_t * le_server_io_client( le_void_t * le_relay );
+    le_void_t le_server_io_client_( le_server_t * const le_server, le_enum_t const le_tid, le_sock_t const le_socket );
 
     /*! \brief i/o methods
      *
