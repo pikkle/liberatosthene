@@ -59,15 +59,24 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C    { _LE_SOCK_NULL, NULL, 0, 0, { LE_SERVER_PSA, 0 }, LE_ERROR_SUCCESS }
+    # define LE_SERVER_C                { _LE_SOCK_NULL, NULL, 0, 0, { LE_SERVER_ACTIVE, 0 }, LE_ERROR_SUCCESS }
 
     /* define pool messsage */
-    # define LE_SERVER_PSA  ( 0x01 )
-    # define LE_SERVER_PSR  ( 0x02 )
+    # define LE_SERVER_ACTIVE           ( 0x01 )
+    # define LE_SERVER_RELOAD           ( 0x02 )
 
 /*
     header - preprocessor macros
  */
+
+    /* define access marco */
+    # define le_server_mac_pool(s,i,m)  ( ( s )->sv_pool[i] & ( m ) )
+
+    /* define access marco */
+    # define le_server_mac_set(s,i,m)   ( ( s )->sv_pool[i] |= ( m ) )
+
+    /* define access marco */
+    # define le_server_mac_clear(s,i,m) ( ( s )->sv_pool[i] &= ( ~ ( m ) ) )
 
 /*
     header - type definition

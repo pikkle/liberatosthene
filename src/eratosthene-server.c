@@ -111,7 +111,7 @@
         for ( le_size_t le_parse = 1; le_parse < _LE_USE_PENDING; le_parse ++ ) {
 
             /* check thread availability */
-            if ( ( le_server->sv_pool[le_parse] & LE_SERVER_PSA ) == 0 ) {
+            if ( le_server_mac_pool( le_server, le_parse, LE_SERVER_ACTIVE ) == 0 ) {
 
                 /* return available thread */
                 return( le_parse );
@@ -214,7 +214,7 @@
     le_enum_t le_server_set_tree( le_server_t * const le_server, le_enum_t const le_tid, le_tree_t * const le_tree ) {
 
         /* check pool message */
-        if ( ( le_server->sv_pool[le_tid] & LE_SERVER_PSR ) == 0 ) {
+        if ( ( le_server->sv_pool[le_tid] & LE_SERVER_RELOAD ) == 0 ) {
 
             /* send message */
             return( _LE_TRUE );
@@ -228,7 +228,7 @@
             if ( le_get_status( ( * le_tree ) = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) == LE_ERROR_SUCCESS ) {
 
                 /* clear pool message */
-                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSR );
+                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_RELOAD );
 
                 /* send message */
                 return( _LE_TRUE );
@@ -236,7 +236,7 @@
             } else {
 
                 /* clear pool message */
-                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+                le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_ACTIVE );
 
                 /* send message */
                 return( _LE_FALSE );
@@ -263,7 +263,7 @@
         le_size_t le_tid = 0;
 
         /* principal server loop */
-        while ( ( ( * le_server->sv_pool ) & LE_SERVER_PSA ) != 0 ) {
+        while ( le_server_mac_pool( le_server, 0, LE_SERVER_ACTIVE ) != 0 ) {
 
             /* client connection */
             if ( ( le_socket = le_client_io_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
@@ -275,7 +275,7 @@
                     le_pack_t le_pack = { le_server, le_tid, le_socket, PTHREAD_MUTEX_INITIALIZER };
 
                     /* initialise thread pool */
-                    le_server->sv_pool[le_tid] = LE_SERVER_PSR;
+                    le_server->sv_pool[le_tid] = LE_SERVER_RELOAD;
 
                     /* create client thread */
                     if ( pthread_create( & le_thread, NULL, le_server_io_client, ( void * ) ( & le_pack ) ) == 0 ) {
@@ -287,7 +287,7 @@
                             pthread_mutex_lock( & le_pack.p_m );
 
                             /* check thread confirmation */
-                            if ( ( le_server->sv_pool[le_tid] & LE_SERVER_PSA ) != 0 ) {
+                            if ( le_server_mac_pool( le_server, le_tid, LE_SERVER_ACTIVE ) != 0 ) {
 
                                 /* thread confirmed */
                                 le_tid = 0;    
@@ -328,20 +328,20 @@
         /* socket-array variables */
         le_array_t le_stack[_LE_USE_ARRAY];
 
-        /* create thread socket-array stack */
-        le_array_mac_create( le_stack, _LE_USE_ARRAY );
-
         /* thread critical region */
         pthread_mutex_lock( & ( ( _pck ) le_pack )->p_m );
 
         /* thread activity confirmation */
-        le_server->sv_pool[le_tid] |= LE_SERVER_PSA;
+        le_server_mac_set( le_server, le_tid, LE_SERVER_ACTIVE );
 
         /* thread critical region */
         pthread_mutex_unlock( & ( ( _pck ) le_pack )->p_m );
 
+        /* create thread socket-array */
+        le_array_mac_create( le_stack, _LE_USE_ARRAY );
+
         /* connection manager */
-        while ( ( le_server->sv_pool[le_tid] & LE_SERVER_PSA ) != 0 ) {
+        while ( le_server_mac_pool( le_server, le_tid, LE_SERVER_ACTIVE ) != 0 ) {
 
             /* thread pooling */
             if ( le_server_set_tree( le_server, le_tid, & le_tree ) == _LE_TRUE ) {
@@ -355,8 +355,8 @@
                         /* mode management - update state */
                         if ( le_server_io_auth( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
-                            /* reset pool activity */
-                            le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+                            /* reset thread activity */
+                            le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
 
                         }
 
@@ -368,13 +368,13 @@
                         /* mode management - update state */
                         if ( le_server_io_inject( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
-                            /* reset pool activity */
-                            le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+                            /* reset thread activity */
+                            le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
 
                         } else {
 
                             /* broadcast message */
-                            le_server_set_broadcast( le_server, le_tid, LE_SERVER_PSR );
+                            le_server_set_broadcast( le_server, le_tid, LE_SERVER_RELOAD );
 
                         }
 
@@ -386,13 +386,13 @@
                         /* mode management - update state */
                         if ( le_server_io_optm( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
-                            /* reset pool activity */
-                            le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+                            /* reset thread activity */
+                            le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
 
                         } else {
 
                             /* broadcast message */
-                            le_server_set_broadcast( le_server, le_tid, LE_SERVER_PSR );
+                            le_server_set_broadcast( le_server, le_tid, LE_SERVER_RELOAD );
 
                         }
 
@@ -404,8 +404,8 @@
                         /* mode management - update state */
                         if ( le_server_io_query( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
-                            /* reset pool activity */
-                            le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+                            /* reset thread activity */
+                            le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
 
                         }
 
@@ -414,14 +414,15 @@
                     /* unexpected mode - update state */
                     default : {
 
-                        /* reset pool activity */
-                        le_server->sv_pool[le_tid] &= ( ~ LE_SERVER_PSA );
+                        /* reset thread activity */
+                        le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
 
                     } break;
 
                 };
 
-            }
+            /* reset thread activity */
+            } else { le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE ); }
 
         }
 
