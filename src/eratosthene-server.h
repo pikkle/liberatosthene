@@ -264,7 +264,7 @@
      *  \param le_message Message mask
      */
 
-    le_void_t le_server_set_broadcast( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message );
+    le_void_t le_server_set_broadcast( le_server_t * const le_server, le_size_t const le_tid, le_byte_t const le_message );
 
     /*! \brief mutator methods
      *
@@ -283,7 +283,7 @@
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_server_set_tree( le_server_t * const le_server, le_enum_t const le_tid, le_tree_t * const le_tree );
+    le_enum_t le_server_set_tree( le_server_t * const le_server, le_size_t const le_tid, le_tree_t * const le_tree );
 
     /*! \brief i/o methods
      *

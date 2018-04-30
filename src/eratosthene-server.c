@@ -197,7 +197,7 @@
 
     }
 
-    le_void_t le_server_set_broadcast( le_server_t * const le_server, le_enum_t const le_tid, le_byte_t const le_message ) {
+    le_void_t le_server_set_broadcast( le_server_t * const le_server, le_size_t const le_tid, le_byte_t const le_message ) {
 
         /* parsing variable */
         le_size_t le_parse = 0;
@@ -215,7 +215,7 @@
 
     }
 
-    le_enum_t le_server_set_tree( le_server_t * const le_server, le_enum_t const le_tid, le_tree_t * const le_tree ) {
+    le_enum_t le_server_set_tree( le_server_t * const le_server, le_size_t const le_tid, le_tree_t * const le_tree ) {
 
         /* check thread message */
         if ( le_server_mac_pool( le_server, le_tid, LE_SERVER_RELOAD ) == 0 ) {
