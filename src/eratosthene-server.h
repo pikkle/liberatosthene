@@ -188,7 +188,26 @@
 
     le_enum_t _status; } le_server_t;
 
-    /* *** */
+    /*! \struct le_pack_struct
+     *  \brief server structure
+     *
+     *  This structure is used to broadcast the required parameters for a thread
+     *  to manage an accepted client connection. The main thread is responsible
+     *  of accepting the client incoming connection before to create a thread
+     *  associated to each client.
+     *
+     *  The main thread then packs the required information in this structure
+     *  that is passed to the created thread.
+     *
+     *  \var le_pack_struct::p_s
+     *  Server structure pointer
+     *  \var le_pack_struct::p_t
+     *  Thread process ID
+     *  \var le_pack_struct::p_c
+     *  Thread client socket descriptor
+     *  \var le_pack_struct::p_m
+     *  Mutual exclusion for thread synchronisation
+     */
 
     typedef struct le_pack_struct {
 
@@ -291,30 +310,43 @@
      *  is part of the server main element. As a created structure is provided,
      *  the function maintains the server service and addresses clients queries.
      *
-     *  The function implements an openmp-based parallel section all able to
-     *  address one client connection. As a client disconnect, the parallel
-     *  section is available for a new one.
+     *  This function is executed by the main thread and is responsible of the
+     *  management of all incoming client connections. As a client is accepted,
+     *  the function creates a thread for the management of its connection. The
+     *  thread is created using pthread library.
      *
-     *  The parallel sections all implement the main client query manager. Its
-     *  role is to read the client queries and to answer accordingly. The type
-     *  and content of the queries are set using socket-arrays, basis of the
-     *  communication between the server and the clients.
-     *
-     *  As a client connection is accepted by one parallel region, it starts by
-     *  creating a tree structure that is used to access the server storage
-     *  structure. Before any new client query, the pooling message are checked
-     *  and the tree structure is re-created accordingly. The tree structure is
-     *  deleted as the client disconnects.
+     *  The function packs the required arguments and parameters in a specific
+     *  packing structure before to send it the the created thread. It then
+     *  ensures the reception of the arguments and parameters by the thread
+     *  before listening again for other client connections.
      *
      *  \param le_server Server structure
      */
 
     le_void_t le_server_io( le_server_t * const le_server );
 
-    /* *** */
+    /*! \brief i/o methods
+     * 
+     *  This function is the main client connection management procedure. It is
+     *  usually called as a pthread function after the acceptation of a new
+     *  client connection by the main thread.
+     *
+     *  The function implements the server services through a loop waiting for
+     *  client queries. The communication between the client and the server is
+     *  made through socket-arrays that packs the communication information. The
+     *  loop implements a switch used to determine which query is made by the
+     *  client to answer it accordingly. Specialised functions are used through
+     *  this switch to properly answer client requests.
+     *
+     *  As the client disconnect or if an critical error occurs, the function
+     *  closes the client connection and exits returning a NULL pointer.
+     *
+     *  \param le_pack pthread arguments and parameters packing structure
+     *
+     *  \return Always a NULL pointer
+     */
 
-    le_void_t * le_server_io_client( le_void_t * le_relay );
-    le_void_t le_server_io_client_( le_server_t * const le_server, le_enum_t const le_tid, le_sock_t const le_socket );
+    le_void_t * le_server_io_client( le_void_t * le_pack );
 
     /*! \brief i/o methods
      *
