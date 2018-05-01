@@ -21,7 +21,7 @@
     /*! \file   eratosthene-class.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - class module
+     *  liberatosthene - class
      */
 
 /*

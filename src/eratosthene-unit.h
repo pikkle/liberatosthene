@@ -21,7 +21,7 @@
     /*! \file   eratosthene-unit.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - unit module
+     *  liberatosthene - unit
      */
 
 /*
@@ -57,25 +57,25 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_UNIT_C          { NULL, 0, 0, { NULL }, LE_ERROR_SUCCESS }
+    # define LE_UNIT_C         { NULL, 0, 0, { NULL }, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_UNIT_C_TIME(t)  { NULL, 0, t, { NULL }, LE_ERROR_SUCCESS }
+    # define LE_UNIT_C_TIME(t) { NULL, 0, t, { NULL }, LE_ERROR_SUCCESS }
 
     /* define stream mode */
-    # define LE_UNIT_READ       ( 0 )
-    # define LE_UNIT_WRITE      ( 1 )
+    # define LE_UNIT_READ      ( 0 )
+    # define LE_UNIT_WRITE     ( 1 )
 
     /* define unit state */
-    # define LE_UNIT_OPEN       ( 0 )
-    # define LE_UNIT_LOCK       ( 1 )
+    # define LE_UNIT_OPEN      ( 0 )
+    # define LE_UNIT_LOCK      ( 1 )
 
 /*
     header - preprocessor macros
  */
 
     /* define stream mode */
-    # define le_unit_mode(m)    ( ( m ) == LE_UNIT_READ ? "r+" : "w+" )
+    # define le_unit_mode(m)   ( ( m ) == LE_UNIT_READ ? "r+" : "w+" )
 
 /*
     header - type definition
@@ -136,8 +136,6 @@
 /*
     header - function prototypes
  */
-
-    /* *** */
 
     /*! \brief constructor/destructor methods
      *
@@ -241,8 +239,6 @@
      */ 
 
     le_void_t le_unit_set_lock( le_unit_t * const le_unit, le_enum_t const le_state );
-
-    /* *** */
 
     /*! \brief mutator methods
      *

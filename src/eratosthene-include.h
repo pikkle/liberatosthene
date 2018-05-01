@@ -21,7 +21,7 @@
     /*! \file   eratosthene-include.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - inclusion module
+     *  liberatosthene - include
      */
 
 /*

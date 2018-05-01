@@ -21,7 +21,7 @@
     /*! \file   eratosthene-client.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - client module
+     *  liberatosthene - client
      */
 
 /*
@@ -44,7 +44,6 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-array.h"
 
 /*
     header - external includes

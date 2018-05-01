@@ -21,7 +21,7 @@
     /*! \file   eratosthene-tree.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - tree module
+     *  liberatosthene - tree
      */
 
 /*
@@ -44,6 +44,7 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-address.h"
     # include "eratosthene-unit.h"
 
 /*
