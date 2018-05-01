@@ -29,7 +29,7 @@
         /* statistic structure variable */
         struct stat le_stat = LE_STAT_C;
 
-        /* retreive element statistics */
+        /* retrieve element statistics */
         if ( stat( ( char * ) le_path, & le_stat ) == 0 ) {
 
             /* send message */

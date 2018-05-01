@@ -218,7 +218,7 @@
         le_char_t le_path[_LE_USE_PATH] = { 0 };
 
         /* string variable */
-        le_char_t le_over[_LE_USE_PATH] = { 0 };
+        le_char_t le_prev[_LE_USE_PATH] = { 0 };
 
         /* dual stream variable */
         le_file_t le_dual[_LE_USE_DEPTH] = { NULL };
@@ -258,20 +258,17 @@
             /* check stream state */
             if ( le_unit->un_pile[le_parse] != NULL ) {
 
-                /* close stream */
-                fclose( le_unit->un_pile[le_parse] );
-
-                /* replace stream */
-                le_unit->un_pile[le_parse] = le_dual[le_parse];
+                /* replace stream by dual stream */
+                fclose( le_unit->un_pile[le_parse] ), le_unit->un_pile[le_parse] = le_dual[le_parse];
 
                 /* compose dual stream path */
                 sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/%03" _LE_SIZE_P ".dual", le_unit->un_root, le_unit->un_time, le_parse );
 
                 /* compose stream path */
-                sprintf( ( char * ) le_over, "%s/%" _LE_TIME_P "/%03" _LE_SIZE_P ".bin", le_unit->un_root, le_unit->un_time, le_parse );
+                sprintf( ( char * ) le_prev, "%s/%" _LE_TIME_P "/%03" _LE_SIZE_P ".bin", le_unit->un_root, le_unit->un_time, le_parse );
 
                 /* overwrite stream with dual stream */
-                rename( ( char * ) le_path, ( char * ) le_over );
+                rename( ( char * ) le_path, ( char * ) le_prev );
 
             }
 
