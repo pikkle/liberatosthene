@@ -243,6 +243,7 @@
     # define LE_ADDRIN_C            { AF_INET, 0         , { INADDR_ANY }, { 0 } }
     # define LE_ADDRIN_C_PORT(p)    { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
     # endif
+    # define LE_STAT_C              { 0 }
 
 /*
     header - preprocessor macros
@@ -285,6 +286,18 @@
 /*
     header - function prototypes
  */
+
+    /*! \brief accessor methods
+     *
+     *  This function answers \b _LE_TRUE if the provided path points to an file
+     *  or a directory that exists. The function returns \b _LE_FALSE otherwise.
+     *
+     *  \param le_path Entity path
+     *
+     *  \return Returns _LE_TRUE if element exists, _LE_FALSE otherwise
+     */
+
+    le_enum_t le_get_exist( le_char_t const * const le_path );
 
 /*
     header - C/C++ compatibility

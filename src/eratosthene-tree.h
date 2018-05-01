@@ -44,9 +44,6 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-address.h"
-    # include "eratosthene-array.h"
-    # include "eratosthene-class.h"
     # include "eratosthene-unit.h"
 
 /*
@@ -148,14 +145,14 @@
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
-     *  \param le_path Server storage structure path
+     *  \param le_root Server storage structure path
      *  \param le_scfg Server spatial configuration value
      *  \param le_tcfg Server temporal configuration value
      *
      *  \return Returns the created structure
      */
 
-    le_tree_t le_tree_create( le_char_t * const le_path, le_size_t const le_scfg, le_time_t const le_tcfg );
+    le_tree_t le_tree_create( le_char_t * const le_root, le_size_t const le_scfg, le_time_t const le_tcfg );
 
     /*! \brief constructor/destructor methods
      *
@@ -248,104 +245,6 @@
      */
 
     le_unit_t * le_tree_set_push( le_tree_t * const le_tree, le_time_t const le_time, le_enum_t const le_mode );
-
-    /*! \brief i/o methods
-     *
-     *  This function searches the offset of the spatial class pointed by the
-     *  spatial index provided through the address structure in the provided
-     *  unit storage structure.
-     *
-     *  The spatial index digits are used to drive the progression through
-     *  the structure scales. This function is mainly used to detect if the
-     *  class pointed by the address exists or not.
-     *
-     *  \param le_unit Unit structure
-     *  \param le_addr Address structure
-     *
-     *  \return Returns the class offset on success, _LE_OFFS_NULL otherwise
-     */
-
-    le_size_t le_tree_io_offset( le_unit_t * const le_unit, le_address_t * const le_addr );
-
-    /*! \brief i/o methods
-     *
-     *  This function writes the content of the incoming array in the server
-     *  storage structure.
-     *
-     *  The provided array is expect to have the UF3 format, that is a series
-     *  of records composed of a coordinates 3-vector and a colour 3-vector.
-     *
-     *  For each array record, the function initiates an address structure using
-     *  the record coordinates to compute the spatial index. The index is then
-     *  used to drive the progression of the record injection through the scale
-     *  files.
-     *
-     *  For a given scale, the class the record belong to is searched. If the
-     *  class is found, the element is added to the class. Otherwise, a new
-     *  class is created using the record to initialise it. The parent class
-     *  offsets array is updated to take into account the new created class.
-     *
-     *  \param le_unit  Unit structure
-     *  \param le_array Array structure
-     *  \param le_scfg  Server spatial configuration value
-     */
-
-    le_void_t le_tree_io_inject( le_unit_t * const le_unit, le_array_t const * const le_array, le_size_t const le_scfg );
-
-    /*! \brief i/o methods
-     *
-     *  This function is used to gather spatial classes positions and colours
-     *  information to build a array using the UF3 format.
-     *
-     *  This function assume that the offset of the spatial class pointed by the
-     *  address index is known (\b le_tree_io_offset()). Starting from the
-     *  offsets array of this class, it starts to gather the position and
-     *  colours by enumerating the class daughters and sub-daughters through a
-     *  recursive process. It detect the gathering scale using the main class
-     *  scale and the address additional depth (span).
-     *
-     *  If the provided array is not passed empty, its previous content is left
-     *  unchanged, the function pushing the elements at the end of it.
-     *
-     *  \param le_unit   Unit structure
-     *  \param le_addr   Address structure
-     *  \param le_offset Class storage offset
-     *  \param le_parse  Class storage scale
-     *  \param le_span   Query additional depth
-     *  \param le_array  Data array filled by the function
-     */
-
-    le_void_t le_tree_io_gather( le_unit_t * const le_unit, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
-
-    /*! \brief i/o methods
-     *
-     *  This function implements a parallel version of \b le_tree_io_gather()
-     *  function. It performs the same operations simply considering two times
-     *  values.
-     *
-     *  As two parallel gathering processes take place in this function, it
-     *  allows to consider the times comparison mode provided by the address
-     *  structure. As elements for the two times are gathered at the same time,
-     *  the function is able to easily implements the logical operators. The
-     *  array is then filled with the results of the application of the logical
-     *  operators.
-     *
-     *  If the provided array is not passed empty, its previous content is left
-     *  unchanged, the function pushing the elements at the end of it.
-     *  of it.
-     *
-     *  \param le_unia    Unit structure - ass. to time 1
-     *  \param le_unib    Unit structure - ass. to time 2
-     *  \param le_addr    Address structure
-     *  \param le_mode    Address mode
-     *  \param le_offseta Class storage offset - ass. to time 1
-     *  \param le_offsetb Class storage offset - ass. to time 2
-     *  \param le_parse   Class storage scale
-     *  \param le_span    Query additional depth
-     *  \param le_array   Data array filled by the function
-     */
-
-    le_void_t le_tree_io_parallel( le_unit_t * const le_unia, le_unit_t * const le_unib, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t le_offseta, le_size_t le_offsetb, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
 /*
     header - C/C++ compatibility

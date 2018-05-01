@@ -44,6 +44,8 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-address.h"
+    # include "eratosthene-array.h"
     # include "eratosthene-class.h"
 
 /*
@@ -55,14 +57,18 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_UNIT_C          { 0, { NULL }, LE_ERROR_SUCCESS }
+    # define LE_UNIT_C          { NULL, 0, 0, { NULL }, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_UNIT_C_TIME(t)  { t, { NULL }, LE_ERROR_SUCCESS }
+    # define LE_UNIT_C_TIME(t)  { NULL, 0, t, { NULL }, LE_ERROR_SUCCESS }
 
     /* define stream mode */
     # define LE_UNIT_READ       ( 0 )
     # define LE_UNIT_WRITE      ( 1 )
+
+    /* define unit state */
+    # define LE_UNIT_OPEN       ( 0 )
+    # define LE_UNIT_LOCK       ( 1 )
 
 /*
     header - preprocessor macros
@@ -85,9 +91,13 @@
      *  This structure holds the required information to manage and access a
      *  specific storage structure of a temporal unit.
      *
-     *  The first field is used to store the time associated to the unit. The
-     *  value stored in this field is according to the equivalence classes point
-     *  of view :
+     *  The two first fields are used to store a copy of the server storage
+     *  structure root path and the spatial configuration value that are used
+     *  for unit manipulation.
+     *
+     *  The next field is used to store the time value associated to the unit.
+     *  The value stored in this field is according to the equivalence classes
+     *  point of view :
      *
      *      time_unit = time_utc / server_temporal_parameter
      *
@@ -101,6 +111,10 @@
      *  creation status of the structure. This allows to creation methods to
      *  return the structure instead of an error code.
      *
+     *  \var le_unit_struct::un_root
+     *  Server storage structure path
+     *  \var le_unit_struct::un_scfg
+     *  Server spatial configuration value : number of scale
      *  \var le_unit_struct::un_time
      *  Unit time in reduced form
      *  \var le_unit_struct::un_pile
@@ -111,14 +125,19 @@
 
     typedef struct le_unit_struct {
 
-        le_time_t un_time;
-        le_file_t un_pile[_LE_USE_DEPTH];
+        le_char_t * un_root;
+        le_size_t   un_scfg;
+
+        le_time_t   un_time;
+        le_file_t   un_pile[_LE_USE_DEPTH];
 
     le_enum_t _status; } le_unit_t;
 
 /*
     header - function prototypes
  */
+
+    /* *** */
 
     /*! \brief constructor/destructor methods
      *
@@ -140,14 +159,14 @@
      *  the structure itself using the reserved \b _status field.
      *
      *  \param le_root   Server storage structure path
-     *  \param le_mode   Access mode value
-     *  \param le_time   Unit time value, in reduced form
      *  \param le_scfg   Server spatial configuration value
+     *  \param le_time   Unit time value, in reduced form
+     *  \param le_mode   Access mode value
      *
      *  \return Returns the created unit
      */
 
-    le_unit_t le_unit_create( le_char_t const * const le_root, le_time_t const le_time, le_enum_t const le_mode, le_size_t const le_scfg );
+    le_unit_t le_unit_create( le_char_t * const le_root, le_size_t const le_scfg, le_time_t const le_time, le_enum_t const le_mode );
 
     /*! \brief constructor/destructor methods
      *
@@ -201,6 +220,32 @@
 
     /*! \brief mutator methods
      *
+     *  This function is used to lock the storage structure of a temporal unit.
+     *  The function creates a special files, called a locker, that indicates
+     *  other processes that the unit is locked for both reading and writing.
+     *
+     *  The provided time indicates which unit has to be locked or unlocked
+     *  according to the state parameter. If \b LE_UNIT_LOCK is provided as
+     *  state parameter, the function creates the locker file. If the unit is
+     *  already locked, the function does nothing.
+     *
+     *  If the \b LE_UNIT_OPEN value is provided as state variable, the function
+     *  deletes the unit locker. If the unit is already unlocked, the function
+     *  does nothing.
+     *
+     *  Note that this function does not check, for efficiency purpose, if the
+     *  provided time value corresponds or not to a valid unit storage.
+     *
+     *  \param le_unit  Unit structure
+     *  \param le_state Unit lock state
+     */ 
+
+    le_void_t le_unit_set_lock( le_unit_t * const le_unit, le_enum_t const le_state );
+
+    /* *** */
+
+    /*! \brief mutator methods
+     *
      *  This function allows to optimise the storage structure of the provided
      *  unit structure. The function rewrites the storage structure of the unit
      *  to allow faster read operations.
@@ -214,12 +259,11 @@
      *  be long on large unit storage structure.
      *
      *  \param le_unit Unit structure
-     *  \param le_root Server storage structure path
      */
 
-    le_void_t le_unit_set_optimise( le_unit_t * const le_unit, le_char_t const * const le_root );
+    le_void_t le_unit_set_optimise( le_unit_t * const le_unit );
 
-    /*! \brief mutator methods
+    /*! \brief i/o methods
      *
      *  This recursive function is the function used by the storage optimisation
      *  procedure implemented in \b le_unit_set_optimise(). This function is
@@ -243,7 +287,104 @@
      *  \param le_scale  Scale number
      */
 
-    le_void_t le_unit_set_arrange( le_unit_t * const le_unit, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
+    le_void_t le_unit_io_arrange( le_unit_t * const le_unit, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
+
+    /*! \brief i/o methods
+     *
+     *  This function searches the offset of the spatial class pointed by the
+     *  spatial index provided through the address structure in the provided
+     *  unit storage structure.
+     *
+     *  The spatial index digits are used to drive the progression through
+     *  the structure scales. This function is mainly used to detect if the
+     *  class pointed by the address exists or not.
+     *
+     *  \param le_unit Unit structure
+     *  \param le_addr Address structure
+     *
+     *  \return Returns the class offset on success, _LE_OFFS_NULL otherwise
+     */
+
+    le_size_t le_unit_io_offset( le_unit_t * const le_unit, le_address_t * const le_addr );
+
+    /*! \brief i/o methods
+     *
+     *  This function writes the content of the incoming array in the server
+     *  storage structure.
+     *
+     *  The provided array is expect to have the UF3 format, that is a series
+     *  of records composed of a coordinates 3-vector and a colour 3-vector.
+     *
+     *  For each array record, the function initiates an address structure using
+     *  the record coordinates to compute the spatial index. The index is then
+     *  used to drive the progression of the record injection through the scale
+     *  files.
+     *
+     *  For a given scale, the class the record belong to is searched. If the
+     *  class is found, the element is added to the class. Otherwise, a new
+     *  class is created using the record to initialise it. The parent class
+     *  offsets array is updated to take into account the new created class.
+     *
+     *  \param le_unit  Unit structure
+     *  \param le_array Array structure
+     */
+
+    le_void_t le_unit_io_inject( le_unit_t * const le_unit, le_array_t const * const le_array );
+
+    /*! \brief i/o methods
+     *
+     *  This function is used to gather spatial classes positions and colours
+     *  information to build a array using the UF3 format.
+     *
+     *  This function assume that the offset of the spatial class pointed by the
+     *  address index is known (\b le_tree_io_offset()). Starting from the
+     *  offsets array of this class, it starts to gather the position and
+     *  colours by enumerating the class daughters and sub-daughters through a
+     *  recursive process. It detect the gathering scale using the main class
+     *  scale and the address additional depth (span).
+     *
+     *  If the provided array is not passed empty, its previous content is left
+     *  unchanged, the function pushing the elements at the end of it.
+     *
+     *  \param le_unit   Unit structure
+     *  \param le_addr   Address structure
+     *  \param le_offset Class storage offset
+     *  \param le_parse  Class storage scale
+     *  \param le_span   Query additional depth
+     *  \param le_array  Data array filled by the function
+     */
+
+    le_void_t le_unit_io_gather( le_unit_t * const le_unit, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
+
+    /*! \brief i/o methods
+     *
+     *  This function implements a parallel version of \b le_tree_io_gather()
+     *  function. It performs the same operations simply considering two times
+     *  values.
+     *
+     *  As two parallel gathering processes take place in this function, it
+     *  allows to consider the times comparison mode provided by the address
+     *  structure. As elements for the two times are gathered at the same time,
+     *  the function is able to easily implements the logical operators. The
+     *  array is then filled with the results of the application of the logical
+     *  operators.
+     *
+     *  If the provided array is not passed empty, its previous content is left
+     *  unchanged, the function pushing the elements at the end of it.
+     *  of it.
+     *
+     *  \param le_unia    Unit structure - ass. to time 1
+     *  \param le_unib    Unit structure - ass. to time 2
+     *  \param le_addr    Address structure
+     *  \param le_mode    Address mode
+     *  \param le_offseta Class storage offset - ass. to time 1
+     *  \param le_offsetb Class storage offset - ass. to time 2
+     *  \param le_parse   Class storage scale
+     *  \param le_span    Query additional depth
+     *  \param le_array   Data array filled by the function
+     */
+
+    le_void_t le_unit_io_parallel( le_unit_t * const le_unia, le_unit_t * const le_unib, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t le_offseta, le_size_t le_offsetb, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
 /*
     header - C/C++ compatibility

@@ -24,7 +24,7 @@
     source - constructor/destructor methods
  */
 
-    le_server_t le_server_create( le_char_t * const le_path, le_sock_t const le_port ) {
+    le_server_t le_server_create( le_char_t * const le_root, le_sock_t const le_port ) {
 
         /* created structure variables */
         le_server_t le_server = LE_SERVER_C;
@@ -33,7 +33,7 @@
         struct sockaddr_in le_addr = LE_ADDRIN_C_PORT( le_port );
 
         /* assign server path - check consistency */
-        if ( ( le_server.sv_path = le_path ) == NULL ) {
+        if ( ( le_server.sv_root = le_root ) == NULL ) {
 
             /* send message */
             return( le_set_status( le_server, LE_ERROR_IO_ACCESS ) );
@@ -138,10 +138,10 @@
         FILE * le_tree = NULL;
 
         /* string length variables */
-        le_size_t le_plen = strlen( ( char * ) le_server->sv_path );
+        le_size_t le_plen = strlen( ( char * ) le_server->sv_root );
 
         /* open configuration stream */
-        if ( ( le_tree = fopen( strcat( ( char * ) le_server->sv_path, "/system" ), "r" ) ) == NULL ) {
+        if ( ( le_tree = fopen( strcat( ( char * ) le_server->sv_root, "/system" ), "r" ) ) == NULL ) {
 
             /* send message */
             return( LE_ERROR_IO_ACCESS );
@@ -190,7 +190,7 @@
         }
 
         /* restore server path */
-        le_server->sv_path[le_plen] = '\0';
+        le_server->sv_root[le_plen] = '\0';
 
         /* send message */
         return( LE_ERROR_SUCCESS );
@@ -229,7 +229,7 @@
         le_tree_delete( le_tree );
 
         /* create tree structure */
-        if ( le_get_status( ( * le_tree ) = le_tree_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) != LE_ERROR_SUCCESS ) {
+        if ( le_get_status( ( * le_tree ) = le_tree_create( le_server->sv_root, le_server->sv_scfg, le_server->sv_tcfg ) ) != LE_ERROR_SUCCESS ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -521,8 +521,14 @@
 
         }
 
+        /* lock unit */
+        le_unit_set_lock( le_unit, LE_UNIT_LOCK );
+
         /* inject socket-array */
-        le_tree_io_inject( le_unit, le_stack, le_server->sv_scfg );
+        le_unit_io_inject( le_unit, le_stack );
+
+        /* open unit */
+        le_unit_set_lock( le_unit, LE_UNIT_OPEN );
 
         /* send message */
         return( _LE_TRUE );
@@ -564,8 +570,14 @@
 
         }
 
+        /* lock unit */
+        le_unit_set_lock( le_unit, LE_UNIT_LOCK );
+
         /* optimise unit storage */
-        le_unit_set_optimise( le_unit, le_server->sv_path );
+        le_unit_set_optimise( le_unit );
+
+        /* open unit */
+        le_unit_set_lock( le_unit, LE_UNIT_OPEN );
 
         /* send message */
         return( _LE_TRUE );
@@ -627,7 +639,7 @@
                 if ( ( le_uia = le_tree_get_query( le_tree, & le_addr, le_mode - 1, & le_offa ) ) != NULL ) {
 
                     /* gathering process */
-                    le_tree_io_gather( le_uia, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
+                    le_unit_io_gather( le_uia, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
 
                 }
 
@@ -643,7 +655,7 @@
                 if ( ( le_uia != NULL ) || ( le_uib != NULL ) ) {
 
                     /* gathering process */
-                    le_tree_io_parallel( le_uia, le_uib, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
+                    le_unit_io_parallel( le_uia, le_uib, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
 
                 }
 

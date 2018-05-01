@@ -164,7 +164,7 @@
      *
      *  \var le_server_struct::sv_sock
      *  Server socket descriptor
-     *  \var le_server_struct::sv_path
+     *  \var le_server_struct::sv_root
      *  Server storage structure path
      *  \var le_server_struct::sv_scfg
      *  Server spatial configuration value : number of scale
@@ -180,7 +180,7 @@
 
         le_sock_t   sv_sock;
 
-        le_char_t * sv_path;
+        le_char_t * sv_root;
         le_size_t   sv_scfg;
         le_time_t   sv_tcfg;
 
@@ -234,13 +234,13 @@
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
+     *  \param le_root Server storage structure path
      *  \param le_port Server service port
-     *  \param le_path Server storage structure path
      *
      *  \return Returns created server structure
      */
 
-    le_server_t le_server_create( le_char_t * const le_path, le_sock_t const le_port );
+    le_server_t le_server_create( le_char_t * const le_root, le_sock_t const le_port );
 
     /*! \brief constructor/destructor methods
      *
@@ -253,7 +253,22 @@
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function searches an available thread usually for the management of
+     *  a client connection.
+     *
+     *  The function searches in the thread pooling array to determine which
+     *  thread is available. If a thread is found, its index is returned by the
+     *  function.
+     *
+     *  If all thread are occupied, the function returns the \b _LE_USE_PENDING
+     *  value that describe the size of the thread stack.
+     *
+     *  \param le_server Server structure
+     *
+     *  \return Returns available thread ID, _LE_USE_PENDING otherwise
+     */
 
     le_size_t le_server_get_thread( le_server_t * const le_server );
 
