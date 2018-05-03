@@ -115,10 +115,10 @@ endif
 	@$(foreach LIB, $(MAKE_SUBS), $(MAKE) -C $(LIB) clean-all-doc && ) true
 
     make-segment-doc:
-	@$(foreach SEG, $(MAKE_SEGS), $(MAKE) -C $(SEG) all-doc && ) true
+	@$(foreach SEG, $(MAKE_SEGS), $(MAKE) -C $(SEG) doc && ) true
 
     make-clean-segment-doc:
-	@$(foreach SEG, $(MAKE_SEGS), $(MAKE) -C $(SEG) clean-all-doc && ) true
+	@$(foreach SEG, $(MAKE_SEGS), $(MAKE) -C $(SEG) clean-doc && ) true
 
     make-directories:
 	$(MAKE_CMKD) $(MAKE_DBIN) $(MAKE_DDOC) $(MAKE_DOBJ)
