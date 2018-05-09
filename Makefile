@@ -24,7 +24,7 @@
 ifeq ($(MAKE_UNAM),Linux)
     MAKE_CLNK:=gcc-ar rcs
 else
-ifeq ($(MAKE_UNAM,DARWIN)
+ifeq ($(MAKE_UNAM),DARWIN)
     MAKE_CLNK:=ar -rv
 endif
 endif
