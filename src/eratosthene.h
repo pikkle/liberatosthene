@@ -113,6 +113,17 @@
     # error "endianness detection required"
     # endif
 
+    # if defined ( __linux__ )
+    # define __OS_LINUX
+    # else
+    # if defined ( __APPLE__ ) && defined ( __MACH__ )
+    # define __OS_APPLE
+    # else
+    # error "unsupported plateform"
+    # endif
+    # endif
+    
+
 /*
     header - C/C++ compatibility
  */
@@ -249,10 +260,11 @@
     # define LE_2P               ( LE_PI * 2.0 )
 
     /* define pseudo-constructor */
-    # if defined ( __APPLE__ ) && defined ( __MACH__ )
+    # if defined ( __OS_APPLE )
     # define LE_ADDRIN_C         { sizeof( struct sockaddr_in ), AF_INET, 0         , { INADDR_ANY }, { 0 } }
     # define LE_ADDRIN_C_PORT(p) { sizeof( struct sockaddr_in ), AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
-    # else
+    # endif
+    # if defined ( __OS_LINUX )
     # define LE_ADDRIN_C         { AF_INET, 0         , { INADDR_ANY }, { 0 } }
     # define LE_ADDRIN_C_PORT(p) { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
     # endif
