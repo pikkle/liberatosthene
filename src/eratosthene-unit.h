@@ -216,7 +216,7 @@
 
     le_enum_t le_unit_get_prior( le_unit_t const * const le_unit, le_unit_t const * const le_candidate );
 
-    /*! \brief mutator methods (revoked)
+    /*! \brief mutator methods
      *
      *  This function is used to lock the storage structure of a temporal unit.
      *  The function creates a special files, called a locker, that indicates
@@ -224,18 +224,21 @@
      *
      *  The provided time indicates which unit has to be locked or unlocked
      *  according to the state parameter. If \b LE_UNIT_LOCK is provided as
-     *  state parameter, the function creates the locker file. If the unit is
-     *  already locked, the function does nothing.
+     *  state parameter, the function creates the locker file and returns the
+     *  \b LE_TRUE value. If the unit is already locked, the function does
+     *  nothing and returns \b _LE_FALSE.
      *
      *  If the \b LE_UNIT_OPEN value is provided as state variable, the function
-     *  deletes the unit locker. If the unit is already unlocked, the function
-     *  does nothing.
+     *  deletes the unit locker and returns \b _LE_TRUE. If the unit is already
+     *  unlocked, the function does nothing and returns \b _LE_FALSE.
      *
      *  Note that this function does not check, for efficiency purpose, if the
      *  provided time value corresponds or not to a valid unit storage.
      *
      *  \param le_unit  Unit structure
      *  \param le_state Unit lock state
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */ 
 
     le_enum_t le_unit_set_lock( le_unit_t * const le_unit, le_enum_t const le_state );

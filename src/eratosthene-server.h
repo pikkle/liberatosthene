@@ -380,13 +380,17 @@
 
     le_enum_t le_server_io_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /*! \brief i/o methods (revoked)
+    /*! \brief i/o methods
      *
      *  This i/o methods is responsible of data injection in the server storage
      *  structure. It expects a time packed in the first client array that is
-     *  used to access the storage structure. It then expects a data array that
-     *  contains the geographic coordinates and colour of the points to inject
-     *  in the server storage structure.
+     *  used to access the storage structure. If the corresponding unit is
+     *  successfully accessed and locked, the function sends back the first
+     *  client array as a confirmation.
+     *
+     *  It then expects a data array that contains the geographic coordinates
+     *  and colours of the points to inject in the server storage structure. The
+     *  revieved data are then injected in the server storage structure.
      *
      *  \param le_server Server structure
      *  \param le_tree   Tree structure
@@ -398,12 +402,14 @@
 
     le_enum_t le_server_io_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /*! \brief i/o methods (revoked)
+    /*! \brief i/o methods
      *
      *  This function allows client to query a specific time storage allocation
      *  optimisation. The function reads the time packed in the socket-array and
-     *  search for the corresponding storage unit. It then runs the optimisation
-     *  process on the found unit.
+     *  search for the corresponding storage unit. If the unit is successfully
+     *  accessed and locked, the function sends the received socket-array back
+     *  as a confirmation. It then executes the optimisation process on the
+     *  pointed unit.
      *
      *  \param le_server Server structure
      *  \param le_tree   Tree structure
