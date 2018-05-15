@@ -380,7 +380,7 @@
 
     le_enum_t le_server_io_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This i/o methods is responsible of data injection in the server storage
      *  structure. It expects a time packed in the first client array that is
@@ -398,7 +398,7 @@
 
     le_enum_t le_server_io_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This function allows client to query a specific time storage allocation
      *  optimisation. The function reads the time packed in the socket-array and

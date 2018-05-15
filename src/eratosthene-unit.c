@@ -178,7 +178,7 @@
     source - mutator methods
  */
 
-    le_void_t le_unit_set_lock( le_unit_t * const le_unit, le_enum_t const le_state ) {
+    le_enum_t le_unit_set_lock( le_unit_t * const le_unit, le_enum_t const le_state ) {
 
         /* stream variable */
         le_file_t le_lock = NULL;
@@ -192,19 +192,40 @@
         /* check state value */
         if ( le_state == LE_UNIT_LOCK ) {
 
-            /* create lock stream - create file */
-            le_lock = fopen( ( char * ) le_path, "w" );
+            /* check lock path */
+            if ( le_get_exist( le_path ) == _LE_TRUE ) {
 
-            /* delete lock stream */
-            fclose( le_lock );
+                /* send message */
+                return( _LE_FALSE );
+
+            } else {
+
+                /* create lock stream - create file */
+                le_lock = fopen( ( char * ) le_path, "w" );
+
+                /* delete lock stream */
+                fclose( le_lock );
+
+                /* send message */
+                return( _LE_TRUE );
+
+            }
 
         } else {
 
             /* check lock path */
-            if ( le_get_exist( le_path ) == _LE_TRUE ) {
+            if ( le_get_exist( le_path ) == _LE_FALSE ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            } else {
 
                 /* remove lock */
                 remove( ( char * ) le_path );
+
+                /* send message */
+                return( _LE_TRUE );
 
             }
 

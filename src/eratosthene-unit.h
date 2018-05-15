@@ -216,7 +216,7 @@
 
     le_enum_t le_unit_get_prior( le_unit_t const * const le_unit, le_unit_t const * const le_candidate );
 
-    /*! \brief mutator methods
+    /*! \brief mutator methods (revoked)
      *
      *  This function is used to lock the storage structure of a temporal unit.
      *  The function creates a special files, called a locker, that indicates
@@ -238,7 +238,7 @@
      *  \param le_state Unit lock state
      */ 
 
-    le_void_t le_unit_set_lock( le_unit_t * const le_unit, le_enum_t const le_state );
+    le_enum_t le_unit_set_lock( le_unit_t * const le_unit, le_enum_t const le_state );
 
     /*! \brief mutator methods
      *

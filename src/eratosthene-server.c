@@ -497,6 +497,30 @@
 
         }
 
+        /* retrieve and check unit */
+        if ( ( le_unit = le_tree_get_unit( le_tree, le_time, LE_UNIT_WRITE ) ) == NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }     
+
+        /* lock unit */
+        if ( le_unit_set_lock( le_unit, LE_UNIT_LOCK ) == _LE_FALSE ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* write socket-array */
+        if ( le_array_io_write( le_stack, LE_MODE_INJE, le_socket ) != LE_MODE_INJE ) {
+
+            /* send messsage */
+            return( _LE_FALSE );
+
+        }
+
         /* read socket-array */
         if ( le_array_io_read( le_stack, le_socket ) != LE_MODE_INJE ) {
 
@@ -512,17 +536,6 @@
             return( _LE_FALSE );
 
         }
-
-        /* retrieve and check unit */
-        if ( ( le_unit = le_tree_get_unit( le_tree, le_time, LE_UNIT_WRITE ) ) == NULL ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* lock unit */
-        le_unit_set_lock( le_unit, LE_UNIT_LOCK );
 
         /* inject socket-array */
         le_unit_io_inject( le_unit, le_stack );
@@ -571,7 +584,20 @@
         }
 
         /* lock unit */
-        le_unit_set_lock( le_unit, LE_UNIT_LOCK );
+        if ( le_unit_set_lock( le_unit, LE_UNIT_LOCK ) == _LE_FALSE ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* write socket-array */
+        if ( le_array_io_write( le_stack, LE_MODE_OPTM, le_socket ) != LE_MODE_OPTM ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
 
         /* optimise unit storage */
         le_unit_set_optimise( le_unit );
