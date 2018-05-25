@@ -98,8 +98,10 @@
     # ifndef __LE_ERATOSTHENE__
     # define __LE_ERATOSTHENE__
 
+    # ifndef __cplusplus
     # if ( __STDC_VERSION__ < 199901L )
     # error "C99 standard required"
+    # endif
     # endif
     # include <limits.h>
     # if ( CHAR_BIT != 8 )
