@@ -79,6 +79,11 @@
     # define LE_ADDRESS_RAN_A         ( LE_ADDRESS_MAX_A - LE_ADDRESS_MIN_A )
     # define LE_ADDRESS_RAN_H         ( LE_ADDRESS_MAX_H - LE_ADDRESS_MIN_H )
 
+    /* define ellipsoidal coordinates ranges */
+    # define LE_ADDRESS_IRN_L         ( 1.0 / LE_ADDRESS_RAN_L )
+    # define LE_ADDRESS_IRN_A         ( 1.0 / LE_ADDRESS_RAN_A )
+    # define LE_ADDRESS_IRN_H         ( 1.0 / LE_ADDRESS_RAN_H )
+
 /*
     header - preprocessor macros
  */
