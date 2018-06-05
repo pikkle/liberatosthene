@@ -146,45 +146,40 @@
             /* analyse address digit */
             if ( ( le_address->as_digit[le_parse] & 0x01 ) != 0 ) {
 
-                /* update coordinates */
+                /* update coordinate */
                 le_pose[0] += le_scale[0];
-            }
-
-            /* asynchronous dimension management */
-            if ( le_parse < LE_ADDRESS_DEPTH_P ) {
-
-                /* break for loop */
-                continue;
 
             }
 
-            /* update dimension scale */
-            le_scale[1] *= 0.5;
+            /* asynchronous dimension */
+            if ( le_parse >= LE_ADDRESS_DEPTH_P ) {
 
-            /* analyse address digit */
-            if ( ( le_address->as_digit[le_parse] & 0x02 ) != 0 ) {
+                /* update dimension scale */
+                le_scale[1] *= 0.5;
 
-                /* update coordinates */
-                le_pose[1] += le_scale[1];
+                /* analyse address digit */
+                if ( ( le_address->as_digit[le_parse] & 0x02 ) != 0 ) {
 
-            }
+                    /* update coordinate */
+                    le_pose[1] += le_scale[1];
 
-            /* asynchronous dimension management */
-            if ( le_parse < LE_ADDRESS_DEPTH_A ) {
+                }
 
-                /* break for loop */
-                continue;
+                /* asynchronous dimension */
+                if ( le_parse >= LE_ADDRESS_DEPTH_A ) {
 
-            }
+                    /* update dimension scale */
+                    le_scale[2] *= 0.5;
 
-            /* update dimension scale */
-            le_scale[2] *= 0.5;
+                    /* analyse address digit */
+                    if ( ( le_address->as_digit[le_parse] & 0x04 ) != 0 ) {
 
-            /* analyse address digit */
-            if ( ( le_address->as_digit[le_parse] & 0x04 ) != 0 ) {
+                        /* update coordinate */
+                        le_pose[2] += le_scale[2];
 
-                /* update coordinates */
-                le_pose[2] += le_scale[2];
+                    }
+
+                }
 
             }
 
