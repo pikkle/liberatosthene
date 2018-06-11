@@ -143,16 +143,10 @@
      *  real array is not sufficient to holds the data array, again saving
      *  memory allocation and copy.
      *
-     *  A last field is available in the structure that is the compressed size
-     *  \b ar_csize. This fields indicates, if not zero, that the data array
-     *  is compressed. The value of this fields gives the size of the array
-     *  in its uncompressed form, the compressed size being stored by the
-     *  \b ar_vsize fields.
-     *
      *  When the array is written on TCP/IP socket, the header is filled as
      *  follows :
      *
-     *      [ar_vsize][ar_csize][mode] ...
+     *      [ar_vsize][mode][array_payload] ... [array_payload]
      *
      *  As the array is received in the remote computer, the header contains
      *  all the information needed to rebuild the array.
