@@ -79,47 +79,26 @@
 
     le_void_t le_array_set_header( le_array_t * const le_array, le_byte_t const le_mode ) {
 
-        /* serialisation variable */
-        le_size_t * le_base = ( le_size_t * ) le_array->ar_rbyte;
-
         /* serialise size */
-        ( * ( le_base ++ ) ) = le_array->ar_vsize;
-
-        /* serialise size */
-        ( * ( le_base ++ ) ) = le_array->ar_csize;
+        * ( ( le_size_t * ) le_array->ar_rbyte ) = le_array->ar_vsize;
 
         /* serialise mode */
-        ( * ( ( le_byte_t * ) le_base ) ) = le_mode;
+        * ( le_array->ar_rbyte + LE_ARRAY_HEADER_SIZE ) = le_mode;
 
     }
 
     le_byte_t le_array_set_array( le_array_t * const le_array ) {
 
-        /* serialisation variable */
-        le_size_t * le_base = ( le_size_t * ) le_array->ar_rbyte;
-
-        /* size variable */
-        le_size_t le_vsize = * ( le_base ++ );
-
-        /* size variable */
-        le_size_t le_csize = * ( le_base ++ );
-
-        /* mode variable */
-        le_byte_t le_mode = * ( ( le_byte_t * ) le_base );
-
-        /* array memory allocation */
-        if ( le_array_set_size( le_array, le_vsize ) == _LE_FALSE ) {
+        /* restore array memory allocation */
+        if ( le_array_set_size( le_array, * ( ( le_size_t * ) le_array->ar_rbyte ) ) == _LE_FALSE ) {
 
             /* send message */
             return( LE_MODE_NULL );
 
         }
 
-        /* array entropic size */
-        le_array->ar_csize = le_csize;
-
         /* return mode */
-        return( le_mode );
+        return( * ( le_array->ar_rbyte + LE_ARRAY_HEADER_SIZE ) );
 
     }
 

@@ -54,14 +54,14 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_ARRAY_C               { 0, NULL, 0, 0, NULL }
+    # define LE_ARRAY_C               { 0, NULL, 0, NULL }
 
     /* define array step */
     # define LE_ARRAY_STEP            ( 65536 )
     # define LE_ARRAY_LIMIT           ( 32 )
 
     /* define array header size */
-    # define LE_ARRAY_HEADER_SIZE     ( sizeof( le_size_t ) * 2 )
+    # define LE_ARRAY_HEADER_SIZE     ( sizeof( le_size_t ) )
     # define LE_ARRAY_HEADER_MODE     ( sizeof( le_byte_t ) )
     # define LE_ARRAY_HEADER          ( LE_ARRAY_HEADER_SIZE + LE_ARRAY_HEADER_MODE )
 
@@ -165,8 +165,6 @@
      *  Size, in bytes, of the data stored in the array
      *  \var le_array_struct::ar_vbyte
      *  Base pointer of the data stored in the array
-     *  \var le_array_struct::ar_csize
-     *  Size of the data in uncompressed form or zero
      */
 
     typedef struct le_array_struct {
@@ -175,7 +173,6 @@
         le_byte_t * ar_rbyte;
 
         le_size_t   ar_vsize;
-        le_size_t   ar_csize;
         le_byte_t * ar_vbyte;
 
     } le_array_t;
