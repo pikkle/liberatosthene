@@ -54,12 +54,17 @@
  */
 
     /* define uv3 element */
-    # define LE_UV3_POSE   ( sizeof( le_real_t ) * 3 )
-    # define LE_UV3_TYPE   ( sizeof( le_byte_t ) )
-    # define LE_UV3_DATA   ( sizeof( le_data_t ) * 3 )
+    # define LE_UV3_POSE     ( sizeof( le_real_t ) * 3 )
+    # define LE_UV3_TYPE     ( sizeof( le_byte_t ) )
+    # define LE_UV3_DATA     ( sizeof( le_data_t ) * 3 )
 
     /* define uv3 record */
-    # define LE_UV3_RECORD ( LE_UV3_POSE + LE_UV3_TYPE + LE_UV3_DATA )
+    # define LE_UV3_RECORD   ( LE_UV3_POSE + LE_UV3_TYPE + LE_UV3_DATA )
+
+    /* define uv3 primitive */
+    # define LE_UV3_POINT    ( 1 )
+    # define LE_UV3_LINE     ( 2 )
+    # define LE_UV3_TRIANGLE ( 3 )
 
 /*
     header - preprocessor macros
