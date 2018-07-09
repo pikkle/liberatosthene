@@ -18,18 +18,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    /*! \file   eratosthene-include.h
+    /*! \file   eratosthene-uv3.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - include
+     *  liberatosthene - uv3
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_INCLUDE__
-    # define __LE_INCLUDE__
+    # ifndef __LE_UV3__
+    # define __LE_UV3__
 
 /*
     header - C/C++ compatibility
@@ -44,14 +44,6 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-address.h"
-    # include "eratosthene-array.h"
-    # include "eratosthene-class.h"
-    # include "eratosthene-client.h"
-    # include "eratosthene-server.h"
-    # include "eratosthene-tree.h"
-    # include "eratosthene-unit.h"
-    # include "eratosthene-uv3.h"
 
 /*
     header - external includes
@@ -60,6 +52,14 @@
 /*
     header - preprocessor definitions
  */
+
+    /* define uv3 element */
+    # define LE_UV3_POSE   ( sizeof( le_real_t ) * 3 )
+    # define LE_UV3_TYPE   ( sizeof( le_byte_t ) )
+    # define LE_UV3_DATA   ( sizeof( le_data_t ) * 3 )
+
+    /* define uv3 record */
+    # define LE_UV3_RECORD ( LE_UV3_POSE + LE_UV3_TYPE + LE_UV3_DATA )
 
 /*
     header - preprocessor macros
