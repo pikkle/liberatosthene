@@ -66,6 +66,9 @@
     # define LE_UV3_LINE     ( 2 )
     # define LE_UV3_TRIANGLE ( 3 )
 
+    /* define standard chunk size */
+    # define LE_UV3_CHUNK    ( 2396745 )
+
 /*
     header - preprocessor macros
  */
