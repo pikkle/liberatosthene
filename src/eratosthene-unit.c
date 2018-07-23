@@ -386,6 +386,9 @@
         /* parsing array */
         for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_UV3 ) {
 
+            /* primitive filtering */
+            if ( ( * le_array_mac_type( le_array, le_index ) ) != LE_UV3_POINT ) continue;
+
             /* compute address digits */
             le_address_set_pose( & le_addr, le_array_mac_pose( le_array, le_index ) );
 
@@ -459,6 +462,9 @@
             /* push element position */
             le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
+            /* push element type */
+            ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
+
             /* push element data */
             le_class_io_data( le_offset, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unit, le_parse ) );
 
@@ -509,6 +515,9 @@
                 /* push element position */
                 le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
+                /* push element type */
+                ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
+
                 /* logical or operator */
                 if ( le_offseta != _LE_OFFS_NULL ) {
 
@@ -533,6 +542,9 @@
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
+                    /* push element type */
+                    ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
+
                     /* push element data */
                     le_class_io_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
 
@@ -549,6 +561,9 @@
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
 
+                    /* push element type */
+                    ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
+
                     /* push element data */
                     le_class_io_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
 
@@ -559,6 +574,9 @@
 
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
+
+                    /* push element type */
+                    ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
                     le_class_io_data( le_offsetb, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unib, le_parse ) );

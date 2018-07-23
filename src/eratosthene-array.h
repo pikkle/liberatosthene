@@ -100,10 +100,16 @@
     # define le_array_mac_pose(a,i)   ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )
 
     /* define array access macro */
+    # define le_array_mac_type(a,i)   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UV3_POSE ) )
+
+    /* define array access macro */
     # define le_array_mac_data(a,i)   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UV3_POSE + LE_ARRAY_UV3_TYPE ) )
 
     /* define array access macro */
     # define le_array_mac_lpose(a)    ( ( le_real_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UV3 ) )
+
+    /* define array access macro */
+    # define le_array_mac_ltype(a)    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UV3_DATA - LE_ARRAY_UV3_TYPE ) )
 
     /* define array access macro */
     # define le_array_mac_ldata(a)    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UV3_DATA ) )
