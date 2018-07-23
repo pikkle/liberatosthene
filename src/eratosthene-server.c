@@ -530,7 +530,7 @@
         }
 
         /* check consistency */
-        if ( ( le_array_get_size( le_stack ) % LE_ARRAY_UF3 ) != 0 ) {
+        if ( ( le_array_get_size( le_stack ) % LE_ARRAY_UV3 ) != 0 ) { 
 
             /* send message */
             return( _LE_FALSE );

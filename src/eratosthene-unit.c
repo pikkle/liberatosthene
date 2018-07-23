@@ -384,7 +384,7 @@
         le_size_t le_size = le_array_get_size( le_array );
 
         /* parsing array */
-        for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_UF3 ) {
+        for ( le_size_t le_index = 0; le_index < le_size; le_index += LE_ARRAY_UV3 ) {
 
             /* compute address digits */
             le_address_set_pose( & le_addr, le_array_mac_pose( le_array, le_index ) );
@@ -454,7 +454,7 @@
         if ( le_parse == le_span ) {
 
             /* update array size */
-            le_array_set( le_array, LE_ARRAY_UF3 );
+            le_array_set( le_array, LE_ARRAY_UV3 );
 
             /* push element position */
             le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
@@ -504,7 +504,7 @@
             if ( le_mode == 3 ) {
 
                 /* update array size */
-                le_array_set( le_array, LE_ARRAY_UF3 );
+                le_array_set( le_array, LE_ARRAY_UV3 );
 
                 /* push element position */
                 le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
@@ -528,7 +528,7 @@
                 if ( ( le_offseta != _LE_OFFS_NULL ) && ( le_offsetb != _LE_OFFS_NULL ) ) {
 
                     /* update array size */
-                    le_array_set( le_array, LE_ARRAY_UF3 );
+                    le_array_set( le_array, LE_ARRAY_UV3 );
 
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
@@ -544,7 +544,7 @@
                 if ( ( le_offseta != _LE_OFFS_NULL ) && ( le_offsetb == _LE_OFFS_NULL ) ) {
 
                     /* update array size */
-                    le_array_set( le_array, LE_ARRAY_UF3 );
+                    le_array_set( le_array, LE_ARRAY_UV3 );
 
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
@@ -555,7 +555,7 @@
                 } else if ( ( le_offseta == _LE_OFFS_NULL ) && ( le_offsetb != _LE_OFFS_NULL ) ) {
 
                     /* update array size */
-                    le_array_set( le_array, LE_ARRAY_UF3 );
+                    le_array_set( le_array, LE_ARRAY_UV3 );
 
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );

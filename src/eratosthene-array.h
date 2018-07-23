@@ -44,6 +44,7 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-uv3.h"
 
 /*
     header - external includes
@@ -79,10 +80,11 @@
     # define LE_ARRAY_ADDR_DESC       ( sizeof( le_byte_t ) * 3 )
     # define LE_ARRAY_ADDR            ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
 
-    /* define array-size - uf3 */
-    # define LE_ARRAY_UF3_POSE        ( 3 * sizeof( le_real_t ) )
-    # define LE_ARRAY_UF3_DATA        ( 3 * sizeof( le_data_t ) )
-    # define LE_ARRAY_UF3             ( LE_ARRAY_UF3_POSE + LE_ARRAY_UF3_DATA )
+    /* define array-size - uv3 */
+    # define LE_ARRAY_UV3_POSE          ( LE_UV3_POSE )
+    # define LE_ARRAY_UV3_TYPE          ( LE_UV3_TYPE )
+    # define LE_ARRAY_UV3_DATA          ( LE_UV3_DATA )
+    # define LE_ARRAY_UV3               ( LE_ARRAY_UV3_POSE + LE_ARRAY_UV3_TYPE + LE_ARRAY_UV3_DATA )
 
 /*
     header - preprocessor macros
@@ -98,13 +100,13 @@
     # define le_array_mac_pose(a,i)   ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )
 
     /* define array access macro */
-    # define le_array_mac_data(a,i)   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UF3_POSE ) )
+    # define le_array_mac_data(a,i)   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UV3_POSE + LE_ARRAY_UV3_TYPE ) )
 
     /* define array access macro */
-    # define le_array_mac_lpose(a)    ( ( le_real_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3 ) )
+    # define le_array_mac_lpose(a)    ( ( le_real_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UV3 ) )
 
     /* define array access macro */
-    # define le_array_mac_ldata(a)    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UF3_DATA ) )
+    # define le_array_mac_ldata(a)    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UV3_DATA ) )
 
 /*
     header - type definition

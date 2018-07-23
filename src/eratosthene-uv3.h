@@ -55,7 +55,7 @@
 
     /* define uv3 element */
     # define LE_UV3_POSE     ( sizeof( le_real_t ) * 3 )
-    # define LE_UV3_TYPE     ( sizeof( le_byte_t ) )
+    # define LE_UV3_TYPE     ( sizeof( le_data_t ) )
     # define LE_UV3_DATA     ( sizeof( le_data_t ) * 3 )
 
     /* define uv3 record */
