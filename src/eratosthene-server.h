@@ -49,6 +49,7 @@
     # include "eratosthene-client.h"
     # include "eratosthene-tree.h"
     # include "eratosthene-unit.h"
+    # include "eratosthene-uv3.h"
 
 /*
     header - external includes
@@ -399,6 +400,8 @@
      *
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
+
+    le_enum_t le_server_io_inject_beta( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 
     le_enum_t le_server_io_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
 

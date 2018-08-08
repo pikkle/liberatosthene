@@ -328,6 +328,8 @@
      *  \param le_array Array structure
      */
 
+    le_void_t le_unit_io_inject_beta( le_unit_t * const le_unit, le_char_t const * const le_file );
+
     le_void_t le_unit_io_inject( le_unit_t * const le_unit, le_array_t const * const le_array );
 
     /*! \brief i/o methods

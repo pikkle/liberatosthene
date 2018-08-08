@@ -363,7 +363,8 @@
                     case ( LE_MODE_INJE ) : {
 
                         /* mode management - update state */
-                        if ( le_server_io_inject( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+                        //if ( le_server_io_inject( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
+                        if ( le_server_io_inject_beta( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
 
                             /* reset thread activity */
                             le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
@@ -467,6 +468,230 @@
 
         /* send message */
         return( _LE_TRUE );
+
+    }
+
+    le_enum_t le_server_io_inject_beta( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
+
+        /* time variable */
+        le_time_t le_time = _LE_TIME_NULL;
+
+        /* message variable */
+        le_enum_t le_message = _LE_TRUE;
+
+        /* length variable */
+        le_size_t le_length = 0;
+
+        /* pointer variable */
+        le_byte_t * le_head = NULL;
+
+        /* pointer variable */
+        le_byte_t * le_edge = NULL;
+
+        /* stream variable */
+        le_file_t le_pstream = NULL;
+
+        /* stream variable */
+        le_file_t le_mstream = NULL;
+
+        /* path variable */
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
+
+        /* check consistency */
+        if ( le_array_get_size( le_stack ) != LE_ARRAY_INJE ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* serialise time */
+        le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
+
+        /* check consistency */
+        if ( le_time == _LE_TIME_NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* compose path */
+        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_server->sv_root, le_time / le_server->sv_tcfg );
+
+        /* compute path length */
+        le_length = strlen( ( char * ) le_path );
+
+        /* check directory */
+        if ( le_get_exist( le_path ) == _LE_FALSE ) {
+
+            /* create directory */
+            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+            /* update path */
+            le_path[le_length++] = '/';
+
+            /* update path */
+            le_path[le_length] = '2';
+
+            /* create directory */
+            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+            /* update path */
+            le_path[le_length] = '1';
+
+            /* create directory */
+            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+            /* update path */
+            le_path[le_length] = '0';
+
+            /* create directory */
+            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+        }
+
+        /* compose path */
+        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/0/", le_server->sv_root, le_time / le_server->sv_tcfg );
+
+        /* compute path length */
+        le_length = strlen( ( char * ) le_path );
+
+        /* update path */
+        le_path[le_length] = '1';
+
+        /* check locker */
+        if ( le_get_exist( le_path ) == _LE_TRUE ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* update path */
+        le_path[le_length] = '2';
+
+        /* check locker */
+        if ( le_get_exist( le_path ) == _LE_TRUE ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* update path */
+        le_path[le_length] = '1';
+
+        /* create stream */
+        if ( ( le_pstream = fopen( ( char * ) le_path, "wb" ) ) == NULL ) {
+
+            /* push message */
+            le_message = _LE_FALSE;
+
+        } else {
+
+            /* update path */
+            le_path[le_length] = '2';
+
+            /* create stream */
+            if ( ( le_mstream = fopen( ( char * ) le_path, "wb" ) ) == NULL ) {
+
+                /* push message */
+                le_message = _LE_FALSE;
+
+            } else {
+
+                /* reading process */
+                while ( le_array_io_read( le_stack, le_socket ) == LE_MODE_INJE ) {
+
+                    /* array base and edge pointer */
+                    le_edge = ( le_head = le_array_get_byte( le_stack ) ) + le_array_get_size( le_stack );
+
+                    /* parsing array */
+                    while ( ( le_head < le_edge ) && ( le_message == _LE_TRUE ) ) {
+
+                        /* check element type */
+                        if ( le_head[LE_UV3_POSE] == LE_UV3_POINT ) {
+
+                            /* element filtering */
+                            if ( fwrite( ( char * ) le_head, sizeof( le_byte_t ), LE_UV3_RECORD, le_pstream ) != LE_UV3_RECORD ) {
+
+                                /* push message */
+                                le_message = _LE_FALSE;
+
+                            }
+
+                        } else {
+
+                            /* element filtering */
+                            if ( fwrite( ( char * ) le_head, sizeof( le_byte_t ), LE_UV3_RECORD, le_mstream ) != LE_UV3_RECORD ) {
+
+                                /* push message */
+                                le_message = _LE_FALSE;
+
+                            }
+
+                        }
+
+                        /* update head */
+                        le_head += LE_UV3_RECORD;
+
+                    }
+
+                }
+
+                /* delete stream */
+                fclose( le_mstream );
+
+            }
+
+            /* delete stream */
+            fclose( le_pstream );
+
+        }
+
+        /* unit variable */
+        le_unit_t * le_unit = NULL;
+
+        /* retrieve and check unit */
+        if ( ( le_unit = le_tree_get_unit( le_tree, le_time, LE_UNIT_WRITE ) ) == NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* update path */
+        le_path[le_length] = '1';
+
+        /* inject socket-array */
+        le_unit_io_inject_beta( le_unit, le_path );
+
+        // DEBUG
+        fprintf( stderr, "Release thread\n" );
+
+        /* send message */
+        return( le_message );
 
     }
 

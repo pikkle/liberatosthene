@@ -45,7 +45,7 @@
         le_unit.un_scfg = le_scfg;
 
         /* compose directory path */
-        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_unit.un_root, le_time );
+        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/1", le_unit.un_root, le_time );
 
         /* check directory state */
         if ( le_get_exist( le_path ) == _LE_FALSE ) {
@@ -257,7 +257,7 @@
             if ( le_unit->un_pile[le_parse] != NULL ) {
 
                 /* compose dual stream path */
-                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/%03" _LE_SIZE_P ".dual", le_unit->un_root, le_unit->un_time, le_parse );
+                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/1/%03" _LE_SIZE_P ".dual", le_unit->un_root, le_unit->un_time, le_parse );
 
                 /* create dual stream */
                 le_dual[le_parse] = fopen( ( char * ) le_path, le_unit_mode( LE_UNIT_WRITE ) );
@@ -283,10 +283,10 @@
                 fclose( le_unit->un_pile[le_parse] ), le_unit->un_pile[le_parse] = le_dual[le_parse];
 
                 /* compose dual stream path */
-                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/%03" _LE_SIZE_P ".dual", le_unit->un_root, le_unit->un_time, le_parse );
+                sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/1/%03" _LE_SIZE_P ".dual", le_unit->un_root, le_unit->un_time, le_parse );
 
                 /* compose stream path */
-                sprintf( ( char * ) le_prev, "%s/%" _LE_TIME_P "/%03" _LE_SIZE_P ".bin", le_unit->un_root, le_unit->un_time, le_parse );
+                sprintf( ( char * ) le_prev, "%s/%" _LE_TIME_P "/1/%03" _LE_SIZE_P ".bin", le_unit->un_root, le_unit->un_time, le_parse );
 
                 /* overwrite stream with dual stream */
                 rename( ( char * ) le_path, ( char * ) le_prev );
@@ -358,6 +358,99 @@
 
         /* return offset */
         return( le_offset );
+
+    }
+
+    le_void_t le_unit_io_inject_beta( le_unit_t * const le_unit, le_char_t const * const le_file ) {
+
+        /* class variable */
+        le_class_t le_class = LE_CLASS_C;
+
+        /* address variable */
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_unit->un_scfg - 1 );
+
+        /* digit variable */
+        le_size_t le_digit = 0;
+
+        /* scale variable */
+        le_size_t le_scale = 0;
+        le_size_t le_ahead = 0;
+
+        /* offset variable */
+        le_size_t le_forward = 0;
+        le_size_t le_current = 0;
+
+        /* reading variable */
+        le_size_t le_read = 0;
+
+        /* buffer variable */
+        le_byte_t le_buffer[LE_UV3_RECORD];
+
+        /* stream variable */
+        le_file_t le_stream = NULL;
+
+        /* create stream */
+        le_stream = fopen( ( char * ) le_file, "rb" );
+
+        /* parsing stream */
+        while ( ( le_read = fread( le_buffer, sizeof( le_byte_t ), LE_UV3_RECORD, le_stream ) ) == LE_UV3_RECORD ) {
+
+            /* compute address digits */
+            le_address_set_pose( & le_addr, ( le_real_t * ) le_buffer );
+
+            /* reset scale */
+            le_scale = 0;
+            le_ahead = 1;
+
+            /* reset offset */
+            le_forward = 0;
+            le_current = 0;
+
+            /* injection process */
+            do {
+
+                /* class importation */
+                if ( le_class_io_read( & le_class, le_current, le_unit_get_stream( le_unit, le_scale ) ) == LE_ERROR_SUCCESS ) {
+
+                    /* inject element in class */
+                    le_class_set_push( & le_class, ( le_data_t * ) ( le_buffer + LE_UV3_POSE + LE_UV3_TYPE ) );
+
+                } else {
+
+                    /* initialise class with element */
+                    le_class = le_class_create( ( le_data_t * ) ( le_buffer + LE_UV3_POSE + LE_UV3_TYPE ) );
+
+                }
+
+                /* extract address digit */
+                le_digit = le_address_get_digit( & le_addr, le_scale );
+
+                /* retrieve daughter offset */
+                le_forward = le_class_get_offset( & le_class, le_digit );
+
+                /* check daughter state */
+                if ( ( le_forward == _LE_OFFS_NULL ) && ( le_ahead != le_unit->un_scfg ) ) {
+
+                    /* seek next scale eof */
+                    fseek( le_unit_get_stream( le_unit, le_ahead ), 0, SEEK_END );
+
+                    /* compute and check injection offset */
+                    if ( ( le_forward = ftell( le_unit_get_stream( le_unit, le_ahead ) ) ) < _LE_OFFS_NULL ) {
+
+                        /* insert offset in class */
+                        le_class_set_offset( & le_class, le_digit, le_forward );
+
+                    }
+
+                }
+
+                /* class exportation */
+                le_class_io_write( & le_class, le_current, le_unit_get_stream( le_unit, le_scale ) );
+
+            /* injection process condition */
+            } while ( ( ( le_current = le_forward, ++ le_ahead, ++ le_scale ) < le_unit->un_scfg ) && ( le_forward < _LE_OFFS_NULL ) );
+
+        }        
 
     }
 
