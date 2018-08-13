@@ -278,7 +278,7 @@
      *  \return Return _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length );
+    le_enum_t le_array_set( le_array_t * const le_array, le_size_t le_length );
 
     /*! \brief mutator methods
      *

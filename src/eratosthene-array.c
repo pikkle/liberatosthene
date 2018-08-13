@@ -102,7 +102,7 @@
 
     }
 
-    le_enum_t le_array_set( le_array_t * const le_array, le_size_t const le_length ) {
+    le_enum_t le_array_set( le_array_t * const le_array, le_size_t le_length ) {
 
         /* swap pointer variables */
         le_byte_t * le_swap = NULL;
@@ -115,8 +115,11 @@
 
         }
 
+        /* compute size correction */
+        le_length = ( ( le_length / LE_ARRAY_STEP ) + 1 ) * LE_ARRAY_STEP;
+
         /* reallocate array memory */
-        if ( ( le_swap = ( le_byte_t * ) realloc( ( le_void_t * ) le_array->ar_rbyte, le_array->ar_rsize += LE_ARRAY_STEP ) ) == NULL ) {
+        if ( ( le_swap = ( le_byte_t * ) realloc( ( le_void_t * ) le_array->ar_rbyte, le_array->ar_rsize += le_length ) ) == NULL ) {
 
             /* restore array size */
             le_array->ar_rsize -= LE_ARRAY_STEP;

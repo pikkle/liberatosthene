@@ -454,6 +454,178 @@
 
     }
 
+    le_void_t le_unit_io_inject_multivertex( le_unit_t * const le_unit, le_char_t const * const le_file ) {
+
+        /* buffer variable */
+        le_byte_t le_buffer[5][LE_UV3_RECORD];
+
+        /* buffer pointer variable */
+        le_real_t * le_uv3p[5];
+
+        /* head variable */
+        le_size_t le_head = 0;
+
+        /* stack variable */
+        le_size_t le_push = 0;
+
+        /* reading variable */
+        le_size_t le_read = 0;
+
+        /* amplitude variable */
+        le_real_t le_wide = 0.0;
+
+        /* distance variable */
+        le_real_t le_dist = 0.0;
+
+        /* stream variable */
+        le_file_t le_stream = NULL;
+
+        /* stream variable */
+        le_file_t le_export = NULL;
+
+        /* path variable */
+        le_char_t le_path[_LE_USE_PATH];
+
+        /* length variable */
+        le_size_t le_length = 0;
+
+        /* pointer variable */
+        le_size_t le_depth = 0;
+
+        /* address variable */
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_unit->un_scfg );
+
+        /* assign buffer pointer */
+        le_uv3p[0] = ( le_real_t * ) le_buffer[0];
+        le_uv3p[1] = ( le_real_t * ) le_buffer[1];
+        le_uv3p[2] = ( le_real_t * ) le_buffer[2];
+        le_uv3p[3] = ( le_real_t * ) le_buffer[3];
+        le_uv3p[4] = ( le_real_t * ) le_buffer[4];
+
+        /* compose path */
+        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/2/", le_unit->un_root, le_unit->un_time );
+
+        /* compute length */
+        le_length = strlen( ( char * ) le_path );
+
+        /* create stream */
+        le_stream = fopen( ( char * ) le_file, "rb" );
+
+        /* parsing stream */
+        while ( ( le_read = fread( le_buffer[le_head], sizeof( le_byte_t ), LE_UV3_RECORD, le_stream ) ) == LE_UV3_RECORD ) {
+
+            /* check head value */
+            if ( le_head == 0 ) {
+
+                /* push primitive type */
+                le_push = le_buffer[le_head][LE_UV3_POSE];
+
+            }
+
+            /* check stack */
+            if ( ( ++ le_head ) == le_push ) {
+
+                /* reset center */
+                le_uv3p[3][0] = 0.0;
+                le_uv3p[3][1] = 0.0;
+                le_uv3p[3][2] = 0.0;
+
+                /* reset amplitude */
+                le_wide = 0.0;
+
+                /* parsing vertex */
+                for ( le_size_t le_parse = 0; le_parse < le_push; le_parse ++ ) {
+
+                    /* center accumulation */
+                    le_uv3p[3][0] += le_uv3p[le_parse][0];
+                    le_uv3p[3][1] += le_uv3p[le_parse][1];
+                    le_uv3p[3][2] += le_uv3p[le_parse][2];
+
+                    /* check index */
+                    if ( le_parse > 0 ) {
+
+                        /* compute distance */
+                        le_dist = le_uv3p[le_parse][2] - le_uv3p[0][2];
+
+                        /* search for maximum */
+                        if ( le_dist > le_wide ) {
+
+                            /* update amplitude */
+                            le_wide = le_dist;
+
+                        }
+
+                    }
+
+                }
+
+                /* compute center */
+                le_uv3p[3][0] /= ( le_real_t ) le_push;
+                le_uv3p[3][1] /= ( le_real_t ) le_push;
+                le_uv3p[3][2] /= ( le_real_t ) le_push;
+
+                /* compute address */
+                le_address_set_pose( & le_addr, le_uv3p[3] );
+
+                /* push depth */
+                le_depth = le_length;
+
+                /* parsing scales */
+                for ( le_size_t le_parse = 0; le_parse < le_unit->un_scfg; le_parse ++ ) {
+
+                    /* update path */
+                    //le_path[le_depth++] = '/';
+                    //le_path[le_depth++] = le_address_get_digit( & le_addr, le_parse ) + 48;
+                    //le_path[le_depth] = '\0';
+                    le_path[le_depth++] = le_address_get_digit( & le_addr, le_parse ) + 48;
+                    le_path[le_depth] = '\0';
+
+                    /* create directory */
+                    //mkdir( ( char * ) le_path, 0755 );
+
+                    le_real_t le_condition = LE_ADDRESS_RAN_H / pow( 2.0, le_parse );
+
+                    le_export = fopen( ( char * ) le_path, "ab" );
+
+                    /* check condition */
+                    //if ( ( le_wide > le_condition ) || ( le_parse == ( le_unit->un_scfg - 1 ) ) ) {
+
+                        /* update path */
+                        //le_path[le_depth++] = '/';
+                        //le_path[le_depth++] = 'd';
+                        //le_path[le_depth] = '\0';
+
+                        //fprintf( stderr, "%s\n", le_path );
+
+                        fwrite( le_buffer[0], sizeof( le_byte_t ), LE_UV3_RECORD, le_export );
+                        fwrite( le_buffer[1], sizeof( le_byte_t ), LE_UV3_RECORD, le_export );
+                        fwrite( le_buffer[2], sizeof( le_byte_t ), LE_UV3_RECORD, le_export );
+
+                        /* update path */
+                        //le_path[le_depth -= 2] = '\0';
+
+                    if ( le_parse == ( le_unit->un_scfg - 1 ) ) {
+
+                        le_parse = le_unit->un_scfg;
+
+                    }
+
+                    fclose( le_export );
+
+                }
+
+                /* reset head */
+                le_head = 0;
+
+            }
+
+        }
+
+        /* close stream */
+        fclose( le_stream );
+
+    }
+
     le_void_t le_unit_io_inject( le_unit_t * const le_unit, le_array_t const * const le_array ) {
 
         /* class variable */
@@ -536,6 +708,63 @@
 
             /* injection process condition */
             } while ( ( ( le_current = le_forward, ++ le_ahead, ++ le_scale ) < le_unit->un_scfg ) && ( le_forward < _LE_OFFS_NULL ) );
+
+        }
+
+    }
+
+    le_void_t le_unit_io_gather_multivertex( le_unit_t * const le_unit, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
+
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
+
+        le_size_t le_length = 0;
+
+        le_file_t le_stream = NULL;
+
+        le_size_t le_size = 0;
+        le_size_t le_file = 0;
+
+        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/2/", le_unit->un_root, le_unit->un_time );
+
+        le_length = strlen( ( char * ) le_path );
+
+        for ( le_size_t le_index = 0; le_index < le_parse; le_index ++ ) {
+
+            le_path[le_length + le_index] = le_address_get_digit( le_addr, le_index ) + 48;
+
+        }
+
+        if ( le_get_exist( le_path ) == _LE_TRUE ) {
+
+            le_stream = fopen( ( char * ) le_path, "rb" );
+
+            fseek( le_stream, 0, SEEK_END );
+
+            if ( ( le_file = ftell( le_stream ) ) > 0 ) {
+
+                le_size = le_array_get_size( le_array );
+
+                le_array_set( le_array, le_file );
+
+                fseek( le_stream, 0, SEEK_SET );
+
+                fread( le_array_get_byte( le_array ) + le_size, sizeof( le_byte_t ), le_file, le_stream );
+
+            }
+
+            fclose( le_stream );
+
+            if ( le_parse < le_span ) {
+
+                for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
+
+                    le_address_set_digit( le_addr, le_parse, le_digit );
+
+                    le_unit_io_gather_multivertex( le_unit, le_addr, le_parse + 1, le_span, le_array );
+
+                }
+
+            }
 
         }
 

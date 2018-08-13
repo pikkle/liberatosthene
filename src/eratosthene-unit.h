@@ -330,6 +330,8 @@
 
     le_void_t le_unit_io_inject_beta( le_unit_t * const le_unit, le_char_t const * const le_file );
 
+    le_void_t le_unit_io_inject_multivertex( le_unit_t * const le_unit, le_char_t const * const le_file );
+
     le_void_t le_unit_io_inject( le_unit_t * const le_unit, le_array_t const * const le_array );
 
     /*! \brief i/o methods
@@ -354,6 +356,8 @@
      *  \param le_span   Query additional depth
      *  \param le_array  Data array filled by the function
      */
+
+    le_void_t le_unit_io_gather_multivertex( le_unit_t * const le_unit, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
     le_void_t le_unit_io_gather( le_unit_t * const le_unit, le_address_t * const le_addr, le_size_t le_offset, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 

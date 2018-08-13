@@ -217,6 +217,8 @@
      *  \return Returns the unit structure on success, NULL otherwise
      */
 
+    le_unit_t * le_tree_get_query_beta( le_tree_t const * const le_tree, le_address_t * const le_addr, le_size_t const le_addrt, le_size_t * const le_offset );
+
     le_unit_t * le_tree_get_query( le_tree_t const * const le_tree, le_address_t * const le_addr, le_size_t const le_addrt, le_size_t * const le_offset );
 
     /*! \brief mutator methods

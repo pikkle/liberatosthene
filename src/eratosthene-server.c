@@ -687,6 +687,10 @@
         /* inject socket-array */
         le_unit_io_inject_beta( le_unit, le_path );
 
+        le_path[le_length] = '2';
+
+        le_unit_io_inject_multivertex( le_unit, le_path );
+
         // DEBUG
         fprintf( stderr, "Release thread\n" );
 
@@ -887,10 +891,16 @@
             if ( ( le_mode = le_address_get_mode( & le_addr ) ) < 3 ) {
 
                 /* reduce and check address */
-                if ( ( le_uia = le_tree_get_query( le_tree, & le_addr, le_mode - 1, & le_offa ) ) != NULL ) {
+                if ( ( le_uia = le_tree_get_query_beta( le_tree, & le_addr, le_mode - 1, & le_offa ) ) != NULL ) {
+
+                    if ( le_offa != _LE_OFFS_NULL ) {
 
                     /* gathering process */
                     le_unit_io_gather( le_uia, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
+
+                    }
+
+                    le_unit_io_gather_multivertex( le_uia, & le_addr, le_size, le_depth, le_stack + 1 );
 
                 }
 

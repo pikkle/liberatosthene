@@ -147,6 +147,7 @@
     # include <stdlib.h>
     # include <unistd.h>
     # include <string.h>
+    # include <math.h>
     # include <limits.h>
     # include <inttypes.h>
     # include <pthread.h>
@@ -156,6 +157,8 @@
     # include <netinet/in.h>
     # include <netinet/tcp.h>
     # include <arpa/inet.h>
+
+    # include <errno.h>
 
 /*
     header - preprocessor definitions
@@ -183,7 +186,7 @@
     # define _LE_USE_RETRY       ( 3 )
     # define _LE_USE_ARRAY       ( 2 )
     # define _LE_USE_COMB        ( 1576800000 )
-    # define _LE_USE_PATH        ( PATH_MAX )
+    # define _LE_USE_PATH        ( PATH_MAX + FILENAME_MAX )
 
     /* define types */
     # define _LE_VOID            void
@@ -260,6 +263,8 @@
     # define LE_PI               ( 3.1415926535897932384626433832795029 )
     # define LE_P2               ( LE_PI / 2.0 )
     # define LE_2P               ( LE_PI * 2.0 )
+    # define LE_D2R              ( LE_PI / 180.0 )
+    # define LE_R2D              ( 180.0 / LE_PI )
 
     /* define pseudo-constructor */
     # if defined ( __OS_APPLE )
