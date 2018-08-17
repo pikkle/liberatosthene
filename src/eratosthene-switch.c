@@ -100,7 +100,6 @@
         le_time_t le_interval = _LE_TIME_MAX;
 
         /* parsing chain */
-        //while ( le_applicant >= 0 ) {
         while ( le_prev == NULL ) {
 
             /* compute interval */
@@ -110,19 +109,21 @@
                 if ( le_time_abs( le_applicant ) < le_interval ) {
 
                     /* assign search entry point */
-                    le_next = le_prev = le_parse;
+                    le_prev = le_next = le_parse;
 
                 } else {
 
                     /* assign search entry point */
-                    le_next = le_prev = le_parse = le_door_get_prev( le_parse );
+                    le_prev = le_next = le_parse = le_door_get_prev( le_parse );
 
                 }
                 
             } else {
 
-                if ( le_door_get_next( le_parse ) == NULL ) {
+                /* chain termination detection */
+                if ( ( le_next = le_door_get_next( le_parse ) ) == NULL ) {
 
+                    /* assign search entry point */
                     le_next = le_prev = le_parse;
 
                 } else {
@@ -131,7 +132,7 @@
                     le_interval = le_applicant;
 
                     /* update parser */
-                    le_parse = le_door_get_next( le_parse );
+                    le_parse = le_next;
 
                 }
 
@@ -175,7 +176,7 @@
 
         }
 
-        /* unavailable cell */
+        /* send message */
         return( NULL );
 
     }
