@@ -48,9 +48,9 @@
     # include "eratosthene-array.h"
     # include "eratosthene-class.h"
     # include "eratosthene-client.h"
+    # include "eratosthene-door.h"
     # include "eratosthene-server.h"
-    # include "eratosthene-tree.h"
-    # include "eratosthene-unit.h"
+    # include "eratosthene-switch.h"
     # include "eratosthene-uv3.h"
 
 /*

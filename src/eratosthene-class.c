@@ -99,7 +99,7 @@
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* set stream position */
-        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) { /* delete check */
 
             /* send message */
              return( LE_ERROR_IO_SEEK );
@@ -124,7 +124,7 @@
     le_enum_t le_class_io_readf( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* set stream position */
-        if ( fseek( le_stream, le_offset + _LE_USE_DATA, SEEK_SET ) != 0 ) {
+        if ( fseek( le_stream, le_offset + _LE_USE_DATA, SEEK_SET ) != 0 ) { /* delete check */
 
             /* send message */
              return( LE_ERROR_IO_SEEK );
@@ -149,7 +149,7 @@
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* set stream position */
-        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) { /* delete check */
 
             /* send message */
             return( LE_ERROR_IO_SEEK );
@@ -177,7 +177,7 @@
         le_size_t le_return = _LE_OFFS_NULL;
 
         /* set stream position */
-        if ( fseek( le_stream, le_offset + _LE_USE_DATA + ( le_index * _LE_USE_OFFSET ), SEEK_SET ) != 0 ) {
+        if ( fseek( le_stream, le_offset + _LE_USE_DATA + ( le_index * _LE_USE_OFFSET ), SEEK_SET ) != 0 ) { /* delete check */
 
             /* send message */
             return( _LE_OFFS_NULL );
@@ -200,7 +200,7 @@
     le_enum_t le_class_io_data( le_size_t const le_offset, le_data_t * const le_data, le_file_t const le_stream ) {
 
         /* set stream position */
-        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) {
+        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) { /* delete check */
 
             /* send message */
             return( LE_ERROR_IO_SEEK );

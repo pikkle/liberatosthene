@@ -24,23 +24,34 @@
     source - constructor/destructor methods
  */
 
-    le_server_t le_server_create( le_char_t * const le_root, le_sock_t const le_port ) {
-
-        /* created structure variables */
-        le_server_t le_server = LE_SERVER_C;
+    le_server_t le_server_create( le_char_t * const le_path, le_sock_t const le_port ) {
 
         /* address variables */
         struct sockaddr_in le_addr = LE_ADDRIN_C_PORT( le_port );
 
-        /* assign server path - check consistency */
-        if ( ( le_server.sv_root = le_root ) == NULL ) {
+        /* created structure variables */
+        le_server_t le_server = LE_SERVER_C;
+
+        /* message variable */
+        le_enum_t le_message = LE_ERROR_SUCCESS;
+
+        /* assign and check server path */
+        if ( ( le_server.sv_path = le_path ) == NULL ) {
 
             /* send message */
             return( le_set_status( le_server, LE_ERROR_IO_ACCESS ) );
 
         }
 
-        /* create server configuration */
+        /* check server path consistency */
+        if ( le_get_exist( le_server.sv_path ) == _LE_FALSE ) {
+
+            /* send message */
+            return( le_set_status( le_server, LE_ERROR_IO_ACCESS ) );
+
+        }
+
+        /* read server configuration */
         if ( ( le_server._status = le_server_set_config( & le_server ) ) != LE_ERROR_SUCCESS ) {
 
             /* send message */
@@ -56,30 +67,35 @@
 
         }
 
-        /* server socket address */
+        /* server socket_address */
         if ( bind( le_server.sv_sock, ( struct sockaddr * ) ( & le_addr ), sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
 
-            /* close server socket */
-            close( le_server.sv_sock );
+            /* push message */
+            le_message = LE_ERROR_IO_BIND;
 
-            /* send message */
-            return( le_set_status( le_server, LE_ERROR_IO_BIND ) );
+        } else {
+
+            /* server socket state */
+            if ( listen( le_server.sv_sock, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
+
+                /* push message */
+                le_message = LE_ERROR_IO_LISTEN;
+
+
+            } else {
+
+                /* return created structure */
+                return( le_server );
+
+            }
 
         }
 
-        /* server socket state */
-        if ( listen( le_server.sv_sock, _LE_USE_PENDING ) == _LE_SOCK_NULL ) {
-
-            /* close server socket */
-            close( le_server.sv_sock );
-
-            /* send message */
-            return( le_set_status( le_server, LE_ERROR_IO_LISTEN ) );
-
-        }
+        /* close socket */
+        close( le_server.sv_sock );
 
         /* return created structure */
-        return( le_server );
+        return( le_set_status( le_server, le_message ) );
 
     }
 
@@ -102,145 +118,80 @@
     }
 
 /*
-    source - accessor methods
- */
-
-    le_size_t le_server_get_thread( le_server_t * const le_server ) {
-
-        /* parsing variable */
-        le_size_t le_parse = 0;
-
-        /* searching available thread */
-        while ( ( ++ le_parse ) < _LE_USE_PENDING ) {
-
-            /* check thread availability */
-            if ( le_server_mac_pool( le_server, le_parse, LE_SERVER_ACTIVE ) == 0 ) {
-
-                /* return thread index */
-                return( le_parse );
-
-            }
-
-        }
-
-        /* return thread index */
-        return( le_parse );
-
-    }
-
-/*
     source - mutator methods
  */
 
     le_enum_t le_server_set_config( le_server_t * const le_server ) {
 
-        /* stream variables */
-        FILE * le_tree = NULL;
+        /* path variable */
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
 
-        /* string length variables */
-        le_size_t le_plen = strlen( ( char * ) le_server->sv_root );
+        /* stream variable */
+        le_file_t le_stream = NULL;
 
-        /* open configuration stream */
-        if ( ( le_tree = fopen( strcat( ( char * ) le_server->sv_root, "/system" ), "r" ) ) == NULL ) {
+        /* message variable */
+        le_enum_t le_message = LE_ERROR_SUCCESS;
 
-            /* send message */
-            return( LE_ERROR_IO_ACCESS );
+        /* compose path */
+        sprintf( ( char * ) le_path, "%s/system", le_server->sv_path );
 
-        }
-
-        /* read configuration parameter */
-        if ( fscanf( le_tree, "%" _LE_SIZE_S, & le_server->sv_scfg ) != 1 ) {
-
-            /* close stream */
-            fclose( le_tree );
+        /* create and check stream */
+        if ( ( le_stream = fopen( ( char * ) le_path, "r" ) ) == NULL ) {
 
             /* send message */
             return( LE_ERROR_IO_READ );
 
         }
 
-        /* read configuration parameter */
-        if ( fscanf( le_tree, "%" _LE_TIME_S, & le_server->sv_tcfg ) != 1 ) {
+        /* read configuration */
+        if ( fscanf( le_stream, "%" _LE_SIZE_S, & le_server->sv_scfg ) != 1 ) {
 
-            /* close stream */
-            fclose( le_tree );
+            /* push message */
+            le_message = LE_ERROR_IO_READ;
 
-            /* send message */
-            return( LE_ERROR_IO_READ );
+        } else {
+
+            /* read configuration */
+            if ( fscanf( le_stream, "%" _LE_TIME_S, & le_server->sv_tcfg ) != 1 ) {
+
+                /* push message */
+                le_message = LE_ERROR_IO_READ;
+
+            } else {
+
+                /* check consistency */
+                if ( le_server->sv_scfg <= 1 ) {
+
+                    /* push message */
+                    le_message = LE_ERROR_DEPTH;
+
+                }
+
+                /* check consistency */
+                if ( le_server->sv_scfg >= _LE_USE_DEPTH ) {
+
+                    /* push message */
+                    le_message = LE_ERROR_DEPTH;
+
+                }
+
+                /* check consistency */
+                if ( le_server->sv_tcfg <= 0 ) {
+
+                    /* push message */
+                    le_message = LE_ERROR_TIME;
+
+                }
+
+            }
 
         }
 
         /* close stream */
-        fclose( le_tree );
-
-        /* check consistency */
-        if ( ( le_server->sv_scfg <= 1 ) || ( le_server->sv_scfg >= _LE_USE_DEPTH ) ) {
-
-            /* send message */
-            return( LE_ERROR_DEPTH );
-
-        }
-
-        /* check consistency */
-        if ( le_server->sv_tcfg <= 0 ) {
-
-            /* send message */
-            return( LE_ERROR_TIME );
-
-        }
-
-        /* restore server path */
-        le_server->sv_root[le_plen] = '\0';
+        fclose( le_stream );
 
         /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_void_t le_server_set_broadcast( le_server_t * const le_server, le_size_t const le_tid, le_byte_t const le_message ) {
-
-        /* parsing variable */
-        le_size_t le_parse = 0;
-
-        /* parsing thread pool */
-        while ( ( ++ le_parse ) < _LE_USE_PENDING ) {
-
-            /* broadcast message */
-            le_server_mac_set( le_server, le_parse, le_message );
-
-        }
-
-        /* reset thread self-message */
-        le_server_mac_clear( le_server, le_tid, le_message );
-
-    }
-
-    le_enum_t le_server_set_tree( le_server_t * const le_server, le_size_t const le_tid, le_tree_t * const le_tree ) {
-
-        /* check thread message */
-        if ( le_server_mac_pool( le_server, le_tid, LE_SERVER_RELOAD ) == 0 ) {
-
-            /* send message */
-            return( _LE_TRUE );
-
-        }
-
-        /* delete tree structure */
-        le_tree_delete( le_tree );
-
-        /* create tree structure */
-        if ( le_get_status( ( * le_tree ) = le_tree_create( le_server->sv_root, le_server->sv_scfg, le_server->sv_tcfg ) ) != LE_ERROR_SUCCESS ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* reset thread message */
-        le_server_mac_clear( le_server, le_tid, LE_SERVER_RELOAD );
-
-        /* send message */
-        return( _LE_TRUE );
+        return( le_message );
 
     }
 
@@ -248,59 +199,32 @@
     source - i/o methods
  */
 
-    le_void_t le_server_io( le_server_t * const le_server ) {
-
-        /* socket variable */
-        le_sock_t le_socket = _LE_SOCK_NULL;
+    le_void_t le_server_io_beta( le_server_t * const le_server ) {
 
         /* process variable */
         le_proc_t le_thread;
 
-        /* process variable */
-        le_size_t le_tid = 0;
+        /* server principal */
+        while ( ( le_server->sv_push = le_client_io_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
-        /* principal server loop */
-        while ( le_server_mac_pool( le_server, 0, LE_SERVER_ACTIVE ) != 0 ) {
+            /* create client process */
+            if ( pthread_create( & le_thread, NULL, le_server_io_client_beta, ( le_void_t * ) le_server ) != 0 ) {
 
-            /* client connection */
-            if ( ( le_socket = le_client_io_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
+                /* reject client connection */
+                close( le_server->sv_push );
 
-                /* search available thread */
-                if ( ( le_tid = le_server_get_thread( le_server ) ) < _LE_USE_PENDING ) {
+            } else {
 
-                    /* client thread pack variable */
-                    le_pack_t le_pack = { le_server, le_tid, le_socket, PTHREAD_MUTEX_INITIALIZER };
+                /* wait thread validation */
+                while ( le_server->sv_push != _LE_SOCK_NULL ) {
 
-                    /* initialise thread pool */
-                    le_server->sv_pool[le_tid] = LE_SERVER_RELOAD;
+                    /* thread critical region */
+                    pthread_mutex_lock( & le_server->sv_mute );
 
-                    /* create client thread */
-                    if ( pthread_create( & le_thread, NULL, le_server_io_client, ( void * ) ( & le_pack ) ) == 0 ) {
+                    /* thread ciritcal region */
+                    pthread_mutex_unlock( & le_server->sv_mute );
 
-                        /* wait thread confirmation */
-                        while ( le_tid != 0 ) {
-
-                            /* thread critical region */
-                            pthread_mutex_lock( & le_pack.p_m );
-
-                            /* check thread confirmation */
-                            if ( le_server_mac_pool( le_server, le_tid, LE_SERVER_ACTIVE ) != 0 ) {
-
-                                /* thread confirmed */
-                                le_tid = 0;    
-
-                            }
-
-                            /* thread critical region */
-                            pthread_mutex_unlock( & le_pack.p_m );
-
-                        }
-
-                    /* refuse connection */
-                    } else { close( le_socket ); }
-
-                /* refuse connection */
-                } else { close( le_socket ); }
+                }
 
             }
 
@@ -308,632 +232,127 @@
 
     }
 
-    le_void_t * le_server_io_client( le_void_t * le_pack ) {
+    le_void_t * le_server_io_client_beta( le_void_t * le_void ) {
 
-        /* server variable */
-        le_server_t * le_server = ( ( _pck ) le_pack )->p_s;
-
-        /* process variable */
-        le_size_t le_tid = ( ( _pck ) le_pack )->p_t;
+        /* server pointer variable */
+        le_server_t * le_server = ( le_server_t * ) le_void;
 
         /* socket variable */
-        le_sock_t le_socket = ( ( _pck ) le_pack )->p_c;
+        le_sock_t le_socket = le_server->sv_push;
 
-        /* socket-array variables */
-        le_array_t le_stack[_LE_USE_ARRAY];
+        /* switch variable */
+        le_switch_t le_switch = LE_SWITCH_C;
 
-        /* stream variables */
-        le_tree_t le_tree = LE_TREE_C;
+        /* socket-array mode variable */
+        le_enum_t le_mode = LE_MODE_NULL;
 
-        /* thread critical region */
-        pthread_mutex_lock( & ( ( _pck ) le_pack )->p_m );
-
-        /* thread activity confirmation */
-        le_server_mac_set( le_server, le_tid, LE_SERVER_ACTIVE );
-
-        /* thread critical region */
-        pthread_mutex_unlock( & ( ( _pck ) le_pack )->p_m );
-
-        /* create thread socket-array */
-        le_array_mac_create( le_stack, _LE_USE_ARRAY );
-
-        /* connection manager */
-        while ( le_server_mac_pool( le_server, le_tid, LE_SERVER_ACTIVE ) != 0 ) {
-
-            /* thread pooling */
-            if ( le_server_set_tree( le_server, le_tid, & le_tree ) == _LE_TRUE ) {
-
-                /* client socket-array */
-                switch( le_array_io_read( le_stack, le_socket ) ) {
-
-                    /* authentication */
-                    case ( LE_MODE_AUTH ) : {
-
-                        /* mode management - update state */
-                        if ( le_server_io_auth( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
-
-                            /* reset thread activity */
-                            le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
-
-                        }
-
-                    } break;
-
-                    /* inject */
-                    case ( LE_MODE_INJE ) : {
-
-                        /* mode management - update state */
-                        //if ( le_server_io_inject( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
-                        if ( le_server_io_inject_beta( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
-
-                            /* reset thread activity */
-                            le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
-
-                        } else {
-
-                            /* broadcast message */
-                            le_server_set_broadcast( le_server, le_tid, LE_SERVER_RELOAD );
-
-                        }
-
-                    } break;
-
-                    /* optimise */
-                    case ( LE_MODE_OPTM ) : {
-
-                        /* mode management - update state */
-                        if ( le_server_io_optm( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
-
-                            /* reset thread activity */
-                            le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
-
-                        } else {
-
-                            /* broadcast message */
-                            le_server_set_broadcast( le_server, le_tid, LE_SERVER_RELOAD );
-
-                        }
-
-                    } break;
-
-                    /* query */
-                    case ( LE_MODE_QUER ) : {
-
-                        /* mode management - update state */
-                        if ( le_server_io_query( le_server, & le_tree, le_stack, le_socket ) != _LE_TRUE ) {
-
-                            /* reset thread activity */
-                            le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
-
-                        }
-
-                    } break;
-
-                    /* unexpected mode - update state */
-                    default : {
-
-                        /* reset thread activity */
-                        le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE );
-
-                    } break;
-
-                };
-
-            /* reset thread activity */
-            } else { le_server_mac_clear( le_server, le_tid, LE_SERVER_ACTIVE ); }
-
-        }
-
-        /* delete thread stream */
-        le_tree_delete( & le_tree );
-
-        /* delete thread socket-array */
-        le_array_mac_delete( le_stack, _LE_USE_ARRAY );
-
-        /* close connection */
-        close( le_socket );
-
-        /* thread exit */
-        return( NULL );
-
-    }
-
-    le_enum_t le_server_io_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
-
-        /* serialisation variable */
-        le_size_t le_serial = 0;
-
-        /* check consistency */
-        if ( le_array_get_size( le_stack ) != 0 ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* update socket-array size */
-        le_array_set_size( le_stack, LE_ARRAY_AUTH );
-
-        /* serialise server configuration */
-        le_serial = le_array_serial( le_stack, & le_server->sv_scfg, sizeof( le_size_t ), le_serial, _LE_SET );
-        le_serial = le_array_serial( le_stack, & le_server->sv_tcfg, sizeof( le_time_t ), le_serial, _LE_SET );
-
-        /* write socket-array */
-        if ( le_array_io_write( le_stack, LE_MODE_AUTH, le_socket ) != LE_MODE_AUTH ) {
-        
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* send message */
-        return( _LE_TRUE );
-
-    }
-
-    le_enum_t le_server_io_inject_beta( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
-
-        /* time variable */
-        le_time_t le_time = _LE_TIME_NULL;
+        /* socket-array stack variable */
+        le_array_t le_array[_LE_USE_ARRAY];
 
         /* message variable */
-        le_enum_t le_message = _LE_TRUE;
+        le_enum_t le_message = LE_ERROR_SUCCESS;
 
-        /* length variable */
-        le_size_t le_length = 0;
+        // DEBUG //
+        fprintf( stderr, "created : %i\n", le_socket );
 
-        /* pointer variable */
-        le_byte_t * le_head = NULL;
+        /* thread citical region */
+        pthread_mutex_lock( & le_server->sv_mute );
 
-        /* pointer variable */
-        le_byte_t * le_edge = NULL;
+        /* send thread validation */
+        le_server->sv_push = _LE_SOCK_NULL;
 
-        /* stream variable */
-        le_file_t le_pstream = NULL;
+        /* thread critical region */
+        pthread_mutex_unlock( & le_server->sv_mute );
 
-        /* stream variable */
-        le_file_t le_mstream = NULL;
+        /* create and check switch */
+        if ( le_get_status( le_switch = le_switch_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) == LE_ERROR_SUCCESS ) {
 
-        /* path variable */
-        le_char_t le_path[_LE_USE_PATH] = { 0 };
+            /* create socket-array stack */
+            for ( le_size_t le_parse = 0; le_parse < _LE_USE_ARRAY; le_parse ++ ) {
 
-        /* check consistency */
-        if ( le_array_get_size( le_stack ) != LE_ARRAY_INJE ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* serialise time */
-        le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
-
-        /* check consistency */
-        if ( le_time == _LE_TIME_NULL ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* compose path */
-        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P, le_server->sv_root, le_time / le_server->sv_tcfg );
-
-        /* compute path length */
-        le_length = strlen( ( char * ) le_path );
-
-        /* check directory */
-        if ( le_get_exist( le_path ) == _LE_FALSE ) {
-
-            /* create directory */
-            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
-
-                /* send message */
-                return( _LE_FALSE );
+                /* create socket-array */
+                ( * ( le_array + le_parse ) ) = le_array_create();
 
             }
 
-            /* update path */
-            le_path[le_length++] = '/';
+            /* client connection */
+            while ( le_message == LE_ERROR_SUCCESS ) {
 
-            /* update path */
-            le_path[le_length] = '2';
+                /* wait client socket-array */
+                if ( ( le_mode = le_array_io_read( le_array, le_socket ) ) == LE_MODE_NULL ) {
 
-            /* create directory */
-            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+                    /* push message */
+                    le_message = LE_ERROR_IO_ARRAY;
 
-                /* send message */
-                return( _LE_FALSE );
+                } else {
 
-            }
+                    /* switch reload management */
+                    if ( ( le_message = le_switch_set_update( & le_switch, 5 ) ) == LE_ERROR_SUCCESS ) {
 
-            /* update path */
-            le_path[le_length] = '1';
+                        /* switch on socket-array mode */
+                        switch ( le_mode ) {
 
-            /* create directory */
-            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+                            case ( LE_MODE_AUTH ) : {
 
-                /* send message */
-                return( _LE_FALSE );
+                                /* service management */
+                                le_message = le_switch_io_auth( & le_switch, le_array, le_socket );
 
-            }
+                            } break;
 
-            /* update path */
-            le_path[le_length] = '0';
+                            case ( LE_MODE_INJE ) : {
 
-            /* create directory */
-            if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+                                /* service management */
+                                le_message = le_switch_io_inject( & le_switch, le_array, le_socket );
 
-                /* send message */
-                return( _LE_FALSE );
+                            } break;
 
-            }
+                            case ( LE_MODE_OPTM ) : {
 
-        }
+                                /* service management */
+                                le_message = le_switch_io_optimise( & le_switch, le_array, le_socket );
 
-        /* compose path */
-        sprintf( ( char * ) le_path, "%s/%" _LE_TIME_P "/0/", le_server->sv_root, le_time / le_server->sv_tcfg );
+                            } break;
 
-        /* compute path length */
-        le_length = strlen( ( char * ) le_path );
+                            case ( LE_MODE_QUER ) : {
 
-        /* update path */
-        le_path[le_length] = '1';
+                                /* service management */
+                                le_message = le_switch_io_query( & le_switch, le_array, le_socket );
 
-        /* check locker */
-        if ( le_get_exist( le_path ) == _LE_TRUE ) {
+                            } break;
 
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* update path */
-        le_path[le_length] = '2';
-
-        /* check locker */
-        if ( le_get_exist( le_path ) == _LE_TRUE ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* update path */
-        le_path[le_length] = '1';
-
-        /* create stream */
-        if ( ( le_pstream = fopen( ( char * ) le_path, "wb" ) ) == NULL ) {
-
-            /* push message */
-            le_message = _LE_FALSE;
-
-        } else {
-
-            /* update path */
-            le_path[le_length] = '2';
-
-            /* create stream */
-            if ( ( le_mstream = fopen( ( char * ) le_path, "wb" ) ) == NULL ) {
-
-                /* push message */
-                le_message = _LE_FALSE;
-
-            } else {
-
-                /* reading process */
-                while ( le_array_io_read( le_stack, le_socket ) == LE_MODE_INJE ) {
-
-                    /* array base and edge pointer */
-                    le_edge = ( le_head = le_array_get_byte( le_stack ) ) + le_array_get_size( le_stack );
-
-                    /* parsing array */
-                    while ( ( le_head < le_edge ) && ( le_message == _LE_TRUE ) ) {
-
-                        /* check element type */
-                        if ( le_head[LE_UV3_POSE] == LE_UV3_POINT ) {
-
-                            /* element filtering */
-                            if ( fwrite( ( char * ) le_head, sizeof( le_byte_t ), LE_UV3_RECORD, le_pstream ) != LE_UV3_RECORD ) {
+                            default : {
 
                                 /* push message */
-                                le_message = _LE_FALSE;
+                                le_message = LE_ERROR_IO_ARRAY;
 
-                            }
-
-                        } else {
-
-                            /* element filtering */
-                            if ( fwrite( ( char * ) le_head, sizeof( le_byte_t ), LE_UV3_RECORD, le_mstream ) != LE_UV3_RECORD ) {
-
-                                /* push message */
-                                le_message = _LE_FALSE;
-
-                            }
+                            } break;
 
                         }
 
-                        /* update head */
-                        le_head += LE_UV3_RECORD;
-
                     }
 
                 }
 
-                /* delete stream */
-                fclose( le_mstream );
-
             }
 
-            /* delete stream */
-            fclose( le_pstream );
-
-        }
-
-        /* unit variable */
-        le_unit_t * le_unit = NULL;
-
-        /* retrieve and check unit */
-        if ( ( le_unit = le_tree_get_unit( le_tree, le_time, LE_UNIT_WRITE ) ) == NULL ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* update path */
-        le_path[le_length] = '1';
-
-        /* inject socket-array */
-        le_unit_io_inject_beta( le_unit, le_path );
-
-        le_path[le_length] = '2';
-
-        le_unit_io_inject_multivertex( le_unit, le_path );
-
-        // DEBUG
-        fprintf( stderr, "Release thread\n" );
-
-        /* send message */
-        return( le_message );
-
-    }
-
-    le_enum_t le_server_io_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
-
-        /* time value variable */
-        le_time_t le_time = _LE_TIME_NULL;
-
-        /* unit variable */
-        le_unit_t * le_unit = NULL;
-
-        /* check consistency */
-        if ( le_array_get_size( le_stack ) != LE_ARRAY_INJE ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* serialise time */
-        le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
-
-        /* check consistency */
-        if ( le_time == _LE_TIME_NULL ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* retrieve and check unit */
-        if ( ( le_unit = le_tree_get_unit( le_tree, le_time, LE_UNIT_WRITE ) ) == NULL ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }     
-
-        /* lock unit */
-        if ( le_unit_set_lock( le_unit, LE_UNIT_LOCK ) == _LE_FALSE ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* write socket-array */
-        if ( le_array_io_write( le_stack, LE_MODE_INJE, le_socket ) != LE_MODE_INJE ) {
-
-            /* send messsage */
-            return( _LE_FALSE );
-
-        }
-
-        /* read socket-array */
-        if ( le_array_io_read( le_stack, le_socket ) != LE_MODE_INJE ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* check consistency */
-        if ( ( le_array_get_size( le_stack ) % LE_ARRAY_UV3 ) != 0 ) { 
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* inject socket-array */
-        le_unit_io_inject( le_unit, le_stack );
-
-        /* open unit */
-        le_unit_set_lock( le_unit, LE_UNIT_OPEN );
-
-        /* send message */
-        return( _LE_TRUE );
-
-    }
-
-    le_enum_t le_server_io_optm( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
-
-        /* time value variable */
-        le_time_t le_time = _LE_TIME_NULL;
-
-        /* unit variable */
-        le_unit_t * le_unit = NULL;
-
-        /* check consistency */
-        if ( le_array_get_size( le_stack ) != LE_ARRAY_OPTM ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* serialise time */
-        le_array_serial( le_stack, & le_time, sizeof( le_time_t ), 0, _LE_GET );
-
-        /* check consistency */
-        if ( le_time == _LE_TIME_NULL ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* retrieve and check unit */
-        if ( ( le_unit = le_tree_get_unit( le_tree, le_time, LE_UNIT_READ ) ) == NULL ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* lock unit */
-        if ( le_unit_set_lock( le_unit, LE_UNIT_LOCK ) == _LE_FALSE ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* write socket-array */
-        if ( le_array_io_write( le_stack, LE_MODE_OPTM, le_socket ) != LE_MODE_OPTM ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* optimise unit storage */
-        le_unit_set_optimise( le_unit );
-
-        /* open unit */
-        le_unit_set_lock( le_unit, LE_UNIT_OPEN );
-
-        /* send message */
-        return( _LE_TRUE );
-
-    }
-
-    le_enum_t le_server_io_query( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket ) {
-
-        /* address variable */
-        le_address_t le_addr = LE_ADDRESS_C;
-
-        /* socket-array parsing variable */
-        le_size_t le_parse = 0;
-
-        /* socket-array size variable */
-        le_size_t le_length = le_array_get_size( le_stack );
-
-        /* address mode variable */
-        le_byte_t le_mode = 0;
-
-        /* address size variable */
-        le_size_t le_size = 0;
-
-        /* address depth variable */
-        le_size_t le_depth = 0;
-
-        /* offset variable */
-        le_size_t le_offa = _LE_OFFS_NULL;
-        le_size_t le_offb = _LE_OFFS_NULL;
-
-        /* unit variable */
-        le_unit_t * le_uia = NULL;
-        le_unit_t * le_uib = NULL;
-
-        /* check consistency */
-        if ( ( le_length % LE_ARRAY_ADDR ) != 0 ) {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
-
-        /* parsing socket-array */
-        while ( ( le_parse = le_address_serial( & le_addr, le_stack, le_parse, _LE_GET ) ) <= le_length ) {
-
-            /* retrieve address size */
-            le_size = le_address_get_size( & le_addr );
-
-            /* retrieve address span */
-            le_depth = le_address_get_span( & le_addr ) + le_size;
-
-            /* reset socket-array */
-            le_array_set_size( le_stack + 1, 0 );
-
-            /* check address mode */
-            if ( ( le_mode = le_address_get_mode( & le_addr ) ) < 3 ) {
-
-                /* reduce and check address */
-                if ( ( le_uia = le_tree_get_query_beta( le_tree, & le_addr, le_mode - 1, & le_offa ) ) != NULL ) {
-
-                    if ( le_offa != _LE_OFFS_NULL ) {
-
-                    /* gathering process */
-                    le_unit_io_gather( le_uia, & le_addr, le_offa, le_size, le_depth, le_stack + 1 );
-
-                    }
-
-                    le_unit_io_gather_multivertex( le_uia, & le_addr, le_size, le_depth, le_stack + 1 );
-
-                }
-
-            } else {
-
-                /* reduce address */
-                le_uia = le_tree_get_query( le_tree, & le_addr, 0, & le_offa );
-
-                /* reduce address */
-                le_uib = le_tree_get_query( le_tree, & le_addr, 1, & le_offb );
-
-                /* check address */
-                if ( ( le_uia != NULL ) || ( le_uib != NULL ) ) {
-
-                    /* gathering process */
-                    le_unit_io_parallel( le_uia, le_uib, & le_addr, le_mode, le_offa, le_offb, le_size, le_depth, le_stack + 1 );
-
-                }
-
-            }
-
-            /* write socket-array */
-            if ( le_array_io_write( le_stack + 1, LE_MODE_QUER, le_socket ) != LE_MODE_QUER ) {
-
-                /* send message */
-                return( _LE_FALSE );
+            /* delete socket-array stack */
+            for ( le_size_t le_parse = 0; le_parse < _LE_USE_ARRAY; le_parse ++ ) {
+
+                /* delete socket-array */
+                le_array_delete( le_array + le_parse );
 
             }
 
         }
 
-        /* send message */
-        return( _LE_TRUE );
+        /* close socket */
+        close( le_socket );
+
+        // DEBUG //
+        fprintf( stderr, "deleted : %i\n", le_socket );
+
+        /* return null pointer */
+        return( NULL );
 
     }
 

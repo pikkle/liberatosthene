@@ -150,6 +150,7 @@
     # include <math.h>
     # include <limits.h>
     # include <inttypes.h>
+    # include <time.h>
     # include <pthread.h>
     # include <dirent.h>
     # include <sys/stat.h>
@@ -201,6 +202,7 @@
     # define _LE_FILE            FILE *
     # define _LE_MASK            uint64_t
     # define _LE_PROC            pthread_t
+    # define _LE_MUTE            pthread_mutex_t
 
     /* define type boundaries */
     # define _LE_BYTE_MIN        ( 0 )
@@ -248,6 +250,7 @@
     # define LE_ERROR_IO_SOCKET  ( 0x0005 )
     # define LE_ERROR_IO_BIND    ( 0x0006 )
     # define LE_ERROR_IO_LISTEN  ( 0x0007 )
+    # define LE_ERROR_IO_ARRAY   ( 0x000b )
     # define LE_ERROR_MEMORY     ( 0x0008 )
     # define LE_ERROR_DEPTH      ( 0x0009 )
     # define LE_ERROR_TIME       ( 0x000a )
@@ -276,6 +279,7 @@
     # define LE_ADDRIN_C_PORT(p) { AF_INET, htons( p ), { INADDR_ANY }, { 0 } }
     # endif
     # define LE_STAT_C           { 0 }
+    # define LE_MUTE_C           PTHREAD_MUTEX_INITIALIZER
 
 /*
     header - preprocessor macros
@@ -310,6 +314,7 @@
     typedef _LE_FILE le_file_t;
     typedef _LE_MASK le_mask_t;
     typedef _LE_PROC le_proc_t;
+    typedef _LE_MUTE le_mute_t;
 
 /*
     header - structures

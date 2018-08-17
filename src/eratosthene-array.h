@@ -91,10 +91,10 @@
  */
 
     /* define stack macro */
-    # define le_array_mac_create(p,s) for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) p[_i_] = le_array_create();
+    # define le_array_mac_create(p,s) for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) p[_i_] = le_array_create(); /* delete */
 
     /* define stack macro */
-    # define le_array_mac_delete(p,s) for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ );
+    # define le_array_mac_delete(p,s) for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ ); /* delete */
 
     /* define array access macro */
     # define le_array_mac_pose(a,i)   ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )

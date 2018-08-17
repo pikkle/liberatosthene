@@ -47,8 +47,8 @@
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
     # include "eratosthene-client.h"
-    # include "eratosthene-tree.h"
-    # include "eratosthene-unit.h"
+    # include "eratosthene-door.h"
+    # include "eratosthene-switch.h"
     # include "eratosthene-uv3.h"
 
 /*
@@ -60,24 +60,11 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_SERVER_C                { _LE_SOCK_NULL, NULL, 0, 0, { LE_SERVER_ACTIVE, 0 }, LE_ERROR_SUCCESS }
-
-    /* define pool messsage */
-    # define LE_SERVER_ACTIVE           ( 0x01 )
-    # define LE_SERVER_RELOAD           ( 0x02 )
+    # define LE_SERVER_C { _LE_SOCK_NULL, _LE_SOCK_NULL, NULL, 0, 0, LE_MUTE_C, LE_ERROR_SUCCESS }
 
 /*
     header - preprocessor macros
  */
-
-    /* define access marco */
-    # define le_server_mac_pool(s,i,m)  ( ( s )->sv_pool[i] & ( m ) )
-
-    /* define access marco */
-    # define le_server_mac_set(s,i,m)   ( ( s )->sv_pool[i] |= ( m ) )
-
-    /* define access marco */
-    # define le_server_mac_clear(s,i,m) ( ( s )->sv_pool[i] &= ( ~ ( m ) ) )
 
 /*
     header - type definition
@@ -87,7 +74,7 @@
     header - structures
  */
 
-    /*! \struct le_server_struct
+    /*! \struct le_server_struct ( revoked )
      *  \brief server structure
      *
      *  This structure is the principal structure of the library as it holds the
@@ -180,50 +167,21 @@
     typedef struct le_server_struct {
 
         le_sock_t   sv_sock;
+        le_sock_t   sv_push;
 
-        le_char_t * sv_root;
+        le_char_t * sv_path;
         le_size_t   sv_scfg;
         le_time_t   sv_tcfg;
 
-        le_byte_t   sv_pool[_LE_USE_PENDING];
+        le_mute_t   sv_mute;
 
     le_enum_t _status; } le_server_t;
-
-    /*! \struct le_pack_struct
-     *  \brief server structure
-     *
-     *  This structure is used to broadcast the required parameters for a thread
-     *  to manage an accepted client connection. The main thread is responsible
-     *  of accepting the client incoming connection before to create a thread
-     *  associated to each client.
-     *
-     *  The main thread then packs the required information in this structure
-     *  that is passed to the created thread.
-     *
-     *  \var le_pack_struct::p_s
-     *  Server structure pointer
-     *  \var le_pack_struct::p_t
-     *  Thread process ID
-     *  \var le_pack_struct::p_c
-     *  Thread client socket descriptor
-     *  \var le_pack_struct::p_m
-     *  Mutual exclusion for thread synchronisation
-     */
-
-    typedef struct le_pack_struct {
-
-        le_server_t     * p_s;
-        le_size_t         p_t;
-        le_sock_t         p_c;
-        pthread_mutex_t   p_m;
-
-    } * _pck, le_pack_t;
 
 /*
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods ( revoked )
      *
      *  This function creates a server structure and initialises its content
      *  according to the provided parameters. It reads the server configuration
@@ -241,9 +199,9 @@
      *  \return Returns created server structure
      */
 
-    le_server_t le_server_create( le_char_t * const le_root, le_sock_t const le_port );
+    le_server_t le_server_create( le_char_t * const le_path, le_sock_t const le_port );
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods ( revoked )
      *
      *  This function deletes the server structure provided as parameter by
      *  closing the socket descriptor. The function ends by clearing the fields
@@ -254,26 +212,7 @@
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
-    /*! \brief accessor methods
-     *
-     *  This function searches an available thread usually for the management of
-     *  a client connection.
-     *
-     *  The function searches in the thread pooling array to determine which
-     *  thread is available. If a thread is found, its index is returned by the
-     *  function.
-     *
-     *  If all thread are occupied, the function returns the \b _LE_USE_PENDING
-     *  value that describe the size of the thread stack.
-     *
-     *  \param le_server Server structure
-     *
-     *  \return Returns available thread ID, _LE_USE_PENDING otherwise
-     */
-
-    le_size_t le_server_get_thread( le_server_t * const le_server );
-
-    /*! \brief mutator methods
+    /*! \brief mutator methods ( revoked )
      *
      *  This function reads the configuration file at the root of the server
      *  storage structure. To locate the storage structure, this function uses
@@ -289,38 +228,7 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /*! \brief mutator methods
-     *
-     *  This function allows to broadcast a modification of the state of the
-     *  thread pooling element to all thread except the provided one.
-     *
-     *  \param le_server  Server structure
-     *  \param le_tid     Thread ID
-     *  \param le_message Message mask
-     */
-
-    le_void_t le_server_set_broadcast( le_server_t * const le_server, le_size_t const le_tid, le_byte_t const le_message );
-
-    /*! \brief mutator methods
-     *
-     *  This function is used to check if the specified thread need to reload
-     *  its tree structure by looking if such a pooling message have been
-     *  broadcasted.
-     *
-     *  In such a case, the function deletes the provided tree structure before
-     *  to re-create it, taking into account the changes responsible of the
-     *  message broadcast.
-     *
-     *  \param le_server  Server structure
-     *  \param le_tid     Thread ID
-     *  \param le_tree    Tree structure
-     *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
-     */
-
-    le_enum_t le_server_set_tree( le_server_t * const le_server, le_size_t const le_tid, le_tree_t * const le_tree );
-
-    /*! \brief i/o methods
+    /*! \brief i/o methods ( revoked )
      *
      *  With the server structure creation and deletion methods, this function
      *  is part of the server main element. As a created structure is provided,
@@ -339,9 +247,9 @@
      *  \param le_server Server structure
      */
 
-    le_void_t le_server_io( le_server_t * const le_server );
+    le_void_t le_server_io_beta( le_server_t * const le_server );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods ( revoked )
      * 
      *  This function is the main client connection management procedure. It is
      *  usually called as a pthread function after the acceptation of a new
@@ -362,85 +270,7 @@
      *  \return Always a NULL pointer
      */
 
-    le_void_t * le_server_io_client( le_void_t * le_pack );
-
-    /*! \brief i/o methods
-     *
-     *  This i/o method is responsible of answering server configuration request
-     *  from client. It simply packs the server configuration values, that are
-     *  the number of space scale and the time equivalences classes length, in
-     *  an array structure before to send it back to the remote client.
-     *
-     *  \param le_server Server structure
-     *  \param le_tree   Tree structure
-     *  \param le_stack  Socket-array stack
-     *  \param le_socket Client socket descriptor
-     *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
-     */
-
-    le_enum_t le_server_io_auth( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
-
-    /*! \brief i/o methods
-     *
-     *  This i/o methods is responsible of data injection in the server storage
-     *  structure. It expects a time packed in the first client array that is
-     *  used to access the storage structure. If the corresponding unit is
-     *  successfully accessed and locked, the function sends back the first
-     *  client array as a confirmation.
-     *
-     *  It then expects a data array that contains the geographic coordinates
-     *  and colours of the points to inject in the server storage structure. The
-     *  revieved data are then injected in the server storage structure.
-     *
-     *  \param le_server Server structure
-     *  \param le_tree   Tree structure
-     *  \param le_stack  Socket-array stack
-     *  \param le_socket Client socket descriptor
-     *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
-     */
-
-    le_enum_t le_server_io_inject_beta( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
-
-    le_enum_t le_server_io_inject( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
-
-    /*! \brief i/o methods
-     *
-     *  This function allows client to query a specific time storage allocation
-     *  optimisation. The function reads the time packed in the socket-array and
-     *  search for the corresponding storage unit. If the unit is successfully
-     *  accessed and locked, the function sends the received socket-array back
-     *  as a confirmation. It then executes the optimisation process on the
-     *  pointed unit.
-     *
-     *  \param le_server Server structure
-     *  \param le_tree   Tree structure
-     *  \param le_stack  Socket-array stack
-     *  \param le_socket Client socket descriptor
-     *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
-     */
-
-    le_enum_t le_server_io_optm( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
-
-    /*! \brief i/o methods
-     *
-     *  This function reads the query addresses packed in the client array and
-     *  gather the relevant data through specific tree method.
-     *
-     *  As the points are gathered from the storage structure, the function
-     *  writes the resulting data array on the client socket.
-     *
-     *  \param le_server Server structure
-     *  \param le_tree   Tree structure
-     *  \param le_stack  Socket-array stack
-     *  \param le_socket Client socket descriptor
-     *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
-     */
-
-    le_enum_t le_server_io_query( le_server_t * const le_server, le_tree_t * const le_tree, le_array_t * const le_stack, le_sock_t const le_socket );
+    le_void_t * le_server_io_client_beta( le_void_t * le_void );
 
 /*
     header - C/C++ compatibility
