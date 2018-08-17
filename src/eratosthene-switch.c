@@ -231,10 +231,10 @@
             /* directory filtering */
             if ( ( le_entity->d_type == DT_DIR ) && ( ( * le_entity->d_name ) != '.' ) ) {
 
-                /* compute unit time */
+                /* compute time form name */
                 le_time = le_time_str( le_entity->d_name ) * le_switch->sw_tcfg;
 
-                /* cretae and push door */
+                /* create and push door */
                 if ( le_switch_set_push( le_switch, le_time, LE_DOOR_READ ) == NULL ) {
 
                     /* push message */
