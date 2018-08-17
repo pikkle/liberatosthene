@@ -48,7 +48,7 @@
     source - accessor methods
  */
 
-    le_door_t * le_switch_get_inject( le_switch_t * const le_switch, le_time_t const le_time ) {
+    le_door_t * le_switch_get_inject( le_switch_t * const le_switch, le_time_t const le_time, le_enum_t const le_mode ) {
 
         /* parsing variable */
         le_door_t * le_parse = le_switch->sw_door;
@@ -66,8 +66,18 @@
 
         }
 
-        /* create and push door */
-        return( le_switch_set_push( le_switch, le_time, LE_DOOR_WRITE ) );
+        /* check mode */
+        if ( le_mode == LE_DOOR_WRITE ) {
+
+            /* create and push door */
+            return( le_switch_set_push( le_switch, le_time, LE_DOOR_WRITE ) );
+
+        } else {
+
+            /* send message */
+            return( NULL );
+
+        }
 
     }
 
@@ -443,7 +453,7 @@
         }
 
         /* retreive and check door */
-        if ( ( le_door = le_switch_get_inject( le_switch, le_time ) ) == NULL ) {
+        if ( ( le_door = le_switch_get_inject( le_switch, le_time, LE_DOOR_WRITE ) ) == NULL ) {
 
             /* send message */
             return( LE_ERROR_IO_ACCESS );
@@ -523,7 +533,7 @@
         }
 
         /* retreive and check door */
-        if ( ( le_door = le_switch_get_inject( le_switch, le_time ) ) == NULL ) {
+        if ( ( le_door = le_switch_get_inject( le_switch, le_time, LE_DOOR_READ ) ) == NULL ) {
 
             /* send message */
             return( LE_ERROR_IO_ACCESS );

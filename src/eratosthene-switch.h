@@ -101,8 +101,9 @@
     le_void_t le_switch_delete( le_switch_t * const le_switch );
 
     /* *** */
+    // note // mode only required for optimisation (implicit write on injection)
 
-    le_door_t * le_switch_get_inject( le_switch_t * const le_switch, le_time_t const le_time );
+    le_door_t * le_switch_get_inject( le_switch_t * const le_switch, le_time_t const le_time, le_enum_t const le_mode );
 
     /* *** */
 
