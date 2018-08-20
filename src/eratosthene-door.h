@@ -176,11 +176,11 @@
 
     /* *** */
 
-    le_void_t le_door_io_optimise_monovertex( le_door_t * const le_door );
+    le_void_t le_door_io_mono_optimise( le_door_t * const le_door );
 
     /* *** */
 
-    le_void_t le_door_io_optimise_proc_monovertex( le_door_t * const le_door, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
+    le_void_t le_door_io_mono_optimise_rewrite( le_door_t * const le_door, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
 
     /* *** */
 

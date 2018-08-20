@@ -553,7 +553,7 @@
         }
 
         /* optimise unit storage */
-        le_door_io_optimise_monovertex( le_door );
+        le_door_io_mono_optimise( le_door );
 
         /* unlock door */
         if ( le_door_set_state( le_door, LE_DOOR_UNLOCK ) == _LE_FALSE ) {

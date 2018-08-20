@@ -809,7 +809,7 @@
 
     }
 
-    le_void_t le_door_io_optimise_monovertex( le_door_t * const le_door ) {
+    le_void_t le_door_io_mono_optimise( le_door_t * const le_door ) {
 
         /* string variable */
         le_char_t le_path[_LE_USE_PATH] = { 0 };
@@ -833,7 +833,7 @@
             if ( le_door->dr_sacc[le_parse] != NULL ) {
 
                 /* compose dual stream path */
-                sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P ".dual", le_door->dr_path, le_parse );
+                sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P "_", le_door->dr_path, le_parse );
 
                 /* create dual stream */
                 le_dual[le_parse] = fopen( ( char * ) le_path, le_door_mode( LE_DOOR_WRITE ) );
@@ -847,7 +847,7 @@
         }
 
         /* optimise unit storage */
-        le_door_io_optimise_proc_monovertex( le_door, le_dual, 0, le_head, 0 );
+        le_door_io_mono_optimise_rewrite( le_door, le_dual, 0, le_head, 0 );
 
         /* parsing scale */
         while ( ( -- le_parse ) >= 0 ) {
@@ -862,7 +862,7 @@
                 fflush( le_door->dr_sacc[le_parse] );
 
                 /* compose dual stream path */
-                sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P ".dual", le_door->dr_path, le_parse );
+                sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P "_", le_door->dr_path, le_parse );
 
                 /* compose stream path */
                 sprintf( ( char * ) le_prev, "%s/1/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
@@ -876,7 +876,7 @@
 
     }
 
-    le_void_t le_door_io_optimise_proc_monovertex( le_door_t * const le_door, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale ) {
+    le_void_t le_door_io_mono_optimise_rewrite( le_door_t * const le_door, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale ) {
 
         /* offset variable */
         le_size_t le_enum = _LE_OFFS_NULL;
@@ -897,7 +897,7 @@
                 le_class_set_offset( & le_class, le_digit, le_head[le_scale + 1] );
 
                 /* recursive optimisation process */
-                le_door_io_optimise_proc_monovertex( le_door, le_dual, le_enum, le_head, le_scale + 1 );
+                le_door_io_mono_optimise_rewrite( le_door, le_dual, le_enum, le_head, le_scale + 1 );
 
             }
 
