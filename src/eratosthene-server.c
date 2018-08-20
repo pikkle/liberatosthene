@@ -252,9 +252,6 @@
         /* message variable */
         le_enum_t le_message = LE_ERROR_SUCCESS;
 
-        // DEBUG //
-        fprintf( stderr, "created : %i\n", le_socket );
-
         /* thread citical region */
         pthread_mutex_lock( & le_server->sv_mute );
 
@@ -343,13 +340,13 @@
 
             }
 
+            /* delete switch */
+            le_switch_delete( & le_switch );
+
         }
 
         /* close socket */
         close( le_socket );
-
-        // DEBUG //
-        fprintf( stderr, "deleted : %i\n", le_socket );
 
         /* return null pointer */
         return( NULL );
