@@ -97,19 +97,25 @@
 
         }
 
-        // debug // remaining streams on error
-
-        /* create monovertex stream */
+        /* create mono-vertex stream */
         while ( ( le_parse < le_door.dr_scfg ) && ( le_get_status( le_door ) == LE_ERROR_SUCCESS ) ) {
 
             /* compose path */
-            sprintf( ( char *) le_path, "%s/1/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
+            sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
 
             /* create stream */
             if ( ( le_door.dr_sacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
 
-                /* update status */
-                le_door._status = LE_ERROR_IO_READ;
+                /* delete mono-vertex stream */
+                while ( ( -- le_parse ) >= 0 ) {
+
+                    /* close stream */
+                    fclose( le_door.dr_sacc[le_parse] );
+
+                }
+
+                /* return created structure */
+                return( le_set_status( le_door, LE_ERROR_IO_READ ) );
 
             /* update index */
             } else { le_parse ++; }
@@ -129,13 +135,8 @@
         /* parsing monovertex stream */
         for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
 
-            /* check stream state */
-            if ( le_door->dr_sacc[le_parse] != NULL ) {
-
-                /* delete stream */
-                fclose( le_door->dr_sacc[le_parse] );
-
-            }
+            /* delete stream */
+            fclose( le_door->dr_sacc[le_parse] );
 
         }
 
@@ -147,38 +148,6 @@
 /*
     source - accessor methods
  */
-
-    le_enum_t le_door_get_inject( le_door_t const * const le_door ) {
-
-        /* path variable */
-        le_char_t le_path[_LE_USE_PATH] = { 0 };
-
-        /* create path */
-        sprintf( ( char * ) le_path, "%s/0/1", le_door->dr_path );
-
-        /* check injection */
-        if ( le_get_exist( le_path ) == _LE_TRUE ) {
-
-            /* send message */
-            return( _LE_TRUE );
-
-        }
-
-        /* compose path */
-        sprintf( ( char * ) le_path, "%s/0/2", le_door->dr_path );
-
-        /* check injection */
-        if ( le_get_exist( le_path ) == _LE_TRUE ) {
-
-            /* send message */
-            return( _LE_TRUE );
-
-        }
-
-        /* send message */
-        return( _LE_FALSE );
-
-    }
 
     le_enum_t le_door_get_switch( le_door_t const * const le_prev, le_door_t const * const le_next, le_time_t const le_reduced ) {
 
@@ -295,6 +264,75 @@
     source - mutator methods
  */
 
+    le_enum_t le_door_set_state( le_door_t const * const le_door, le_enum_t const le_state ) {
+
+        /* path variable */
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
+
+        /* stream variable */
+        le_file_t le_stream = NULL;
+
+        /* compose path */
+        sprintf( ( char * ) le_path, "%s/lock", le_door->dr_path );
+
+        /* check target state */
+        if ( le_state == LE_DOOR_LOCK ) {
+
+            /* check current state */
+            if ( le_get_exist( le_path ) == _LE_TRUE ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            } else {
+
+                /* create and check stream */
+                if ( ( le_stream = fopen( ( char * ) le_path, "w" ) ) == NULL ) {
+
+                    /* send message */
+                    return( _LE_FALSE );
+
+                } else {
+
+                    /* delete stream */
+                    fclose( le_stream );
+
+                    /* send message */
+                    return( _LE_TRUE );
+
+                }
+
+            }
+
+        } else {
+
+            /* check current state */
+            if ( le_get_exist( le_path ) == _LE_FALSE ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            } else {
+
+                /* update state */
+                if ( remove( ( char * ) le_path ) != 0 ) {
+
+                    /* send message */
+                    return( _LE_FALSE );
+
+                } else {
+
+                    /* send message */
+                    return( _LE_TRUE );
+
+                }
+
+            }
+
+        }
+
+    }
+
     le_void_t le_door_set_insert( le_door_t * const le_door, le_door_t * const le_prev, le_door_t * const le_next ) {
 
         /* update link */
@@ -388,7 +426,7 @@
 
     }
 
-    le_enum_t le_door_io_inject_filter( le_door_t const * const le_door, le_array_t const * const le_array ) {
+    le_enum_t le_door_io_inject_filter( le_door_t const * const le_door, le_array_t const * const le_array ) { // debug // need standard error as return
 
         /* path variable */
         le_char_t le_vpath[_LE_USE_PATH] = { 0 };
@@ -792,7 +830,7 @@
 
     }
 
-    le_void_t le_door_io_inject_clean( le_door_t const * const le_door ) {
+    le_void_t le_door_io_inject_clean( le_door_t const * const le_door ) { // debug // need to return error
 
         /* path variable */
         le_char_t le_path[_LE_USE_PATH] = { 0 };

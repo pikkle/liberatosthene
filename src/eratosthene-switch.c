@@ -462,8 +462,8 @@
 
         }
 
-        /* check door state */
-        if ( le_door_get_inject( le_door ) == _LE_TRUE ) {
+        /* lock door */
+        if ( le_door_set_state( le_door, LE_DOOR_LOCK ) == _LE_FALSE ) {
 
             /* send message */
             return( LE_ERROR_IO_ACCESS );
@@ -483,24 +483,31 @@
 
         }
 
-        /* monovertex injection */
-        if ( ( le_message = le_door_io_inject_monovertex( le_door ) ) != LE_ERROR_SUCCESS ) {
+        /* check message */
+        if ( le_message == LE_ERROR_SUCCESS ) {
 
-            /* send message */
-            return( le_message );
+            /* mono-vertex injection */
+            if ( ( le_message = le_door_io_inject_monovertex( le_door ) ) == LE_ERROR_SUCCESS ) {
+
+                /* multi-vertex injection */
+                if ( ( le_message = le_door_io_inject_multivertex( le_door ) ) == LE_ERROR_SUCCESS ) {
+
+                    /* remove containers */
+                    le_door_io_inject_clean( le_door );
+
+                }
+
+            }
 
         }
 
-        /* multivertex injection */
-        if ( ( le_message = le_door_io_inject_multivertex( le_door ) ) != LE_ERROR_SUCCESS ) {
+        /* unlock door */
+        if ( le_door_set_state( le_door, LE_DOOR_UNLOCK ) == _LE_FALSE ) {
 
             /* send message */
-            return( le_message );
+            return( LE_ERROR_IO_ACCESS );
 
         }
-
-        /* remove filtered container */
-        le_door_io_inject_clean( le_door );
 
         /* send message */
         return( le_message );
@@ -542,8 +549,8 @@
 
         }
 
-        /* check door state */
-        if ( le_door_get_inject( le_door ) == _LE_TRUE ) {
+        /* lock door */
+        if ( le_door_set_state( le_door, LE_DOOR_LOCK ) == _LE_FALSE ) {
 
             /* send message */
             return( LE_ERROR_IO_ACCESS );
@@ -552,6 +559,14 @@
 
         /* optimise unit storage */
         le_door_io_optimise_monovertex( le_door );
+
+        /* unlock door */
+        if ( le_door_set_state( le_door, LE_DOOR_UNLOCK ) == _LE_FALSE ) {
+
+            /* send message */
+            return( LE_ERROR_IO_ACCESS );
+
+        }
 
         /* send message */
         return( _LE_TRUE );
