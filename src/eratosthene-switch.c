@@ -474,12 +474,7 @@
         while ( ( le_array_io_read( le_array, le_socket ) == LE_MODE_INJE ) && ( le_message == LE_ERROR_SUCCESS ) ) {
 
             /* socket-array filtering */
-            if ( le_door_io_inject_filter( le_door, le_array ) == _LE_FALSE ) {
-
-                /* push message */
-                le_message = LE_ERROR_IO_ACCESS;
-
-            }
+            le_message = le_door_io_each_inject_filter( le_door, le_array );
 
         }
 
@@ -487,13 +482,13 @@
         if ( le_message == LE_ERROR_SUCCESS ) {
 
             /* mono-vertex injection */
-            if ( ( le_message = le_door_io_inject_monovertex( le_door ) ) == LE_ERROR_SUCCESS ) {
+            if ( ( le_message = le_door_io_mono_inject( le_door ) ) == LE_ERROR_SUCCESS ) {
 
                 /* multi-vertex injection */
-                if ( ( le_message = le_door_io_inject_multivertex( le_door ) ) == LE_ERROR_SUCCESS ) {
+                if ( ( le_message = le_door_io_poly_inject( le_door ) ) == LE_ERROR_SUCCESS ) {
 
                     /* remove containers */
-                    le_door_io_inject_clean( le_door );
+                    le_message = le_door_io_each_inject_clean( le_door );
 
                 }
 

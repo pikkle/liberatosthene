@@ -160,27 +160,19 @@
 
     /* *** */
 
-    le_enum_t le_door_io_mono_detect( le_door_t * const le_door, le_address_t const * const le_addr );
+    le_enum_t le_door_io_each_inject_filter( le_door_t const * const le_door, le_array_t const * const le_array );
 
     /* *** */
 
-    le_enum_t le_door_io_poly_detect( le_door_t * const le_door, le_address_t const * const le_addr );
+    le_enum_t le_door_io_mono_inject( le_door_t * const le_door );
 
     /* *** */
 
-    le_enum_t le_door_io_inject_filter( le_door_t const * const le_door, le_array_t const * const le_array );
+    le_enum_t le_door_io_poly_inject( le_door_t const * const le_door );
 
     /* *** */
 
-    le_enum_t le_door_io_inject_monovertex( le_door_t * const le_door );
-
-    /* *** */
-
-    le_enum_t le_door_io_inject_multivertex( le_door_t const * const le_door );
-
-    /* *** */
-
-    le_void_t le_door_io_inject_clean( le_door_t const * const le_door );
+    le_enum_t le_door_io_each_inject_clean( le_door_t const * const le_door );
 
     /* *** */
 
@@ -189,6 +181,14 @@
     /* *** */
 
     le_void_t le_door_io_optimise_proc_monovertex( le_door_t * const le_door, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
+
+    /* *** */
+
+    le_enum_t le_door_io_mono_detect( le_door_t * const le_door, le_address_t const * const le_addr );
+
+    /* *** */
+
+    le_enum_t le_door_io_poly_detect( le_door_t * const le_door, le_address_t const * const le_addr );
 
     /* *** */
 
