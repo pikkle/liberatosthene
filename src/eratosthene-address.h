@@ -58,13 +58,18 @@
     # define LE_ADDRESS_C             { 0, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
     # define LE_ADDRESS_C_SIZE(s)     { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
 
-    /* define WGS84 ellipsoid parameters */
-    # define LE_ADDRESS_WGS_A         ( 6378137.0 )
-    # define LE_ADDRESS_WGS_F         ( 298.257223563 )
+    /* define address mode */
+    # define LE_ADDRESS_OR            ( 3 )
+    # define LE_ADDRESS_AND           ( 4 )
+    # define LE_ADDRESS_XOR           ( 5 )
 
     /* asynchronous dimension attachment */
     # define LE_ADDRESS_DEPTH_P       ( 1 )
     # define LE_ADDRESS_DEPTH_A       ( 10 ) 
+
+    /* define WGS84 ellipsoid parameters */
+    # define LE_ADDRESS_WGS_A         ( 6378137.0 )
+    # define LE_ADDRESS_WGS_F         ( 298.257223563 )
 
     /* define ellispoidal coordinates boundaries */
     # define LE_ADDRESS_MIN_L         ( - LE_PI )

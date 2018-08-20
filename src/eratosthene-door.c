@@ -197,7 +197,7 @@
     le_size_t le_door_get_offset( le_door_t const * const le_door ) {
 
         /* return mono-vertex offset */
-        return( le_door->dr_soff );
+        return( ( le_door != NULL ) ? le_door->dr_soff : _LE_OFFS_NULL );
 
     }
 
@@ -976,9 +976,9 @@
 
     }
 
-    le_void_t le_door_io_gather_monovertex( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
+    le_void_t le_door_io_mono_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
-        /* class variable */ // move to door structure
+        /* class variable */
         le_class_t le_class = LE_CLASS_C;
 
         /* enumeration boundary */
@@ -1011,7 +1011,7 @@
                     le_address_set_digit( le_addr, le_parse, le_digit );
 
                     /* recursive enumeration */
-                    le_door_io_gather_monovertex( le_door, le_addr, le_parse + 1, le_span, le_array );
+                    le_door_io_mono_gather( le_door, le_addr, le_parse + 1, le_span, le_array );
 
                 }
 
@@ -1021,7 +1021,7 @@
 
     }
 
-    le_void_t le_door_io_gather_multivertex( le_door_t const * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
+    le_void_t le_door_io_poly_gather( le_door_t const * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         le_char_t le_path[_LE_USE_PATH] = { 0 };
 
@@ -1050,7 +1050,7 @@
 
                     le_address_set_digit( le_addr, le_parse, le_digit );
 
-                    le_door_io_gather_multivertex( le_door, le_addr, le_parse + 1, le_span, le_array );
+                    le_door_io_poly_gather( le_door, le_addr, le_parse + 1, le_span, le_array );
 
                 }
 
@@ -1080,21 +1080,25 @@
 
     }
 
-    le_void_t le_door_io_parallel_monovertex( le_door_t * const le_unia, le_door_t * const le_unib, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
+    le_void_t le_door_io_mono_parallel( le_door_t * const le_pdoor, le_door_t * const le_sdoor, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         /* class variable */
-        le_class_t le_classa = LE_CLASS_C;
-        le_class_t le_classb = LE_CLASS_C;
+        le_class_t le_pclass = LE_CLASS_C;
+
+        /* class variable */
+        le_class_t le_sclass = LE_CLASS_C;
 
         /* message variable */
-        le_enum_t le_msga = LE_ERROR_IO_READ;
-        le_enum_t le_msgb = LE_ERROR_IO_READ;
+        le_enum_t le_pmessage = LE_ERROR_IO_READ;
+
+        /* message variable */
+        le_enum_t le_smessage = LE_ERROR_IO_READ;
 
         /* enumeration boundary */
         if ( le_parse == le_span ) {
 
             /* switch on mode */
-            if ( le_mode == 3 ) {
+            if ( le_mode == LE_ADDRESS_OR ) {
 
                 /* update array size */
                 le_array_set( le_array, LE_ARRAY_UV3 );
@@ -1106,26 +1110,22 @@
                 ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                 /* logical or operator */
-                //if ( le_offseta != _LE_OFFS_NULL ) {
-                if ( le_unia->dr_soff != _LE_OFFS_NULL ) {
+                if ( le_pdoor->dr_soff != _LE_OFFS_NULL ) {
 
                     /* push element data */
-                    //le_class_io_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
-                    le_class_io_data( le_unia->dr_soff, le_array_mac_ldata( le_array ), * ( le_unia->dr_sacc + le_parse ) );
+                    le_class_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
 
                 } else {
 
                     /* push element data */
-                    //le_class_io_data( le_offsetb, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unib, le_parse ) );
-                    le_class_io_data( le_unib->dr_soff, le_array_mac_ldata( le_array ), * ( le_unib->dr_sacc + le_parse ) );
+                    le_class_io_data( le_sdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_sacc + le_parse ) );
 
                 }
 
-            } else if ( le_mode == 4 ) {
+            } else if ( le_mode == LE_ADDRESS_AND ) {
 
                 /* logical and operator */
-                //if ( ( le_offseta != _LE_OFFS_NULL ) && ( le_offsetb != _LE_OFFS_NULL ) ) {
-                if ( ( le_unia->dr_soff != _LE_OFFS_NULL ) && ( le_unib->dr_soff != _LE_OFFS_NULL ) ) {
+                if ( ( le_pdoor->dr_soff != _LE_OFFS_NULL ) && ( le_sdoor->dr_soff != _LE_OFFS_NULL ) ) {
 
                     /* update array size */
                     le_array_set( le_array, LE_ARRAY_UV3 );
@@ -1137,16 +1137,14 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    //le_class_io_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
-                    le_class_io_data( le_unia->dr_soff, le_array_mac_ldata( le_array ), * ( le_unia->dr_sacc + le_parse ) );
+                    le_class_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
 
                 }
 
-            } else if ( le_mode == 5 ) {
+            } else if ( le_mode == LE_ADDRESS_XOR ) {
 
                 /* logical xor operator */
-                //if ( ( le_offseta != _LE_OFFS_NULL ) && ( le_offsetb == _LE_OFFS_NULL ) ) {
-                if ( ( le_unia->dr_soff != _LE_OFFS_NULL ) && ( le_unib->dr_soff == _LE_OFFS_NULL ) ) {
+                if ( ( le_pdoor->dr_soff != _LE_OFFS_NULL ) && ( le_sdoor->dr_soff == _LE_OFFS_NULL ) ) {
 
                     /* update array size */
                     le_array_set( le_array, LE_ARRAY_UV3 );
@@ -1158,11 +1156,9 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    //le_class_io_data( le_offseta, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unia, le_parse ) );
-                    le_class_io_data( le_unia->dr_soff, le_array_mac_ldata( le_array ), * ( le_unia->dr_sacc + le_parse ) );
+                    le_class_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
 
-                //} else if ( ( le_offseta == _LE_OFFS_NULL ) && ( le_offsetb != _LE_OFFS_NULL ) ) {
-                } else if ( ( le_unia->dr_soff == _LE_OFFS_NULL ) && ( le_unib->dr_soff != _LE_OFFS_NULL ) ) {
+                } else if ( ( le_pdoor->dr_soff == _LE_OFFS_NULL ) && ( le_sdoor->dr_soff != _LE_OFFS_NULL ) ) {
 
                     /* update array size */
                     le_array_set( le_array, LE_ARRAY_UV3 );
@@ -1174,8 +1170,7 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    //le_class_io_data( le_offsetb, le_array_mac_ldata( le_array ), le_unit_get_stream( le_unib, le_parse ) );
-                    le_class_io_data( le_unib->dr_soff, le_array_mac_ldata( le_array ), * ( le_unib->dr_sacc + le_parse ) );
+                    le_class_io_data( le_sdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_sacc + le_parse ) );
 
                 }
 
@@ -1184,22 +1179,18 @@
         } else {
 
             /* check offset */
-            //if ( le_offseta != _LE_OFFS_NULL ) {
-            if ( le_unia->dr_soff != _LE_OFFS_NULL ) {
+            if ( le_pdoor->dr_soff != _LE_OFFS_NULL ) {
 
                 /* read class */
-                //le_msga = le_class_io_readf( & le_classa, le_offseta, le_unit_get_stream( le_unia, le_parse ) );
-                le_msga = le_class_io_readf( & le_classa, le_unia->dr_soff, * ( le_unia->dr_sacc + le_parse ) );
+                le_pmessage = le_class_io_readf( & le_pclass, le_pdoor->dr_soff, * ( le_pdoor->dr_sacc + le_parse ) );
 
             }
 
             /* check offset */
-            //if ( le_offsetb != _LE_OFFS_NULL ) {
-            if ( le_unib->dr_soff != _LE_OFFS_NULL ) {
+            if ( le_sdoor->dr_soff != _LE_OFFS_NULL ) {
 
                 /* read class */
-                //le_msgb = le_class_io_readf( & le_classb, le_offsetb, le_unit_get_stream( le_unib, le_parse ) );
-                le_msgb = le_class_io_readf( & le_classb, le_unib->dr_soff, * ( le_unib->dr_sacc + le_parse ) );
+                le_smessage = le_class_io_readf( & le_sclass, le_sdoor->dr_soff, * ( le_sdoor->dr_sacc + le_parse ) );
 
             }
 
@@ -1207,36 +1198,31 @@
             for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
 
                 /* check message */
-                if ( le_msga == LE_ERROR_SUCCESS ) {
+                if ( le_pmessage == LE_ERROR_SUCCESS ) {
 
                     /* extract class offset */
-                    //le_offseta = le_class_get_offset( & le_classa, le_digit );
-                    le_unia->dr_soff = le_class_get_offset( & le_classa, le_digit );
+                    le_pdoor->dr_soff = le_class_get_offset( & le_pclass, le_digit );
 
                 /* reset offset */
-                //} else { le_offseta = _LE_OFFS_NULL; }
-                } else { le_unia->dr_soff = _LE_OFFS_NULL; }
+                } else { le_pdoor->dr_soff = _LE_OFFS_NULL; }
 
                 /* check message */
-                if ( le_msgb == LE_ERROR_SUCCESS ) {
+                if ( le_smessage == LE_ERROR_SUCCESS ) {
 
                     /* extract class offset */
-                    //le_offsetb = le_class_get_offset( & le_classb, le_digit );
-                    le_unib->dr_soff = le_class_get_offset( & le_classb, le_digit );
+                    le_sdoor->dr_soff = le_class_get_offset( & le_sclass, le_digit );
 
                 /* reset offset */
-                //} else { le_offsetb = _LE_OFFS_NULL; }
-                } else { le_unib->dr_soff = _LE_OFFS_NULL; }
+                } else { le_sdoor->dr_soff = _LE_OFFS_NULL; }
 
                 /* check offsets */
-                //if ( ( le_offseta != _LE_OFFS_NULL ) || ( le_offsetb != _LE_OFFS_NULL ) ) {
-                if ( ( le_unia->dr_soff != _LE_OFFS_NULL ) || ( le_unib->dr_soff != _LE_OFFS_NULL ) ) {
+                if ( ( le_pdoor->dr_soff != _LE_OFFS_NULL ) || ( le_sdoor->dr_soff != _LE_OFFS_NULL ) ) {
 
                     /* update address digit */
                     le_address_set_digit( le_addr, le_parse, le_digit );
 
                     /* recursive enumeration */
-                    le_door_io_parallel_monovertex( le_unia, le_unib, le_addr, le_mode, le_parse + 1, le_span, le_array );
+                    le_door_io_mono_parallel( le_pdoor, le_sdoor, le_addr, le_mode, le_parse + 1, le_span, le_array );
 
                 }
 

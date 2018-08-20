@@ -615,21 +615,21 @@
             le_array_set_size( le_array + 1, 0 );
 
             /* check address mode */
-            if ( ( le_mode = le_address_get_mode( & le_addr ) ) < 3 ) {
+            if ( ( le_mode = le_address_get_mode( & le_addr ) ) < LE_ADDRESS_OR ) {
 
                 /* query and check door */
-                if ( ( le_pdoor = le_switch_get_query( le_switch, le_address_get_time( & le_addr, 0 ), & le_addr ) ) != NULL ) {
+                if ( ( le_pdoor = le_switch_get_query( le_switch, le_address_get_time( & le_addr, le_mode - 1 ), & le_addr ) ) != NULL ) {
 
                     /* check door mono-vertex offset */
                     if ( le_door_get_offset( le_pdoor ) != _LE_OFFS_NULL ) {
 
                         /* gathering process - mono-vertex */
-                        le_door_io_gather_monovertex( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
+                        le_door_io_mono_gather( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
 
                     }
 
                     /* gathering process - multi-vertex */
-                    le_door_io_gather_multivertex( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
+                    le_door_io_poly_gather( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
 
                 }
 
@@ -645,7 +645,7 @@
                 if ( ( le_door_get_offset( le_pdoor ) != _LE_OFFS_NULL ) || ( le_door_get_offset( le_sdoor ) != _LE_OFFS_NULL ) ) {
 
                     /* gathering process - parallel */
-                    le_door_io_parallel_monovertex( le_pdoor, le_sdoor, & le_addr, le_mode, le_size, le_span, le_array + 1 );
+                    le_door_io_mono_parallel( le_pdoor, le_sdoor, & le_addr, le_mode, le_size, le_span, le_array + 1 );
 
                 }
 
