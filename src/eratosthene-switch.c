@@ -62,7 +62,8 @@
                 /* return door */
                 return( le_parse );
 
-            }
+            /* update parser */
+            } else { le_parse = le_door_get_next( le_parse ); }
 
         }
 
@@ -549,14 +550,6 @@
 
         }
 
-        /* write socket-array */
-        if ( le_array_io_write( le_array, LE_MODE_OPTM, le_socket ) != LE_MODE_OPTM ) { /* delete */
-
-            /* send message */
-            return( LE_ERROR_IO_WRITE );
-
-        }
-
         /* optimise unit storage */
         le_door_io_optimise_monovertex( le_door );
 
@@ -570,11 +563,11 @@
         /* address variable */
         le_address_t le_addr = LE_ADDRESS_C;
 
-        /* socket-array parsing variable */
-        le_size_t le_parse = 0;
-
         /* socket-array size variable */
         le_size_t le_length = le_array_get_size( le_array );
+
+        /* parsing variable */
+        le_size_t le_parse = 0;
 
         /* address mode variable */
         le_byte_t le_mode = 0;
@@ -582,18 +575,13 @@
         /* address size variable */
         le_size_t le_size = 0;
 
-        /* address depth variable */
-        le_size_t le_depth = 0;
+        /* span variable */
+        le_size_t le_span = 0;
 
-        /* offset variable */
-        //le_size_t le_offa = _LE_OFFS_NULL;
-        //le_size_t le_offb = _LE_OFFS_NULL;
-
-        /* unit variable */
-        //le_unit_t * le_uia = NULL;
-        //le_unit_t * le_uib = NULL;
-
+        /* door pointer variable */
         le_door_t * le_pdoor = NULL;
+
+        /* door pointer variable */
         le_door_t * le_sdoor = NULL;
 
         /* check consistency */
@@ -611,7 +599,7 @@
             le_size = le_address_get_size( & le_addr );
 
             /* retrieve address span */
-            le_depth = le_address_get_span( & le_addr ) + le_size;
+            le_span = le_address_get_span( & le_addr ) + le_size;
 
             /* reset socket-array */
             le_array_set_size( le_array + 1, 0 );
@@ -622,16 +610,16 @@
                 /* query and check door */
                 if ( ( le_pdoor = le_switch_get_query( le_switch, le_address_get_time( & le_addr, 0 ), & le_addr ) ) != NULL ) {
 
-                    // encapsulation fault //
-                    if ( le_pdoor->dr_soff != _LE_OFFS_NULL ) {
+                    /* check door mono-vertex offset */
+                    if ( le_door_get_offset( le_pdoor ) != _LE_OFFS_NULL ) {
 
-                        /* gathering process - monovertex */
-                        le_door_io_gather_monovertex( le_pdoor, & le_addr, le_size, le_depth, le_array + 1 );
+                        /* gathering process - mono-vertex */
+                        le_door_io_gather_monovertex( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
 
                     }
 
-                    /* gathering process - multivertex */
-                    le_door_io_gather_multivertex( le_pdoor, & le_addr, le_size, le_depth, le_array + 1 );
+                    /* gathering process - multi-vertex */
+                    le_door_io_gather_multivertex( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
 
                 }
 
@@ -643,11 +631,11 @@
                 /* query door */
                 le_sdoor = le_switch_get_query( le_switch, le_address_get_time( & le_addr, 1 ), & le_addr );
 
-                /* check address */
-                if ( ( le_pdoor != NULL ) || ( le_sdoor != NULL ) ) {
+                /* check door mono-vertex offset */
+                if ( ( le_door_get_offset( le_pdoor ) != _LE_OFFS_NULL ) || ( le_door_get_offset( le_sdoor ) != _LE_OFFS_NULL ) ) {
 
                     /* gathering process - parallel */
-                    le_door_io_parallel_monovertex( le_pdoor, le_sdoor, & le_addr, le_mode, le_size, le_depth, le_array + 1 );
+                    le_door_io_parallel_monovertex( le_pdoor, le_sdoor, & le_addr, le_mode, le_size, le_span, le_array + 1 );
 
                 }
 

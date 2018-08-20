@@ -124,6 +124,10 @@
 
     /* *** */
 
+    le_size_t le_door_get_offset( le_door_t const * const le_door );
+
+    /* *** */
+
     le_time_t le_door_get_interval( le_door_t const * const le_door, le_time_t const le_time );
 
     /* *** */
