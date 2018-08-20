@@ -62,6 +62,10 @@
     /* define pseudo-constructor */
     # define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { 0 }, NULL, NULL, LE_ERROR_SUCCESS }
 
+    /* define door link */
+    # define LE_DOOR_PREV         ( 0 )
+    # define LE_DOOR_NEXT         ( 1 )
+
     /* define door mode */
     # define LE_DOOR_READ         ( 0 )
     # define LE_DOOR_WRITE        ( 1 )
@@ -120,7 +124,7 @@
 
     /* *** */
 
-    le_enum_t le_door_get_switch( le_door_t const * const le_prev, le_door_t const * const le_next, le_time_t const le_reduced );
+    le_enum_t le_door_get_nearest( le_door_t const * const le_prev, le_door_t const * const le_next, le_time_t const le_reduced );
 
     /* *** */
 

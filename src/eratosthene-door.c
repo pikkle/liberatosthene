@@ -149,50 +149,46 @@
     source - accessor methods
  */
 
-    le_enum_t le_door_get_switch( le_door_t const * const le_prev, le_door_t const * const le_next, le_time_t const le_reduced ) {
+    le_enum_t le_door_get_nearest( le_door_t const * const le_prev, le_door_t const * const le_next, le_time_t const le_reduced ) {
 
         /* differential variable */
-        le_time_t le_pdiff = 0;
+        le_time_t le_pdiff = _LE_TIME_NULL;
 
         /* differential variable */
-        le_time_t le_ndiff = 0;
+        le_time_t le_ndiff = _LE_TIME_NULL;
 
         /* check link */
         if ( le_prev->dr_prev == NULL ) {
 
             /* send message */
-            return( _LE_FALSE );
+            return( LE_DOOR_NEXT );
+
+        }
+
+        /* check link */
+        if ( le_next->dr_next == NULL ) {
+
+            /* send message */
+            return( LE_DOOR_PREV );
+
+        }
+
+        /* compute differential */
+        le_pdiff = ( ( le_door_t * ) le_prev->dr_prev )->dr_time - le_reduced;
+
+        /* compute differential */
+        le_ndiff = ( ( le_door_t * ) le_next->dr_next )->dr_time - le_reduced;
+
+        /* compare differential */
+        if ( le_time_abs( le_pdiff ) < le_time_abs( le_ndiff ) ) {
+
+            /* send message */
+            return( LE_DOOR_PREV );
 
         } else {
 
-            /* check link */
-            if ( le_next->dr_next == NULL ) {
-
-                /* send message */
-                return( _LE_TRUE );
-
-            } else {
-
-                /* compute differential */
-                le_pdiff = le_time_abs( ( ( le_door_t * ) le_prev->dr_prev )->dr_time - le_reduced );
-
-                /* compute differential */
-                le_ndiff = le_time_abs( ( ( le_door_t * ) le_next->dr_next )->dr_time - le_reduced );
-
-                /* compare differential */
-                if ( le_pdiff < le_ndiff ) {
-
-                    /* send message */
-                    return( _LE_TRUE );
-
-                } else {
-
-                    /* send message */
-                    return( _LE_FALSE );
-
-                }
-
-            }
+            /* send message */
+            return( LE_DOOR_NEXT );
 
         }
 

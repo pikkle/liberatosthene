@@ -163,7 +163,7 @@
             }
 
             /* compare doors */
-            if ( le_door_get_switch( le_prev, le_next, le_reduced ) == _LE_TRUE ) {
+            if ( le_door_get_nearest( le_prev, le_next, le_reduced ) == LE_DOOR_PREV ) {
 
                 /* update parser */
                 le_parse = le_prev = le_door_get_prev( le_prev );
