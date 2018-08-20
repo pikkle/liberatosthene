@@ -26,7 +26,7 @@
 
     le_array_t le_array_create( le_void_t ) {
 
-        /* created structure variables */
+        /* created structure variable */
         le_array_t le_array = LE_ARRAY_C;
 
         /* initialise array */
@@ -39,7 +39,7 @@
 
     le_void_t le_array_delete( le_array_t * const le_array ) {
 
-        /* deleted structure variables */
+        /* deleted structure variable */
         le_array_t le_delete = LE_ARRAY_C;
 
         /* check array pointer */

@@ -26,20 +26,20 @@
 
     le_class_t le_class_create( le_data_t const * const le_data ) {
 
-        /* created structure variables */
+        /* created structure variable */
         le_class_t le_class = LE_CLASS_C_DATA( le_data[0], le_data[1], le_data[2] );
 
         /* initialise offsets */
         memset( le_class.cs_data + _LE_USE_DATA, 0xff, _LE_USE_OFFSET * _LE_USE_BASE );
 
-        /* return constructed structure */
+        /* return created structure */
         return( le_class );
 
     }
 
     le_void_t le_class_delete( le_class_t * const le_class ) {
 
-        /* deleted structure variables */
+        /* deleted structure variable */
         le_class_t le_delete = LE_CLASS_C;
 
         /* delete structure */
@@ -98,16 +98,11 @@
 
     le_enum_t le_class_io_read( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream ) {
 
-        /* set stream position */
-        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) { /* delete check */
+        /* stream offset */
+        fseek( le_stream, le_offset, SEEK_SET );
 
-            /* send message */
-             return( LE_ERROR_IO_SEEK );
-
-        }
-
-        /* read class buffer */
-        if ( fread( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_ARRAY, le_stream ) != LE_CLASS_ARRAY ) {
+        /* read class */
+        if ( fread( ( le_void_t * ) le_class->cs_data, sizeof( le_byte_t ), LE_CLASS_ARRAY, le_stream ) != LE_CLASS_ARRAY ) {
 
             /* send message */
             return( LE_ERROR_IO_READ );
@@ -123,16 +118,11 @@
 
     le_enum_t le_class_io_readf( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream ) {
 
-        /* set stream position */
-        if ( fseek( le_stream, le_offset + _LE_USE_DATA, SEEK_SET ) != 0 ) { /* delete check */
+        /* stream offset */
+        fseek( le_stream, le_offset + _LE_USE_DATA, SEEK_SET );
 
-            /* send message */
-             return( LE_ERROR_IO_SEEK );
-
-        }
-
-        /* read class buffer */
-        if ( fread( ( le_void_t * ) ( le_class->cs_data + _LE_USE_DATA ), 1, LE_CLASS_OFFSET, le_stream ) != LE_CLASS_OFFSET ) {
+        /* read class */
+        if ( fread( ( le_void_t * ) ( le_class->cs_data + _LE_USE_DATA ), sizeof( le_byte_t ), LE_CLASS_OFFSET, le_stream ) != LE_CLASS_OFFSET ) {
 
             /* send message */
             return( LE_ERROR_IO_READ );
@@ -148,16 +138,11 @@
 
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, le_file_t const le_stream ) {
 
-        /* set stream position */
-        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) { /* delete check */
+        /* stream offset */
+        fseek( le_stream, le_offset, SEEK_SET );
 
-            /* send message */
-            return( LE_ERROR_IO_SEEK );
-
-        }
-
-        /* write class buffer */
-        if ( fwrite( ( le_void_t * ) le_class->cs_data, 1, LE_CLASS_ARRAY, le_stream ) != LE_CLASS_ARRAY ) {
+        /* write class */
+        if ( fwrite( ( le_void_t * ) le_class->cs_data, sizeof( le_byte_t ), LE_CLASS_ARRAY, le_stream ) != LE_CLASS_ARRAY ) {
 
             /* send message */
             return( LE_ERROR_IO_WRITE );
@@ -176,16 +161,11 @@
         /* returned value variable */
         le_size_t le_return = _LE_OFFS_NULL;
 
-        /* set stream position */
-        if ( fseek( le_stream, le_offset + _LE_USE_DATA + ( le_index * _LE_USE_OFFSET ), SEEK_SET ) != 0 ) { /* delete check */
+        /* stream position */
+        fseek( le_stream, le_offset + _LE_USE_DATA + ( le_index * _LE_USE_OFFSET ), SEEK_SET );
 
-            /* send message */
-            return( _LE_OFFS_NULL );
-
-        }
-
-        /* read class offset */
-        if ( fread( ( le_void_t * ) & le_return, 1, _LE_USE_OFFSET, le_stream ) != _LE_USE_OFFSET ) {
+        /* read offset */
+        if ( fread( ( le_void_t * ) & le_return, sizeof( le_byte_t ), _LE_USE_OFFSET, le_stream ) != _LE_USE_OFFSET ) {
 
             /* send message */
             return( _LE_OFFS_NULL );
@@ -199,16 +179,11 @@
 
     le_enum_t le_class_io_data( le_size_t const le_offset, le_data_t * const le_data, le_file_t const le_stream ) {
 
-        /* set stream position */
-        if ( fseek( le_stream, le_offset, SEEK_SET ) != 0 ) { /* delete check */
+        /* stream position */
+        fseek( le_stream, le_offset, SEEK_SET );
 
-            /* send message */
-            return( LE_ERROR_IO_SEEK );
-
-        }
-
-        /* read class data */
-        if ( fread( ( le_void_t * ) le_data, 1, 3, le_stream ) != 3 ) {
+        /* read data */
+        if ( fread( ( le_void_t * ) le_data, sizeof( le_byte_t ), 3, le_stream ) != 3 ) {
 
             /* send message */
             return( LE_ERROR_IO_READ );
