@@ -145,7 +145,7 @@
         while ( le_parse != NULL ) {
 
             /* empty-cell detection */
-            if ( le_door_io_detect_monovertex( le_parse, le_addr ) == _LE_TRUE ) {
+            if ( le_door_io_mono_detect( le_parse, le_addr ) == _LE_TRUE ) {
 
                 /* return door */
                 return( le_parse );
@@ -153,7 +153,7 @@
             } else {
 
                 /* empty-cell detection */
-                if ( le_door_io_detect_multivertex( le_parse, le_addr ) == _LE_TRUE ) {
+                if ( le_door_io_poly_detect( le_parse, le_addr ) == _LE_TRUE ) {
 
                     /* return door */
                     return( le_parse );

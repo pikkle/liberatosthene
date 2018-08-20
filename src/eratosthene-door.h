@@ -160,11 +160,11 @@
 
     /* *** */
 
-    le_enum_t le_door_io_detect_monovertex( le_door_t * const le_door, le_address_t const * const le_addr );
+    le_enum_t le_door_io_mono_detect( le_door_t * const le_door, le_address_t const * const le_addr );
 
     /* *** */
 
-    le_enum_t le_door_io_detect_multivertex( le_door_t * const le_door, le_address_t const * const le_addr );
+    le_enum_t le_door_io_poly_detect( le_door_t * const le_door, le_address_t const * const le_addr );
 
     /* *** */
 

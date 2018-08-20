@@ -210,35 +210,15 @@
 
     le_enum_t le_door_get_equal( le_door_t const * const le_door, le_time_t const le_time ) {
 
-        /* compare time */
-        if ( le_door->dr_time == ( le_time / le_door->dr_tcfg ) ) {
-
-            /* send message */
-            return( _LE_TRUE );
-
-        } else {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
+        /* compare time and send message */
+        return( ( le_door->dr_time == ( le_time / le_door->dr_tcfg ) ) ? _LE_TRUE : _LE_FALSE );
 
     }
 
     le_enum_t le_door_get_anterior( le_door_t const * const le_door, le_door_t const * const le_candidate ) {
 
-        /* compare time */
-        if ( le_candidate->dr_time < le_door->dr_time ) {
-
-            /* send message */
-            return( _LE_TRUE );
-
-        } else {
-
-            /* send message */
-            return( _LE_FALSE );
-
-        }
+        /* compare time and send message */
+        return( ( le_candidate->dr_time < le_door->dr_time ) ? _LE_TRUE : _LE_FALSE );
 
     }
 
@@ -331,14 +311,16 @@
 
     le_void_t le_door_set_insert( le_door_t * const le_door, le_door_t * const le_prev, le_door_t * const le_next ) {
 
-        /* update link */
+        /* update chain link */
         le_door->dr_prev = ( le_void_t * ) le_prev;
+
+        /* update chain link */
         le_door->dr_next = ( le_void_t * ) le_next;
 
         /* check pointer */
         if ( le_prev != NULL ) {
 
-            /* update link */
+            /* update chain link */
             le_prev->dr_next = ( le_void_t * ) le_door;
 
         }
@@ -346,7 +328,7 @@
         /* check pointer */
         if ( le_next != NULL ) {
 
-            /* update link */
+            /* update chain link */
             le_next->dr_prev = ( le_void_t * ) le_door;
 
         }
@@ -357,7 +339,7 @@
     source - i/o methods
  */
 
-    le_enum_t le_door_io_detect_monovertex( le_door_t * const le_door, le_address_t const * const le_addr ) {
+    le_enum_t le_door_io_mono_detect( le_door_t * const le_door, le_address_t const * const le_addr ) {
 
         /* parsing variables */
         le_size_t le_parse = 0;
@@ -368,7 +350,7 @@
         /* reset offset */
         le_door->dr_soff = 0;
 
-        /* follow offsets */
+        /* follow offset */
         do {
 
             /* read class offset */
@@ -390,7 +372,7 @@
 
     }
 
-    le_enum_t le_door_io_detect_multivertex( le_door_t * const le_door, le_address_t const * const le_addr ) {
+    le_enum_t le_door_io_poly_detect( le_door_t * const le_door, le_address_t const * const le_addr ) {
 
         /* parsing variable */
         le_size_t le_parse = le_door->dr_plen;
