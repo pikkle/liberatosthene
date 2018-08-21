@@ -247,7 +247,7 @@
      *  \param le_server Server structure
      */
 
-    le_void_t le_server_io_beta( le_server_t * const le_server );
+    le_void_t le_server_io( le_server_t * const le_server );
 
     /*! \brief i/o methods ( revoked )
      * 
@@ -270,7 +270,7 @@
      *  \return Always a NULL pointer
      */
 
-    le_void_t * le_server_io_client_beta( le_void_t * le_void );
+    le_void_t * le_server_io_client( le_void_t * le_void );
 
 /*
     header - C/C++ compatibility

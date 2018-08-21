@@ -39,6 +39,9 @@
         /* deleted structure variable */
         le_switch_t le_delete = LE_SWITCH_C;
 
+        /* delete switch chain */
+        le_switch_set_erase( le_switch );
+
         /* delete structure */
         ( * le_switch ) = le_delete;
 

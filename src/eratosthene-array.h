@@ -81,20 +81,20 @@
     # define LE_ARRAY_ADDR            ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
 
     /* define array-size - uv3 */
-    # define LE_ARRAY_UV3_POSE          ( LE_UV3_POSE )
-    # define LE_ARRAY_UV3_TYPE          ( LE_UV3_TYPE )
-    # define LE_ARRAY_UV3_DATA          ( LE_UV3_DATA )
-    # define LE_ARRAY_UV3               ( LE_ARRAY_UV3_POSE + LE_ARRAY_UV3_TYPE + LE_ARRAY_UV3_DATA )
+    # define LE_ARRAY_UV3_POSE        ( LE_UV3_POSE )
+    # define LE_ARRAY_UV3_TYPE        ( LE_UV3_TYPE )
+    # define LE_ARRAY_UV3_DATA        ( LE_UV3_DATA )
+    # define LE_ARRAY_UV3             ( LE_ARRAY_UV3_POSE + LE_ARRAY_UV3_TYPE + LE_ARRAY_UV3_DATA )
 
 /*
     header - preprocessor macros
  */
 
     /* define stack macro */
-    # define le_array_mac_create(p,s) for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) p[_i_] = le_array_create(); /* delete */
+    # define le_array_mac_create(p,s) { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) p[_i_] = le_array_create(); }
 
     /* define stack macro */
-    # define le_array_mac_delete(p,s) for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ ); /* delete */
+    # define le_array_mac_delete(p,s) { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ ); }
 
     /* define array access macro */
     # define le_array_mac_pose(a,i)   ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )

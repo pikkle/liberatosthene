@@ -199,7 +199,7 @@
     source - i/o methods
  */
 
-    le_void_t le_server_io_beta( le_server_t * const le_server ) {
+    le_void_t le_server_io( le_server_t * const le_server ) {
 
         /* process variable */
         le_proc_t le_thread;
@@ -208,7 +208,7 @@
         while ( ( le_server->sv_push = le_client_io_accept( le_server->sv_sock ) ) != _LE_SOCK_NULL ) {
 
             /* create client process */
-            if ( pthread_create( & le_thread, NULL, le_server_io_client_beta, ( le_void_t * ) le_server ) != 0 ) {
+            if ( pthread_create( & le_thread, NULL, le_server_io_client, ( le_void_t * ) le_server ) != 0 ) {
 
                 /* reject client connection */
                 close( le_server->sv_push );
@@ -232,7 +232,7 @@
 
     }
 
-    le_void_t * le_server_io_client_beta( le_void_t * le_void ) {
+    le_void_t * le_server_io_client( le_void_t * le_void ) {
 
         /* server pointer variable */
         le_server_t * le_server = ( le_server_t * ) le_void;
@@ -243,10 +243,10 @@
         /* switch variable */
         le_switch_t le_switch = LE_SWITCH_C;
 
-        /* socket-array mode variable */
+        /* mode variable */
         le_enum_t le_mode = LE_MODE_NULL;
 
-        /* socket-array stack variable */
+        /* stack variable */
         le_array_t le_array[_LE_USE_ARRAY];
 
         /* message variable */
@@ -261,70 +261,63 @@
         /* thread critical region */
         pthread_mutex_unlock( & le_server->sv_mute );
 
-        /* create and check switch */
-        if ( le_get_status( le_switch = le_switch_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg ) ) == LE_ERROR_SUCCESS ) {
+        /* create socket-array stack */
+        le_array_mac_create( le_array, _LE_USE_ARRAY );
 
-            /* create socket-array stack */
-            for ( le_size_t le_parse = 0; le_parse < _LE_USE_ARRAY; le_parse ++ ) {
+        /* create switch */
+        le_switch = le_switch_create( le_server->sv_path, le_server->sv_scfg, le_server->sv_tcfg );
 
-                /* create socket-array */
-                ( * ( le_array + le_parse ) ) = le_array_create();
+        /* client connection */
+        while ( le_message == LE_ERROR_SUCCESS ) {
 
-            }
+            /* wait client socket-array */
+            if ( ( le_mode = le_array_io_read( le_array, le_socket ) ) == LE_MODE_NULL ) {
 
-            /* client connection */
-            while ( le_message == LE_ERROR_SUCCESS ) {
+                /* push message */
+                le_message = LE_ERROR_IO_ARRAY;
 
-                /* wait client socket-array */
-                if ( ( le_mode = le_array_io_read( le_array, le_socket ) ) == LE_MODE_NULL ) {
+            } else {
 
-                    /* push message */
-                    le_message = LE_ERROR_IO_ARRAY;
+                /* switch reload management */
+                if ( ( le_message = le_switch_set_update( & le_switch, 5 ) ) == LE_ERROR_SUCCESS ) {
 
-                } else {
+                    /* switch on socket-array mode */
+                    switch ( le_mode ) {
 
-                    /* switch reload management */
-                    if ( ( le_message = le_switch_set_update( & le_switch, 5 ) ) == LE_ERROR_SUCCESS ) {
+                        case ( LE_MODE_AUTH ) : {
 
-                        /* switch on socket-array mode */
-                        switch ( le_mode ) {
+                            /* service management */
+                            le_message = le_switch_io_auth( & le_switch, le_array, le_socket );
 
-                            case ( LE_MODE_AUTH ) : {
+                        } break;
 
-                                /* service management */
-                                le_message = le_switch_io_auth( & le_switch, le_array, le_socket );
+                        case ( LE_MODE_INJE ) : {
 
-                            } break;
+                            /* service management */
+                            le_message = le_switch_io_inject( & le_switch, le_array, le_socket );
 
-                            case ( LE_MODE_INJE ) : {
+                        } break;
 
-                                /* service management */
-                                le_message = le_switch_io_inject( & le_switch, le_array, le_socket );
+                        case ( LE_MODE_OPTM ) : {
 
-                            } break;
+                            /* service management */
+                            le_message = le_switch_io_optimise( & le_switch, le_array, le_socket );
 
-                            case ( LE_MODE_OPTM ) : {
+                        } break;
 
-                                /* service management */
-                                le_message = le_switch_io_optimise( & le_switch, le_array, le_socket );
+                        case ( LE_MODE_QUER ) : {
 
-                            } break;
+                            /* service management */
+                            le_message = le_switch_io_query( & le_switch, le_array, le_socket );
 
-                            case ( LE_MODE_QUER ) : {
+                        } break;
 
-                                /* service management */
-                                le_message = le_switch_io_query( & le_switch, le_array, le_socket );
+                        default : {
 
-                            } break;
+                            /* push message */
+                            le_message = LE_ERROR_IO_ARRAY;
 
-                            default : {
-
-                                /* push message */
-                                le_message = LE_ERROR_IO_ARRAY;
-
-                            } break;
-
-                        }
+                        } break;
 
                     }
 
@@ -332,21 +325,16 @@
 
             }
 
-            /* delete socket-array stack */
-            for ( le_size_t le_parse = 0; le_parse < _LE_USE_ARRAY; le_parse ++ ) {
-
-                /* delete socket-array */
-                le_array_delete( le_array + le_parse );
-
-            }
-
-            /* delete switch */
-            le_switch_delete( & le_switch );
-
         }
 
         /* close socket */
         close( le_socket );
+
+        /* delete switch */
+        le_switch_delete( & le_switch );
+
+        /* delete socket-array stack */
+        le_array_mac_delete( le_array, _LE_USE_ARRAY );
 
         /* return null pointer */
         return( NULL );
