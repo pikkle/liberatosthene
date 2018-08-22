@@ -85,7 +85,7 @@
 
     }
 
-    le_door_t * le_switch_get_query( le_switch_t * const le_switch, le_time_t const le_time, le_address_t const * const le_addr ) {
+    le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_time_t const le_time, le_address_t const * const le_addr ) {
 
         /* reduced time variable */
         le_time_t le_reduced = le_time / le_switch->sw_tcfg;
