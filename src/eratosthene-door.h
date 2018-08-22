@@ -57,10 +57,10 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { 0 }, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { 0 }, 0, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { 0 }, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { 0 }, 0, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define door link */
     # define LE_DOOR_PREV         ( 0 )
@@ -104,6 +104,7 @@
         le_size_t   dr_soff;
 
         le_char_t   dr_mpth[_LE_USE_PATH];
+        le_size_t   dr_mlen;
 
         le_void_t * dr_prev;
         le_void_t * dr_next;
@@ -128,7 +129,11 @@
 
     /* *** */
 
-    le_size_t le_door_get_offset( le_door_t const * const le_door );
+    le_enum_t le_door_get_mono( le_door_t const * const le_door );
+
+    /* *** */
+
+    le_enum_t le_door_get_poly( le_door_t const * const le_door );
 
     /* *** */
 
@@ -168,7 +173,11 @@
 
     /* *** */
 
-    le_enum_t le_door_io_poly_inject( le_door_t const * const le_door );
+    le_enum_t le_door_io_poly_inject( le_door_t * const le_door );
+
+    /* *** */
+    
+    le_enum_t le_door_io_poly_inject_vertex( le_door_t * const le_door, le_byte_t const * const le_cache, le_size_t const le_vertex );
 
     /* *** */
 
@@ -196,7 +205,7 @@
 
     /* *** */
 
-    le_void_t le_door_io_poly_gather( le_door_t const * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
+    le_void_t le_door_io_poly_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
     /* *** */
 
