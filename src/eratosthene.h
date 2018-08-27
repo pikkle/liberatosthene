@@ -124,7 +124,7 @@
     # error "unsupported plateform"
     # endif
     # endif
-    
+
 
 /*
     header - C/C++ compatibility
@@ -180,7 +180,7 @@
     # error "offset range is [2,7]"
     # endif
     # define _LE_USE_DEPTH       ( 40 )
-    # define _LE_USE_TIMES       ( 2 )
+    # define _LE_USE_TIMES       ( 3 )
     # define _LE_USE_DATA        ( 4 )
     # define _LE_USE_PORT        ( 11027 )
     # define _LE_USE_PENDING     ( 16 )

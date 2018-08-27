@@ -55,8 +55,8 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_ADDRESS_C             { 0, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
-    # define LE_ADDRESS_C_SIZE(s)     { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
+    # define LE_ADDRESS_C             { 0, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
+    # define LE_ADDRESS_C_SIZE(s)     { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
 
     /* define address mode */
     # define LE_ADDRESS_OR            ( 3 )
@@ -65,7 +65,7 @@
 
     /* asynchronous dimension attachment */
     # define LE_ADDRESS_DEPTH_P       ( 1 )
-    # define LE_ADDRESS_DEPTH_A       ( 10 ) 
+    # define LE_ADDRESS_DEPTH_A       ( 10 )
 
     /* define WGS84 ellipsoid parameters */
     # define LE_ADDRESS_WGS_A         ( 6378137.0 )
@@ -108,7 +108,7 @@
  */
 
     /*! \struct le_address_struct
-     *  \brief address structure
+     *  \brief address structure ( revoked )
      *
      *  This structure holds the address, or the index, of an equivalence class
      *  defined on the geodetic and time parameter spaces. These addresses are
@@ -236,7 +236,7 @@
 
     le_byte_t le_address_get_span( le_address_t const * const le_address );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods ( revoked )
      *
      *  This function compare the two provided address structures and returns a
      *  boolean value indicating their identity.
@@ -343,7 +343,7 @@
 
     le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
 
-    /*! \brief serialisation method
+    /*! \brief serialisation method ( revoked )
      *
      *  This functions is used to pack and unpack an address structure in and
      *  from the provided array. In other words, this function ensure the
@@ -366,7 +366,7 @@
 
     le_size_t le_address_serial( le_address_t * const le_address, le_array_t * const le_array, le_size_t const le_offset, le_enum_t const le_mode );
 
-    /*! \brief conversion methods
+    /*! \brief conversion methods ( revoked )
      *
      *  This function translate the address structure content in human readable
      *  text form.
@@ -383,7 +383,7 @@
 
     le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string );
 
-    /*! \brief conversion methods
+    /*! \brief conversion methods ( revoked )
      *
      *  This function inverts the conversion made by \b le_address_ct_string()
      *  function. It expects an address in human readable text string structured

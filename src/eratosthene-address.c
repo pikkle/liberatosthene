@@ -105,6 +105,14 @@
 
         }
 
+        /* comb comparison */
+        if ( le_addra->as_times[2] != le_addrb->as_times[2] ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
         /* end of array */
         le_pa += le_addra->as_size;
         le_pb += le_addrb->as_size;
@@ -320,6 +328,7 @@
             /* serialise times */
             le_address->as_times[0] = le_time[0];
             le_address->as_times[1] = le_time[1];
+            le_address->as_times[2] = le_time[2];
 
             /* update serial base */
             le_base += LE_ARRAY_ADDR_TIME;
@@ -337,6 +346,7 @@
             /* serialise times */
             le_time[0] = le_address->as_times[0];
             le_time[1] = le_address->as_times[1];
+            le_time[2] = le_address->as_times[2];
 
             /* update serial base */
             le_base += LE_ARRAY_ADDR_TIME;
@@ -374,7 +384,7 @@
         }
 
         /* compose address string */
-        sprintf( ( char * ) le_string, "/%" _LE_BYTE_P "/%" _LE_TIME_P ",%" _LE_TIME_P "/%s/%" _LE_BYTE_P, le_address->as_mode, le_address->as_times[0], le_address->as_times[1], le_data, le_address->as_span );
+        sprintf( ( char * ) le_string, "/%" _LE_BYTE_P "/%" _LE_TIME_P ",%" _LE_TIME_P "/%" _LE_TIME_P "/%s/%" _LE_BYTE_P, le_address->as_mode, le_address->as_times[0], le_address->as_times[1], le_address->as_times[2], le_data, le_address->as_span );
 
     }
 
@@ -384,7 +394,7 @@
         le_char_t le_data[_LE_USE_DEPTH + 1] = { 0 };
 
         /* decompose address string */
-        sscanf( ( char * ) le_string, "/%" _LE_BYTE_S "/%" _LE_TIME_S ",%" _LE_TIME_S "/%[^/]/%" _LE_BYTE_S, & le_address->as_mode, le_address->as_times, le_address->as_times + 1, le_data, & le_address->as_span );
+        sscanf( ( char * ) le_string, "/%" _LE_BYTE_S "/%" _LE_TIME_S ",%" _LE_TIME_S "/%" _LE_TIME_S "/%[^/]/%" _LE_BYTE_S, & le_address->as_mode, le_address->as_times, le_address->as_times + 1, le_address->as_times + 2, le_data, & le_address->as_span );
 
         /* compute address size */
         le_address->as_size = strlen( ( char * ) le_data );
