@@ -42,7 +42,7 @@
         le_door.dr_plen = strlen( ( char * ) le_door.dr_path );
 
         /* compute poly-vertex path */
-        sprintf( ( char * ) le_door.dr_mpth, "%s/2", le_door.dr_path ); 
+        sprintf( ( char * ) le_door.dr_mpth, "%s/2", le_door.dr_path );
 
         /* check unit state */
         if ( le_get_exist( le_door.dr_path ) == _LE_FALSE ) {
@@ -152,6 +152,13 @@
     source - accessor methods
  */
 
+    le_time_t le_door_get_reduced( le_door_t const * const le_door ) {
+
+        /* return door reduced time */
+        return( le_door->dr_time );
+
+    }
+
     le_enum_t le_door_get_nearest( le_door_t const * const le_prev, le_door_t const * const le_next, le_time_t const le_reduced ) {
 
         /* differential variable */
@@ -197,6 +204,19 @@
 
     }
 
+    le_enum_t le_door_get_comb( le_door_t const * const le_door, le_time_t const le_reduced, le_time_t const le_redcomb ) {
+
+        /* comb conidition */
+        if ( le_time_abs( le_door->dr_time - le_reduced ) < le_redcomb ) {
+
+            /* send message */
+            return( _LE_TRUE );
+
+        /* send message */
+        } else { return( _LE_FALSE ); }
+
+    }
+
     le_enum_t le_door_get_mono( le_door_t const * const le_door ) {
 
         /* return detection result */
@@ -208,13 +228,6 @@
 
         /* return detection result */
         return( ( le_door->dr_mlen != 0 ) ? _LE_TRUE : _LE_FALSE );
-
-    }
-
-    le_time_t le_door_get_interval( le_door_t const * const le_door, le_time_t const le_time ) {
-
-        /* compute and return interval */
-        return( le_time - ( le_door->dr_time * le_door->dr_tcfg ) );
 
     }
 
@@ -587,7 +600,7 @@
             free( le_buffer );
 
         }
-        
+
         /* send message */
         return( le_message );
 
@@ -1024,7 +1037,7 @@
             /* read and check class offset */
             if ( le_door->dr_soff == _LE_OFFS_NULL ) {
 
-                /* send message */  
+                /* send message */
                 return( _LE_FALSE );
 
             }

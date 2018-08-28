@@ -159,8 +159,6 @@
     # include <netinet/tcp.h>
     # include <arpa/inet.h>
 
-    # include <errno.h>
-
 /*
     header - preprocessor definitions
  */

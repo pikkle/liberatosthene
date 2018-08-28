@@ -194,6 +194,10 @@
 
     /* *** */
 
+    le_time_t le_door_get_reduced( le_door_t const * const le_door );
+
+    /* *** */
+
     le_enum_t le_door_get_nearest( le_door_t const * const le_prev, le_door_t const * const le_next, le_time_t const le_reduced );
 
     /* *** */
@@ -203,10 +207,6 @@
     /* *** */
 
     le_enum_t le_door_get_poly( le_door_t const * const le_door );
-
-    /* *** */
-
-    le_time_t le_door_get_interval( le_door_t const * const le_door, le_time_t const le_time );
 
     /* *** */
 
@@ -265,7 +265,7 @@
     le_enum_t le_door_io_poly_inject( le_door_t * const le_door );
 
     /* *** */
-    
+
     le_enum_t le_door_io_poly_inject_vertex( le_door_t * const le_door, le_byte_t const * const le_cache, le_size_t const le_vertex );
 
     /* *** */
@@ -303,7 +303,7 @@
      *  The "dual" stream array has to have, at least, a size equal to the
      *  server space parameter. In addition, it as to contain already created
      *  file descriptor toward the optimisation "dual" files.
-     * 
+     *
      *  In the same way, the class writing offsets tracker array (\b le_head)
      *  has the same constraint on its size. In addition, its content has to be
      *  zero for each of it used elements.

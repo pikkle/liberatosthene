@@ -197,7 +197,7 @@
 
     le_byte_t le_address_get_mode( le_address_t const * const le_address );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods ( revoked - used for comb also )
      *
      *  Returns the desired time of the equivalence class stored in the address
      *  structure. The provided offset has to be 0 or 1 to retrieve the first
@@ -293,7 +293,7 @@
 
     le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode );
 
-    /*! \brief mutator methods
+    /*! \brief mutator methods ( revoked - used for comb also )
      *
      *  Sets the address desired time. The provided offset has to be 0 or 1 to
      *  set the first or second time, respectively.

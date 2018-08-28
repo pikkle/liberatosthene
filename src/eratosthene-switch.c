@@ -90,6 +90,9 @@
         /* reduced time variable */
         le_time_t le_reduced = le_time / le_switch->sw_tcfg;
 
+        /* reduced comb variable */
+        le_time_t le_comb = le_address_get_time( le_addr, 2 ) / le_switch->sw_tcfg;
+
         /* parsing variable */
         le_door_t * le_prev = NULL;
         le_door_t * le_next = NULL;
@@ -103,11 +106,19 @@
         /* interval variable */
         le_time_t le_interval = _LE_TIME_MAX;
 
+        /* check switch state */
+        if ( le_parse == NULL ) {
+
+            /* send message */
+            return( NULL );
+
+        }
+
         /* parsing chain */
         while ( le_prev == NULL ) {
 
             /* compute interval */
-            if ( ( le_applicant = le_door_get_interval( le_parse, le_time ) ) < 0 ) {
+            if ( ( le_applicant = ( le_reduced - le_door_get_reduced( le_parse ) ) ) < 0 ) {
 
                 /* compare applicants */
                 if ( le_time_abs( le_applicant ) < le_interval ) {
@@ -121,7 +132,7 @@
                     le_prev = le_next = le_parse = le_door_get_prev( le_parse );
 
                 }
-                
+
             } else {
 
                 /* chain termination detection */
@@ -147,26 +158,32 @@
         /* searching algorithm */
         while ( le_parse != NULL ) {
 
-            /* empty-cell detection */
-            if ( ( le_door_io_mono_detect( le_parse, le_addr ) | le_door_io_poly_detect( le_parse, le_addr ) ) == _LE_TRUE ) {
+            /* apply temporal comb condition */
+            if ( le_time_abs( le_door_get_reduced( le_parse ) - le_reduced ) < le_comb ) {
 
-                /* return door */
-                return( le_parse );
+                /* empty-cell detection */
+                if ( ( le_door_io_mono_detect( le_parse, le_addr ) | le_door_io_poly_detect( le_parse, le_addr ) ) == _LE_TRUE ) {
 
-            }
+                    /* return door */
+                    return( le_parse );
 
-            /* compare doors */
-            if ( le_door_get_nearest( le_prev, le_next, le_reduced ) == LE_DOOR_PREV ) {
+                }
 
-                /* update parser */
-                le_parse = le_prev = le_door_get_prev( le_prev );
+                /* compare doors */
+                if ( le_door_get_nearest( le_prev, le_next, le_reduced ) == LE_DOOR_PREV ) {
 
-            } else {
+                    /* update parser */
+                    le_parse = le_prev = le_door_get_prev( le_prev );
 
-                /* update parser */
-                le_parse = le_next = le_door_get_next( le_next );
+                } else {
 
-            }
+                    /* update parser */
+                    le_parse = le_next = le_door_get_next( le_next );
+
+                }
+
+            /* send message */
+            } else { return( NULL ); }
 
         }
 
@@ -407,7 +424,7 @@
 
         /* write socket-array */
         if ( le_array_io_write( le_array, LE_MODE_AUTH, le_socket ) != LE_MODE_AUTH ) {
-        
+
             /* send message */
             return( LE_ERROR_IO_WRITE );
 
