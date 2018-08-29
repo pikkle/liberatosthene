@@ -59,7 +59,6 @@
 
     /* define array step */
     # define LE_ARRAY_STEP            ( 65536 )
-    # define LE_ARRAY_LIMIT           ( 32 )
 
     /* define array header size */
     # define LE_ARRAY_HEADER_SIZE     ( sizeof( le_size_t ) )
@@ -76,16 +75,15 @@
     # define LE_ARRAY_OPTM            ( sizeof( le_time_t ) )
 
     /* define array-size - address */
-    //# define LE_ARRAY_ADDR_TIME       ( sizeof( le_time_t ) * 2 )
     # define LE_ARRAY_ADDR_TIME       ( sizeof( le_time_t ) * _LE_USE_TIMES )
     # define LE_ARRAY_ADDR_DESC       ( sizeof( le_byte_t ) * 3 )
     # define LE_ARRAY_ADDR            ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
 
     /* define array-size - uv3 */
-    # define LE_ARRAY_UV3_POSE        ( LE_UV3_POSE )
-    # define LE_ARRAY_UV3_TYPE        ( LE_UV3_TYPE )
-    # define LE_ARRAY_UV3_DATA        ( LE_UV3_DATA )
-    # define LE_ARRAY_UV3             ( LE_ARRAY_UV3_POSE + LE_ARRAY_UV3_TYPE + LE_ARRAY_UV3_DATA )
+    # define LE_ARRAY_DATA_POSE       ( LE_UV3_POSE )
+    # define LE_ARRAY_DATA_TYPE       ( LE_UV3_TYPE )
+    # define LE_ARRAY_DATA_DATA       ( LE_UV3_DATA )
+    # define LE_ARRAY_DATA            ( LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE + LE_ARRAY_DATA_DATA )
 
 /*
     header - preprocessor macros
@@ -101,19 +99,19 @@
     # define le_array_mac_pose(a,i)   ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )
 
     /* define array access macro */
-    # define le_array_mac_type(a,i)   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UV3_POSE ) )
+    # define le_array_mac_type(a,i)   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_DATA_POSE ) )
 
     /* define array access macro */
-    # define le_array_mac_data(a,i)   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_UV3_POSE + LE_ARRAY_UV3_TYPE ) )
+    # define le_array_mac_data(a,i)   ( ( le_data_t * ) ( ( a )->ar_vbyte + i + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) )
 
     /* define array access macro */
-    # define le_array_mac_lpose(a)    ( ( le_real_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UV3 ) )
+    # define le_array_mac_lpose(a)    ( ( le_real_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_DATA ) )
 
     /* define array access macro */
-    # define le_array_mac_ltype(a)    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UV3_DATA - LE_ARRAY_UV3_TYPE ) )
+    # define le_array_mac_ltype(a)    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_DATA_DATA - LE_ARRAY_DATA_TYPE ) )
 
     /* define array access macro */
-    # define le_array_mac_ldata(a)    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_UV3_DATA ) )
+    # define le_array_mac_ldata(a)    ( ( le_data_t * ) ( ( a )->ar_vbyte + ( a )->ar_vsize - LE_ARRAY_DATA_DATA ) )
 
 /*
     header - type definition
@@ -255,7 +253,7 @@
      *
      *  This function is usually used while a socket-array is read from a given
      *  device.
-     * 
+     *
      *  \param le_array Array structure
      *
      *  \return Returns the read socket-array mode

@@ -184,7 +184,6 @@
     # define _LE_USE_PENDING     ( 16 )
     # define _LE_USE_RETRY       ( 3 )
     # define _LE_USE_ARRAY       ( 2 )
-    # define _LE_USE_COMB        ( 1576800000 )
     # define _LE_USE_PATH        ( PATH_MAX + FILENAME_MAX )
 
     /* define types */
@@ -211,7 +210,6 @@
     # define _LE_TIME_MAX        ( INT64_MAX )
 
     /* define type nulls */
-    # define _LE_BYTE_NULL       ( _LE_BYTE_MAX )
     # define _LE_SIZE_NULL       ( _LE_SIZE_MIN )
     # define _LE_TIME_NULL       ( _LE_TIME_MIN )
     # define _LE_SOCK_NULL       ( -1 )

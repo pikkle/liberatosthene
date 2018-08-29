@@ -204,19 +204,6 @@
 
     }
 
-    le_enum_t le_door_get_comb( le_door_t const * const le_door, le_time_t const le_reduced, le_time_t const le_redcomb ) {
-
-        /* comb conidition */
-        if ( le_time_abs( le_door->dr_time - le_reduced ) < le_redcomb ) {
-
-            /* send message */
-            return( _LE_TRUE );
-
-        /* send message */
-        } else { return( _LE_FALSE ); }
-
-    }
-
     le_enum_t le_door_get_mono( le_door_t const * const le_door ) {
 
         /* return detection result */
@@ -1110,7 +1097,7 @@
         if ( le_parse == le_span ) {
 
             /* update array size */
-            le_array_set( le_array, LE_ARRAY_UV3 );
+            le_array_set( le_array, LE_ARRAY_DATA );
 
             /* push element position */
             le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
@@ -1265,7 +1252,7 @@
             if ( le_mode == LE_ADDRESS_OR ) {
 
                 /* update array size */
-                le_array_set( le_array, LE_ARRAY_UV3 );
+                le_array_set( le_array, LE_ARRAY_DATA );
 
                 /* push element position */
                 le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
@@ -1292,7 +1279,7 @@
                 if ( ( le_pdoor->dr_soff != _LE_OFFS_NULL ) && ( le_sdoor->dr_soff != _LE_OFFS_NULL ) ) {
 
                     /* update array size */
-                    le_array_set( le_array, LE_ARRAY_UV3 );
+                    le_array_set( le_array, LE_ARRAY_DATA );
 
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
@@ -1311,7 +1298,7 @@
                 if ( ( le_pdoor->dr_soff != _LE_OFFS_NULL ) && ( le_sdoor->dr_soff == _LE_OFFS_NULL ) ) {
 
                     /* update array size */
-                    le_array_set( le_array, LE_ARRAY_UV3 );
+                    le_array_set( le_array, LE_ARRAY_DATA );
 
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
@@ -1325,7 +1312,7 @@
                 } else if ( ( le_pdoor->dr_soff == _LE_OFFS_NULL ) && ( le_sdoor->dr_soff != _LE_OFFS_NULL ) ) {
 
                     /* update array size */
-                    le_array_set( le_array, LE_ARRAY_UV3 );
+                    le_array_set( le_array, LE_ARRAY_DATA );
 
                     /* push element position */
                     le_address_get_pose_( le_addr, le_parse, le_array_mac_lpose( le_array ) );
