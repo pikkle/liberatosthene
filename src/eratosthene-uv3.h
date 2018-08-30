@@ -44,6 +44,7 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-address.h"
 
 /*
     header - external includes
@@ -52,14 +53,6 @@
 /*
     header - preprocessor definitions
  */
-
-    /* define uv3 element */
-    # define LE_UV3_POSE     ( sizeof( le_real_t ) * 3 )
-    # define LE_UV3_TYPE     ( sizeof( le_data_t ) )
-    # define LE_UV3_DATA     ( sizeof( le_data_t ) * 3 )
-
-    /* define uv3 record */
-    # define LE_UV3_RECORD   ( LE_UV3_POSE + LE_UV3_TYPE + LE_UV3_DATA )
 
     /* define uv3 primitive */
     # define LE_UV3_POINT    ( 1 )
@@ -84,6 +77,10 @@
 /*
     header - function prototypes
  */
+
+    /* *** */
+
+    le_byte_t * le_uv3_set_sort( le_byte_t * const le_buffer, le_size_t const le_size, le_size_t const le_scfg );
 
 /*
     header - C/C++ compatibility

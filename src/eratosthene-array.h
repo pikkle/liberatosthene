@@ -44,7 +44,6 @@
  */
 
     # include "eratosthene.h"
-    # include "eratosthene-uv3.h"
 
 /*
     header - external includes
@@ -80,9 +79,9 @@
     # define LE_ARRAY_ADDR            ( LE_ARRAY_ADDR_TIME + LE_ARRAY_ADDR_DESC + _LE_USE_DEPTH )
 
     /* define array-size - uv3 */
-    # define LE_ARRAY_DATA_POSE       ( LE_UV3_POSE )
-    # define LE_ARRAY_DATA_TYPE       ( LE_UV3_TYPE )
-    # define LE_ARRAY_DATA_DATA       ( LE_UV3_DATA )
+    # define LE_ARRAY_DATA_POSE       ( sizeof( le_real_t ) * 3 )
+    # define LE_ARRAY_DATA_TYPE       ( sizeof( le_data_t ) )
+    # define LE_ARRAY_DATA_DATA       ( sizeof( le_data_t ) * 3 )
     # define LE_ARRAY_DATA            ( LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE + LE_ARRAY_DATA_DATA )
 
 /*

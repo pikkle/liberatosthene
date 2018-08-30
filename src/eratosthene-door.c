@@ -398,10 +398,10 @@
                 while ( ( le_head < le_edge ) && ( le_message == LE_ERROR_SUCCESS ) ) {
 
                     /* primitive filtering */
-                    if ( * ( le_head + LE_UV3_POSE ) == LE_UV3_POINT ) {
+                    if ( * ( le_head + LE_ARRAY_DATA_POSE ) == LE_UV3_POINT ) {
 
                         /* export primitive */
-                        if ( fwrite( le_head, sizeof( le_byte_t ), LE_UV3_RECORD, le_mstream ) != LE_UV3_RECORD ) {
+                        if ( fwrite( le_head, sizeof( le_byte_t ), LE_ARRAY_DATA, le_mstream ) != LE_ARRAY_DATA ) {
 
                             /* push message */
                             le_message = LE_ERROR_IO_WRITE;
@@ -411,7 +411,7 @@
                     } else {
 
                         /* export primitive */
-                        if ( fwrite( le_head, sizeof( le_byte_t ), LE_UV3_RECORD, le_pstream ) != LE_UV3_RECORD ) {
+                        if ( fwrite( le_head, sizeof( le_byte_t ), LE_ARRAY_DATA, le_pstream ) != LE_ARRAY_DATA ) {
 
                             /* push message */
                             le_message = LE_ERROR_IO_WRITE;
@@ -421,7 +421,7 @@
                     }
 
                     /* update head */
-                    le_head += LE_UV3_RECORD;
+                    le_head += LE_ARRAY_DATA;
 
                 }
 
@@ -485,7 +485,7 @@
         le_enum_t le_message = LE_ERROR_SUCCESS;
 
         /* allocate buffer memory */
-        if ( ( le_buffer = ( le_byte_t * ) malloc( LE_UV3_CHUNK * LE_UV3_RECORD ) ) == NULL ) {
+        if ( ( le_buffer = ( le_byte_t * ) malloc( LE_UV3_CHUNK * LE_ARRAY_DATA ) ) == NULL ) {
 
             /* push message */
             le_message = LE_ERROR_MEMORY;
@@ -504,7 +504,7 @@
             } else {
 
                 /* stream reading */
-                while ( ( le_read = fread( le_buffer, sizeof( le_byte_t ), LE_UV3_CHUNK * LE_UV3_RECORD, le_stream ) ) > 0 ) {
+                while ( ( le_read = fread( le_buffer, sizeof( le_byte_t ), LE_UV3_CHUNK * LE_ARRAY_DATA, le_stream ) ) > 0 ) {
 
                     /* compute buffer pointer */
                     le_edge = ( le_head = le_buffer ) + le_read;
@@ -516,7 +516,7 @@
                         le_address_set_pose( & le_addr, ( le_real_t * ) le_head );
 
                         /* update head */
-                        le_head += LE_UV3_RECORD;
+                        le_head += LE_ARRAY_DATA;
 
                         /* reset scale */
                         le_scale = 0;
@@ -537,12 +537,12 @@
                             if ( le_class_io_read( & le_class, le_current, * ( le_door->dr_sacc + le_scale ) ) == LE_ERROR_SUCCESS ) {
 
                                 /* inject element in class */
-                                le_class_set_push( & le_class, ( le_data_t * ) ( le_head + LE_UV3_POSE + LE_UV3_TYPE ) );
+                                le_class_set_push( & le_class, ( le_data_t * ) ( le_head + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) );
 
                             } else {
 
                                 /* initialise class with element */
-                                le_class = le_class_create( ( le_data_t * ) ( le_head + LE_UV3_POSE + LE_UV3_TYPE ) );
+                                le_class = le_class_create( ( le_data_t * ) ( le_head + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) );
 
                             }
 
@@ -626,7 +626,7 @@
         sprintf( ( char * ) le_path, "%s/0/2", le_door->dr_path );
 
         /* allocate buffer memory */
-        if ( ( le_cache = ( le_byte_t * ) malloc( 3 * LE_UV3_RECORD * sizeof( le_byte_t ) ) ) == NULL ) {
+        if ( ( le_cache = ( le_byte_t * ) malloc( 3 * LE_ARRAY_DATA * sizeof( le_byte_t ) ) ) == NULL ) {
 
             /* push message */
             le_message = LE_ERROR_MEMORY;
@@ -634,7 +634,7 @@
         } else {
 
             /* allocate buffer memory */
-            if ( ( le_buffer = ( le_byte_t * ) malloc( LE_UV3_CHUNK * LE_UV3_RECORD * sizeof( le_byte_t ) ) ) == NULL ) {
+            if ( ( le_buffer = ( le_byte_t * ) malloc( LE_UV3_CHUNK * LE_ARRAY_DATA * sizeof( le_byte_t ) ) ) == NULL ) {
 
                 /* push message */
                 le_message = LE_ERROR_MEMORY;
@@ -650,7 +650,7 @@
                 } else {
 
                     /* stream reading */
-                    while ( ( ( le_read = fread( le_buffer, sizeof( le_byte_t ), LE_UV3_CHUNK * LE_UV3_RECORD , le_stream ) ) > 0 ) && ( le_message == LE_ERROR_SUCCESS ) ) {
+                    while ( ( ( le_read = fread( le_buffer, sizeof( le_byte_t ), LE_UV3_CHUNK * LE_ARRAY_DATA , le_stream ) ) > 0 ) && ( le_message == LE_ERROR_SUCCESS ) ) {
 
                         /* compute buffer pointer */
                         le_edge = ( le_head = le_buffer ) + le_read;
@@ -659,10 +659,10 @@
                         while ( ( le_head < le_edge ) && ( le_message == LE_ERROR_SUCCESS ) ) {
 
                             /* cache record */
-                            memcpy( le_cache + ( le_stack * LE_UV3_RECORD ), le_head, LE_UV3_RECORD );
+                            memcpy( le_cache + ( le_stack * LE_ARRAY_DATA ), le_head, LE_ARRAY_DATA );
 
                             /* check stack state */
-                            if ( ( ++ le_stack ) == * ( le_head + LE_UV3_POSE ) ) {
+                            if ( ( ++ le_stack ) == * ( le_head + LE_ARRAY_DATA_POSE ) ) {
 
                                 /* *** */
                                 le_message = le_door_io_poly_inject_vertex( le_door, le_cache, le_stack );
@@ -673,7 +673,7 @@
                             }
 
                             /* update head */
-                            le_head += LE_UV3_RECORD;
+                            le_head += LE_ARRAY_DATA;
 
                         }
 
@@ -749,7 +749,7 @@
             le_address_set_pose( le_stack + le_parse, le_push );
 
             /* update head */
-            le_head += LE_UV3_RECORD;
+            le_head += LE_ARRAY_DATA;
 
         }
 
@@ -834,7 +834,7 @@
                     } else {
 
                         /* export cache */
-                        if ( fwrite( le_cache, sizeof( le_byte_t ) * LE_UV3_RECORD, le_vertex, le_stream ) != le_vertex ) {
+                        if ( fwrite( le_cache, sizeof( le_byte_t ) * LE_ARRAY_DATA, le_vertex, le_stream ) != le_vertex ) {
 
                             /* push message */
                             le_message = LE_ERROR_IO_WRITE;

@@ -135,6 +135,40 @@
 
     }
 
+    le_enum_t le_address_get_greater( le_address_t const * const le_address, le_address_t const * const le_applicant ) {
+
+        /* parsing variable */
+        le_size_t le_parse = 0;
+
+        /* compare address digit */
+        while ( le_parse < le_address->as_size ) {
+
+            /* digit identity detection */
+            if ( le_address->as_digit[le_parse] != le_applicant->as_digit[le_parse] ) {
+
+                /* compare digit */
+                if ( le_address->as_digit[le_parse] > le_applicant->as_digit[le_parse] ) {
+
+                    /* send message */
+                    return( _LE_TRUE );
+
+                } else {
+
+                    /* send message */
+                    return( _LE_FALSE );
+
+                }
+
+            /* update parser */
+            } else { le_parse ++; }
+
+        }
+
+        /* send message */
+        return( _LE_FALSE );
+
+    }
+
     le_void_t le_address_get_pose_( le_address_t const * const le_address, le_size_t le_size, le_real_t * const le_pose ) {
 
         /* scales variable */

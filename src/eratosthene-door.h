@@ -47,6 +47,7 @@
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
     # include "eratosthene-class.h"
+    # include "eratosthene-uv3.h"
 
 /*
     header - external includes

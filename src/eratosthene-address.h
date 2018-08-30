@@ -248,6 +248,10 @@
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb );
 
+    /* *** note : does not check address size equality */
+
+    le_enum_t le_address_get_greater( le_address_t const * const le_address, le_address_t const * const le_applicant );
+
     /*! \brief accessor methods
      *
      *  This function reads the digits of the index stored in the address
