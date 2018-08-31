@@ -344,7 +344,7 @@
      *  \param le_pose    3-vector containing the coordinates
      */
 
-    le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose );
+    le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t const * const le_pose );
 
     /*! \brief serialisation method ( revoked )
      *

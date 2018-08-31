@@ -273,27 +273,32 @@
 
     }
 
-    le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t * const le_pose ) {
+    le_void_t le_address_set_pose( le_address_t * const le_address, le_real_t const * const le_pose ) {
 
-        /* coordinates normalisation on [0,1[ range */
-        le_pose[0] = ( le_pose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L;
-        le_pose[1] = ( le_pose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A;
-        le_pose[2] = ( le_pose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H;
+        /* vector variable */
+        le_real_t le_vector[3] = {
+
+            /* coordinates normalisation on [0,1[ range */
+            ( le_pose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
+            ( le_pose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
+            ( le_pose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
+
+        };
 
         /* composing address */
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
 
             /* update dimension value */
-            le_pose[0] *= 2.0;
+            le_vector[0] *= 2.0;
 
             /* check dimension value */
-            if ( le_pose[0] >= 1.0 ) {
+            if ( le_vector[0] >= 1.0 ) {
 
                 /* assign address digit component */
                 le_address->as_digit[le_parse] = 0x01;
 
                 /* update dimension value */
-                le_pose[0] -= 1.0;
+                le_vector[0] -= 1.0;
 
             } else {
 
@@ -306,16 +311,16 @@
             if ( le_parse >= LE_ADDRESS_DEPTH_P ) {
 
                 /* update dimension value */
-                le_pose[1] *= 2.0;
+                le_vector[1] *= 2.0;
 
                 /* check dimension value */
-                if ( le_pose[1] >= 1.0 ) {
+                if ( le_vector[1] >= 1.0 ) {
 
                     /* assign address digit component */
                     le_address->as_digit[le_parse] |= 0x02;
 
                     /* update dimension value */
-                    le_pose[1] -= 1.0;
+                    le_vector[1] -= 1.0;
 
                 }
 
@@ -323,16 +328,16 @@
                 if ( le_parse >= LE_ADDRESS_DEPTH_A ) {
 
                     /* update dimension value */
-                    le_pose[2] *= 2.0;
+                    le_vector[2] *= 2.0;
 
                     /* check dimension value */
-                    if ( le_pose[2] >= 1.0 ) {
+                    if ( le_vector[2] >= 1.0 ) {
 
                         /* assign address digit component */
                         le_address->as_digit[le_parse] |= 0x04;
 
                         /* update dimension value */
-                        le_pose[2] -= 1.0;
+                        le_vector[2] -= 1.0;
 
                     }
 
