@@ -288,17 +288,14 @@
         /* composing address */
         for ( le_size_t le_parse = 0 ; le_parse < le_address->as_size; le_parse ++ ) {
 
-            /* update dimension value */
-            le_vector[0] *= 2.0;
-
-            /* check dimension value */
-            if ( le_vector[0] >= 1.0 ) {
-
-                /* assign address digit component */
-                le_address->as_digit[le_parse] = 0x01;
+            /* update and check dimension value */
+            if ( ( le_vector[0] *= 2.0 ) >= 1.0 ) {
 
                 /* update dimension value */
                 le_vector[0] -= 1.0;
+
+                /* assign address digit component */
+                le_address->as_digit[le_parse] = 0x01;
 
             } else {
 
@@ -310,34 +307,28 @@
             /* asynchronous dimension management */
             if ( le_parse >= LE_ADDRESS_DEPTH_P ) {
 
-                /* update dimension value */
-                le_vector[1] *= 2.0;
-
-                /* check dimension value */
-                if ( le_vector[1] >= 1.0 ) {
-
-                    /* assign address digit component */
-                    le_address->as_digit[le_parse] |= 0x02;
+                /* update and check dimension value */
+                if ( ( le_vector[1] *= 2.0) >= 1.0 ) {
 
                     /* update dimension value */
                     le_vector[1] -= 1.0;
+
+                    /* assign address digit component */
+                    le_address->as_digit[le_parse] |= 0x02;
 
                 }
 
                 /* asynchronous dimension management */
                 if ( le_parse >= LE_ADDRESS_DEPTH_A ) {
 
-                    /* update dimension value */
-                    le_vector[2] *= 2.0;
-
-                    /* check dimension value */
-                    if ( le_vector[2] >= 1.0 ) {
-
-                        /* assign address digit component */
-                        le_address->as_digit[le_parse] |= 0x04;
+                    /* update and check dimension value */
+                    if ( ( le_vector[2] *= 2.0 ) >= 1.0 ) {
 
                         /* update dimension value */
                         le_vector[2] -= 1.0;
+
+                        /* assign address digit component */
+                        le_address->as_digit[le_parse] |= 0x04;
 
                     }
 
