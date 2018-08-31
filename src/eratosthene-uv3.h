@@ -78,7 +78,7 @@
     header - function prototypes
  */
 
-    /* *** */
+    /* *** note : the function assume a complete uv3 stream chunk (no primitive truncation) */
 
     le_byte_t * le_uv3_set_sort( le_byte_t * const le_buffer, le_size_t const le_size, le_size_t const le_scfg );
 

@@ -135,32 +135,127 @@
 
     }
 
-    le_enum_t le_address_get_greater( le_address_t const * const le_address, le_address_t const * const le_applicant ) {
+    le_enum_t le_address_get_greater( le_real_t const * const le_fpose, le_real_t const * const le_spose, le_size_t const le_size ) {
 
-        /* parsing variable */
-        le_size_t le_parse = 0;
+        /* vector variable */
+        le_real_t le_fdual[3] = {
 
-        /* compare address digit */
-        while ( le_parse < le_address->as_size ) {
+            /* coordinates normalisation on [0,1[ range */
+            ( le_fpose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
+            ( le_fpose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
+            ( le_fpose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
 
-            /* digit identity detection */
-            if ( le_address->as_digit[le_parse] != le_applicant->as_digit[le_parse] ) {
+        };
 
-                /* compare digit */
-                if ( le_address->as_digit[le_parse] > le_applicant->as_digit[le_parse] ) {
+        /* vector variable */
+        le_real_t le_sdual[3] = {
 
-                    /* send message */
-                    return( _LE_TRUE );
+            /* coordinates normalisation on [0,1[ range */
+            ( le_spose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
+            ( le_spose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
+            ( le_spose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
 
-                } else {
+        };
 
-                    /* send message */
-                    return( _LE_FALSE );
+        /* digit variable */
+        le_byte_t le_fdigit = 0;
+
+        /* digit variable */
+        le_byte_t le_sdigit = 0;
+
+        /* composing address */
+        for ( le_size_t le_parse = 0 ; le_parse < le_size; le_parse ++ ) {
+
+            /* update and check dimension value */
+            if ( ( le_fdual[0] *= 2.0 ) >= 1.0 ) {
+
+                /* update dimension value */
+                le_fdual[0] -= 1.0;
+
+                /* assign digit component */
+                le_fdigit = 0x01;
+
+            /* initialise digit component */
+            } else { le_fdigit = 0x00; }
+
+            /* update and check dimension value */
+            if ( ( le_sdual[0] *= 2.0 ) >= 1.0 ) {
+
+                /* update dimension value */
+                le_sdual[0] -= 1.0;
+
+                /* assign digit component */
+                le_sdigit = 0x01;
+
+            /* initialise digit component */
+            } else { le_sdigit = 0x00; }
+
+            /* asynchronous dimension management */
+            if ( le_parse >= LE_ADDRESS_DEPTH_P ) {
+
+                /* update and check dimension value */
+                if ( ( le_fdual[1] *= 2.0 ) >= 1.0 ) {
+
+                    /* update dimension value */
+                    le_fdual[1] -= 1.0;
+
+                    /* assign digit component */
+                    le_fdigit |= 0x02;
 
                 }
 
-            /* update parser */
-            } else { le_parse ++; }
+                /* update and check dimension value */
+                if ( ( le_sdual[1] *= 2.0 ) >= 1.0 ) {
+
+                    /* update dimension value */
+                    le_sdual[1] -= 1.0;
+
+                    /* assign digit component */
+                    le_sdigit |= 0x02;
+
+                }
+
+                /* asynchronous dimension management */
+                if ( le_parse >= LE_ADDRESS_DEPTH_A ) {
+
+                    /* update and check dimension value */
+                    if ( ( le_fdual[2] *= 2.0 ) >= 1.0 ) {
+
+                        /* update dimension value */
+                        le_fdual[2] -= 1.0;
+
+                        /* assign digit component */
+                        le_fdigit |= 0x04;
+
+                    }
+
+                    /* update and check dimension value */
+                    if ( ( le_sdual[2] *= 2.0 ) >= 1.0 ) {
+
+                        /* update dimension value */
+                        le_sdual[2] -= 1.0;
+
+                        /* assign digit component */
+                        le_sdigit |= 0x04;
+
+                    }
+
+                }
+
+            }
+
+            /* digit comparison */
+            if ( le_fdigit > le_sdigit ) {
+
+                /* send message */
+                return( _LE_TRUE );
+
+            } else if ( le_fdigit < le_sdigit ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
 
         }
 

@@ -248,9 +248,9 @@
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb );
 
-    /* *** note : does not check address size equality */
+    /* *** */
 
-    le_enum_t le_address_get_greater( le_address_t const * const le_address, le_address_t const * const le_applicant );
+    le_enum_t le_address_get_greater( le_real_t const * const le_fpose, le_real_t const * const le_spose, le_size_t const le_size );
 
     /*! \brief accessor methods
      *

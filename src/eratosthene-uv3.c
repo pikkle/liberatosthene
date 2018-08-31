@@ -45,10 +45,6 @@
         le_size_t le_qhead = 0;
         le_size_t le_qedge = 0;
 
-        /* address variable */
-        le_address_t le_paddr = LE_ADDRESS_C_SIZE( le_scfg );
-        le_address_t le_qaddr = LE_ADDRESS_C_SIZE( le_scfg );
-
         /* allocate buffer memory */
         if ( ( le_dual[1] = ( le_byte_t * ) malloc( le_size ) ) == NULL ) {
 
@@ -102,22 +98,8 @@
 
                     } else {
 
-                        le_real_t le_pvec[3];
-
-                        memcpy( le_pvec, le_dual[le_swip] + le_phead, sizeof( le_real_t ) * 3 );
-
-                        le_real_t le_qvec[3];
-
-                        memcpy( le_qvec, le_dual[le_swip] + le_qhead, sizeof( le_real_t ) * 3 );
-
-                        /* compute address digit */
-                        le_address_set_pose( & le_paddr, le_pvec );
-
-                        /* compute address digit */
-                        le_address_set_pose( & le_qaddr, le_qvec );
-
                         /* compare address index */
-                        if ( le_address_get_greater( & le_paddr, & le_qaddr ) == _LE_TRUE ) {
+                        if ( le_address_get_greater( ( le_real_t * ) ( le_dual[le_swip] + le_phead ), ( le_real_t * ) ( le_dual[le_swip] + le_qhead ), le_scfg ) == _LE_TRUE ) {
 
                             /* merge range */
                             memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, LE_ARRAY_DATA );
