@@ -55,16 +55,19 @@
  */
 
     /* define uv3 primitive */
-    # define LE_UV3_POINT    ( 1 )
-    # define LE_UV3_LINE     ( 2 )
-    # define LE_UV3_TRIANGLE ( 3 )
+    # define LE_UV3_POINT         ( 1 )
+    # define LE_UV3_LINE          ( 2 )
+    # define LE_UV3_TRIANGLE      ( 3 )
 
     /* define standard chunk size */
-    # define LE_UV3_CHUNK    ( 2396745 )
+    # define LE_UV3_CHUNK         ( 2396745 )
 
 /*
     header - preprocessor macros
  */
+
+    /* uv3 record access */
+    # define le_uv3_get_type( r ) ( * ( ( le_byte_t * ) ( r + LE_ARRAY_DATA_POSE ) ) )
 
 /*
     header - type definition

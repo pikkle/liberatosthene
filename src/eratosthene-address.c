@@ -140,20 +140,20 @@
         /* vector variable */
         le_real_t le_fdual[3] = {
 
-            /* coordinates normalisation on [0,1[ range */
-            ( le_fpose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
-            ( le_fpose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
-            ( le_fpose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
+        /* coordinates normalisation on [0,1[ range */
+        ( le_fpose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
+        ( le_fpose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
+        ( le_fpose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
 
         };
 
         /* vector variable */
         le_real_t le_sdual[3] = {
 
-            /* coordinates normalisation on [0,1[ range */
-            ( le_spose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
-            ( le_spose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
-            ( le_spose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
+        /* coordinates normalisation on [0,1[ range */
+        ( le_spose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
+        ( le_spose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
+        ( le_spose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
 
         };
 
@@ -373,10 +373,10 @@
         /* vector variable */
         le_real_t le_vector[3] = {
 
-            /* coordinates normalisation on [0,1[ range */
-            ( le_pose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
-            ( le_pose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
-            ( le_pose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
+        /* coordinates normalisation on [0,1[ range */
+        ( le_pose[0] - LE_ADDRESS_MIN_L ) * LE_ADDRESS_IRN_L,
+        ( le_pose[1] - LE_ADDRESS_MIN_A ) * LE_ADDRESS_IRN_A,
+        ( le_pose[2] - LE_ADDRESS_MIN_H ) * LE_ADDRESS_IRN_H
 
         };
 

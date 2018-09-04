@@ -21,7 +21,7 @@
     # include "eratosthene-uv3.h"
 
 /*
-    source -
+    source - mutator methods
  */
 
     le_byte_t * le_uv3_set_sort( le_byte_t * const le_buffer, le_size_t const le_size, le_size_t const le_scfg ) {
@@ -41,9 +41,12 @@
 
         /* merge variable */
         le_size_t le_phead = 0;
-        le_size_t le_pedge = 0;
+        le_size_t le_pbulk = 0;
         le_size_t le_qhead = 0;
-        le_size_t le_qedge = 0;
+        le_size_t le_qbulk = 0;
+
+        /* size variable */
+        le_size_t le_copy = 0;
 
         /* allocate buffer memory */
         if ( ( le_dual[1] = ( le_byte_t * ) malloc( le_size ) ) == NULL ) {
@@ -64,61 +67,101 @@
 
                 /* compute merge range */
                 le_phead = le_index;
-                le_pedge = le_phead + le_step;
+
+                if ( ( le_phead + le_step ) >= le_size ) {
+
+                    le_pbulk = ( le_size - le_phead ) / LE_ARRAY_DATA;
+
+                } else {
+
+                    le_pbulk = le_step / LE_ARRAY_DATA;
+
+                }
 
                 /* compute merge range */
-                le_qhead = le_pedge;
-                le_qedge = le_qhead + le_step;
+                le_qhead = le_index + le_step;
 
-                /* check edge - correction */
-                if ( le_pedge > le_size ) le_pedge = le_size;
+                if ( ( le_qhead + le_step ) >= le_size ) {
 
-                /* check edge - correction */
-                if ( le_qedge > le_size ) le_qedge = le_size;
+                    le_qbulk = le_size - le_qhead;
+
+                    if ( le_qbulk > 0 ) {
+
+                        le_qbulk /= LE_ARRAY_DATA;
+
+                    } else {
+
+                        le_qbulk = 0;
+
+                    }
+
+                } else {
+
+                    le_qbulk = le_step / LE_ARRAY_DATA;
+
+                }
 
                 /* range merging algorithm */
-                while ( le_index < le_qedge ) {
+                while ( ( le_pbulk | le_qbulk ) != 0 ) {
 
                     /* exhaust condition */
-                    if ( le_phead >= le_pedge ) {
+                    if ( le_pbulk == 0 ) {
+
+                        le_copy = le_qbulk * LE_ARRAY_DATA;
 
                         /* merge remaining range */
-                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, le_qedge - le_qhead );
+                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, le_copy );
 
                         /* update index */
-                        le_index = le_qedge;
+                        le_index += le_copy;
 
-                    } else if ( le_qhead >= le_qedge ) {
+                        le_qbulk = 0;
+
+                    } else if ( le_qbulk == 0 ) {
+
+                        le_copy = le_pbulk * LE_ARRAY_DATA;
 
                         /* merge remaining range */
-                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_phead, le_pedge - le_phead );
+                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_phead, le_copy );
 
                         /* update index */
-                        le_index = le_qedge;
+                        le_index += le_copy;
+
+                        le_pbulk = 0;
 
                     } else {
 
                         /* compare address index */
                         if ( le_address_get_greater( ( le_real_t * ) ( le_dual[le_swip] + le_phead ), ( le_real_t * ) ( le_dual[le_swip] + le_qhead ), le_scfg ) == _LE_TRUE ) {
 
+                            /* compute primitive size */
+                            le_copy = LE_ARRAY_DATA * le_uv3_get_type( le_dual[le_swip] + le_qhead );
+
                             /* merge range */
-                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, LE_ARRAY_DATA );
+                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, le_copy );
 
                             /* update head */
-                            le_qhead += LE_ARRAY_DATA;
+                            le_qhead += le_copy;
+
+                            le_qbulk --;
 
                         } else {
 
+                            /* compute primitive size */
+                            le_copy = LE_ARRAY_DATA * le_uv3_get_type( le_dual[le_swip] + le_phead );
+
                             /* merge range */
-                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_phead, LE_ARRAY_DATA );
+                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_phead, le_copy );
 
                             /* update head */
-                            le_phead += LE_ARRAY_DATA;
+                            le_phead += le_copy;
+
+                            le_pbulk --;
 
                         }
 
                         /* update index */
-                        le_index += LE_ARRAY_DATA;
+                        le_index += le_copy;
 
                     }
 
