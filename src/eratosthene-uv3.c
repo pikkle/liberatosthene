@@ -33,23 +33,22 @@
         le_size_t le_swip = 0;
         le_size_t le_swis = 1;
 
-        /* step variable */
-        le_size_t le_step = LE_ARRAY_DATA;
-
-        /* index variable */
-        le_size_t le_index = 0;
-
-        /* merge variable */
-        le_size_t le_phead = 0;
-        le_size_t le_pbulk = 0;
-        le_size_t le_qhead = 0;
-        le_size_t le_qbulk = 0;
-
-        /* size variable */
         le_size_t le_copy = 0;
 
+        /* algorithm variable */
+        le_size_t le_range = 1;
+        le_size_t le_merge = 2;
+        le_size_t le_count = 0;
+
+        /* merge variable */
+        le_size_t le_index = 0;
+        le_size_t le_start = 0;
+        le_size_t le_middl = 0;
+        le_size_t le_inner = 0;
+        le_size_t le_limit = 0;
+
         /* allocate buffer memory */
-        if ( ( le_dual[1] = ( le_byte_t * ) malloc( le_size ) ) == NULL ) {
+        if ( ( le_dual[le_swis] = ( le_byte_t * ) malloc( le_size ) ) == NULL ) {
 
             /* send message */
             return( NULL );
@@ -57,120 +56,136 @@
         }
 
         /* sorting algorithm */
-        while ( le_step < le_size ) {
+        while ( le_merge > 1 ) {
+
+            /* reset algorithm variable */
+            le_merge = 0;
 
             /* reset index */
             le_index = 0;
 
-            /* merging algorithm */
+            le_size_t le_track = le_dual[le_swip][LE_ARRAY_DATA_POSE];
+
+            /* merging procedure */
             while ( le_index < le_size ) {
 
-                /* compute merge range */
-                le_phead = le_index;
+                /* range specification */
+                le_limit = ( le_start = le_index ) + LE_ARRAY_DATA_POSE;
 
-                if ( ( le_phead + le_step ) >= le_size ) {
+                le_count = 0;
 
-                    le_pbulk = ( le_size - le_phead ) / LE_ARRAY_DATA;
+                le_enum_t le_flag = _LE_FALSE;
 
-                } else {
+                while ( le_flag == _LE_FALSE ) {
 
-                    le_pbulk = le_step / LE_ARRAY_DATA;
+                    if ( ( le_limit += LE_ARRAY_DATA ) < le_size ) {
 
-                }
+                        if ( ( -- le_track ) == 0 ) {
 
-                /* compute merge range */
-                le_qhead = le_index + le_step;
+                            le_track = le_dual[le_swip][le_limit];
 
-                if ( ( le_qhead + le_step ) >= le_size ) {
+                            if ( ( ++ le_count ) == le_range ) {
 
-                    le_qbulk = le_size - le_qhead;
+                                le_middl = ( le_inner = le_limit - LE_ARRAY_DATA_POSE );
 
-                    if ( le_qbulk > 0 ) {
+                                le_flag = _LE_TRUE;
 
-                        le_qbulk /= LE_ARRAY_DATA;
-
-                    } else {
-
-                        le_qbulk = 0;
-
-                    }
-
-                } else {
-
-                    le_qbulk = le_step / LE_ARRAY_DATA;
-
-                }
-
-                /* range merging algorithm */
-                while ( ( le_pbulk | le_qbulk ) != 0 ) {
-
-                    /* exhaust condition */
-                    if ( le_pbulk == 0 ) {
-
-                        le_copy = le_qbulk * LE_ARRAY_DATA;
-
-                        /* merge remaining range */
-                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, le_copy );
-
-                        /* update index */
-                        le_index += le_copy;
-
-                        le_qbulk = 0;
-
-                    } else if ( le_qbulk == 0 ) {
-
-                        le_copy = le_pbulk * LE_ARRAY_DATA;
-
-                        /* merge remaining range */
-                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_phead, le_copy );
-
-                        /* update index */
-                        le_index += le_copy;
-
-                        le_pbulk = 0;
-
-                    } else {
-
-                        /* compare address index */
-                        if ( le_address_get_greater( ( le_real_t * ) ( le_dual[le_swip] + le_phead ), ( le_real_t * ) ( le_dual[le_swip] + le_qhead ), le_scfg ) == _LE_TRUE ) {
-
-                            /* compute primitive size */
-                            le_copy = LE_ARRAY_DATA * le_uv3_get_type( le_dual[le_swip] + le_qhead );
-
-                            /* merge range */
-                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, le_copy );
-
-                            /* update head */
-                            le_qhead += le_copy;
-
-                            le_qbulk --;
-
-                        } else {
-
-                            /* compute primitive size */
-                            le_copy = LE_ARRAY_DATA * le_uv3_get_type( le_dual[le_swip] + le_phead );
-
-                            /* merge range */
-                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_phead, le_copy );
-
-                            /* update head */
-                            le_phead += le_copy;
-
-                            le_pbulk --;
+                            }
 
                         }
 
-                        /* update index */
+                    } else {
+
+                        le_limit = ( le_middl = ( le_inner = le_size ) );
+
+                        le_flag = _LE_TRUE;
+
+                    }
+
+                }
+
+                if ( le_inner < le_size ) {
+
+                    le_flag = _LE_FALSE;
+
+                    le_count = 0;
+
+                    while ( le_flag == _LE_FALSE ) {
+
+                        if ( ( le_limit += LE_ARRAY_DATA ) < le_size ) {
+
+                            if ( ( -- le_track ) == 0 ) {
+
+                                le_track = le_dual[le_swip][le_limit];
+
+                                if ( ( ++ le_count ) == le_range ) {
+
+                                    le_limit -= LE_ARRAY_DATA_POSE;
+
+                                    le_flag = _LE_TRUE;
+
+                                }
+
+                            }
+
+                        } else {
+
+                            le_limit = le_size;
+
+                            le_flag = _LE_TRUE;
+
+                        }
+
+                    }
+
+                }
+
+                while ( le_index < le_limit ) {
+
+                    if ( le_start == le_middl ) {
+
+                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_inner, le_limit - le_inner );
+
+                        le_index = le_limit;
+
+                    } else if ( le_inner == le_limit ) {
+
+                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_start, le_middl - le_start );
+
+                        le_index = le_limit;
+
+                    } else {
+
+                        if ( le_address_get_greater( ( le_real_t * ) ( le_dual[le_swip] + le_start ), ( le_real_t * ) ( le_dual[le_swip] + le_inner ), le_scfg ) == _LE_TRUE ) {
+
+                            le_copy = le_uv3_get_type( le_dual[le_swip] + le_inner ) * LE_ARRAY_DATA;
+
+                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_inner, le_copy );
+
+                            le_inner += le_copy;
+
+                        } else {
+
+                            le_copy = le_uv3_get_type( le_dual[le_swip] + le_start ) * LE_ARRAY_DATA;
+
+                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_start, le_copy );
+
+                            le_start += le_copy;
+
+                        }
+
                         le_index += le_copy;
 
                     }
 
                 }
 
+                le_merge ++;
+
             }
 
-            /* update step */
-            le_step <<= 1;
+            /* update algorithm variable */
+            le_range *= 2;
 
             /* update switch */
             le_swip = 1 - le_swip;
