@@ -33,7 +33,14 @@
         le_size_t le_swip = 0;
         le_size_t le_swis = 1;
 
+        /* size variable */
         le_size_t le_copy = 0;
+
+        /* flag variable */
+        le_enum_t le_flag = 0;
+
+        /* stack variable */
+        le_size_t le_stack = 0;
 
         /* algorithm variable */
         le_size_t le_range = 1;
@@ -42,10 +49,12 @@
 
         /* merge variable */
         le_size_t le_index = 0;
-        le_size_t le_start = 0;
-        le_size_t le_middl = 0;
-        le_size_t le_inner = 0;
-        le_size_t le_limit = 0;
+
+        /* merge variable */
+        le_size_t le_phead = 0;
+        le_size_t le_pedge = 0;
+        le_size_t le_qhead = 0;
+        le_size_t le_qedge = 0;
 
         /* allocate buffer memory */
         if ( ( le_dual[le_swis] = ( le_byte_t * ) malloc( le_size ) ) == NULL ) {
@@ -58,36 +67,46 @@
         /* sorting algorithm */
         while ( le_merge > 1 ) {
 
-            /* reset algorithm variable */
+            /* reset algorithm */
             le_merge = 0;
 
             /* reset index */
             le_index = 0;
 
-            le_size_t le_track = le_dual[le_swip][LE_ARRAY_DATA_POSE];
+            /* initial primitive */
+            le_stack = le_uv3_get_type( le_dual[le_swip] );
 
             /* merging procedure */
             while ( le_index < le_size ) {
 
                 /* range specification */
-                le_limit = ( le_start = le_index ) + LE_ARRAY_DATA_POSE;
+                le_qedge = ( le_phead = le_index ) + LE_ARRAY_DATA_POSE;
 
+                /* reset flag */
+                le_flag = _LE_FALSE;
+
+                /* reset range */
                 le_count = 0;
 
-                le_enum_t le_flag = _LE_FALSE;
-
+                /* search range boundary */
                 while ( le_flag == _LE_FALSE ) {
 
-                    if ( ( le_limit += LE_ARRAY_DATA ) < le_size ) {
+                    /* stream boundary detection */
+                    if ( ( le_qedge += LE_ARRAY_DATA ) < le_size ) {
 
-                        if ( ( -- le_track ) == 0 ) {
+                        /* primitive stack */
+                        if ( ( -- le_stack ) == 0 ) {
 
-                            le_track = le_dual[le_swip][le_limit];
+                            /* primitive size */
+                            le_stack = le_dual[le_swip][le_qedge];
 
+                            /* update and check range */
                             if ( ( ++ le_count ) == le_range ) {
 
-                                le_middl = ( le_inner = le_limit - LE_ARRAY_DATA_POSE );
+                                /* compute range domain */
+                                le_pedge = ( le_qhead = le_qedge - LE_ARRAY_DATA_POSE );
 
+                                /* update flag */
                                 le_flag = _LE_TRUE;
 
                             }
@@ -96,32 +115,44 @@
 
                     } else {
 
-                        le_limit = ( le_middl = ( le_inner = le_size ) );
+                        /* compute range domain */
+                        le_qedge = ( le_pedge = ( le_qhead = le_size ) );
 
+                        /* update flag */
                         le_flag = _LE_TRUE;
 
                     }
 
                 }
 
-                if ( le_inner < le_size ) {
+                /* check range boundary */
+                if ( le_qedge < le_size ) {
 
+                    /* reset flag */
                     le_flag = _LE_FALSE;
 
+                    /* reset range */
                     le_count = 0;
 
+                    /* search range boundary */
                     while ( le_flag == _LE_FALSE ) {
 
-                        if ( ( le_limit += LE_ARRAY_DATA ) < le_size ) {
+                        /* stream boundary detection */
+                        if ( ( le_qedge += LE_ARRAY_DATA ) < le_size ) {
 
-                            if ( ( -- le_track ) == 0 ) {
+                            /* primitive stack */
+                            if ( ( -- le_stack ) == 0 ) {
 
-                                le_track = le_dual[le_swip][le_limit];
+                                /* primitive size */
+                                le_stack = le_dual[le_swip][le_qedge];
 
+                                /* update and check range */
                                 if ( ( ++ le_count ) == le_range ) {
 
-                                    le_limit -= LE_ARRAY_DATA_POSE;
+                                    /* compute range domain */
+                                    le_qedge -= LE_ARRAY_DATA_POSE;
 
+                                    /* update flag */
                                     le_flag = _LE_TRUE;
 
                                 }
@@ -130,8 +161,10 @@
 
                         } else {
 
-                            le_limit = le_size;
+                            /* compute range domain */
+                            le_qedge = le_size;
 
+                            /* update flag */
                             le_flag = _LE_TRUE;
 
                         }
@@ -140,51 +173,66 @@
 
                 }
 
-                while ( le_index < le_limit ) {
+                /* merge range */
+                while ( le_index < le_qedge ) {
 
-                    if ( le_start == le_middl ) {
+                    /* check exhaust condition */
+                    if ( le_phead == le_pedge ) {
 
-                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_inner, le_limit - le_inner );
+                        /* copy remaining range */
+                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, le_qedge - le_qhead );
 
-                        le_index = le_limit;
+                        /* update merge index */
+                        le_index = le_qedge;
 
-                    } else if ( le_inner == le_limit ) {
+                    } else if ( le_qhead == le_qedge ) {
 
-                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_start, le_middl - le_start );
+                        /* copy remaining range */
+                        memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_phead, le_pedge - le_phead );
 
-                        le_index = le_limit;
+                        /* update merge index */
+                        le_index = le_qedge;
 
                     } else {
 
-                        if ( le_address_get_greater( ( le_real_t * ) ( le_dual[le_swip] + le_start ), ( le_real_t * ) ( le_dual[le_swip] + le_inner ), le_scfg ) == _LE_TRUE ) {
+                        /* sorting condition */
+                        if ( le_address_get_greater( ( le_real_t * ) ( le_dual[le_swip] + le_phead ), ( le_real_t * ) ( le_dual[le_swip] + le_qhead ), le_scfg ) == _LE_TRUE ) {
 
-                            le_copy = le_uv3_get_type( le_dual[le_swip] + le_inner ) * LE_ARRAY_DATA;
+                            /* compute primitive size */
+                            le_copy = le_uv3_get_type( le_dual[le_swip] + le_qhead ) * LE_ARRAY_DATA;
 
-                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_inner, le_copy );
+                            /* copy primitive */
+                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_qhead, le_copy );
 
-                            le_inner += le_copy;
+                            /* update range domain */
+                            le_qhead += le_copy;
 
                         } else {
 
-                            le_copy = le_uv3_get_type( le_dual[le_swip] + le_start ) * LE_ARRAY_DATA;
+                            /* compute primitive size */
+                            le_copy = le_uv3_get_type( le_dual[le_swip] + le_phead ) * LE_ARRAY_DATA;
 
-                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_start, le_copy );
+                            /* copy primitive */
+                            memcpy( le_dual[le_swis] + le_index, le_dual[le_swip] + le_phead, le_copy );
 
-                            le_start += le_copy;
+                            /* update range domain */
+                            le_phead += le_copy;
 
                         }
 
+                        /* update merge index */
                         le_index += le_copy;
 
                     }
 
                 }
 
+                /* update algorithm */
                 le_merge ++;
 
             }
 
-            /* update algorithm variable */
+            /* update algorithm */
             le_range *= 2;
 
             /* update switch */
