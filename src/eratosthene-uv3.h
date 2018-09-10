@@ -85,6 +85,10 @@
 
     le_byte_t * le_uv3_set_sort( le_byte_t * const le_buffer, le_size_t const le_size, le_size_t const le_scfg );
 
+    /* *** */
+
+    le_enum_t le_uv3_set_merge( le_char_t const * const le_pfile, le_char_t const * const le_qfile, le_char_t const * const le_file, le_size_t const le_scfg );
+
 /*
     header - C/C++ compatibility
  */
