@@ -24,7 +24,7 @@
     source - mutator methods
  */
 
-    le_byte_t * le_uv3_set_sort( le_byte_t * const le_buffer, le_size_t const le_size, le_size_t const le_scfg ) {
+    le_byte_t * le_uv3_set_sort( le_byte_t * const le_buffer, le_size_t const le_size, le_size_t le_memory, le_size_t const le_scfg ) {
 
         /* buffer variable */
         le_byte_t * le_dual[2] = { le_buffer, NULL };
@@ -57,7 +57,7 @@
         le_size_t le_qedge = 0;
 
         /* allocate buffer memory */
-        if ( ( le_dual[le_swis] = ( le_byte_t * ) malloc( le_size ) ) == NULL ) {
+        if ( ( le_dual[le_swis] = ( le_byte_t * ) malloc( le_memory ) ) == NULL ) {
 
             /* send message */
             return( NULL );
