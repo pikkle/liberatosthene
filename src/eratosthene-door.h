@@ -235,6 +235,10 @@
 
     /* *** */
 
+    le_enum_t le_door_io_each_inject_dispatch( le_door_t const * const le_door, le_array_t * const le_array, le_sock_t const le_socket );
+
+    /* *** */
+
     le_enum_t le_door_io_each_inject_filter( le_door_t const * const le_door, le_array_t const * const le_array );
 
     /*! \brief i/o methods ( revoked )

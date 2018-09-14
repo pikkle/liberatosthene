@@ -349,6 +349,228 @@
     source - i/o methods
  */
 
+    le_enum_t le_door_io_each_inject_dispatch( le_door_t const * const le_door, le_array_t * const le_array, le_sock_t const le_socket ) {
+
+        /* path variable */
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
+
+        /* stream variable */
+        le_file_t le_stream = NULL;
+
+        /* mode variable */
+        le_enum_t le_mode = LE_MODE_INJE;
+
+        /* stack variable */
+        le_size_t le_stack = 1;
+
+        /* dispatch variable */
+        le_size_t le_switch = 0;
+
+        /* array pointer variable */
+        le_byte_t * le_head = NULL;
+        le_byte_t * le_edge = NULL;
+
+        /* buffer pointer variable */
+        le_byte_t * le_mbyte = NULL;
+        le_byte_t * le_pbyte = NULL;
+
+        /* index variable */
+        le_size_t le_mindex = 0;
+        le_size_t le_pindex = 0;
+
+        /* stack variable */
+        le_size_t le_mstack = 0;
+        le_size_t le_pstack = 0;
+
+        /* size variable */
+        le_size_t le_chunk = LE_ARRAY_DATA * LE_UV3_CHUNK;
+
+        /* size variable */
+        le_size_t le_spare = LE_ARRAY_DATA * _LE_BYTE_MAX + le_chunk;
+
+        /* message variable */
+        le_enum_t le_message = LE_ERROR_SUCCESS;
+
+        /* allocate buffer memory */
+        if ( ( le_mbyte = ( le_byte_t * ) malloc( le_chunk ) ) == NULL ) {
+
+            /* push message */
+            le_message = LE_ERROR_MEMORY;
+
+        } else {
+
+            /* allocate buffer memory */
+            if ( ( le_pbyte = ( le_byte_t * ) malloc( le_spare ) ) == NULL ) {
+
+                /* push message */
+                le_message = LE_ERROR_MEMORY;
+
+            } else {
+
+                /* array stream dispatch */
+                while ( ( le_mode == LE_MODE_INJE ) && ( le_message == LE_ERROR_SUCCESS ) ) {
+
+                    /* exhaust condition */
+                    if ( le_head == le_edge ) {
+
+                        /* read and check next array */
+                        if ( ( le_mode = le_array_io_read( le_array, le_socket ) ) == LE_MODE_INJE ) {
+
+                            /* compute array pointer */
+                            le_edge = ( le_head = le_array_get_byte( le_array ) ) + le_array_get_size( le_array );
+
+                        } else {
+
+                            /* assign array pointer */
+                            le_edge = ( le_head = NULL );
+
+                        }
+
+                    }
+
+                    /* stack management */
+                    le_stack --;
+
+                    /* check index */
+                    if ( ( le_stack == 0 ) && ( ( le_mindex >= le_chunk ) || ( ( le_head == NULL ) && ( le_mindex != 0 ) ) ) ) {
+
+                        /* sort chunk */
+                        if ( ( le_mbyte = le_uv3_set_sort( le_mbyte, le_mindex, le_chunk, le_door->dr_scfg ) ) == NULL ) {
+
+                            /* push message */
+                            le_message = LE_ERROR_MEMORY;
+
+                        } else {
+
+                            /* compose path */
+                            sprintf( ( char * ) le_path, "%s/0/1%" _LE_SIZE_P, le_door->dr_path, le_mstack ++ );
+
+                            /* create and check stream */
+                            if ( ( le_stream = fopen( ( char * ) le_path, "wb" ) ) == NULL ) {
+
+                                /* push message */
+                                le_message = LE_ERROR_IO_WRITE;
+
+                            } else {
+
+                                /* export chunk */
+                                if ( fwrite( le_mbyte, sizeof( le_byte_t ), le_mindex, le_stream ) != le_mindex ) {
+
+                                    /* push message */
+                                    le_message = LE_ERROR_IO_WRITE;
+
+                                } else {
+
+                                    /* reset index */
+                                    le_mindex = 0;
+
+                                }
+
+                                /* delete stream */
+                                fclose( le_stream );
+
+                            }
+
+                        }
+
+                    }
+
+                    /* check index */
+                    if ( ( le_stack == 0 ) && ( ( le_pindex >= le_chunk ) || ( ( le_head == NULL ) && ( le_pindex != 0 ) ) ) ) {
+
+                        /* sort chunk */
+                        if ( ( le_pbyte = le_uv3_set_sort( le_pbyte, le_pindex, le_spare, le_door->dr_scfg ) ) == NULL ) {
+
+                            /* push message */
+                            le_message = LE_ERROR_MEMORY;
+
+                        } else {
+
+                            /* compose path */
+                            sprintf( ( char * ) le_path, "%s/0/2%" _LE_SIZE_P, le_door->dr_path, le_pstack ++ );
+
+                            /* create and check stream */
+                            if ( ( le_stream = fopen( ( char * ) le_path, "wb" ) ) == NULL ) {
+
+                                /* push message */
+                                le_message = LE_ERROR_IO_WRITE;
+
+                            } else {
+
+                                /* export chunk */
+                                if ( fwrite( le_pbyte, sizeof( le_byte_t ), le_pindex, le_stream ) != le_pindex ) {
+
+                                    /* push message */
+                                    le_message = LE_ERROR_IO_WRITE;
+
+                                } else {
+
+                                    /* reset index */
+                                    le_pindex = 0;
+
+                                }
+
+                                /* delete stream */
+                                fclose( le_stream );
+
+                            }
+
+                        }
+
+                    }
+
+                    /* check array head */
+                    if ( le_head != NULL ) {
+
+                        /* check stack state */
+                        if ( le_stack == 0 ) {
+
+                            /* update stack */
+                            le_stack = ( le_switch = le_uv3_get_type( le_head ) );
+
+                        }
+
+                        /* check dispatch */
+                        if ( le_switch == 1 ) {
+
+                            /* dispatch record */
+                            memcpy( ( char * ) ( le_mbyte + le_mindex ), ( char * ) le_head, LE_ARRAY_DATA );
+
+                            /* update index */
+                            le_mindex += LE_ARRAY_DATA;
+
+                        } else {
+
+                            /* dispatch record */
+                            memcpy( ( char * ) ( le_pbyte + le_pindex ), ( char * ) le_head, LE_ARRAY_DATA );
+
+                            /* update index */
+                            le_pindex += LE_ARRAY_DATA;
+
+                        }
+
+                        /* update head */
+                        le_head += LE_ARRAY_DATA;
+
+                    }
+
+                }
+
+                /* release buffer memory */
+                free( le_pbyte );
+
+            }
+
+            /* release buffer memory */
+            free( le_mbyte );
+
+        }
+
+        /* send message */
+        return( le_message );
+
+    }
+
     le_enum_t le_door_io_each_inject_filter( le_door_t const * const le_door, le_array_t const * const le_array ) {
 
         /* path variable */
