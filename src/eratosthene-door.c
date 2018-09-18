@@ -875,7 +875,7 @@
                                     if ( le_address_get_digit( & le_hold, le_scale - 1 ) != _LE_USE_BASE ) {
 
                                         /* export class */
-                                        fwrite( le_class + le_scale, sizeof( le_byte_t ), LE_CLASS_ARRAY, le_door->dr_sacc[le_scale] );
+                                        le_class_io_write( le_class + le_scale, _LE_OFFS_NULL, le_door->dr_sacc[le_scale] );
 
                                         /* update offset */
                                         le_offset[le_scale] += LE_CLASS_ARRAY;
@@ -937,7 +937,7 @@
                 while ( le_scale < le_door->dr_scfg ) {
 
                     /* export class */
-                    fwrite( le_class + le_scale, sizeof( le_byte_t ), LE_CLASS_ARRAY, le_door->dr_sacc[le_scale] );
+                    le_class_io_write( le_class + le_scale, _LE_OFFS_NULL, le_door->dr_sacc[le_scale] );
 
                     /* update parser */
                     le_scale ++;

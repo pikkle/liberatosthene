@@ -212,7 +212,7 @@
 
     le_enum_t le_class_io_readf( le_class_t * const le_class, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This function performs the invert operation of \b le_class_io_write()
      *  function. It creates the storage representation of the provided class

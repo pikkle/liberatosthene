@@ -138,8 +138,13 @@
 
     le_enum_t le_class_io_write( le_class_t const * const le_class, le_size_t const le_offset, le_file_t const le_stream ) {
 
-        /* stream offset */
-        fseek( le_stream, le_offset, SEEK_SET );
+        /* check offset */
+        if ( le_offset != _LE_OFFS_NULL ) {
+
+            /* stream offset */
+            fseek( le_stream, le_offset, SEEK_SET );
+
+        }
 
         /* write class */
         if ( fwrite( ( le_void_t * ) le_class->cs_data, sizeof( le_byte_t ), LE_CLASS_ARRAY, le_stream ) != LE_CLASS_ARRAY ) {
