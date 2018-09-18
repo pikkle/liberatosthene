@@ -239,6 +239,14 @@
 
     /* *** */
 
+    le_enum_t le_door_io_each_inject_merge( le_door_t const * const le_door, le_size_t const le_suffix );
+
+    /* *** */
+
+    le_enum_t le_door_io_mono_inject_beta( le_door_t const * const le_door );
+
+    /* *** */
+
     le_enum_t le_door_io_each_inject_filter( le_door_t const * const le_door, le_array_t const * const le_array );
 
     /*! \brief i/o methods ( revoked )

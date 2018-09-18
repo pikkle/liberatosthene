@@ -434,6 +434,85 @@
         return( LE_ERROR_SUCCESS );
     }
 
+    le_enum_t le_switch_io_inject_beta( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket ) {
+
+        /* time variable */
+        le_time_t le_time = _LE_TIME_NULL;
+
+        /* door variable */
+        le_door_t * le_door = NULL;
+
+        /* message variable */
+        le_enum_t le_message = LE_ERROR_SUCCESS;
+
+        /* check consistency */
+        if ( le_array_get_size( le_array ) != LE_ARRAY_INJE ) {
+
+            /* send message */
+            return( LE_ERROR_IO_ARRAY );
+
+        }
+
+        /* serialise time */
+        le_array_serial( le_array, & le_time, sizeof( le_time_t ), 0, _LE_GET );
+
+        /* check consistency */
+        if ( le_time == _LE_TIME_NULL ) {
+
+            /* send message */
+            return( LE_ERROR_TIME );
+
+        }
+
+        /* retrieve and check door */
+        if ( ( le_door = le_switch_get_inject( le_switch, le_time, LE_DOOR_WRITE ) ) == NULL ) {
+
+            /* send message */
+            return( LE_ERROR_IO_ACCESS );
+
+        }
+
+        /* lock door */
+        if ( le_door_set_state( le_door, LE_DOOR_LOCK ) == _LE_FALSE ) {
+
+            /* send message */
+            return( LE_ERROR_IO_ACCESS );
+
+        }
+
+        /* array stream dispatch */
+        if ( ( le_message = le_door_io_each_inject_dispatch( le_door, le_array, le_socket ) ) == LE_ERROR_SUCCESS ) {
+
+            /* merge dispatch chunks - monovertex */
+            if ( ( le_message = le_door_io_each_inject_merge( le_door, 1 ) ) == LE_ERROR_SUCCESS ) {
+
+                /* inject process - monovertex */
+                if ( ( le_message = le_door_io_mono_inject_beta( le_door ) ) == LE_ERROR_SUCCESS ) {
+
+                    /* merge dispatch chunks - polyvertex */
+                    if ( ( le_message = le_door_io_each_inject_merge( le_door, 2 ) ) == LE_ERROR_SUCCESS ) {
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        /* unlock door */
+        if ( le_door_set_state( le_door, LE_DOOR_UNLOCK ) == _LE_FALSE ) {
+
+            /* send message */
+            return( LE_ERROR_IO_ACCESS );
+
+        }
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
+
+    }
+
     le_enum_t le_switch_io_inject( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket ) {
 
         /* time variable */

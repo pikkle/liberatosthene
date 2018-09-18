@@ -294,7 +294,7 @@
                         case ( LE_MODE_INJE ) : {
 
                             /* service management */
-                            le_message = le_switch_io_inject( & le_switch, le_array, le_socket );
+                            le_message = le_switch_io_inject_beta( & le_switch, le_array, le_socket );
 
                         } break;
 

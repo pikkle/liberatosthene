@@ -97,7 +97,7 @@
      *  A last field is used by the structure creation methods to specified the
      *  creation status of the structure. This allows to creation methods to
      *  return the structure instead of an error code.
-     *  
+     *
      *  \var le_tree_struct::tr_root
      *  Server storage structure path
      *  \var le_tree_struct::tr_scfg
@@ -169,7 +169,7 @@
     le_void_t le_switch_delete( le_switch_t * const le_switch );
 
     /*! \brief accessor methods ( revoked )
-     * 
+     *
      *  This function search in the provided tree structure stack the unit
      *  structure that matches exactly the provided time value.
      *
@@ -259,7 +259,7 @@
     /* *** */
 
     le_void_t le_switch_set_erase( le_switch_t * const le_switch );
-    
+
     /*! \brief i/o methods ( revoked )
      *
      *  This i/o method is responsible of answering server configuration request
@@ -296,6 +296,8 @@
      *
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
+
+    le_enum_t le_switch_io_inject_beta( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
     le_enum_t le_switch_io_inject( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
