@@ -591,6 +591,9 @@
         /* message variable */
         le_enum_t le_message = LE_ERROR_SUCCESS;
 
+        /* compose path */
+        sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+
         /* merge process */
         while ( ( le_merge > 1 ) && ( le_message == LE_ERROR_SUCCESS ) ) {
 
@@ -668,7 +671,7 @@
                         sprintf( ( char * ) le_derive, "%s/0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index >> 1 );
 
                         /* avoid single-chunk dispatch */
-                        if ( strcmp( ( char * ) le_pchunk, ( char * ) le_derive ) != 0 ) {
+                        if ( le_index > 1 ) {
 
                             /* move chunk */
                             if ( rename( ( char * ) le_pchunk, ( char * ) le_derive ) != 0 ) {
@@ -694,51 +697,56 @@
 
         }
 
-        /* compose persistant path */
+        /* compose chunk path */
+        sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+
+        /* compose chunk path */
         sprintf( ( char * ) le_qchunk, "%s/%" _LE_SIZE_P "_", le_door->dr_path, le_suffix );
 
-        /* check persistant chunk */
-        if ( le_get_exist( le_qchunk ) == _LE_TRUE ) {
+        /* check state */
+        if ( le_get_exist( le_pchunk ) == _LE_TRUE ) {
 
-            /* compose chunk path */
-            sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+            /* check persistant chunk */
+            if ( le_get_exist( le_qchunk ) == _LE_TRUE ) {
 
-            /* compose derivation path */
-            sprintf( ( char * ) le_derive, "%s/0/%" _LE_SIZE_P "1", le_door->dr_path,le_suffix );
+                /* compose derivation path */
+                sprintf( ( char * ) le_derive, "%s/0/%" _LE_SIZE_P "1", le_door->dr_path,le_suffix );
 
-            /* merge stream with persistant */
-            if ( ( le_message = le_uv3_set_merge( le_pchunk, le_qchunk, le_derive, le_door->dr_scfg ) ) == LE_ERROR_SUCCESS ) {
+                /* merge stream with persistant */
+                if ( ( le_message = le_uv3_set_merge( le_pchunk, le_qchunk, le_derive, le_door->dr_scfg ) ) == LE_ERROR_SUCCESS ) {
 
-                /* remove chunks */
-                if ( ( remove( ( char * ) le_pchunk ) | remove( ( char * ) le_qchunk ) ) != 0 ) {
-
-                    /* push message */
-                    le_message = LE_ERROR_IO_ACCESS;
-
-                } else {
-
-                    /* update persistant chunk */
-                    if ( rename( ( char * ) le_derive, ( char * ) le_qchunk ) != 0 ) {
+                    /* remove chunks */
+                    if ( ( remove( ( char * ) le_pchunk ) | remove( ( char * ) le_qchunk ) ) != 0 ) {
 
                         /* push message */
                         le_message = LE_ERROR_IO_ACCESS;
+
+                    } else {
+
+                        /* update persistant chunk */
+                        if ( rename( ( char * ) le_derive, ( char * ) le_qchunk ) != 0 ) {
+
+                            /* push message */
+                            le_message = LE_ERROR_IO_ACCESS;
+
+                        }
 
                     }
 
                 }
 
-            }
+            } else {
 
-        } else {
+                /* compose chunk path */
+                sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
 
-            /* compose chunk path */
-            sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+                /* update persistant chunk */
+                if ( rename( ( char * ) le_pchunk, ( char * ) le_qchunk ) != 0 ) {
 
-            /* update persistant chunk */
-            if ( rename( ( char * ) le_pchunk, ( char * ) le_qchunk ) != 0 ) {
+                    /* push message */
+                    le_message = LE_ERROR_IO_ACCESS;
 
-                /* push message */
-                le_message = LE_ERROR_IO_ACCESS;
+                }
 
             }
 
