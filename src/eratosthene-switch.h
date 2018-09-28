@@ -297,28 +297,7 @@
      *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
      */
 
-    le_enum_t le_switch_io_inject_beta( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
-
     le_enum_t le_switch_io_inject( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
-
-    /*! \brief i/o methods ( revoked )
-     *
-     *  This function allows client to query a specific time storage allocation
-     *  optimisation. The function reads the time packed in the socket-array and
-     *  search for the corresponding storage unit. If the unit is successfully
-     *  accessed and locked, the function sends the received socket-array back
-     *  as a confirmation. It then executes the optimisation process on the
-     *  pointed unit.
-     *
-     *  \param le_server Server structure
-     *  \param le_tree   Tree structure
-     *  \param le_stack  Socket-array stack
-     *  \param le_socket Client socket descriptor
-     *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
-     */
-
-    le_enum_t le_switch_io_optimise( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
     /*! \brief i/o methods ( revoked )
      *

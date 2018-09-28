@@ -59,10 +59,12 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, { 0 }, 0, NULL, NULL, LE_ERROR_SUCCESS }
+    //# define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, { 0 }, 0, NULL, NULL, LE_ERROR_SUCCESS }
+    //# define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define door link */
     # define LE_DOOR_PREV         ( 0 )
@@ -145,9 +147,6 @@
         le_file_t   dr_pacc[_LE_USE_DEPTH];
         le_size_t   dr_poff;
 
-        le_char_t   dr_mpth[_LE_USE_PATH];
-        le_size_t   dr_mlen;
-
         le_void_t * dr_prev;
         le_void_t * dr_next;
 
@@ -213,8 +212,6 @@
 
     le_enum_t le_door_get_poly( le_door_t const * const le_door );
 
-    le_enum_t le_door_get_poly_beta( le_door_t const * const le_door );
-
     /* *** */
 
     le_enum_t le_door_get_equal( le_door_t const * const le_door, le_time_t const le_time );
@@ -247,18 +244,6 @@
 
     le_enum_t le_door_io_each_inject_merge( le_door_t const * const le_door, le_size_t const le_suffix );
 
-    /* *** */
-
-    le_enum_t le_door_io_mono_inject_beta( le_door_t const * const le_door );
-
-    /* *** */
-
-    le_enum_t le_door_io_poly_inject_beta( le_door_t const * const le_door );
-
-    /* *** */
-
-    le_enum_t le_door_io_each_inject_filter( le_door_t const * const le_door, le_array_t const * const le_array );
-
     /*! \brief i/o methods ( revoked )
      *
      *  This function writes the content of the incoming array in the server
@@ -281,64 +266,11 @@
      *  \param le_array Array structure
      */
 
-    le_enum_t le_door_io_mono_inject( le_door_t const * const le_door );
+    le_enum_t le_door_io_mono_inject_beta( le_door_t const * const le_door );
 
     /* *** */
 
-    le_enum_t le_door_io_poly_inject( le_door_t * const le_door );
-
-    /* *** */
-
-    le_enum_t le_door_io_poly_inject_vertex( le_door_t * const le_door, le_byte_t const * const le_cache, le_size_t const le_vertex );
-
-    /* *** */
-
-    le_enum_t le_door_io_each_inject_clean( le_door_t const * const le_door );
-
-    /*! \brief mutator methods ( revoked )
-     *
-     *  This function allows to optimise the storage structure of the provided
-     *  unit structure. The function rewrites the storage structure of the unit
-     *  to allow faster read operations.
-     *
-     *  The function starts by creating "dual" files for each scales of the unit
-     *  in which the content of the current file is re-written in an optimised
-     *  fashion. At the end of the process, the "dual" files are move to over-
-     *  write the unit previous files.
-     *
-     *  This operation being heavy in terms of read and write operation, it can
-     *  be long on large unit storage structure.
-     *
-     *  \param le_unit Unit structure
-     */
-
-    le_void_t le_door_io_mono_optimise( le_door_t * const le_door );
-
-    /*! \brief i/o methods ( revoked )
-     *
-     *  This recursive function is the function used by the storage optimisation
-     *  procedure implemented in \b le_unit_set_optimise(). This function is
-     *  used to read the storage structure as the tree it defines. In the same
-     *  time, the read classes of the different scales are rewritten in their
-     *  "tree-reading" order in the provided "dual" files. The recursive process
-     *  ends as the tree is entirely read, and so, written in the "dual" files.
-     *
-     *  The "dual" stream array has to have, at least, a size equal to the
-     *  server space parameter. In addition, it as to contain already created
-     *  file descriptor toward the optimisation "dual" files.
-     *
-     *  In the same way, the class writing offsets tracker array (\b le_head)
-     *  has the same constraint on its size. In addition, its content has to be
-     *  zero for each of it used elements.
-     *
-     *  \param le_unit   Unit structure
-     *  \param le_dual   Dual stream array
-     *  \param le_offset Class offset
-     *  \param le_head   Class writing offsets tracker
-     *  \param le_scale  Scale number
-     */
-
-    le_void_t le_door_io_mono_optimise_rewrite( le_door_t * const le_door, le_file_t const * const le_dual, le_size_t const le_offset, le_size_t * const le_head, le_size_t const le_scale );
+    le_enum_t le_door_io_poly_inject_beta( le_door_t const * const le_door );
 
     /*! \brief i/o methods ( revoked )
      *
@@ -361,8 +293,6 @@
     /* *** */
 
     le_enum_t le_door_io_poly_detect( le_door_t * const le_door, le_address_t const * const le_addr );
-
-    le_enum_t le_door_io_poly_detect_beta( le_door_t * const le_door, le_address_t const * const le_addr );
 
     /*! \brief i/o methods ( revoked )
      *
@@ -392,8 +322,6 @@
     /* *** */
 
     le_void_t le_door_io_poly_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
-
-    le_void_t le_door_io_poly_gather_beta( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
     /*! \brief i/o methods ( revoked )
      *
