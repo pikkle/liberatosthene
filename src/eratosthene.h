@@ -197,7 +197,7 @@
     # define _LE_DATA            uint8_t
     # define _LE_SOCK            int
     # define _LE_FILE            FILE *
-    # define _LE_MASK            uint64_t
+    # define _LE_MASK            uint64_t /* delete */
     # define _LE_PROC            pthread_t
     # define _LE_MUTE            pthread_mutex_t
 
@@ -308,7 +308,7 @@
     typedef _LE_DATA le_data_t;
     typedef _LE_SOCK le_sock_t;
     typedef _LE_FILE le_file_t;
-    typedef _LE_MASK le_mask_t;
+    typedef _LE_MASK le_mask_t; /* delete */
     typedef _LE_PROC le_proc_t;
     typedef _LE_MUTE le_mute_t;
 

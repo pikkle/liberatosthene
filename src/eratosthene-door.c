@@ -100,28 +100,39 @@
 
         }
 
-        /* create mono-vertex stream */
-        while ( ( le_parse < le_door.dr_scfg ) && ( le_get_status( le_door ) == LE_ERROR_SUCCESS ) ) {
+        /* create each-vertex stream */
+        while ( le_parse < le_door.dr_scfg ) {
 
             /* compose path */
             sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
 
-            /* create stream */
+            /* create and check stream */
             if ( ( le_door.dr_sacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
 
-                /* delete mono-vertex stream */
-                while ( ( -- le_parse ) >= 0 ) {
-
-                    /* close stream */
-                    fclose( le_door.dr_sacc[le_parse] );
-
-                }
+                /* delete structure */
+                le_door_delete( & le_door );
 
                 /* return created structure */
-                return( le_set_status( le_door, LE_ERROR_IO_READ ) );
+                return( le_set_status( le_door, LE_ERROR_IO_ACCESS ) );
 
-            /* update index */
-            } else { le_parse ++; }
+            }
+
+            /* compose path */
+            sprintf( ( char * ) le_path, "%s/2/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
+
+            /* create and check stream */
+            if ( ( le_door.dr_pacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
+
+                /* delete structure */
+                le_door_delete( & le_door );
+
+                /* return created strcuture */
+                return( le_set_status( le_door, LE_ERROR_IO_ACCESS ) );
+
+            }
+
+            /*  update parser */
+            le_parse ++;
 
         }
 
@@ -138,8 +149,21 @@
         /* parsing monovertex stream */
         for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
 
-            /* delete stream */
-            fclose( le_door->dr_sacc[le_parse] );
+            /* check stream */
+            if ( le_door->dr_sacc[le_parse] != NULL ) {
+
+                /* delete stream */
+                fclose( le_door->dr_sacc[le_parse] );
+
+            }
+
+            /* check stream */
+            if ( le_door->dr_pacc[le_parse] != NULL ) {
+
+                /* delete stream */
+                fclose( le_door->dr_pacc[le_parse] );
+
+            }
 
         }
 
@@ -215,6 +239,13 @@
 
         /* return detection result */
         return( ( le_door->dr_mlen != 0 ) ? _LE_TRUE : _LE_FALSE );
+
+    }
+
+    le_enum_t le_door_get_poly_beta( le_door_t const * const le_door ) {
+
+        /* return detection result */
+        return( ( le_door->dr_poff != _LE_OFFS_NULL ) ? _LE_TRUE : _LE_FALSE );
 
     }
 
@@ -592,7 +623,9 @@
         le_enum_t le_message = LE_ERROR_SUCCESS;
 
         /* compose path */
-        sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+        //sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+
+        /* check *** */
 
         /* merge process */
         while ( ( le_merge > 1 ) && ( le_message == LE_ERROR_SUCCESS ) ) {
@@ -805,12 +838,7 @@
         sprintf( ( char * ) le_path, "%s/1_", le_door->dr_path );
 
         /* create stream */
-        if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) == NULL ) {
-
-            /* push message */
-            le_message = LE_ERROR_IO_READ;
-
-        } else {
+        if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) != NULL ) {
 
             /* allocate buffer memory */
             if ( ( le_buffer = ( le_byte_t * ) malloc( le_chunk ) ) == NULL ) {
@@ -959,6 +987,231 @@
 
             /* delete stream */
             fclose( le_stream );
+
+        }
+
+        /* send message */
+        return( le_message );
+
+    }
+
+    le_enum_t le_door_io_poly_inject_beta( le_door_t const * const le_door ) {
+
+        /* address variable */
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
+
+        /* address variable */
+        le_address_t le_hold = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
+
+        /* address variable */
+        le_address_t le_span = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
+
+        /* path variable */
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
+
+        /* buffer variable */
+        le_byte_t * le_buffer = NULL;
+
+        /* size variable */
+        le_size_t le_size = LE_UV3_CHUNK * LE_ARRAY_DATA;
+
+        /* parsing variable */
+        le_size_t le_index = 0;
+
+        /* parsing variable */
+        le_size_t le_parse = 0;
+
+        le_size_t le_push = 0;
+
+        /* reading variable */
+        le_size_t le_read = 0;
+
+        /* stack variable */
+        le_size_t le_stack = 1;
+
+        /* depth variable */
+        le_size_t le_inject = 0;
+
+        /* stream variable */
+        le_file_t le_stream = NULL;
+
+        /* class variable */
+        le_pclass_t le_class[_LE_USE_DEPTH];
+
+        /* offset variable */
+        le_size_t le_offset[_LE_USE_DEPTH];
+
+        /* message variable */
+        le_enum_t le_message = LE_ERROR_SUCCESS;
+
+        /* compose path */
+        sprintf( ( char * ) le_path, "%s/2_", le_door->dr_path );
+
+        /* create stream */
+        if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) == NULL ) {
+
+            /* push message */
+            le_message = LE_ERROR_IO_READ;
+
+        } else {
+
+            /* allocate buffer memory */
+            if ( ( le_buffer = ( le_byte_t * ) malloc( le_size ) ) == NULL ) {
+
+                /* push message */
+                le_message = LE_ERROR_MEMORY;
+
+            } else {
+
+                /* reset parser */
+                le_parse = 0;
+
+                /* initialise address */
+                while ( le_parse < le_door->dr_scfg ) {
+
+                    /* initialise digit */
+                    le_address_set_digit( & le_addr, le_parse, _LE_USE_BASE );
+
+                    /* initialise offset */
+                    le_offset[le_parse] = 0;
+
+                    /* initialise class */
+                    le_class[le_parse] = le_pclass_create();
+
+                    /* update parser */
+                    le_parse ++;
+
+                }
+
+                /* stream reading */
+                while ( ( le_read = fread( le_buffer, sizeof( le_byte_t ), le_size, le_stream ) ) > 0 ) {
+
+                    /* reset parser */
+                    le_parse = 0;
+
+                    /* stream chunk reading */
+                    while ( le_parse < le_read ) {
+
+                        /* check stack */
+                        if ( ( -- le_stack ) == 0 ) {
+
+                            /* check index */
+                            if ( le_index > 0 ) {
+
+                                /* injection loop */
+                                for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
+
+                                    /* update class offset */
+                                    le_pclass_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth] );
+
+                                    /* check injection depth */
+                                    if ( le_depth >= le_inject ) {
+
+                                        /* push primitive */
+                                        le_pclass_set_push( le_class + le_depth, le_push );
+
+                                    }
+
+                                }
+
+                            }
+
+                            /* hold address */
+                            le_hold = le_addr;
+
+                            /* compute address */
+                            le_address_set_pose( & le_addr, ( le_real_t * ) ( le_buffer + le_parse ) );
+
+                            /* check index */
+                            if ( le_index > 0 ) {
+
+                                /* exportation loop */
+                                for ( le_size_t le_depth = 1; le_depth < le_door->dr_scfg; le_depth ++ ) {
+
+                                    /* compare digit */
+                                    if ( le_address_get_digit( & le_addr, le_depth - 1 ) != le_address_get_digit( & le_hold, le_depth - 1 ) ) {
+
+                                        /* export class */
+                                        le_pclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
+
+                                        /* reset class */
+                                        ( * ( le_class + le_depth ) ) = le_pclass_create();
+
+                                        /* update offset */
+                                        le_offset[le_depth] = ftell( le_door->dr_pacc[le_depth] );
+
+                                    }
+
+                                }
+
+                            }
+
+                            /* update stack */
+                            le_stack = le_uv3_get_type( le_buffer + le_parse );
+
+                            /* push index */
+                            le_push = le_index;
+
+                            /* reset span */
+                            le_inject = le_door->dr_scfg;
+
+                        } else {
+
+                            /* compute address */
+                            le_address_set_pose( & le_span, ( le_real_t * ) ( le_buffer + le_parse ) );
+
+                            /* span detection */
+                            for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
+
+                                /* digit comparison */
+                                //if ( le_address_get_digit( & le_span, le_depth ) == le_address_get_digit( & le_addr, le_depth ) ) {
+
+                                    /* maximum detection */
+                                //    if ( le_depth > le_inject ) {
+
+                                        /* update span */
+                                //        le_inject = le_depth;
+
+                                //    }
+
+                                //}
+
+                                if ( le_address_get_digit( & le_span, le_depth ) != le_address_get_digit( & le_addr, le_depth ) ) {
+
+                                    if ( le_depth < le_inject ) {
+
+                                        le_inject = le_depth;
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                        /* update parser */
+                        le_parse += LE_ARRAY_DATA;
+
+                        /* update offset */
+                        le_index += LE_ARRAY_DATA;
+
+                    } /* stream chunk reading */
+
+                } /* stream reading */
+
+                /* export class */
+                for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
+
+                    /* export class */
+                    le_pclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
+
+                }
+
+                /* release buffer memory */
+                free( le_buffer );
+
+            }
 
         }
 
@@ -1706,6 +1959,42 @@
 
     }
 
+    le_enum_t le_door_io_poly_detect_beta( le_door_t * const le_door, le_address_t const * const le_addr ) {
+
+        /* parsing variable */
+        le_size_t le_parse = 0;
+
+        /* size variable */
+        le_size_t le_size = le_address_get_size( le_addr );
+
+        /* class variable */
+        le_pclass_t le_class = LE_PCLASS_C;
+
+        /* reset offset */
+        le_door->dr_poff = 0;
+
+        /* follow offset */
+        do {
+
+            /* read class */
+            le_pclass_io_read( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
+
+            /* check offset */
+            if ( ( le_door->dr_poff = le_pclass_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) ) ) == _LE_OFFS_NULL ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+        /* update index and condition */
+        } while ( ( ++ le_parse ) < le_size );
+
+        /* send message */
+        return( _LE_TRUE );
+
+    }
+
     le_void_t le_door_io_mono_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         /* class variable */
@@ -1844,6 +2133,92 @@
 
             /* pop hash swicth */
             le_door->dr_mlen --;
+
+        }
+
+    }
+
+    le_void_t le_door_io_poly_gather_beta( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
+
+        /* class variable */
+        le_pclass_t le_class = LE_PCLASS_C;
+
+        /* path variable */
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
+
+        /* stream variable */
+        le_file_t le_stream = NULL;
+
+        /* read class */
+        le_pclass_io_read( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
+
+        /* enumeration boundary */
+        if ( le_parse == le_span ) {
+
+            /* check class */
+            if ( le_class.pc_data[0] > 0 ) { // encapsulation fault //
+
+                /* compose path */
+                sprintf( ( char * ) le_path, "%s/2_", le_door->dr_path );
+
+                /* create stream */
+                if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) != NULL ) {
+
+                    /* link base pointer */
+                    le_size_t * le_base = ( le_size_t * ) ( le_class.pc_data + sizeof( le_byte_t ) ); // encapsulation fault //
+
+                    /* parsing class links */
+                    for ( le_size_t le_link = 0; le_link < le_class.pc_data[0]; le_link ++ ) { // encapsulation fault //
+
+                        /* update array size */
+                        le_array_set( le_array, LE_ARRAY_DATA );
+
+                        /* seek link */
+                        fseek( le_stream, le_base[le_link], SEEK_SET ); // encapsulation fault //
+
+                        /* import records */
+                        fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_stream ); // check return //
+
+                        /* retrieve primitive */
+                        le_size_t le_type = * ( le_array_mac_ltype( le_array ) );
+
+                        /* complete primitive */
+                        for ( le_size_t le_vertex = 1; le_vertex < le_type; le_vertex ++ ) {
+
+                            /* update array size */
+                            le_array_set( le_array, LE_ARRAY_DATA );
+
+                            /* import record */
+                            fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_stream ); // check return //
+
+                        }
+
+                    }
+
+                    /* delete stream */
+                    fclose( le_stream );
+
+                }
+
+            }
+
+        } else {
+
+            /* enumerate daughter classes */
+            for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
+
+                /* extract class offset */
+                if ( ( le_door->dr_poff = le_pclass_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
+
+                    /* update address digit */
+                    le_address_set_digit( le_addr, le_parse, le_digit );
+
+                    /* recursive enumeration */
+                    le_door_io_poly_gather_beta( le_door, le_addr, le_parse + 1, le_span, le_array );
+
+                }
+
+            }
 
         }
 

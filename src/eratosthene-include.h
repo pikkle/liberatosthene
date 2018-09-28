@@ -49,6 +49,7 @@
     # include "eratosthene-class.h"
     # include "eratosthene-client.h"
     # include "eratosthene-door.h"
+    # include "eratosthene-pclass.h"
     # include "eratosthene-server.h"
     # include "eratosthene-switch.h"
     # include "eratosthene-uv3.h"

@@ -162,7 +162,8 @@
             if ( le_time_abs( le_door_get_reduced( le_parse ) - le_reduced ) < le_comb ) {
 
                 /* empty-cell detection */
-                if ( ( le_door_io_mono_detect( le_parse, le_addr ) | le_door_io_poly_detect( le_parse, le_addr ) ) == _LE_TRUE ) {
+                //if ( ( le_door_io_mono_detect( le_parse, le_addr ) | le_door_io_poly_detect( le_parse, le_addr ) ) == _LE_TRUE ) {
+                if ( ( le_door_io_mono_detect( le_parse, le_addr ) | le_door_io_poly_detect_beta( le_parse, le_addr ) ) == _LE_TRUE ) {
 
                     /* return door */
                     return( le_parse );
@@ -481,20 +482,44 @@
         }
 
         /* array stream dispatch */
-        if ( ( le_message = le_door_io_each_inject_dispatch( le_door, le_array, le_socket ) ) == LE_ERROR_SUCCESS ) {
+        if ( ( le_message = le_door_io_each_inject_dispatch( le_door, le_array, le_socket ) ) != LE_ERROR_SUCCESS ) {
 
-            /* merge dispatch chunks - monovertex */
-            if ( ( le_message = le_door_io_each_inject_merge( le_door, 1 ) ) == LE_ERROR_SUCCESS ) {
+            /* send message */
+            return( le_message );
 
-                /* inject process - monovertex */
-                if ( ( le_message = le_door_io_mono_inject_beta( le_door ) ) == LE_ERROR_SUCCESS ) {
+        }
 
-                    /* merge dispatch chunks - polyvertex */
-                    if ( ( le_message = le_door_io_each_inject_merge( le_door, 2 ) ) == LE_ERROR_SUCCESS ) {
+        /* merge dispatch chunks - mono-vertex */
+        if ( ( le_message = le_door_io_each_inject_merge( le_door, 1 ) ) != LE_ERROR_SUCCESS ) {
 
-                    }
+            /* send message */
+            return( le_message );
 
-                }
+        } else {
+
+            /* injection process - mono-vertex */
+            if ( ( le_message = le_door_io_mono_inject_beta( le_door ) ) != LE_ERROR_SUCCESS ) {
+
+                /* send message */
+                return( le_message );
+
+            }
+
+        }
+
+        /* merge dispatch chunks - poly-vertex */
+        if ( ( le_message = le_door_io_each_inject_merge( le_door, 2 ) ) != LE_ERROR_SUCCESS ) {
+
+            /* send message */
+            return( le_message );
+
+        } else {
+
+            /* injection process - poly-vertex */
+            if ( ( le_message = le_door_io_poly_inject_beta( le_door ) ) != LE_ERROR_SUCCESS ) {
+
+                /* send message */
+                return( le_message );
 
             }
 
@@ -718,11 +743,19 @@
                     }
 
                     /* check poly-vertex detection */
-                    if ( le_door_get_poly( le_pdoor ) == _LE_TRUE ) {
+                    //if ( le_door_get_poly( le_pdoor ) == _LE_TRUE ) {
 
                         /* gathering process - poly-vertex */
-                        le_door_io_poly_gather( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
+                    //    le_door_io_poly_gather( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
 
+                    //}
+
+                    /* check poly-vertex detection */
+                    if ( le_door_get_poly_beta( le_pdoor ) == _LE_TRUE ) {
+fprintf( stderr, "gathering\n" );
+                        /* gathering process - poly-vertex */
+                        le_door_io_poly_gather_beta( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
+fprintf( stderr, "gathering end\n" );
                     }
 
                 }
