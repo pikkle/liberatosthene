@@ -1091,11 +1091,15 @@
                                 /* injection loop */
                                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
-                                    /* update class offset */
-                                    le_pclass_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth] );
+                                    if ( le_depth < ( le_door->dr_scfg - 1 ) ) {
+
+                                        /* update class offset */
+                                        le_pclass_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
+
+                                    }
 
                                     /* check injection depth */
-                                    if ( le_depth >= le_inject ) {
+                                    if ( le_depth + 4 >= le_inject ) {
 
                                         /* push primitive */
                                         le_pclass_set_push( le_class + le_depth, le_push );
@@ -1353,7 +1357,12 @@
                         fseek( le_stream, le_base[le_link], SEEK_SET ); // encapsulation fault //
 
                         /* import records */
-                        fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_stream ); // check return //
+                        if ( fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_stream ) != LE_ARRAY_DATA ) { // check return //
+
+                            // debug //
+                            fprintf( stderr, "fault\n" );
+
+                        }
 
                         /* retrieve primitive */
                         le_size_t le_type = * ( le_array_mac_ltype( le_array ) );
@@ -1365,7 +1374,12 @@
                             le_array_set( le_array, LE_ARRAY_DATA );
 
                             /* import record */
-                            fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_stream ); // check return //
+                            if ( fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_stream ) != LE_ARRAY_DATA ) { // check return //
+
+                                // debug //
+                                fprintf( stderr, "fault\n" );
+
+                            }
 
                         }
 
