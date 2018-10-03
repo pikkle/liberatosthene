@@ -97,6 +97,12 @@
 
         }
 
+        /* compute path */
+        sprintf( ( char * ) le_path, "%s/2_", le_door.dr_path );
+
+        /* create poly-vertex stream */
+        le_door.dr_pdat = fopen( ( char * ) le_path, "rb" );
+
         /* create each-vertex stream */
         while ( le_parse < le_door.dr_scfg ) {
 
@@ -161,6 +167,14 @@
                 fclose( le_door->dr_pacc[le_parse] );
 
             }
+
+        }
+
+        /* delete poly-vertex stream */
+        if ( le_door->dr_pdat != NULL ) {
+
+            /* delete stream */
+            fclose( le_door->dr_pdat );
 
         }
 
@@ -1099,7 +1113,7 @@
                                     }
 
                                     /* check injection depth */
-                                    if ( le_depth + 4 >= le_inject ) {
+                                    if ( le_depth >= le_inject ) {
 
                                         /* push primitive */
                                         le_pclass_set_push( le_class + le_depth, le_push );
@@ -1129,7 +1143,8 @@
                                         le_pclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
 
                                         /* reset class */
-                                        ( * ( le_class + le_depth ) ) = le_pclass_create();
+                                        //( * ( le_class + le_depth ) ) = le_pclass_create();
+                                        le_pclass_reset( le_class + le_depth );
 
                                         /* update offset */
                                         le_offset[le_depth] = ftell( le_door->dr_pacc[le_depth] );
@@ -1190,6 +1205,9 @@
                     /* export class */
                     le_pclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
 
+                    /* delete class */
+                    le_pclass_delete( le_class + le_depth );
+
                 }
 
                 /* release buffer memory */
@@ -1221,7 +1239,7 @@
             /* read class offset */
             le_door->dr_soff = le_class_io_offset( le_door->dr_soff, le_address_get_digit( le_addr, le_parse ), * ( le_door->dr_sacc + le_parse ) );
 
-            /* read and check class offset */
+            /* check class offset */
             if ( le_door->dr_soff == _LE_OFFS_NULL ) {
 
                 /* send message */
@@ -1245,20 +1263,17 @@
         /* size variable */
         le_size_t le_size = le_address_get_size( le_addr );
 
-        /* class variable */
-        le_pclass_t le_class = LE_PCLASS_C;
-
         /* reset offset */
         le_door->dr_poff = 0;
 
         /* follow offset */
         do {
 
-            /* read class */
-            le_pclass_io_read( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
+            /* read class offset */
+            le_door->dr_poff = le_pclass_io_offset( le_door->dr_poff, le_address_get_digit( le_addr, le_parse ), * ( le_door->dr_pacc + le_parse ) );
 
-            /* check offset */
-            if ( ( le_door->dr_poff = le_pclass_get_offset( & le_class, le_address_get_digit( le_addr, le_parse ) ) ) == _LE_OFFS_NULL ) {
+            /* check class offset */
+            if ( le_door->dr_poff == _LE_OFFS_NULL ) {
 
                 /* send message */
                 return( _LE_FALSE );
@@ -1323,72 +1338,54 @@
         /* class variable */
         le_pclass_t le_class = LE_PCLASS_C;
 
-        /* path variable */
-        le_char_t le_path[_LE_USE_PATH] = { 0 };
+        /* size variable */
+        le_size_t le_size = 0;
 
-        /* stream variable */
-        le_file_t le_stream = NULL;
+        /* type variable */
+        le_size_t le_type = 0;
 
-        /* read class */
-        le_pclass_io_read( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
+        /* read class - partial */
+        le_pclass_io_read_fast( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
 
         /* enumeration boundary */
         if ( le_parse == le_span ) {
 
-            /* check class */
-            if ( le_class.pc_data[0] > 0 ) { // encapsulation fault //
+            /* check class content */
+            if ( ( le_size = le_pclass_get_size( & le_class ) ) > 0 ) {
 
-                /* compose path */
-                sprintf( ( char * ) le_path, "%s/2_", le_door->dr_path );
+                /* read class - completion */
+                le_pclass_io_read_next( & le_class, * ( le_door->dr_pacc + le_parse ) );
 
-                /* create stream */
-                if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) != NULL ) {
+                /* parsing class links */
+                for ( le_size_t le_link = 0; le_link < le_size; le_link ++ ) {
 
-                    /* link base pointer */
-                    le_size_t * le_base = ( le_size_t * ) ( le_class.pc_data + sizeof( le_byte_t ) ); // encapsulation fault //
+                    /* follow link */
+                    fseek( le_door->dr_pdat, le_pclass_get_link( & le_class, le_link ), SEEK_SET );
 
-                    /* parsing class links */
-                    for ( le_size_t le_link = 0; le_link < le_class.pc_data[0]; le_link ++ ) { // encapsulation fault //
+                    /* update array size */
+                    le_array_set( le_array, LE_ARRAY_DATA );
+
+                    /* import vertex */
+                    fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_door->dr_pdat );
+
+                    /* primitive type */
+                    le_type = * le_array_mac_ltype( le_array );
+
+                    /* import remaining vertex */
+                    for ( le_size_t le_vertex = 1; le_vertex < le_type; le_vertex ++ ) {
 
                         /* update array size */
                         le_array_set( le_array, LE_ARRAY_DATA );
 
-                        /* seek link */
-                        fseek( le_stream, le_base[le_link], SEEK_SET ); // encapsulation fault //
-
-                        /* import records */
-                        if ( fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_stream ) != LE_ARRAY_DATA ) { // check return //
-
-                            // debug //
-                            fprintf( stderr, "fault\n" );
-
-                        }
-
-                        /* retrieve primitive */
-                        le_size_t le_type = * ( le_array_mac_ltype( le_array ) );
-
-                        /* complete primitive */
-                        for ( le_size_t le_vertex = 1; le_vertex < le_type; le_vertex ++ ) {
-
-                            /* update array size */
-                            le_array_set( le_array, LE_ARRAY_DATA );
-
-                            /* import record */
-                            if ( fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_stream ) != LE_ARRAY_DATA ) { // check return //
-
-                                // debug //
-                                fprintf( stderr, "fault\n" );
-
-                            }
-
-                        }
+                        /* import vertex */
+                        fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_door->dr_pdat );
 
                     }
 
-                    /* delete stream */
-                    fclose( le_stream );
-
                 }
+
+                /* delete class */
+                le_pclass_delete( & le_class );
 
             }
 

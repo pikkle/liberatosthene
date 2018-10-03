@@ -60,11 +60,11 @@
 
     /* define pseudo-constructor */
     //# define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, LE_ERROR_SUCCESS }
-    # define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
     //# define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, LE_ERROR_SUCCESS }
-    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define door link */
     # define LE_DOOR_PREV         ( 0 )
@@ -146,6 +146,7 @@
 
         le_file_t   dr_pacc[_LE_USE_DEPTH];
         le_size_t   dr_poff;
+        le_file_t   dr_pdat;
 
         le_void_t * dr_prev;
         le_void_t * dr_next;

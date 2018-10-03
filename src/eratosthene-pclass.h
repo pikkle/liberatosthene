@@ -54,29 +54,29 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_PCLASS_C      { { 0 } }
-
-    /* define class limit */
-    # define LE_PCLASS_SIZE   ( 255 )
+    # define LE_PCLASS_C { 0, NULL, { 0 } }
 
     /* define class structure */
-    # define LE_PCLASS_DATA   ( sizeof( le_byte_t ) + sizeof( le_size_t ) * LE_PCLASS_SIZE )
+    # define LE_PCLASS_HEAD ( sizeof( uint16_t ) )
 
     /* define class structure */
     # define LE_PCLASS_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
 
-    /* define class memory */
-    # define LE_PCLASS_ARRAY  ( LE_PCLASS_DATA + LE_PCLASS_OFFSET )
+    /* define class structure */
+    # define LE_PCLASS_FIXED ( LE_PCLASS_HEAD + LE_PCLASS_OFFSET )
 
     /* define class memory */
-    # define LE_PCLASS_MEMORY ( LE_PCLASS_ARRAY + sizeof( le_size_t ) - _LE_USE_OFFSET )
+    # define LE_PCLASS_MEMORY ( LE_PCLASS_FIXED + _LE_USE_OFFSET )
+
+    /* define class management */
+    # define LE_PCLASS_STEP ( 32 )
 
 /*
     header - preprocessor macros
  */
 
     /* define offset access */
-    # define le_pclass_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->pc_data + LE_PCLASS_DATA + ( _LE_USE_OFFSET * ( i ) ) ) )
+    # define le_pclass_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->pc_data + LE_PCLASS_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) )
 
 /*
     header - type definition
@@ -90,7 +90,9 @@
 
     typedef struct le_pclass_struct {
 
-        le_byte_t pc_data[LE_PCLASS_MEMORY];
+        le_size_t   pc_size;
+        le_size_t * pc_link;
+        le_byte_t   pc_data[LE_PCLASS_MEMORY];
 
     } le_pclass_t;
 
@@ -104,7 +106,19 @@
 
     /* *** */
 
+    le_void_t le_pclass_reset( le_pclass_t * const le_pclass );
+
+    /* *** */
+
     le_void_t le_pclass_delete( le_pclass_t * const le_pclass );
+
+    /* *** */
+
+    le_size_t le_pclass_get_size( le_pclass_t const * const le_pclass );
+
+    /* *** */
+
+    le_size_t le_pclass_get_link( le_pclass_t const * const le_pclass, le_size_t const le_index );
 
     /* *** */
 
@@ -112,11 +126,15 @@
 
     /* *** */
 
+    le_enum_t le_pclass_set_memory( le_pclass_t * const le_pclass, le_size_t const le_size );
+
+    /* *** */
+
     le_void_t le_pclass_set_offset( le_pclass_t * const le_pclass, le_size_t const le_index, le_size_t const le_offset );
 
     /* *** */
 
-    le_void_t le_pclass_set_push( le_pclass_t * const le_pclass, le_size_t const le_link );
+    le_enum_t le_pclass_set_push( le_pclass_t * const le_pclass, le_size_t const le_link );
 
     /* *** */
 
@@ -124,7 +142,26 @@
 
     /* *** */
 
-    le_enum_t le_pclass_io_write( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_pclass_io_read_fast( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+
+    /* *** */
+
+    le_enum_t le_pclass_io_read_next( le_pclass_t * const le_pclass, le_file_t const le_stream );
+
+    /* *** */
+
+    le_enum_t le_pclass_io_write( le_pclass_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+
+    /*! \brief i/o methods (detached)
+     *
+     *  Note :
+     *
+     *  Detached methods are specific function associated to a structure but
+     *  without operating directly on it. Such function are used in optimisation
+     *  strategies.
+     */
+
+    le_size_t le_pclass_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
 
 /*
     header - C/C++ compatibility
