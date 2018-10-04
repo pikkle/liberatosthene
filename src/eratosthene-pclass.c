@@ -39,11 +39,8 @@
 
     le_void_t le_pclass_reset( le_pclass_t * const le_pclass ) {
 
-        /* size variable */
-        uint16_t * le_size = ( uint16_t * ) le_pclass->pc_data;
-
         /* reset class size */
-        ( * le_size ) = 0;
+        memset( le_pclass->pc_data, 0x00, sizeof( le_pdata_t ) );
 
         /* reset class offsets */
         memset( le_pclass->pc_data + LE_PCLASS_HEAD, 0xff, LE_PCLASS_OFFSET );
@@ -75,7 +72,7 @@
     le_size_t le_pclass_get_size( le_pclass_t const * const le_pclass ) {
 
         /* size variable */
-        uint16_t * le_size = ( uint16_t * ) le_pclass->pc_data;
+        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
 
         /* return class size */
         return( ( le_size_t ) ( * le_size ) );
@@ -141,35 +138,23 @@
 
     le_enum_t le_pclass_set_push( le_pclass_t * const le_pclass, le_size_t const le_link ) {
 
-        /* swap variable */
-        le_void_t * le_swap = NULL;
-
         /* size variable */
-        uint16_t * le_size = ( uint16_t * ) le_pclass->pc_data;
+        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
 
-        /* check memory */
+        /* check class memory */
         if ( le_pclass->pc_size == ( * le_size ) ) {
 
-            /* update size */
-            le_pclass->pc_size += LE_PCLASS_STEP;
-
-            /* memory re-allocation */
-            if ( ( le_swap = realloc( le_pclass->pc_link, le_pclass->pc_size * sizeof( le_size_t ) ) ) == NULL ) {
-
-                /* size fallback */
-                le_pclass->pc_size -= LE_PCLASS_STEP;
+            /* update class memory */
+            if ( le_pclass_set_memory( le_pclass, ( * le_size ) + LE_PCLASS_STEP ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( LE_ERROR_MEMORY );
 
             }
 
-            /* memory validation */
-            le_pclass->pc_link = ( le_size_t * ) le_swap;
-
         }
 
-        /* push link and update size */
+        /* push link and update class */
         le_pclass->pc_link[ ( * le_size ) ++ ] = le_link;
 
         /* send message */
@@ -184,7 +169,7 @@
     le_enum_t le_pclass_io_read( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* size variable */
-        uint16_t * le_size = ( uint16_t * ) le_pclass->pc_data;
+        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
 
         /* stream offset */
         fseek( le_stream, le_offset, SEEK_SET );
@@ -247,7 +232,7 @@
     le_enum_t le_pclass_io_read_next( le_pclass_t * const le_pclass, le_file_t const le_stream ) {
 
         /* size variable */
-        uint16_t * le_size = ( uint16_t * ) le_pclass->pc_data;
+        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
 
         /* memory management */
         if ( le_pclass_set_memory( le_pclass, ( * le_size ) ) != LE_ERROR_SUCCESS ) {
@@ -277,7 +262,7 @@
     le_enum_t le_pclass_io_write( le_pclass_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* size variable */
-        uint16_t * le_size = ( uint16_t * ) le_pclass->pc_data;
+        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
 
         /* check offset */
         if ( le_offset != _LE_OFFS_NULL ) {
@@ -318,7 +303,7 @@
         le_size_t le_return = _LE_OFFS_NULL;
 
         /* stream position */
-        fseek( le_stream, le_offset + LE_PCLASS_HEAD + ( le_index * _LE_USE_OFFSET ), SEEK_SET );
+        fseek( le_stream, le_offset + LE_PCLASS_HEAD + ( _LE_USE_OFFSET * le_index ), SEEK_SET );
 
         /* import offset */
         if ( fread( ( le_void_t * ) & le_return, sizeof( le_byte_t ), _LE_USE_OFFSET, le_stream ) != _LE_USE_OFFSET ) {
@@ -326,10 +311,12 @@
             /* send message */
             return( _LE_OFFS_NULL );
 
-        }
+        } else {
 
-        /* return offset */
-        return( le_return );
+            /* return offset */
+            return( le_return );
+
+        }
 
     }
 

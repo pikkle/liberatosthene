@@ -54,22 +54,22 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_PCLASS_C { 0, NULL, { 0 } }
+    # define LE_PCLASS_C      { 0, NULL, { 0 } }
 
     /* define class structure */
-    # define LE_PCLASS_HEAD ( sizeof( uint16_t ) )
+    # define LE_PCLASS_HEAD   ( sizeof( le_pdata_t ) )
 
     /* define class structure */
     # define LE_PCLASS_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
 
     /* define class structure */
-    # define LE_PCLASS_FIXED ( LE_PCLASS_HEAD + LE_PCLASS_OFFSET )
+    # define LE_PCLASS_FIXED  ( LE_PCLASS_HEAD + LE_PCLASS_OFFSET )
 
     /* define class memory */
     # define LE_PCLASS_MEMORY ( LE_PCLASS_FIXED + _LE_USE_OFFSET )
 
     /* define class management */
-    # define LE_PCLASS_STEP ( 32 )
+    # define LE_PCLASS_STEP   ( 32 )
 
 /*
     header - preprocessor macros
@@ -81,6 +81,9 @@
 /*
     header - type definition
  */
+
+    /* class data */
+    typedef uint16_t le_pdata_t;
 
 /*
     header - structures
