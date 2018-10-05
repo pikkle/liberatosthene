@@ -1102,6 +1102,8 @@
                             /* check index */
                             if ( le_index > 0 ) {
 
+                                if ( le_inject == le_door->dr_scfg ) le_inject --;
+
                                 /* injection loop */
                                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
@@ -1143,7 +1145,6 @@
                                         le_pclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
 
                                         /* reset class */
-                                        //( * ( le_class + le_depth ) ) = le_pclass_create();
                                         le_pclass_reset( le_class + le_depth );
 
                                         /* update offset */
@@ -1169,23 +1170,27 @@
                             /* compute address */
                             le_address_set_pose( & le_span, ( le_real_t * ) ( le_buffer + le_parse ) );
 
+                            le_size_t le_dist = le_address_get_dist( & le_span, & le_addr, le_door->dr_scfg );
+
+                            if ( le_dist < le_inject ) le_inject = le_dist;
+
                             /* span detection */
-                            for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
+                            //for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
                                 /* digit comparison */
-                                if ( le_address_get_digit( & le_span, le_depth ) != le_address_get_digit( & le_addr, le_depth ) ) {
+                            //    if ( le_address_get_digit( & le_span, le_depth ) != le_address_get_digit( & le_addr, le_depth ) ) {
 
                                     /* maximum detection */
-                                    if ( le_depth < le_inject ) {
+                            //        if ( le_depth < le_inject ) {
 
                                         /* update span */
-                                        le_inject = le_depth;
+                            //            le_inject = le_depth;
 
-                                    }
+                            //        }
 
-                                }
+                            //    }
 
-                            }
+                            //}
 
                         }
 
@@ -1344,6 +1349,9 @@
         /* type variable */
         le_size_t le_type = 0;
 
+        /* fallback variable */
+        le_size_t le_step = 0;
+
         /* read class - partial */
         le_pclass_io_read_fast( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
 
@@ -1362,23 +1370,41 @@
                     /* follow link */
                     fseek( le_door->dr_pdat, le_pclass_get_link( & le_class, le_link ), SEEK_SET );
 
+                    /* push array size */
+                    le_step = le_array_get_size( le_array );
+
                     /* update array size */
                     le_array_set( le_array, LE_ARRAY_DATA );
 
                     /* import vertex */
-                    fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_door->dr_pdat );
+                    if ( fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_door->dr_pdat ) != LE_ARRAY_DATA ) {
 
-                    /* primitive type */
-                    le_type = * le_array_mac_ltype( le_array );
+                        /* fallback */
+                        le_array_set_size( le_array, le_step );
 
-                    /* import remaining vertex */
-                    for ( le_size_t le_vertex = 1; le_vertex < le_type; le_vertex ++ ) {
+                    } else {
 
-                        /* update array size */
-                        le_array_set( le_array, LE_ARRAY_DATA );
+                        /* compute remaining vertex */
+                        le_type = * le_array_mac_ltype( le_array );
 
-                        /* import vertex */
-                        fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_door->dr_pdat );
+                        /* parsing vertex */
+                        while ( ( -- le_type ) > 0 ) {
+
+                            /* update array size */
+                            le_array_set( le_array, LE_ARRAY_DATA );
+
+                            /* import vertex */
+                            if ( fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_door->dr_pdat ) != LE_ARRAY_DATA ) {
+
+                                /* abort importation */
+                                le_type = 0;
+
+                                /* fallback */
+                                le_array_set_size( le_array, le_step );
+
+                            }
+
+                        }
 
                     }
 
