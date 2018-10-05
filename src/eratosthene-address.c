@@ -264,6 +264,82 @@
 
     }
 
+    le_size_t le_address_get_dist( le_address_t const * const le_address, le_address_t const * const le_origin, le_size_t const le_size ) {
+
+        /* parsing variable */
+        le_size_t le_parse = 0;
+
+        /* order variable */
+        le_size_t le_sign = 0;
+
+        /* arithmetic variable */
+        le_size_t le_remain = 0;
+
+        /* arithmetic variable */
+        le_size_t le_digit = 0;
+
+        /* returned value variable */
+        le_size_t le_return = 0;
+
+        /* parsing digit */
+        while ( ( le_parse < le_size ) && ( le_sign == 0 ) ) {
+
+            /* digit comparison */
+            if ( le_address->as_digit[le_parse] != le_origin->as_digit[le_parse] ) {
+
+                /* digit comparison */
+                if ( le_address->as_digit[le_parse] > le_origin->as_digit[le_parse] ) {
+
+                    /* update sign */
+                    le_sign = +1;
+
+                } else {
+
+                    /* update sign */
+                    le_sign = -1;
+
+                }
+
+            /* update parser */
+            } else { le_parse ++; }
+
+        }
+
+        /* case study */
+        if ( le_sign == 0 ) {
+
+            /* return distance */
+            return( le_size );
+
+        }
+
+        /* reset parser */
+        le_parse = le_size;
+
+        /* parsing digit */
+        while ( ( -- le_parse ) >= 0 ) {
+
+            /* compute digit */
+            le_digit = ( le_address->as_digit[le_parse] - le_origin->as_digit[le_parse] ) * le_sign + le_remain;
+
+            /* remainder broadcasting */
+            le_remain = ( le_digit < 0 ) ? -1 : 0;
+
+            /* check digit */
+            if ( le_digit != 0 ) {
+
+                /* update distance */
+                le_return = le_parse;
+
+            }
+
+        }
+
+        /* return distance */
+        return( le_return );
+
+    }
+
     le_void_t le_address_get_pose_( le_address_t const * const le_address, le_size_t le_size, le_real_t * const le_pose ) {
 
         /* scales variable */

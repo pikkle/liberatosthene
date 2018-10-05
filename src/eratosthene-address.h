@@ -92,8 +92,11 @@
     header - preprocessor macros
  */
 
-    /* base according to scale */
+    /* digit base from scale */
     # define le_address_base(s)       ( ( s ) < LE_ADDRESS_DEPTH_P ) ? ( _LE_USE_BASE >> 2 ) : ( ( ( s ) < LE_ADDRESS_DEPTH_A ) ? ( _LE_USE_BASE >> 1 ) : ( _LE_USE_BASE ) )
+
+    /* address common digit */
+    # define le_address_mac_min(s,t)  ( ( ( s )->as_size > ( t )->as_size ) ? ( t )->as_size : ( s )->as_size )
 
     /* method alias */
     # define le_address_get_pose(a,p) ( le_address_get_pose_( ( a ), ( a )->as_size, ( p ) ) )
@@ -251,6 +254,10 @@
     /* *** */
 
     le_enum_t le_address_get_greater( le_real_t const * const le_fpose, le_real_t const * const le_spose, le_size_t const le_size );
+
+    /* *** */
+
+    le_size_t le_address_get_dist( le_address_t const * const le_address, le_address_t const * const le_origin, le_size_t const le_size );
 
     /*! \brief accessor methods
      *
