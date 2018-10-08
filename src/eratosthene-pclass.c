@@ -40,7 +40,7 @@
     le_void_t le_pclass_reset( le_pclass_t * const le_pclass ) {
 
         /* reset class size */
-        memset( le_pclass->pc_data, 0x00, sizeof( le_pdata_t ) );
+        memset( le_pclass->pc_data, 0x00, sizeof( le_pidx_t ) );
 
         /* reset class offsets */
         memset( le_pclass->pc_data + LE_PCLASS_HEAD, 0xff, LE_PCLASS_OFFSET );
@@ -72,7 +72,7 @@
     le_size_t le_pclass_get_size( le_pclass_t const * const le_pclass ) {
 
         /* size variable */
-        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
+        le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
 
         /* return class size */
         return( ( le_size_t ) ( * le_size ) );
@@ -139,7 +139,7 @@
     le_enum_t le_pclass_set_push( le_pclass_t * const le_pclass, le_size_t const le_link ) {
 
         /* size variable */
-        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
+        le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
 
         /* check class limit */
         if ( ( * le_size ) == LE_PCLASS_LIMIT ) {
@@ -177,7 +177,7 @@
     le_enum_t le_pclass_io_read( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* size variable */
-        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
+        le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
 
         /* stream offset */
         fseek( le_stream, le_offset, SEEK_SET );
@@ -240,7 +240,7 @@
     le_enum_t le_pclass_io_read_next( le_pclass_t * const le_pclass, le_file_t const le_stream ) {
 
         /* size variable */
-        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
+        le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
 
         /* memory management */
         if ( le_pclass_set_memory( le_pclass, ( * le_size ) ) != LE_ERROR_SUCCESS ) {
@@ -270,7 +270,7 @@
     le_enum_t le_pclass_io_write( le_pclass_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* size variable */
-        le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
+        le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
 
         /* check offset */
         if ( le_offset != _LE_OFFS_NULL ) {

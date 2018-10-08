@@ -57,7 +57,7 @@
     # define LE_PCLASS_C      { 0, NULL, { 0 } }
 
     /* define class structure */
-    # define LE_PCLASS_HEAD   ( sizeof( le_pdata_t ) )
+    # define LE_PCLASS_HEAD   ( sizeof( le_pidx_t ) )
 
     /* define class structure */
     # define LE_PCLASS_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
@@ -71,7 +71,7 @@
     /* define class management */
     # define LE_PCLASS_STEP   ( 32 )
 
-    /* define class limit */
+    /* define class management */
     # define LE_PCLASS_LIMIT  ( UINT16_MAX )
 
 /*
@@ -86,7 +86,7 @@
  */
 
     /* class data */
-    typedef uint16_t le_pdata_t;
+    typedef uint16_t le_pidx_t;
 
 /*
     header - structures
