@@ -71,6 +71,9 @@
     /* define class management */
     # define LE_PCLASS_STEP   ( 32 )
 
+    /* define class limit */
+    # define LE_PCLASS_LIMIT  ( UINT16_MAX )
+
 /*
     header - preprocessor macros
  */

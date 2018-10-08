@@ -141,6 +141,14 @@
         /* size variable */
         le_pdata_t * le_size = ( le_pdata_t * ) le_pclass->pc_data;
 
+        /* check class limit */
+        if ( ( * le_size ) == LE_PCLASS_LIMIT ) {
+
+            /* send message */
+            return( LE_ERROR_OVERFLOW );
+
+        }
+
         /* check class memory */
         if ( le_pclass->pc_size == ( * le_size ) ) {
 

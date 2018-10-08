@@ -250,6 +250,7 @@
     # define LE_ERROR_MEMORY     ( 0x0008 )
     # define LE_ERROR_DEPTH      ( 0x0009 )
     # define LE_ERROR_TIME       ( 0x000a )
+    # define LE_ERROR_OVERFLOW   ( 0x000b )
 
     /* define server/client modes */
     # define LE_MODE_NULL        ( 0x00 )
