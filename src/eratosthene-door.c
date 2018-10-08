@@ -97,7 +97,7 @@
 
         }
 
-        /* compute path */
+        /* compose path */
         sprintf( ( char * ) le_path, "%s/2_", le_door.dr_path );
 
         /* create poly-vertex stream */
@@ -1027,6 +1027,8 @@
 
         le_size_t le_push = 0;
 
+        le_enum_t le_flag = _LE_FALSE;
+
         /* reading variable */
         le_size_t le_read = 0;
 
@@ -1135,11 +1137,14 @@
                             /* check index */
                             if ( le_index > 0 ) {
 
+                                /* reset flag */
+                                le_flag = _LE_FALSE;
+
                                 /* exportation loop */
                                 for ( le_size_t le_depth = 1; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
                                     /* compare digit */
-                                    if ( le_address_get_digit( & le_addr, le_depth - 1 ) != le_address_get_digit( & le_hold, le_depth - 1 ) ) {
+                                    if ( ( le_address_get_digit( & le_addr, le_depth - 1 ) != le_address_get_digit( & le_hold, le_depth - 1 ) ) || ( le_flag == _LE_TRUE ) ) {
 
                                         /* export class */
                                         le_pclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
@@ -1149,6 +1154,9 @@
 
                                         /* update offset */
                                         le_offset[le_depth] = ftell( le_door->dr_pacc[le_depth] );
+
+                                        /* continuous injection */
+                                        le_flag = _LE_TRUE;
 
                                     }
 
@@ -1172,25 +1180,11 @@
 
                             le_size_t le_dist = le_address_get_dist( & le_span, & le_addr, le_door->dr_scfg );
 
-                            if ( le_dist < le_inject ) le_inject = le_dist;
+                            if ( le_dist < le_inject ) {
 
-                            /* span detection */
-                            //for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
+                                le_inject = le_dist;
 
-                                /* digit comparison */
-                            //    if ( le_address_get_digit( & le_span, le_depth ) != le_address_get_digit( & le_addr, le_depth ) ) {
-
-                                    /* maximum detection */
-                            //        if ( le_depth < le_inject ) {
-
-                                        /* update span */
-                            //            le_inject = le_depth;
-
-                            //        }
-
-                            //    }
-
-                            //}
+                            }
 
                         }
 
