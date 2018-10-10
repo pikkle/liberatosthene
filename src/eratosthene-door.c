@@ -626,11 +626,6 @@
         /* message variable */
         le_enum_t le_message = LE_ERROR_SUCCESS;
 
-        /* compose path */
-        //sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
-
-        /* check *** */
-
         /* merge process */
         while ( ( le_merge > 1 ) && ( le_message == LE_ERROR_SUCCESS ) ) {
 
