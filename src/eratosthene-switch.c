@@ -515,7 +515,7 @@
         } else {
 
             /* injection process - poly-vertex */
-            if ( ( le_message = le_door_io_poly_inject_beta( le_door ) ) != LE_ERROR_SUCCESS ) {
+            if ( ( le_message = le_door_io_poly_inject( le_door ) ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( le_message );
