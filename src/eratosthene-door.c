@@ -1338,11 +1338,11 @@
         /* size variable */
         le_size_t le_size = 0;
 
-        /* type variable */
-        le_size_t le_type = 0;
-
         /* fallback variable */
         le_size_t le_step = 0;
+
+        /* reading variable */
+        le_size_t le_read = 0;
 
         /* read class - partial */
         le_pclass_io_read_fast( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
@@ -1359,37 +1359,34 @@
                 /* parsing class links */
                 for ( le_size_t le_link = 0; le_link < le_size; le_link ++ ) {
 
-                    /* follow link */
-                    fseek( le_door->dr_pdat, le_pclass_get_link( & le_class, le_link ), SEEK_SET );
+                    /* reset read length */
+                    le_read = LE_ARRAY_DATA << 1;
 
-                    /* push array size */
+                    /* retrieve array size */
                     le_step = le_array_get_size( le_array );
 
                     /* update array size */
-                    le_array_set( le_array, LE_ARRAY_DATA );
+                    le_array_set( le_array, le_read );
+
+                    /* follow link */
+                    fseek( le_door->dr_pdat, le_pclass_get_link( & le_class, le_link ), SEEK_SET );
 
                     /* import vertex */
-                    if ( fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_door->dr_pdat ) != LE_ARRAY_DATA ) {
+                    if ( fread( le_array_mac_back( le_array, le_read ), sizeof( le_byte_t ), le_read, le_door->dr_pdat ) != le_read ) {
 
                         /* fallback */
                         le_array_set_size( le_array, le_step );
 
                     } else {
 
-                        /* compute remaining vertex */
-                        le_type = * le_array_mac_ltype( le_array );
-
-                        /* parsing vertex */
-                        while ( ( -- le_type ) > 0 ) {
+                        /* check remaining read length */
+                        if ( ( le_read = ( * le_array_mac_ltype( le_array ) ) * LE_ARRAY_DATA - le_read ) > 0 ) {
 
                             /* update array size */
-                            le_array_set( le_array, LE_ARRAY_DATA );
+                            le_array_set( le_array, le_read );
 
                             /* import vertex */
-                            if ( fread( le_array_mac_lpose( le_array ), sizeof( le_byte_t ), LE_ARRAY_DATA, le_door->dr_pdat ) != LE_ARRAY_DATA ) {
-
-                                /* abort importation */
-                                le_type = 0;
+                            if ( fread( le_array_mac_back( le_array, le_read ), sizeof( le_byte_t ), le_read, le_door->dr_pdat ) != le_read ) {
 
                                 /* fallback */
                                 le_array_set_size( le_array, le_step );
