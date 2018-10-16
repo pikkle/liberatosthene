@@ -616,7 +616,7 @@
                 le_sdoor = le_switch_get_query( le_switch, le_address_get_time( & le_addr, 1 ), & le_addr );
 
                 /* check door mono-vertex offset */
-                if ( ( le_door_get_mono( le_pdoor ) | le_door_get_poly( le_sdoor ) ) == _LE_TRUE ) {
+                if ( ( le_door_get_mono( le_pdoor ) | le_door_get_mono( le_sdoor ) ) == _LE_TRUE ) {
 
                     /* gathering process - parallel */
                     le_door_io_mono_parallel( le_pdoor, le_sdoor, & le_addr, le_mode, le_size, le_span, le_array + 1 );

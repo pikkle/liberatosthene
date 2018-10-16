@@ -241,8 +241,28 @@
 
     le_enum_t le_door_get_mono( le_door_t const * const le_door ) {
 
-        /* return detection result */
-        return( ( le_door->dr_soff != _LE_OFFS_NULL ) ? _LE_TRUE : _LE_FALSE );
+        /* check pointer */
+        if ( le_door != NULL ) {
+
+            /* check offset */
+            if ( le_door->dr_soff != _LE_OFFS_NULL ) {
+
+                /* send message */
+                return( _LE_TRUE );
+
+            } else {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+        } else {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
 
     }
 
@@ -794,17 +814,26 @@
         /* path variable */
         le_char_t le_path[_LE_USE_PATH] = { 0 };
 
+        /* address variable */
+        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
+
+        /* address variable */
+        le_address_t le_hold = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
+
+        /* class variable */
+        le_mclass_t le_class[_LE_USE_DEPTH];
+
+        /* offset variable */
+        le_size_t le_offset[_LE_USE_DEPTH] = { 0 };
+
         /* buffer variable */
         le_byte_t * le_buffer = NULL;
 
-        /* buffer pointer variable */
-        le_data_t * le_data = NULL;
-
         /* size variable */
-        le_size_t le_chunk = LE_UV3_CHUNK * LE_ARRAY_DATA;
+        le_size_t le_size = LE_UV3_CHUNK * LE_ARRAY_DATA;
 
-        /* flag variable */
-        le_enum_t le_flag = _LE_FALSE;
+        /* stream variable */
+        le_file_t le_stream = NULL;
 
         /* reading variable */
         le_size_t le_read = 0;
@@ -812,23 +841,11 @@
         /* parsing variable */
         le_size_t le_parse = 0;
 
-        /* parsing variable */
-        le_size_t le_scale = 0;
+        /* flag variable */
+        le_enum_t le_first = _LE_FALSE;
 
-        /* stream variable */
-        le_file_t le_stream = NULL;
-
-        /* class variable */
-        le_class_t le_class[_LE_USE_DEPTH];
-
-        /* offset variable */
-        le_size_t le_offset[_LE_USE_DEPTH] = { 0 };
-
-        /* address variable */
-        le_address_t le_addr = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
-
-        /* address variable */
-        le_address_t le_hold = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
+        /* flag variable */
+        le_enum_t le_flag = _LE_FALSE;
 
         /* message variable */
         le_enum_t le_message = LE_ERROR_SUCCESS;
@@ -837,145 +854,116 @@
         sprintf( ( char * ) le_path, "%s/1_", le_door->dr_path );
 
         /* create stream */
-        if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) != NULL ) {
+        if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) == NULL ) {
+
+            /* push message */
+            le_message = LE_ERROR_IO_READ;
+
+        } else {
 
             /* allocate buffer memory */
-            if ( ( le_buffer = ( le_byte_t * ) malloc( le_chunk ) ) == NULL ) {
+            if ( ( le_buffer = ( le_byte_t * ) malloc( le_size ) ) == NULL ) {
 
                 /* push message */
                 le_message = LE_ERROR_MEMORY;
 
             } else {
 
-                /* reset parser */
-                le_parse = 0;
+                /* classes stack initialisation */
+                for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
-                /* initialise address */
-                while ( le_parse < le_door->dr_scfg ) {
-
-                    /* assign invalid digit */
-                    le_address_set_digit( & le_hold, le_parse ++, _LE_USE_BASE );
+                    /* initialise class */
+                    le_class[le_depth] = le_mclass_create();
 
                 }
 
-                /* stream reading */
-                while ( ( le_read = fread( le_buffer, sizeof( le_byte_t ), le_chunk, le_stream ) ) > 0 ) {
+                /* stream chunk reading */
+                while ( ( le_read = fread( le_buffer, sizeof( le_byte_t ), le_size, le_stream ) ) > 0 ) {
 
                     /* reset parser */
                     le_parse = 0;
 
-                    /* parsing buffer */
+                    /* parsing stream chunk */
                     while ( le_parse < le_read ) {
+
+                        /* hold address */
+                        le_hold = le_addr;
 
                         /* compute address */
                         le_address_set_pose( & le_addr, ( le_real_t * ) ( le_buffer + le_parse ) );
 
-                        /* compute buffer pointer */
-                        le_data = ( le_data_t * ) ( le_buffer + le_parse + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE );
+                        /* wait primitive */
+                        if ( le_first == _LE_TRUE ) {
 
-                        /* reset flag */
-                        le_flag = _LE_FALSE;
+                            /* reset continuous exportation */
+                            le_flag = _LE_FALSE;
 
-                        /* reset parser */
-                        le_scale = 0;
+                            /* class transversal exportation */
+                            for ( le_size_t le_depth = 1; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
-                        /* parsing scale */
-                        while ( le_scale < le_door->dr_scfg ) {
+                                /* check continuous exportation */
+                                if ( le_flag == _LE_FALSE ) {
 
-                            /* scale specific */
-                            if ( le_scale == 0 ) {
+                                    /* compare address digit */
+                                    if ( le_address_get_digit( & le_addr, le_depth - 1 ) != le_address_get_digit( & le_hold, le_depth - 1 ) ) {
 
-                                /* check hold digit */
-                                if ( le_address_get_digit( & le_hold, le_scale ) == _LE_USE_BASE ) {
-
-                                    /* class bootstrape */
-                                    le_class[le_scale] = le_class_create( le_data );
-
-                                } else {
-
-                                    /* update class */
-                                    le_class_set_push( le_class + le_scale, le_data );
-
-                                }
-
-                                /* update class offset */
-                                le_class_set_offset( le_class + le_scale, le_address_get_digit( & le_addr, le_scale ), le_offset[le_scale + 1] );
-
-                            } else {
-
-                                /* check hold digit */
-                                if ( ( le_flag == _LE_TRUE ) || ( le_address_get_digit( & le_addr, le_scale - 1 ) != le_address_get_digit( & le_hold, le_scale - 1 ) ) ) {
-
-                                    /* check hold digit */
-                                    if ( le_address_get_digit( & le_hold, le_scale - 1 ) != _LE_USE_BASE ) {
-
-                                        /* export class */
-                                        le_class_io_write( le_class + le_scale, _LE_OFFS_NULL, le_door->dr_sacc[le_scale] );
-
-                                        /* update offset */
-                                        le_offset[le_scale] += LE_CLASS_ARRAY;
+                                        /* update continuous exportation */
+                                        le_flag = _LE_TRUE;
 
                                     }
 
-                                    /* update flag */
-                                    le_flag = _LE_TRUE;
+                                }
+
+                                /* check continous exportation */
+                                if ( le_flag == _LE_TRUE ) {
+
+                                    /* class exportation */
+                                    le_mclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_sacc[le_depth] );
 
                                     /* reset class */
-                                    le_class[le_scale] = le_class_create( le_data );
+                                    le_mclass_reset( le_class + le_depth );
 
-                                } else {
-
-                                    /* update class */
-                                    le_class_set_push( le_class + le_scale, le_data );
-
-                                }
-
-                                /* check scale boundary */
-                                if ( le_scale < ( le_door->dr_scfg - 1 ) ) {
-
-                                    /* check hold digit */
-                                    if ( ( le_flag == _LE_TRUE ) || ( le_address_get_digit( & le_addr, le_scale ) != le_address_get_digit( & le_hold, le_scale ) ) ) {
-
-                                        /* update class offset */
-                                        le_class_set_offset( le_class + le_scale, le_address_get_digit( & le_addr, le_scale ), le_offset[le_scale + 1] + LE_CLASS_ARRAY );
-
-                                    } else {
-
-                                        /* update class offset */
-                                        le_class_set_offset( le_class + le_scale, le_address_get_digit( & le_addr, le_scale ), le_offset[le_scale + 1] );
-
-                                    }
+                                    /* update offset */
+                                    le_offset[le_depth] = ftell( le_door->dr_sacc[le_depth] );
 
                                 }
 
                             }
 
-                            /* update parser */
-                            le_scale ++;
+                        }
+
+                        /* injection and offset assignation */
+                        for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
+
+                            /* update class offset */
+                            le_mclass_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
+
+                            /* push primitive */
+                            le_mclass_set_push( le_class + le_depth, ( le_byte_t * ) ( le_buffer + le_parse + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) );
 
                         }
 
-                        /* hold address */
-                        le_hold = le_addr;
+                        /* push primitive */
+                        le_mclass_set_push( le_class + le_door->dr_scfg - 1, ( le_byte_t * ) ( le_buffer + le_parse + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) );
 
                         /* update parser */
                         le_parse += LE_ARRAY_DATA;
+
+                        /* update flag */
+                        le_first = _LE_TRUE;
 
                     }
 
                 }
 
-                /* reset parser */
-                le_scale = 0;
+                /* terminal transversal exportation */
+                for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
-                /* parsing scale */
-                while ( le_scale < le_door->dr_scfg ) {
+                    /* class exportation */
+                    le_mclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_sacc[le_depth] );
 
-                    /* export class */
-                    le_class_io_write( le_class + le_scale, _LE_OFFS_NULL, le_door->dr_sacc[le_scale] );
-
-                    /* update parser */
-                    le_scale ++;
+                    /* delete class */
+                    le_mclass_delete( le_class + le_depth );
 
                 }
 
@@ -1221,10 +1209,10 @@
 
     le_enum_t le_door_io_mono_detect( le_door_t * const le_door, le_address_t const * const le_addr ) {
 
-        /* parsing variables */
+        /* parsing variable */
         le_size_t le_parse = 0;
 
-        /* size variables */
+        /* size variable */
         le_size_t le_size = le_address_get_size( le_addr );
 
         /* reset offset */
@@ -1234,7 +1222,7 @@
         do {
 
             /* read class offset */
-            le_door->dr_soff = le_class_io_offset( le_door->dr_soff, le_address_get_digit( le_addr, le_parse ), * ( le_door->dr_sacc + le_parse ) );
+            le_door->dr_soff = le_mclass_io_offset( le_door->dr_soff, le_address_get_digit( le_addr, le_parse ), * ( le_door->dr_sacc + le_parse ) );
 
             /* check class offset */
             if ( le_door->dr_soff == _LE_OFFS_NULL ) {
@@ -1288,7 +1276,7 @@
     le_void_t le_door_io_mono_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         /* class variable */
-        le_class_t le_class = LE_CLASS_C;
+        le_mclass_t le_class = LE_MCLASS_C;
 
         /* enumeration boundary */
         if ( le_parse == le_span ) {
@@ -1303,18 +1291,18 @@
             ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
             /* push element data */
-            le_class_io_data( le_door->dr_soff, le_array_mac_ldata( le_array ), * ( le_door->dr_sacc + le_parse ) );
+            le_mclass_io_data( le_door->dr_soff, le_array_mac_ldata( le_array ), * ( le_door->dr_sacc + le_parse ) );
 
         } else {
 
             /* read class */
-            le_class_io_readf( & le_class, le_door->dr_soff, * ( le_door->dr_sacc + le_parse ) );
+            le_mclass_io_read_fast( & le_class, le_door->dr_soff, * ( le_door->dr_sacc + le_parse ) );
 
             /* enumerate daughter classes */
             for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
 
                 /* extract class offset */
-                if ( ( le_door->dr_soff = le_class_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
+                if ( ( le_door->dr_soff = le_mclass_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
 
                     /* update address digit */
                     le_address_set_digit( le_addr, le_parse, le_digit );
@@ -1429,10 +1417,10 @@
     le_void_t le_door_io_mono_parallel( le_door_t * const le_pdoor, le_door_t * const le_sdoor, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         /* class variable */
-        le_class_t le_pclass = LE_CLASS_C;
+        le_mclass_t le_pclass = LE_MCLASS_C;
 
         /* class variable */
-        le_class_t le_sclass = LE_CLASS_C;
+        le_mclass_t le_sclass = LE_MCLASS_C;
 
         /* message variable */
         le_enum_t le_pmessage = LE_ERROR_IO_READ;
@@ -1459,12 +1447,12 @@
                 if ( le_pdoor->dr_soff != _LE_OFFS_NULL ) {
 
                     /* push element data */
-                    le_class_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
+                    le_mclass_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
 
                 } else {
 
                     /* push element data */
-                    le_class_io_data( le_sdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_sacc + le_parse ) );
+                    le_mclass_io_data( le_sdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_sacc + le_parse ) );
 
                 }
 
@@ -1483,7 +1471,7 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    le_class_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
+                    le_mclass_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
 
                 }
 
@@ -1502,7 +1490,7 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    le_class_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
+                    le_mclass_io_data( le_pdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_sacc + le_parse ) );
 
                 } else if ( ( le_pdoor->dr_soff == _LE_OFFS_NULL ) && ( le_sdoor->dr_soff != _LE_OFFS_NULL ) ) {
 
@@ -1516,7 +1504,7 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    le_class_io_data( le_sdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_sacc + le_parse ) );
+                    le_mclass_io_data( le_sdoor->dr_soff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_sacc + le_parse ) );
 
                 }
 
@@ -1528,7 +1516,7 @@
             if ( le_pdoor->dr_soff != _LE_OFFS_NULL ) {
 
                 /* read class */
-                le_pmessage = le_class_io_readf( & le_pclass, le_pdoor->dr_soff, * ( le_pdoor->dr_sacc + le_parse ) );
+                le_pmessage = le_mclass_io_read_fast( & le_pclass, le_pdoor->dr_soff, * ( le_pdoor->dr_sacc + le_parse ) );
 
             }
 
@@ -1536,7 +1524,7 @@
             if ( le_sdoor->dr_soff != _LE_OFFS_NULL ) {
 
                 /* read class */
-                le_smessage = le_class_io_readf( & le_sclass, le_sdoor->dr_soff, * ( le_sdoor->dr_sacc + le_parse ) );
+                le_smessage = le_mclass_io_read_fast( & le_sclass, le_sdoor->dr_soff, * ( le_sdoor->dr_sacc + le_parse ) );
 
             }
 
@@ -1547,7 +1535,7 @@
                 if ( le_pmessage == LE_ERROR_SUCCESS ) {
 
                     /* extract class offset */
-                    le_pdoor->dr_soff = le_class_get_offset( & le_pclass, le_digit );
+                    le_pdoor->dr_soff = le_mclass_get_offset( & le_pclass, le_digit );
 
                 /* reset offset */
                 } else { le_pdoor->dr_soff = _LE_OFFS_NULL; }
@@ -1556,7 +1544,7 @@
                 if ( le_smessage == LE_ERROR_SUCCESS ) {
 
                     /* extract class offset */
-                    le_sdoor->dr_soff = le_class_get_offset( & le_sclass, le_digit );
+                    le_sdoor->dr_soff = le_mclass_get_offset( & le_sclass, le_digit );
 
                 /* reset offset */
                 } else { le_sdoor->dr_soff = _LE_OFFS_NULL; }

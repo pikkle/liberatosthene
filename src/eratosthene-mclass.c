@@ -129,7 +129,7 @@
         fseek( le_stream, le_offset + LE_MCLASS_HEAD, SEEK_SET );
 
         /* class importation */
-        if ( fread( le_mclass->mc_data, sizeof( le_byte_t ), LE_MCLASS_OFFSET, le_stream ) != LE_MCLASS_OFFSET ) {
+        if ( fread( le_mclass->mc_data + LE_MCLASS_HEAD, sizeof( le_byte_t ), LE_MCLASS_OFFSET, le_stream ) != LE_MCLASS_OFFSET ) {
 
             /* send message */
             return( LE_ERROR_IO_READ );
@@ -154,9 +154,9 @@
         }
 
         /* compose class data */
-        le_mclass->mc_data[0] = le_mclass->mc_push[0] / le_mclass->mc_size;
-        le_mclass->mc_data[1] = le_mclass->mc_push[1] / le_mclass->mc_size;
-        le_mclass->mc_data[2] = le_mclass->mc_push[2] / le_mclass->mc_size;
+        le_mclass->mc_data[0] = le_mclass->mc_push[0] / ( le_real_t ) le_mclass->mc_size;
+        le_mclass->mc_data[1] = le_mclass->mc_push[1] / ( le_real_t ) le_mclass->mc_size;
+        le_mclass->mc_data[2] = le_mclass->mc_push[2] / ( le_real_t ) le_mclass->mc_size;
 
         /* class exportation */
         if ( fwrite( le_mclass->mc_data, sizeof( le_byte_t ), LE_MCLASS_FIXED, le_stream ) != LE_MCLASS_FIXED ) {

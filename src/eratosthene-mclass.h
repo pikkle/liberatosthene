@@ -54,7 +54,7 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_MCLASS_C { 0, { 0.0 }, { 0 } }
+    # define LE_MCLASS_C      { 0, { 0.0 }, { 0 } }
 
     /* define class structure */
     # define LE_MCLASS_LENGTH ( 3 )
