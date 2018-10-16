@@ -265,7 +265,7 @@
      *  \param le_array Array structure
      */
 
-    le_enum_t le_door_io_mono_inject_beta( le_door_t const * const le_door );
+    le_enum_t le_door_io_mono_inject( le_door_t const * const le_door );
 
     /* *** */
 

@@ -57,7 +57,10 @@
     # define LE_MCLASS_C { 0, { 0.0 }, { 0 } }
 
     /* define class structure */
-    # define LE_MCLASS_HEAD   ( sizeof( le_byte_t ) * 3 )
+    # define LE_MCLASS_LENGTH ( 3 )
+
+    /* define class structure */
+    # define LE_MCLASS_HEAD   ( sizeof( le_byte_t ) * LE_MCLASS_LENGTH )
 
     /* define class structure */
     # define LE_MCLASS_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
@@ -119,15 +122,27 @@
 
     /* *** */
 
-    le_enum_t le_mclass_read( le_mclass_t  * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_void_t le_mclass_set_push( le_mclass_t * const le_mclass, le_byte_t const * const le_data );
 
     /* *** */
 
-    le_enum_t le_mclass_read_fast( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_mclass_io_read( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
 
     /* *** */
 
-    le_enum_t le_mclass_write( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_mclass_io_read_fast( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+
+    /* *** */
+
+    le_enum_t le_mclass_io_write( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+
+    /* *** */
+
+    le_size_t le_mclass_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
+
+    /* *** */
+
+    le_enum_t le_mclass_io_data( le_size_t const le_offset, le_byte_t * const le_data, le_file_t const le_stream );
 
 /*
     header - C/C++ compatibility

@@ -789,7 +789,7 @@
 
     }
 
-    le_enum_t le_door_io_mono_inject_beta( le_door_t const * const le_door ) {
+    le_enum_t le_door_io_mono_inject( le_door_t const * const le_door ) {
 
         /* path variable */
         le_char_t le_path[_LE_USE_PATH] = { 0 };
@@ -1017,7 +1017,7 @@
         /* buffer variable */
         le_byte_t * le_buffer = NULL;
 
-        /* buffer variable */
+        /* size variable */
         le_size_t le_size = LE_UV3_CHUNK * LE_ARRAY_DATA;
 
         /* stream variable */

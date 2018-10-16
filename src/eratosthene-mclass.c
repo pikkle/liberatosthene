@@ -87,11 +87,23 @@
 
     }
 
+    le_void_t le_mclass_set_push( le_mclass_t * const le_mclass, le_byte_t const * const le_data ) {
+
+        /* push components */
+        le_mclass->mc_push[0] += ( le_real_t ) le_data[0];
+        le_mclass->mc_push[1] += ( le_real_t ) le_data[1];
+        le_mclass->mc_push[2] += ( le_real_t ) le_data[2];
+
+        /* update counter */
+        le_mclass->mc_size ++;
+
+    }
+
 /*
     source - i/o methods
  */
 
-    le_enum_t le_mclass_read( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream ) {
+    le_enum_t le_mclass_io_read( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* stream offset */
         fseek( le_stream, le_offset, SEEK_SET );
@@ -111,7 +123,7 @@
 
     }
 
-    le_enum_t le_mclass_read_fast( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream ) {
+    le_enum_t le_mclass_io_read_fast( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* stream offset */
         fseek( le_stream, le_offset + LE_MCLASS_HEAD, SEEK_SET );
@@ -131,7 +143,7 @@
 
     }
 
-    le_enum_t le_mclass_write( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream ) {
+    le_enum_t le_mclass_io_write( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* check offset */
         if ( le_offset != _LE_OFFS_NULL ) {
@@ -151,6 +163,49 @@
 
             /* send message */
             return( LE_ERROR_IO_WRITE );
+
+        } else {
+
+            /* send message */
+            return( LE_ERROR_SUCCESS );
+
+        }
+
+    }
+
+    le_size_t le_mclass_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream ) {
+
+        /* returned value variable */
+        le_size_t le_return = _LE_OFFS_NULL;
+
+        /* stream offset */
+        fseek( le_stream, le_offset + LE_MCLASS_HEAD + ( _LE_USE_OFFSET * le_index ), SEEK_SET );
+
+        /* import offset */
+        if ( fread( ( le_void_t * ) & le_return, sizeof( le_byte_t ), _LE_USE_OFFSET, le_stream ) != _LE_USE_OFFSET ) {
+
+            /* send message */
+            return( _LE_OFFS_NULL );
+
+        } else {
+
+            /* send message */
+            return( le_return );
+
+        }
+
+    }
+
+    le_enum_t le_mclass_io_data( le_size_t const le_offset, le_byte_t * const le_data, le_file_t const le_stream ) {
+
+        /* stream offset */
+        fseek( le_stream, le_offset, SEEK_SET );
+
+        /* import data */
+        if ( fread( ( le_void_t * ) le_data, sizeof( le_byte_t ), LE_MCLASS_LENGTH, le_stream ) != LE_MCLASS_LENGTH ) {
+
+            /* send message */
+            return( LE_ERROR_IO_READ );
 
         } else {
 
