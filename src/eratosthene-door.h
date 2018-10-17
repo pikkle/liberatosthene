@@ -139,8 +139,8 @@
         le_time_t   dr_tcfg;
         le_time_t   dr_time;
 
-        le_file_t   dr_sacc[_LE_USE_DEPTH];
-        le_size_t   dr_soff;
+        le_file_t   dr_macc[_LE_USE_DEPTH];
+        le_size_t   dr_moff;
 
         le_file_t   dr_pacc[_LE_USE_DEPTH];
         le_size_t   dr_poff;
@@ -226,6 +226,10 @@
     /* *** */
 
     le_door_t * le_door_get_next( le_door_t const * const le_door );
+
+    /* *** */
+
+    le_enum_t le_door_get_dispatch( le_door_t const * const le_door, le_size_t const le_suffix );
 
     /* *** */
 

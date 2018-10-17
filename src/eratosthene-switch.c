@@ -488,37 +488,47 @@
 
         }
 
-        /* merge dispatch chunks - mono-vertex */
-        if ( ( le_message = le_door_io_each_inject_merge( le_door, 1 ) ) != LE_ERROR_SUCCESS ) {
+        /* check dispatch chunks - mono-vertex */
+        if ( le_door_get_dispatch( le_door, 1 ) == _LE_TRUE ) {
 
-            /* send message */
-            return( le_message );
-
-        } else {
-
-            /* injection process - mono-vertex */
-            if ( ( le_message = le_door_io_mono_inject( le_door ) ) != LE_ERROR_SUCCESS ) {
+            /* merge dispatch chunks - mono-vertex */
+            if ( ( le_message = le_door_io_each_inject_merge( le_door, 1 ) ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( le_message );
+
+            } else {
+
+                /* injection process - mono-vertex */
+                if ( ( le_message = le_door_io_mono_inject( le_door ) ) != LE_ERROR_SUCCESS ) {
+
+                    /* send message */
+                    return( le_message );
+
+                }
 
             }
 
         }
 
-        /* merge dispatch chunks - poly-vertex */
-        if ( ( le_message = le_door_io_each_inject_merge( le_door, 2 ) ) != LE_ERROR_SUCCESS ) {
+        /* check dispatch chunks - poly-vertex */
+        if ( le_door_get_dispatch( le_door, 2 ) == _LE_TRUE ) {
 
-            /* send message */
-            return( le_message );
-
-        } else {
-
-            /* injection process - poly-vertex */
-            if ( ( le_message = le_door_io_poly_inject( le_door ) ) != LE_ERROR_SUCCESS ) {
+            /* merge dispatch chunks - poly-vertex */
+            if ( ( le_message = le_door_io_each_inject_merge( le_door, 2 ) ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( le_message );
+
+            } else {
+
+                /* injection process - poly-vertex */
+                if ( ( le_message = le_door_io_poly_inject( le_door ) ) != LE_ERROR_SUCCESS ) {
+
+                    /* send message */
+                    return( le_message );
+
+                }
 
             }
 
