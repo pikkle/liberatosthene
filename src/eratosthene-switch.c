@@ -648,14 +648,50 @@
 
                 } else {
 
-                    /* check door - mono-vertex */
-                    if ( le_door_get_mono( le_sdoor ) == _LE_TRUE ) {
+                    /* check mode */
+                    if ( ( le_mode == LE_ADDRESS_OR ) || ( le_mode == LE_ADDRESS_XOR ) ) {
 
-                        /* check mode */
-                        if ( ( le_mode == LE_ADDRESS_OR ) || ( le_mode == LE_ADDRESS_XOR ) ) {
+                        /* check door - mono-vertex */
+                        if ( le_door_get_mono( le_sdoor ) == _LE_TRUE ) {
 
                             /* gathering process - mono-vertex */
                             le_door_io_mono_gather( le_sdoor, & le_addr, le_size, le_span, le_array + 1 );
+
+                        }
+
+                    }
+
+                }
+
+                /* check door - poly-vertex */
+                if ( le_door_get_poly( le_pdoor ) == _LE_TRUE ) {
+
+                    /* check mode */
+                    if ( ( le_mode == LE_ADDRESS_OR ) || ( le_mode == LE_ADDRESS_XOR ) ) {
+
+                        /* gathering process - poly-vertex */
+                        le_door_io_poly_gather( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
+
+                        /* check door - poly-vertex */
+                        if ( le_door_get_poly( le_sdoor ) == _LE_TRUE ) {
+
+                            /* gathering process - poly-vertex */
+                            le_door_io_poly_gather( le_sdoor, & le_addr, le_size, le_span, le_array + 1 );
+
+                        }
+
+                    }
+
+                } else {
+
+                    /* check mode */
+                    if ( ( le_mode == LE_ADDRESS_OR ) || ( le_mode == LE_ADDRESS_XOR ) ) {
+
+                        /* check door - poly-vertex */
+                        if ( le_door_get_poly( le_sdoor ) == _LE_TRUE ) {
+
+                            /* gathering process - poly-vertex */
+                            le_door_io_poly_gather( le_sdoor, & le_addr, le_size, le_span, le_array + 1 );
 
                         }
 

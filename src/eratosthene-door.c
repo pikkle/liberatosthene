@@ -268,8 +268,28 @@
 
     le_enum_t le_door_get_poly( le_door_t const * const le_door ) {
 
-        /* return detection result */
-        return( ( le_door->dr_poff != _LE_OFFS_NULL ) ? _LE_TRUE : _LE_FALSE );
+        /* check pointer */
+        if ( le_door != NULL ) {
+
+            /* check offset */
+            if ( le_door->dr_poff != _LE_OFFS_NULL ) {
+
+                /* send message */
+                return( _LE_TRUE );
+
+            } else {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+        } else {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
 
     }
 
