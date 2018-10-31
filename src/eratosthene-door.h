@@ -364,19 +364,98 @@
 
     le_enum_t le_door_get_dispatch( le_door_t const * const le_door, le_size_t const le_suffix );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to update the storage structure state pointed by
+     *  the provided door structure. If \b LE_DOOR_LOCK is provided, the door
+     *  storage structure is locked, indicating other process that it can not
+     *  be access for writting. If \b LE_DOOR_UNLOCK is provided, the function
+     *  unlock the door storage structure.
+     *
+     *  \param le_door  Door structure
+     *  \param le_state Lock state
+     *
+     *  \return Returns _LE_TRUE if the state was able to be updated, _LE_FALSE
+     *  otherwise
+     */
 
     le_enum_t le_door_set_state( le_door_t const * const le_door, le_enum_t const le_state );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to insert the provided door strcuture between the
+     *  two other provided structure in the linked list they define. The links
+     *  of the provided structure are updated along with the links of the two
+     *  other structures of the linked list.
+     *
+     *  \param le_door Door strcuture
+     *  \param le_prev Previous door structure in the linked list
+     *  \param le_next Next door structure in the linked list
+     */
 
     le_void_t le_door_set_insert( le_door_t * const le_door, le_door_t * const le_prev, le_door_t * const le_next );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function is responsible of recieving the injected data from a
+     *  connected clients.
+     *
+     *  This function performs two important writting operation on the provided
+     *  door storage structure.
+     *
+     *  The first operation is to dispatch the incoming data into two groups of
+     *  chunks that are mono-vertex and poly-vertex chunks. It continue the
+     *  dispatch until the connected client stops sending data.
+     *
+     *  The second operation the function performs is the sorting of the chunks
+     *  of each of the two groups, mono-vertex and poly-vertex. Each groups of
+     *  data is dispatch in chunks of a small and controlled size. As one chunk
+     *  reaches the limiting size, the function sorts its content before to
+     *  write it in the provided door storage structure.
+     *
+     *  The sorting of the chunks is performed considering a merge-sort process
+     *  with a comparison function based on the spatial index of the data
+     *  positions coordinates.
+     *
+     *  At the end of the process performed by the function, the door storage
+     *  strcuture ends with two groups of files containing each the dispatched
+     *  an sorted data content for the mono-vertex and poly-vertex.
+     *
+     *  Because the function writes on the door storage strcuture, the function
+     *  assumes that the door has been locked.
+     *
+     *  \param le_door   Door structure
+     *  \param le_array  Socket-array used for client data reading
+     *  \param le_socket Socket of the connected client
+     *
+     *  \return Return LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_door_io_each_inject_dispatch( le_door_t const * const le_door, le_array_t * const le_array, le_sock_t const le_socket );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function is reponsible of the merging of the chunks created during
+     *  the an injection process by the \b le_door_io_each_inject_dispatch()
+     *  function.
+     *
+     *  The function reads the chunks of the specified group, using the suffix
+     *  parameter, and merge them into a single chunks. The merging of the
+     *  chunks can be seen as the last steps of a global merge-sort initiated
+     *  by the dispatch function.
+     *
+     *  The sorting of the chunks into a single file is made considering a merge
+     *  sort based on the spatial index of the element position containing in
+     *  the processed chunks.
+     *
+     *  Because the function writes on the door storage strcuture, the function
+     *  assumes that the door has been locked.
+     *
+     *  \param le_door   Door structure
+     *  \param le_suffix Data type suffix
+     *
+     *  \return Return LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_door_io_each_inject_merge( le_door_t const * const le_door, le_size_t const le_suffix );
 
