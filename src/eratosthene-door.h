@@ -91,43 +91,63 @@
     header - structures
  */
 
-
-    /*! \struct le_unit_struct
-     *  \brief unit structure ( revoked )
+    /*! \struct le_door_struct
+     *  \brief door structure
      *
-     *  This structure holds the required information to manage and access a
-     *  specific storage structure of a temporal unit.
+     *  This structure holds the required information and data for accessing
+     *  the storage structure of one time unit.
      *
-     *  The two first fields are used to store a copy of the server storage
-     *  structure root path and the spatial configuration value that are used
-     *  for unit manipulation.
+     *  The two first fields store the path of the time unit and the length of
+     *  the path itself.
      *
-     *  The next field is used to store the time value associated to the unit.
-     *  The value stored in this field is according to the equivalence classes
-     *  point of view :
+     *  The two next fields store a copy of the server space and time parameters
+     *  in order for the structure to properly access the data.
      *
-     *      time_unit = time_utc / server_temporal_parameter
+     *  The next field stores the time value of the time unit. The time unit
+     *  is stored in its reduced form, that is the proper time devided by the
+     *  value of the server time parameter.
      *
-     *  The unit time is then called "reduced".
+     *  The next two fields, an array and a size, are used to access mono-vertex
+     *  related data in the storage structure. The array is used to store the
+     *  stream descriptor opened toward the files of the storage structure. The
+     *  amount of descriptor corresponds then to the amount of scale of the
+     *  server, that is its space parameter value. The offset field coming after
+     *  the array is used during data access to keep track of the offset, in a
+     *  specific scale, of the data that have to be accessed.
      *
-     *  The next field of the structure holds the stack of stream opened
-     *  toward the file of the unit storage structure. Each scale file is then
-     *  described by its corresponding stream in the pile.
+     *  The next three fields are similar than the previous one but for the case
+     *  of polyvertex access. In addition to the stream descriptor stack and
+     *  access offset, poly-vertex have to maintain an additional descriptor
+     *  toward the file containing the poly-vertex definition.
      *
-     *  A last field is used by the structure creation methods to specified the
-     *  creation status of the structure. This allows to creation methods to
-     *  return the structure instead of an error code.
+     *  The two last field are used to create and maintain linked list. The two
+     *  pointer are used as \b le_door_t structure link toward the previous and
+     *  next structure in the list, NULL being used as termination signal.
      *
-     *  \var le_unit_struct::un_root
-     *  Server storage structure path
-     *  \var le_unit_struct::un_scfg
-     *  Server spatial configuration value : number of scale
-     *  \var le_unit_struct::un_time
-     *  Unit time in reduced form
-     *  \var le_unit_struct::un_pile
-     *  Unit stream pile
-     *  \var le_unit_struct::_status
-     *  Standard status field
+     *  \var le_door_struct::dr_path
+     *  Path of the time unit directory
+     *  \var le_door_struct::dr_plen
+     *  Length of the path of the time unit directory
+     *  \var le_door_struct::dr_scfg
+     *  Server spatial configuration parameter copy
+     *  \var le_door_struct::dr_tcfg
+     *  Server temporal configuration parameter copy
+     *  \var le_door_struct::dr_time
+     *  Time unit time value in reduced form
+     *  \var le_door_struct::dr_macc
+     *  Stream stack toward mono-vertex tree structure
+     *  \var le_door_struct::dr_moff
+     *  Mono-vertex offset tracker
+     *  \var le_door_struct::dr_pacc
+     *  Stream stack toward poly-vertex tree structure
+     *  \var le_door_struct::dr_poff
+     *  Poly-vertex offset tracker
+     *  \var le_door_struct::dr_pdat
+     *  Poly-vertex storage stream
+     *  \var le_door_struct::dr_prev
+     *  Linked list pointer (previous)
+     *  \var le_door_struct::dr_next
+     *  Linked list pointer (next)
      */
 
     typedef struct le_door_struct {
@@ -155,79 +175,192 @@
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods ( revoked )
+    /*! \brief constructor/destructor methods
      *
-     *  This function creates a unit structure according to the provided path
-     *  and to the provided mode.
+     *  This function creates a door structure toward the time unit pointer by
+     *  the provided time value.
      *
-     *  Two modes are available : \b LE_UNIT_READ and \b LE_UNIT_WRITE. The
-     *  first mode triggers the creation of the unit structure according to an
-     *  existing storage structure. It assign the provided time value, in its
-     *  reduced form, before to create the stream descriptor to the scale files.
+     *  The function starts by checking the state of the pointed directory
+     *  according to the provided read/write mode. In case \b LE_DOOR_READ is
+     *  provided as mode parameter and the corresponding storage directory is
+     *  missing, the function throw and error.
      *
-     *  The second mode creates the storage structure directory if necessary and
-     *  creates the scale files while creating the streams to them.
+     *  In the case \b LE_DOOR_WRITE is provided as mode paramter and the
+     *  corresponding storage directory is missing, the function creates it and
+     *  initialise its content.
      *
-     *  If any stream is not accessible or if the directory creation fails, the
-     *  function returns the structure as it is.
+     *  The function then creates the streams toward the poly-vertex storage
+     *  file and toward the tree structure of the mono-vertex and poly-vertex
+     *  data.
+     *
+     *  If any stream of the tree structures leads to an error during opening
+     *  operation, the function fails and deletes itself, ensuring no stream
+     *  descriptor remains open.
      *
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
-     *  \param le_root   Server storage structure path
-     *  \param le_scfg   Server spatial configuration value
-     *  \param le_time   Unit time value, in reduced form
-     *  \param le_mode   Access mode value
+     *  \param le_root Server storage structure main path
+     *  \param le_scfg Server spatial parameter
+     *  \param le_tcfg Server temporal parameter
+     *  \param le_time Temporal unit time
+     *  \param le_mode Structure creation mode
      *
-     *  \return Returns the created unit
+     *  \return Returns the created structure
      */
 
     le_door_t le_door_create( le_char_t const * const le_root, le_size_t const le_scfg, le_time_t const le_tcfg, le_time_t const le_time, le_enum_t const le_mode );
 
-    /*! \brief constructor/destructor methods ( revoked )
+    /*! \brief constructor/destructor methods
      *
-     *  This function deletes the provided unit structure. It parses the scales
-     *  of the unit and deletes each scale opened stream. It finally resets the
-     *  unit structure fields.
+     *  This function is used to deletes the content of the provided door
+     *  structure.
      *
-     *  \param le_unit Unit structure
+     *  The function deletes all the opened stream descriptors and erase the
+     *  structrue fields using default values.
+     *
+     *  \param le_door Door structure
      */
 
     le_void_t le_door_delete( le_door_t * const le_door );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function allows to obtain the time of the door structure in its
+     *  reduce form, that is devided by the server temporal parameter.
+     *
+     *  \param le_door Door Structure
+     *
+     *  \return Return structure reduced time
+     */
 
     le_time_t le_door_get_reduced( le_door_t const * const le_door );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function returns the previous door structure of the first provided
+     *  structure or the next one of the second provided structure according to
+     *  their proximity to the provided time value.
+     *
+     *  The function performs a temporal proximity checks between the two door
+     *  structures candidates before to return the \b LE_DOOR_NEXT value or the
+     *  \b LE_DOOR_PREV value according to the result.
+     *
+     *  The provided time value has to be given in its reduced form.
+     *
+     *  \param le_prev    Door structure
+     *  \param le_next    Door structure
+     *  \param le_reduced Time value, in reduced form
+     *
+     *  \return Returns LE_DOOR_PREV or LE_DOOR_NEXT according to the proximity
+     *  to the time value
+     */
 
     le_enum_t le_door_get_nearest( le_door_t const * const le_prev, le_door_t const * const le_next, le_time_t const le_reduced );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function returns a boolean value according to the state of the
+     *  provided door structure tracking offset for mono-vertex.
+     *
+     *  If the door tracking offset points to a valid location, the function
+     *  returns _LE_TRUE, _LE_FALSE otherwise.
+     *
+     *  \param le_door Door structure
+     *
+     *  \return Returns _LE_TRUE if the structure mono-vertex tracking offset
+     *  points to a valid location, _LE_FALSE otherwise
+     */
 
     le_enum_t le_door_get_mono( le_door_t const * const le_door );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function returns a boolean value according to the state of the
+     *  poly-vertex trackin offset of the provided door structure.
+     *
+     *  If the door tracking offset points to a valid location, the function
+     *  return _LE_TRUE, _LE_FALSE otherwise.
+     *
+     *  \param le_door Door structure
+     *
+     *  \return Returns _LE_TRUE if the structure poly-vertex tracking offset
+     *  points to a valid location, _LE_FALSE otherwise
+     */
 
     le_enum_t le_door_get_poly( le_door_t const * const le_door );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function returns a boolean value if the provided time is in the
+     *  equivalence class of the provided door structure. The time value has to
+     *  be in the server time frame (not in reduced form).
+     *
+     *  \param le_door Door structure
+     *  \param le_time Time value
+     *
+     *  \return Returns _LE_TRUE if the provided time value belong to the
+     *  structure temporal equivalence class.
+     */
 
     le_enum_t le_door_get_equal( le_door_t const * const le_door, le_time_t const le_time );
 
-    /* *** */
+    /*! \biref accessor methods
+     *
+     *  This function returns \b _LE_TRUE boolean value if the provided door
+     *  structure is greater than the provided door candidate, \b _LE_FALSE
+     *  otherwise. The comparison is made from the temporal point of view.
+     *
+     *  \param le_door      Door structure
+     *  \param le_candidate Door structure
+     *
+     *  \return Returns _LE_TRUE if the candidate is anterior to the provided
+     *  door structure from a temporal point of view
+     */
 
     le_enum_t le_door_get_anterior( le_door_t const * const le_door, le_door_t const * const le_candidate );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function simply returns the pointer to the previous door structure
+     *  of the provided one.
+     *
+     *  \param le_door Door structure
+     *
+     *  \return Returns the previous door structure in the linked list
+     */
 
     le_door_t * le_door_get_prev( le_door_t const * const le_door );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function simply returns the pointer to the next door structure of
+     *  the provided one.
+     *
+     *  \param le_door Door structure
+     *
+     *  \return Returns the next door structure in the linked list
+     */
 
     le_door_t * le_door_get_next( le_door_t const * const le_door );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function checks if any chunks of dispatched data are present in the
+     *  provided door storage structure for the specified type of data.
+     *
+     *  If 1 is provided as suffix value, the checks is performed on mono-vertex
+     *  data. If 2 is provided, the check is made on the poly-vertex data.
+     *
+     *  In any case, if at least one chunk of data is detected for the specified
+     *  type, the function returns \b _LE_TRUE, \b _LE_FALSE otherwise.
+     *
+     *  \param le_door   Door structure
+     *  \param le_suffix Data type suffix
+     *
+     *  \return Returns _LE_TRUE if a data chunk is detected, _LE_FALSE
+     *  otherwise
+     */
 
     le_enum_t le_door_get_dispatch( le_door_t const * const le_door, le_size_t const le_suffix );
 
