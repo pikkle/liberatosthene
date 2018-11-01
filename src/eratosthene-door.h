@@ -104,7 +104,7 @@
      *  in order for the structure to properly access the data.
      *
      *  The next field stores the time value of the time unit. The time unit
-     *  is stored in its reduced form, that is the proper time devided by the
+     *  is stored in its reduced form, that is the proper time divided by the
      *  value of the server time parameter.
      *
      *  The next two fields, an array and a size, are used to access mono-vertex
@@ -116,7 +116,7 @@
      *  specific scale, of the data that have to be accessed.
      *
      *  The next three fields are similar than the previous one but for the case
-     *  of polyvertex access. In addition to the stream descriptor stack and
+     *  of poly-vertex access. In addition to the stream descriptor stack and
      *  access offset, poly-vertex have to maintain an additional descriptor
      *  toward the file containing the poly-vertex definition.
      *
@@ -185,7 +185,7 @@
      *  provided as mode parameter and the corresponding storage directory is
      *  missing, the function throw and error.
      *
-     *  In the case \b LE_DOOR_WRITE is provided as mode paramter and the
+     *  In the case \b LE_DOOR_WRITE is provided as mode parameter and the
      *  corresponding storage directory is missing, the function creates it and
      *  initialise its content.
      *
@@ -217,7 +217,7 @@
      *  structure.
      *
      *  The function deletes all the opened stream descriptors and erase the
-     *  structrue fields using default values.
+     *  structure fields using default values.
      *
      *  \param le_door Door structure
      */
@@ -227,7 +227,7 @@
     /*! \brief accessor methods
      *
      *  This function allows to obtain the time of the door structure in its
-     *  reduce form, that is devided by the server temporal parameter.
+     *  reduce form, that is divided by the server temporal parameter.
      *
      *  \param le_door Door Structure
      *
@@ -260,7 +260,7 @@
 
     /*! \brief accessor methods
      *
-     *  This function returns a boolean value according to the state of the
+     *  This function returns a Boolean value according to the state of the
      *  provided door structure tracking offset for mono-vertex.
      *
      *  If the door tracking offset points to a valid location, the function
@@ -276,8 +276,8 @@
 
     /*! \brief accessor methods
      *
-     *  This function returns a boolean value according to the state of the
-     *  poly-vertex trackin offset of the provided door structure.
+     *  This function returns a Boolean value according to the state of the
+     *  poly-vertex tracking offset of the provided door structure.
      *
      *  If the door tracking offset points to a valid location, the function
      *  return _LE_TRUE, _LE_FALSE otherwise.
@@ -292,7 +292,7 @@
 
     /*! \brief accessor methods
      *
-     *  This function returns a boolean value if the provided time is in the
+     *  This function returns a Boolean value if the provided time is in the
      *  equivalence class of the provided door structure. The time value has to
      *  be in the server time frame (not in reduced form).
      *
@@ -307,7 +307,7 @@
 
     /*! \brief accessor methods
      *
-     *  This function returns \b _LE_TRUE boolean value if the provided door
+     *  This function returns \b _LE_TRUE Boolean value if the provided door
      *  structure is greater than the provided door candidate, \b _LE_FALSE
      *  otherwise. The comparison is made from the temporal point of view.
      *
@@ -369,7 +369,7 @@
      *  This function allows to update the storage structure state pointed by
      *  the provided door structure. If \b LE_DOOR_LOCK is provided, the door
      *  storage structure is locked, indicating other process that it can not
-     *  be access for writting. If \b LE_DOOR_UNLOCK is provided, the function
+     *  be access for writing. If \b LE_DOOR_UNLOCK is provided, the function
      *  unlock the door storage structure.
      *
      *  \param le_door  Door structure
@@ -383,7 +383,7 @@
 
     /*! \brief mutator methods
      *
-     *  This function allows to insert the provided door strcuture between the
+     *  This function allows to insert the provided door structure between the
      *  two other provided structure in the linked list they define. The links
      *  of the provided structure are updated along with the links of the two
      *  other structures of the linked list.
@@ -397,10 +397,10 @@
 
     /*! \brief i/o methods
      *
-     *  This function is responsible of recieving the injected data from a
+     *  This function is responsible of receiving the injected data from a
      *  connected clients.
      *
-     *  This function performs two important writting operation on the provided
+     *  This function performs two important writing operation on the provided
      *  door storage structure.
      *
      *  The first operation is to dispatch the incoming data into two groups of
@@ -418,13 +418,13 @@
      *  positions coordinates.
      *
      *  At the end of the process performed by the function, the door storage
-     *  strcuture ends with two groups of files containing each the dispatched
+     *  structure ends with two groups of files containing each the dispatched
      *  an sorted data content for the mono-vertex and poly-vertex.
      *
      *  The input data are expected to be in uv3 format. The output data are
      *  kept in the same format.
      *
-     *  Because the function writes on the door storage strcuture, the function
+     *  Because the function writes on the door storage structure, the function
      *  assumes that the door has been locked.
      *
      *  \param le_door   Door structure
@@ -438,8 +438,8 @@
 
     /*! \brief i/o methods
      *
-     *  This function is reponsible of the merging of the chunks created during
-     *  the an injection process by the \b le_door_io_each_inject_dispatch()
+     *  This function is responsible for the merging of the chunks created
+     *  during the injection process by the \b le_door_io_each_inject_dispatch()
      *  function.
      *
      *  The function reads the chunks of the specified group, using the suffix
@@ -454,7 +454,7 @@
      *  The input data are expected to be in uv3 format. The output data are
      *  kept in the same format.
      *
-     *  Because the function writes on the door storage strcuture, the function
+     *  Because the function writes on the door storage structure, the function
      *  assumes that the door has been locked.
      *
      *  \param le_door   Door structure
@@ -472,17 +472,17 @@
      *  function is usually placed after the injection dispatch and merging.
      *
      *  The function read the mono-vertex sorted data and creates the tree
-     *  structure using a transversal approach (in opposition to tree-driven
+     *  structure using a transverse approach (in opposition to tree-driven
      *  writing process). This allows the function to writes tree structure in
      *  an efficient way.
      *
      *  For mono-vertex data, the only data needed to represent a point in the
-     *  equivalence class strcuture is only a color that is packed within the
+     *  equivalence class structure is only a color that is packed within the
      *  tree along with the linking offsets.
      *
      *  The input data are expected to be in uv3 format.
      *
-     *  Because the function writes on the door storage strcuture, the function
+     *  Because the function writes on the door storage structure, the function
      *  assumes that the door has been locked.
      *
      *  \param le_door Door structure
@@ -499,8 +499,8 @@
      *  function is usually placed after the injection dispatch and merging.
      *
      *  The function reads the poly-vertex sorted data and creates the tree
-     *  structure using a transversal approach (in opposition to tree-driven
-     *  writing process). This allows the function to writes tree strcutures in
+     *  structure using a transverse approach (in opposition to tree-driven
+     *  writing process). This allows the function to writes tree structures in
      *  an efficient way.
      *
      *  For poly-vertex, the definition of the graphical primitive are kept in
@@ -532,7 +532,7 @@
      *
      *  This function is used before to perform any query over the data hold in
      *  the mono-vertex tree structure. In the case the class is found, it
-     *  updates the traking offset of the provided door strcuture for the
+     *  updates the tracking offset of the provided door structure for the
      *  subsequent gathering processes.
      *
      *  \param le_door Door structure
@@ -557,7 +557,7 @@
      *
      *  This function is used before to perform any query over the data hold in
      *  the poly-vertex tree structure. In the case the class is found, it
-     *  updates the traking offset of the provided door strcuture for the
+     *  updates the tracking offset of the provided door structure for the
      *  subsequent gathering processes.
      *
      *  \param le_door Door structure
@@ -575,14 +575,14 @@
      *  for data queries. The gathered data are packed in the provided array
      *  structure following the uv3 format.
      *
-     *  This function assumes that the class on which the gathering processs
+     *  This function assumes that the class on which the gathering process
      *  exists and is pointed by the door structure mono-vertex tracking
      *  offset. Starting with this offset, the function enumerates all existing
      *  daughter cells to gather the data in the scale pointed by the span
      *  value. The provided address structure is used as the enumeration
      *  backbone through its digit array.
      *
-     *  The enuemration is peformed in a recursive way by enumerating all link
+     *  The enumeration is performed in a recursive way by enumerating all link
      *  of all subsequent classes and following their own link. The process is
      *  made until the targeted scale is reached.
      *
@@ -608,20 +608,20 @@
      *  for data queries. The gathered data are packed in the provided array
      *  structure following the uv3 format.
      *
-     *  This function assumes that the class on which the gathering processs
+     *  This function assumes that the class on which the gathering process
      *  exists and is pointed by the door structure poly-vertex tracking
      *  offset. Starting with this offset, the function enumerates all existing
      *  daughter cells to gather the data in the scale pointed by the span
      *  value. The provided address structure is used as the enumeration
      *  backbone through its digit array.
      *
-     *  The enuemration is peformed in a recursive way by enumerating all link
+     *  The enumeration is performed in a recursive way by enumerating all link
      *  of all subsequent classes and following their own link. The process is
      *  made until the targeted scale is reached.
      *
      *  For poly-vertex, the tree structure contains links to the elements
      *  stored in the injection sorted and merged file. This file is then read,
-     *  following the found links, to extract the elementd definition to pack
+     *  following the found links, to extract the elements definition to pack
      *  them in the provided array structure.
      *
      *  If the provided array is not empty, its content is kept and the gathered
@@ -646,7 +646,7 @@
      *  data, to compute convolutional models in the fly.
      *
      *  The currently implemented convolution are the logical OR, AND and XOR.
-     *  As the parallel gethering goes on, the function compare of one, two or
+     *  As the parallel gathering goes on, the function compare of one, two or
      *  none of the data are missing on one of the two tree structure. This is
      *  on this basis that the function applies the logical convolutions.
      *
