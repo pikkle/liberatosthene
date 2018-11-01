@@ -305,7 +305,7 @@
 
     le_enum_t le_door_get_equal( le_door_t const * const le_door, le_time_t const le_time );
 
-    /*! \biref accessor methods
+    /*! \brief accessor methods
      *
      *  This function returns \b _LE_TRUE boolean value if the provided door
      *  structure is greater than the provided door candidate, \b _LE_FALSE
@@ -421,6 +421,9 @@
      *  strcuture ends with two groups of files containing each the dispatched
      *  an sorted data content for the mono-vertex and poly-vertex.
      *
+     *  The input data are expected to be in uv3 format. The output data are
+     *  kept in the same format.
+     *
      *  Because the function writes on the door storage strcuture, the function
      *  assumes that the door has been locked.
      *
@@ -448,6 +451,9 @@
      *  sort based on the spatial index of the element position containing in
      *  the processed chunks.
      *
+     *  The input data are expected to be in uv3 format. The output data are
+     *  kept in the same format.
+     *
      *  Because the function writes on the door storage strcuture, the function
      *  assumes that the door has been locked.
      *
@@ -459,111 +465,201 @@
 
     le_enum_t le_door_io_each_inject_merge( le_door_t const * const le_door, le_size_t const le_suffix );
 
-    /*! \brief i/o methods ( revoked )
+    /*! \brief i/o methods
      *
-     *  This function writes the content of the incoming array in the server
-     *  storage structure.
+     *  This function creates the storage tree structure using the sorted and
+     *  merged files of the data injected by a client for mono-vertex data. This
+     *  function is usually placed after the injection dispatch and merging.
      *
-     *  The provided array is expect to have the UF3 format, that is a series
-     *  of records composed of a coordinates 3-vector and a colour 3-vector.
+     *  The function read the mono-vertex sorted data and creates the tree
+     *  structure using a transversal approach (in opposition to tree-driven
+     *  writing process). This allows the function to writes tree structure in
+     *  an efficient way.
      *
-     *  For each array record, the function initiates an address structure using
-     *  the record coordinates to compute the spatial index. The index is then
-     *  used to drive the progression of the record injection through the scale
-     *  files.
+     *  For mono-vertex data, the only data needed to represent a point in the
+     *  equivalence class strcuture is only a color that is packed within the
+     *  tree along with the linking offsets.
      *
-     *  For a given scale, the class the record belong to is searched. If the
-     *  class is found, the element is added to the class. Otherwise, a new
-     *  class is created using the record to initialise it. The parent class
-     *  offsets array is updated to take into account the new created class.
+     *  The input data are expected to be in uv3 format.
      *
-     *  \param le_unit  Unit structure
-     *  \param le_array Array structure
+     *  Because the function writes on the door storage strcuture, the function
+     *  assumes that the door has been locked.
+     *
+     *  \param le_door Door structure
+     *
+     *  \return Return LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_door_io_mono_inject( le_door_t const * const le_door );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function creates the storage tree structure using the sorted and
+     *  merged files of the data injected by a client for poly-vertex data. This
+     *  function is usually placed after the injection dispatch and merging.
+     *
+     *  The function reads the poly-vertex sorted data and creates the tree
+     *  structure using a transversal approach (in opposition to tree-driven
+     *  writing process). This allows the function to writes tree strcutures in
+     *  an efficient way.
+     *
+     *  For poly-vertex, the definition of the graphical primitive are kept in
+     *  the injection sorted and merged file. The tree structure holds link to
+     *  this file along with the linking offset.
+     *
+     *  The input data are expected to be in the uv3 formats.
+     *
+     *  Because the function writes on the door storage strcuture, the function
+     *  assumes that the door has been locked.
+     *
+     *  \param le_door Door structure
+     *
+     *  \return Return LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_door_io_poly_inject( le_door_t const * const le_door );
 
-    /*! \brief i/o methods ( revoked )
+    /*! \brief i/o methods
      *
-     *  This function searches the offset of the spatial class pointed by the
-     *  spatial index provided through the address structure in the provided
-     *  unit storage structure.
+     *  This function searches the offset of the spatial equivalence class that
+     *  is pointed by the index hold in the provided address structure for
+     *  mono-vertex.
      *
-     *  The spatial index digits are used to drive the progression through
-     *  the structure scales. This function is mainly used to detect if the
-     *  class pointed by the address exists or not.
+     *  The function follows the tree structure links driven by the spatial
+     *  index to determine if any data can be found in the pointed class. The
+     *  function returns \b _LE_TRUE if the class is found, and \b _LE_FALSE
+     *  in the other case, indicating that no data can be found further away.
      *
-     *  \param le_unit Unit structure
+     *  This function is used before to perform any query over the data hold in
+     *  the mono-vertex tree structure. In the case the class is found, it
+     *  updates the traking offset of the provided door strcuture for the
+     *  subsequent gathering processes.
+     *
+     *  \param le_door Door structure
      *  \param le_addr Address structure
      *
-     *  \return Returns the class offset on success, _LE_OFFS_NULL otherwise
+     *  \return Returns _LE_TRUE if the class pointed by the address exists,
+     *  _LE_FALSE otherwise.
      */
 
     le_enum_t le_door_io_mono_detect( le_door_t * const le_door, le_address_t const * const le_addr );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function searches the offset of the spatial equivalence class that
+     *  is pointed by the index hold in the provided address structure for
+     *  poly-vertex.
+     *
+     *  The function follows the tree structure links driven by the spatial
+     *  index to determine if any data can be found in the pointed class. The
+     *  function returns \b _LE_TRUE if the class is found, and \b _LE_FALSE
+     *  in the other case, indicating that no data can be found further away.
+     *
+     *  This function is used before to perform any query over the data hold in
+     *  the poly-vertex tree structure. In the case the class is found, it
+     *  updates the traking offset of the provided door strcuture for the
+     *  subsequent gathering processes.
+     *
+     *  \param le_door Door structure
+     *  \param le_addr Address structure
+     *
+     *  \return Returns _LE_TRUE if the class pointed by the address exists,
+     *  _LE_FALSE otherwise.
+     */
 
     le_enum_t le_door_io_poly_detect( le_door_t * const le_door, le_address_t const * const le_addr );
 
-    /*! \brief i/o methods ( revoked )
+    /*! \brief i/o methods
      *
-     *  This function is used to gather spatial classes positions and colours
-     *  information to build a array using the UF3 format.
+     *  This function performs the data gathering on mono-vertex tree structure
+     *  for data queries. The gathered data are packed in the provided array
+     *  structure following the uv3 format.
      *
-     *  This function assume that the offset of the spatial class pointed by the
-     *  address index is known (\b le_tree_io_offset()). Starting from the
-     *  offsets array of this class, it starts to gather the position and
-     *  colours by enumerating the class daughters and sub-daughters through a
-     *  recursive process. It detect the gathering scale using the main class
-     *  scale and the address additional depth (span).
+     *  This function assumes that the class on which the gathering processs
+     *  exists and is pointed by the door structure mono-vertex tracking
+     *  offset. Starting with this offset, the function enumerates all existing
+     *  daughter cells to gather the data in the scale pointed by the span
+     *  value. The provided address structure is used as the enumeration
+     *  backbone through its digit array.
      *
-     *  If the provided array is not passed empty, its previous content is left
-     *  unchanged, the function pushing the elements at the end of it.
+     *  The enuemration is peformed in a recursive way by enumerating all link
+     *  of all subsequent classes and following their own link. The process is
+     *  made until the targeted scale is reached.
      *
-     *  \param le_unit   Unit structure
-     *  \param le_addr   Address structure
-     *  \param le_offset Class storage offset
-     *  \param le_parse  Class storage scale
-     *  \param le_span   Query additional depth
-     *  \param le_array  Data array filled by the function
+     *  For mono-vertex, the position of the data element is deduced from the
+     *  backbone address structure. The color of the elements is directly
+     *  extracted from the tree structure.
+     *
+     *  If the provided array is not empty, its content is kept and the gathered
+     *  data are packed after the existing ones.
+     *
+     *  \param le_door  Door structure
+     *  \param le_addr  Address structure
+     *  \param le_parse Current enumerated scale
+     *  \param le_span  Target scale
+     *  \param le_array Array structure
      */
 
     le_void_t le_door_io_mono_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function performs the data gathering on poly-vertex tree structure
+     *  for data queries. The gathered data are packed in the provided array
+     *  structure following the uv3 format.
+     *
+     *  This function assumes that the class on which the gathering processs
+     *  exists and is pointed by the door structure poly-vertex tracking
+     *  offset. Starting with this offset, the function enumerates all existing
+     *  daughter cells to gather the data in the scale pointed by the span
+     *  value. The provided address structure is used as the enumeration
+     *  backbone through its digit array.
+     *
+     *  The enuemration is peformed in a recursive way by enumerating all link
+     *  of all subsequent classes and following their own link. The process is
+     *  made until the targeted scale is reached.
+     *
+     *  For poly-vertex, the tree structure contains links to the elements
+     *  stored in the injection sorted and merged file. This file is then read,
+     *  following the found links, to extract the elementd definition to pack
+     *  them in the provided array structure.
+     *
+     *  If the provided array is not empty, its content is kept and the gathered
+     *  data are packed after the existing ones.
+     *
+     *  \param le_door  Door structure
+     *  \param le_addr  Address structure
+     *  \param le_parse Current enumerated scale
+     *  \param le_span  Target scale
+     *  \param le_array Array structure
+     */
 
     le_void_t le_door_io_poly_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
 
-    /*! \brief i/o methods ( revoked )
+    /*! \brief i/o methods
      *
-     *  This function implements a parallel version of \b le_tree_io_gather()
-     *  function. It performs the same operations simply considering two times
-     *  values.
+     *  This function implements a parallel version of the process implemented
+     *  in the \b le_door_io_mono_gather() function.
      *
-     *  As two parallel gathering processes take place in this function, it
-     *  allows to consider the times comparison mode provided by the address
-     *  structure. As elements for the two times are gathered at the same time,
-     *  the function is able to easily implements the logical operators. The
-     *  array is then filled with the results of the application of the logical
-     *  operators.
+     *  The process is identical but performed on the tree structure in the
+     *  same time. The goal of the implementation is to allows, for mono-vertex
+     *  data, to compute convolutional models in the fly.
      *
-     *  If the provided array is not passed empty, its previous content is left
-     *  unchanged, the function pushing the elements at the end of it.
-     *  of it.
+     *  The currently implemented convolution are the logical OR, AND and XOR.
+     *  As the parallel gethering goes on, the function compare of one, two or
+     *  none of the data are missing on one of the two tree structure. This is
+     *  on this basis that the function applies the logical convolutions.
      *
-     *  \param le_unia    Unit structure - ass. to time 1
-     *  \param le_unib    Unit structure - ass. to time 2
-     *  \param le_addr    Address structure
-     *  \param le_mode    Address mode
-     *  \param le_offseta Class storage offset - ass. to time 1
-     *  \param le_offsetb Class storage offset - ass. to time 2
-     *  \param le_parse   Class storage scale
-     *  \param le_span    Query additional depth
-     *  \param le_array   Data array filled by the function
+     *  If the provided array is not empty, its content is kept and the gathered
+     *  data are packed after the existing ones.
+     *
+     *  \param le_pdoor  Door structure - primary
+     *  \param le_sdoor  Door structure - secondary
+     *  \param le_addr   Address structure
+     *  \param le_mode   Convolution mode
+     *  \param le_parse  Current enumerated scale
+     *  \param le_span   Target scale
+     *  \param le_array  Array structure
      */
 
     le_void_t le_door_io_mono_parallel( le_door_t * const le_pdoor, le_door_t * const le_sdoor, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array );
