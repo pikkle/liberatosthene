@@ -92,7 +92,40 @@
     header - structures
  */
 
-    /* *** */
+    /*! \struct le_pclass_struct
+     *  \brief poly-vertex class structure
+     *
+     *  This structure holds the definition and required elements to access poly
+     *  vertex storage representation in door tree structure.
+     *
+     *  Two major elements are hold by the structure and its tree structure
+     *  storage representation.
+     *
+     *  The first main element is the array of links that describe the location
+     *  of the content of the class, seen as a container. The size of this
+     *  array indicates how many graphical primitive that are contained by the
+     *  considered class. The link are understood as offset in the uv3 files
+     *  containing the actual primitive.
+     *
+     *  The next main element is the link to the daughter classes in the scale
+     *  directly below the scale of the considered class. These links are simple
+     *  offsets packed just after the amount of primitive stored in the class.
+     *
+     *  The storage representation of one poly-vertex class can then be seen as
+     *  follows :
+     *
+     *      [link_count][offset_0] ... [offset_7][link_0][link_1] ...
+     *
+     *  It follows that the storage representation size of a poly-vertex class
+     *  is a function of its content.
+     *
+     *  \var le_pclass_struct::pc_size
+     *  Size, in link count, of the links array
+     *  \var le_pclass_struct::pc_link
+     *  Base pointer of the links array
+     *  \var le_pclass_struct::pc_data
+     *  Buffer used to read storage class representation (without links array)
+     */
 
     typedef struct le_pclass_struct {
 
@@ -106,55 +139,219 @@
     header - function prototypes
  */
 
-    /* *** */
+    /*! \brief constructor/destructor methods
+     *
+     *  This function creates and initialise the content of a poly-vertex class
+     *  structure.
+     *
+     *  The function initialise the structure field with default values and
+     *  assigns null offset values before to return the structure.
+     *
+     *  \return Returns the created structure
+     */
 
     le_pclass_t le_pclass_create( le_void_t );
 
-    /* *** */
+    /*! \brief constructor/destructor methods
+     *
+     *  This function allows the reset the provided poly-vertex class structure
+     *  to restore its state as it would have been created by the pseudo
+     *  constructor function \b le_pclass_create().
+     *
+     *  The links array is emptied but its memory allocation is kept.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     */
 
     le_void_t le_pclass_reset( le_pclass_t * const le_pclass );
 
-    /* *** */
+    /*! \brief constructor/destructor methods
+     *
+     *  This function deletes the content of the provided poly-vertex class
+     *  structure.
+     *
+     *  The links array is emptied and its memory allocation is released. The
+     *  fields of the structure are reset using default values.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     */
 
     le_void_t le_pclass_delete( le_pclass_t * const le_pclass );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function allows to query the size of the links array of the
+     *  provided poly-vertex class structure. This size corresponds to the
+     *  amount of graphical primitive hold by the class.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *
+     *  \return Returns the size of the class links array
+     */
 
     le_size_t le_pclass_get_size( le_pclass_t const * const le_pclass );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function allows to retrieve the offset value of the element of the
+     *  links array of the provided poly-vertex class structure. These offset
+     *  values are usually used to fund the graphical primitive definition in
+     *  a specific uv3 file.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_index  Index of the link in the links array
+     *
+     *  \return Returns the link value find at the desired index
+     */
 
     le_size_t le_pclass_get_link( le_pclass_t const * const le_pclass, le_size_t const le_index );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function allows the query the offset value stored in the provided
+     *  poly-vertex class structure. The provided index indicates which offset
+     *  to return and has to be in the [0,7] range.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_index  Offset index
+     *
+     *  \return Returns the extracted offset from the class structure
+     */
 
     le_size_t le_pclass_get_offset( le_pclass_t const * const le_pclass, le_size_t const le_index );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function is used to update the poly-vertex class structure links
+     *  array memory allocation.
+     *
+     *  The provided size indicates the amount of bytes required and the
+     *  function checks if the current allocation is sufficient. In case the
+     *  provided size is higher than the size of the current allocation, the
+     *  function re-allocates the links array memory.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_size   Size of the desired links array, in links count
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_pclass_set_memory( le_pclass_t * const le_pclass, le_size_t const le_size );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to update the offset of the provided poly-vertex
+     *  class structure using the provided value. The index indicates which
+     *  offset to update and has to be in the [0,7] range.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_index  Offset index
+     *  \param le_offset Offset value
+     */
 
     le_void_t le_pclass_set_offset( le_pclass_t * const le_pclass, le_size_t const le_index, le_size_t const le_offset );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to add a link to the provided poly-vertex class
+     *  structure links array.
+     *
+     *  The function checks the state of the links array memory allocation and
+     *  proceed to a correction when needed. The provided link is then added to
+     *  the end of the array. The size of the links array is also updated.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_link   Link value
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_pclass_set_push( le_pclass_t * const le_pclass, le_size_t const le_link );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function allows to read the storage representation of a poly-vertex
+     *  class into the provided structure.
+     *
+     *  The function starts by reading the fixed-length header, that are the
+     *  links array size and offsets array. Based on the links array read size,
+     *  the function allocates the structure links array memory before the read
+     *  the links themselves.
+     *
+     *  The provided offset gives the offset in the provided stream to start
+     *  the reading to the class representation. The provided stream has to be
+     *  an already opened stream in read-binary mode.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_offset Class reading offset, in bytes
+     *  \param le_stream Steam descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_pclass_io_read( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function allows the read a poly-vertex class storage representation
+     *  reading only the fixed-length header, that are the links array size and
+     *  the offsets array.
+     *
+     *  This function is used for efficiency purpose when process does not need
+     *  the read the content of the links array of the class.
+     *
+     *  The provided offset gives the offset in the provided stream to start
+     *  the reading to the class representation. The provided stream has to be
+     *  an already opened stream in read-binary mode.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_offset Class reading offset, in bytes
+     *  \param le_stream Stream descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_pclass_io_read_fast( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function allows the read a poly-vertex class storage representation
+     *  remaining links array after a call to \b le_pclass_io_read_fast().
+     *
+     *  The function used the size of the links array, read using the previous
+     *  function, and update the provided class structure links array memory
+     *  allocation before to read the content of the links array.
+     *
+     *  The function assumes that the position in the provided stream is where
+     *  the previous would let it, that is on the links array first byte. The
+     *  provided stream has to be an already opened stream in read-binary mode.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_stream Stream descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_pclass_io_read_next( le_pclass_t * const le_pclass, le_file_t const le_stream );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function is used to write the provided poly-vertex class structure
+     *  storage representation.
+     *
+     *  The function starts by writing the fixed-length header before to export
+     *  the content of the links array.
+     *
+     *  If a null offset is provided, the function assumes that the class has to
+     *  be written at the current position of the provided stream. The provided
+     *  stream has to be an already opened stream in write-binary mode.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_offset Class writing offset, in bytes
+     *  \param le_stream Stream descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_pclass_io_write( le_pclass_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
@@ -162,9 +359,24 @@
      *
      *  Note :
      *
-     *  Detached methods are specific function associated to a structure but
+     *  Detached methods are specific functions associated to a structure but
      *  without operating directly on it. Such function are used in optimisation
      *  strategies.
+     *
+     *  This function allows the read a single offset from a poly-vertex class
+     *  representation in the storage structure. The function only reads the
+     *  bytes corresponding the the desired offset.
+     *
+     *  The provided offset value indicates where to start the representation
+     *  reading in the provided stream. The provided stream has to be an already
+     *  opened stream in read-binary mode.
+     *
+     *  \param le_offset Class reading offset, in bytes
+     *  \param le_index  Class index
+     *  \param le_stream Stream descriptor
+     *
+     *  \return Returns the class desired offset on success, _LE_OFFS_NULL
+     *  otherwise
      */
 
     le_size_t le_pclass_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );

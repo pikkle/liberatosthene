@@ -87,13 +87,13 @@
  */
 
     /*! \struct le_mclass_struct
-     *  \brief door structure
+     *  \brief mono-vertex class structure
      *
-     *  This structure hold the definition and required element to access mono-
+     *  This structure holds the definition and required elements to access mono
      *  vertex storage representation in door tree structure.
      *
-     *  Three main elements are hold by the structure and its storage tree
-     *  structure representation.
+     *  Three main elements are hold by the structure and its tree structure
+     *  storage representation.
      *
      *  The first element is the color of the element injected in the tree
      *  structure. The color are three bytes hold in the first positions.
@@ -141,7 +141,7 @@
      *  This function creates and initialise the content of a mono-vertex class
      *  structure.
      *
-     *  The function initialise the structure field with default value and
+     *  The function initialise the structure field with default values and
      *  assigns null offset values before to return the structure.
      *
      *  \return Returns created structure
@@ -259,13 +259,13 @@
      *  class structure in the provided stream to create its tree structure
      *  storage representation.
      *
-     *  If a null offset is provided, the function assumes that the class has to
-     *  be written at the current position of the provided stream. The provided
-     *  stream has to be an already opened stream in write-binary mode.
-     *
      *  Before to write the class in the stream, the function computes the mean
      *  color of the class by reading the content of the accumulation array and
      *  the state of the counter.
+     *
+     *  If a null offset is provided, the function assumes that the class has to
+     *  be written at the current position of the provided stream. The provided
+     *  stream has to be an already opened stream in write-binary mode.
      *
      *  \param le_mclass Mono-vertex class structure
      *  \param le_offset Class writing offset, in bytes
@@ -284,7 +284,7 @@
      *  without operating directly on it. Such function are used in optimisation
      *  strategies.
      *
-     *  This function allows the read a single offset from a mono-vertex class
+     *  This function allows the reads a single offset from a mono-vertex class
      *  representation in the storage structure. The function only read the
      *  bytes corresponding the the desired offset.
      *
