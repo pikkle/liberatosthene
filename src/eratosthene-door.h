@@ -148,6 +148,8 @@
      *  Linked list pointer (previous)
      *  \var le_door_struct::dr_next
      *  Linked list pointer (next)
+     *  \var le_door_struct::_status
+     *  Standard status field
      */
 
     typedef struct le_door_struct {

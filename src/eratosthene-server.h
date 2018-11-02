@@ -193,6 +193,8 @@
      *  Server temporal configuration parameter
      *  \var le_server_struct::sv_mute
      *  Server/client mutual exclusion descriptor
+     *  \var le_server_struct::_status
+     *  Standard status field
      */
 
     typedef struct le_server_struct {

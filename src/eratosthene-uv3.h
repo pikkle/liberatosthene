@@ -123,8 +123,15 @@
      *  to take place and it also improves the efficiency with which data are
      *  accessed.
      *
+     *  Two size are provided to the function that are the actual size, in bytes
+     *  of the input uv3 chunk and the size of the memory allocation that holds
+     *  the data. This allows to have larger memory allocation than the data
+     *  it holds and having a function that always returns an array contained
+     *  in a memory allocation that have the same size as the input one.
+     *
      *  \param le_buffer Pointer to the first byte of the uv3 data
      *  \param le_size   Size of the uv3 data, in bytes
+     *  \param le_memory Size of the uv3 data memory allocation, in bytes
      *  \param le_scfg   Server spatial configuration parameter
      *
      *  \return Returns a pointer to the resulting data
@@ -163,7 +170,7 @@
      *
      *  \param le_pfile Path to the first uv3 file
      *  \param le_qfile Path to the second uv3 file
-     *  \param le_efile Path to the output uv3 file
+     *  \param le_file  Path to the output uv3 file
      *  \param le_scfg  Server spatial configuration parameter
      *
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
