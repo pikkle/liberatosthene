@@ -129,9 +129,9 @@
      *  \var le_door_struct::dr_plen
      *  Length of the path of the time unit directory
      *  \var le_door_struct::dr_scfg
-     *  Server spatial configuration parameter copy
+     *  Server spatial configuration parameter - copy
      *  \var le_door_struct::dr_tcfg
-     *  Server temporal configuration parameter copy
+     *  Server temporal configuration parameter - copy
      *  \var le_door_struct::dr_time
      *  Time unit time value in reduced form
      *  \var le_door_struct::dr_macc

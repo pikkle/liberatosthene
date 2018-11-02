@@ -74,43 +74,61 @@
     header - structures
  */
 
-    /*! \struct le_tree_struct
-     *  \brief tree structure ( revoked )
+    /*! \struct le_switch_struct
+     *  \brief tree structure
      *
-     *  This structure holds the required element to access the server storage
-     *  structure. Usually, each client thread of the server holds its own
-     *  instance of this structure that it uses for data access and export.
+     *  This structure holds the backbone elements to access a server storage
+     *  structure. It maintain a linked list of door structures that are used
+     *  for specialised data access.
      *
-     *  The three first field are copies of the server storage structure path
-     *  and space-time configuration parameters. The next field is a statically
-     *  initialised value that indicates the tree associated function to discard
-     *  time units due to their temporal distance of the point of view. This
-     *  allow to avoid mixing too much model that belong to too different times.
+     *  The structure is mainly responsible of maintaining the door structures
+     *  linked list. This linked list is the first element to access for data
+     *  query for a remote client. It is used as a search backbone to detect
+     *  in which temporal storage structure to search the relevant data.
      *
-     *  The next fields are the size of the unit stack and the stack itself. The
-     *  stack is an array of unit structures that each contain the required data
-     *  to access one time unit. It follows that any data injected in the
-     *  storage structure is contained in one of those unit, distinguished
-     *  through their time. It follows that any access starts by searching the
-     *  unit associated to a time value.
+     *  The maintained linked list provided a sorted, from the time point of
+     *  view, of the active doors of a specific server implementation. Each door
+     *  is responsible for the management of the data access on its dedicated
+     *  temporal storage structure.
+     *
+     *  This module is also used as a front-end to client queries. The module
+     *  function searches the relevant door structure before to broadcast the
+     *  access request to the relevant door engaged in the linked list. From
+     *  this point of view, this module is used by the functions of the server
+     *  module to process the client queries.
+     *
+     *  The first field of the structure is used to store the last linked list
+     *  update clock time. This allows the structure to know for how many time
+     *  it has been kept un-updated. This allows to trigger the linked list
+     *  update each given amount time. This procedure is set to simplify the
+     *  communication between the thread to keep them synchronised, in terms of
+     *  their view of the storage structure, when a thread inject new data.
+     *  Doing so allows to avoid to setup a complicated communication system
+     *  between the thread to keep track of newly injected data.
+     *
+     *  The three next field are a simple copy of the server configuration data
+     *  for a given implementation. These data includes storage structure path,
+     *  spatial and time configuration values.
+     *
+     *  The last field is a pointer to the first door structure engaged in the
+     *  linked list hold by this switch structure. It is used to search along
+     *  the active door to find the relevant one during client queries.
      *
      *  A last field is used by the structure creation methods to specified the
      *  creation status of the structure. This allows to creation methods to
      *  return the structure instead of an error code.
      *
-     *  \var le_tree_struct::tr_root
-     *  Server storage structure path
-     *  \var le_tree_struct::tr_scfg
-     *  Server spatial configuration value : number of scale
-     *  \var le_tree_struct::tr_tcfg
-     *  Server temporal configuration value : size of temporal classes
-     *  \var le_tree_struct::tr_comb
-     *  Server temporal comb size
-     *  \var le_tree_struct::tr_size
-     *  Tree unit stack size (number of units)
-     *  \var le_tree_struct::tr_unit
-     *  Tree unit stack
-     *  \var le_tree_struct::_status
+     *  \var le_switch_struct::sw_load
+     *  Clock time of the last linked list update
+     *  \var le_switch_struct::sw_path
+     *  Server storage structure path - copy
+     *  \var le_switch_struct::sw_scfg
+     *  Server spatial configuration parameter - copy
+     *  \var le_switch_struct::sw_tcfg
+     *  Server temporal configuration parameter - copy
+     *  \var le_switch_struct::sw_door
+     *  Doors linked list first (lower in time) pointer
+     *  \var le_switch_struct::_status
      *  Standard status field
      */
 
@@ -130,24 +148,16 @@
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods ( revoked )
+    /*! \brief constructor/destructor method
      *
-     *  This function creates and initialise a tree structure according to the
-     *  provided storage structure path.
-     *
-     *  The function starts by enumerating the temporal units directory and
-     *  create for each of them a corresponding unit structure using their
-     *  specific creation method.
-     *
-     *  Each unit structure is inserted in the tree stack in growing order from
-     *  their respective time values. The time value of each unit is read from
-     *  their directory name. As the stack is entirely filled, the function
-     *  returns the created structure.
+     *  This function creates a switch structure and returns it. It simply
+     *  initialises the fields of the structure with default value and assigns
+     *  the provided parameter to their respective fields.
      *
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
-     *  \param le_root Server storage structure path
+     *  \param le_path Server storage structure path
      *  \param le_scfg Server spatial configuration value
      *  \param le_tcfg Server temporal configuration value
      *
@@ -156,163 +166,239 @@
 
     le_switch_t le_switch_create( le_char_t * const le_path, le_size_t const le_scfg, le_time_t const le_tcfg );
 
-    /*! \brief constructor/destructor methods ( revoked )
+    /*! \brief constructor/destructor methods
      *
-     *  This function deletes the provided tree structure. It starts by parsing
-     *  the tree unit structures stack to delete them using their specific
-     *  method. The function then release the stack memory and clears the tree
-     *  structure fields.
+     *  This function deletes the content of the provided switch structure and
+     *  resets its field using default values.
      *
-     *  \param le_tree Tree structure
+     *  The function then deletes the created linked list, if present, by
+     *  deleting all the engaged door structures using their specialised
+     *  deletion function.
+     *
+     *  \param le_switch Tree structure
      */
 
     le_void_t le_switch_delete( le_switch_t * const le_switch );
 
-    /*! \brief accessor methods ( revoked )
+    /*! \brief accessor methods
      *
-     *  This function search in the provided tree structure stack the unit
-     *  structure that matches exactly the provided time value.
+     *  This function searches in the provided switch structure doors linked
+     *  list for a door corresponding exactly to the provided time.
      *
-     *  If such a unit is found in the tree stack, it is returned through its
-     *  pointer. In case no unit can be found in the stack, the behaviour of the
-     *  function depends on the provided mode value.
+     *  In case the corresponding door is found, it is returned as a pointer
+     *  to the calling function. If the door is not found and the provided mode
+     *  is set to \b LE_DOOR_WRITE, a new door is created and returned by the
+     *  function after its insertion in the linked list.
      *
-     *  If the mode \b LE_UNIT_READ is provided and no unit is found, a NULL
-     *  pointer is returned. If no unit is found and the \b LE_UNIT_WRITE is
-     *  provided as mode value, the function ask for the creation of the unit
-     *  storage allocation. The created unit structure is inserted in the tree
-     *  stack and its pointer is returned.
+     *  In case of a door creation case, the specialised door creation function
+     *  is used, which causes the storage structure of the door to be created.
      *
-     *  \param le_tree Tree structure
-     *  \param le_time Time value
-     *  \param le_mode Access mode value
+     *  \param le_switch Switch structure
+     *  \param le_time   Target time
+     *  \param le_mode   Storage structure access mode
      *
-     *  \return Returns the unit structure on success, NULL otherwise
+     *  \return Returns the found/created door structure or a NULL pointer
      */
 
     le_door_t * le_switch_get_inject( le_switch_t * const le_switch, le_time_t const le_time, le_enum_t const le_mode );
 
-    /*! \brief accessor methods ( revoked )
+    /*! \brief accessor methods
      *
-     *  This function search in the provided tree structure stack the nearest
-     *  unit structure and its corresponding offset in which the class provided
-     *  through the address structure is found and not empty. The proximity is
-     *  understood from a temporal point of view.
+     *  This function searches in the provided switch structure door linked
+     *  list the door that is the closest, from a temporal point of view, to the
+     *  provided time value.
      *
-     *  The function starts by reading the provided address time using its index
-     *  and start to search which unit structure is able to give access to the
-     *  class pointed by the address structure digit. It searches, in both
-     *  direction, through time for the nearest unit containing the non-empty
-     *  class.
+     *  In addition, the function checks, using the spatial index provided
+     *  through the address structure, is the door contains data accordingly. If
+     *  no data are available from the spatial index point of view, the door
+     *  is rejected and the door search goes on.
      *
-     *  As a unit structure is found, it is returned by the function along with
-     *  the offset of the class in the storage structure described by the unit
-     *  structure. The offset is also returned in order to allow further
-     *  optimisation of subsequent gathering processes.
+     *  The door search is stopped under two conditions : in case the end of the
+     *  linked list is reached or of the considered door is distant, from a
+     *  temporal point view, of more than the comb value coming with the address
+     *  structure.
      *
-     *  \param le_tree   Tree structure
-     *  \param le_addr   Address structure
-     *  \param le_addrt  Offset of time - zero based
-     *  \param le_offset Returned offset of the found class
+     *  The function implements then a dual door search : one going with time
+     *  the other against it. The function starts with the two nearest door
+     *  surrounding the target time.
      *
-     *  \return Returns the unit structure on success, NULL otherwise
+     *  If a relevant door is found filled with data form the spatial index
+     *  point of view, it is returned by the structure. A NULL pointer is
+     *  returned otherwise.
+     *
+     *  \param le_switch Switch structure
+     *  \param le_time   Target time
+     *  \param le_addr   Target address structure
+     *
+     *  \return Returns a door structure on success, NULL otherwise
      */
 
     le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_time_t const le_time, le_address_t const * const le_addr );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows the rebuild the provided switch structure doors
+     *  linked list. According to the provided maximum lifespan of the switch,
+     *  the function erases the linked list before to recreate it.
+     *
+     *  This function is used as each client connection thread are independent
+     *  from each other. This allows for thread to keep track of newly injected
+     *  data without having synchronise to each other.
+     *
+     *  \param le_switch Switch structure
+     *  \param le_lifespan Maximum lifetime of the switch structure, in seconds
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_switch_set_update( le_switch_t * const le_switch, le_time_t const le_lifespan );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function creates the doors linked list of the provided switch
+     *  structure.
+     *
+     *  The function enumerates the directories of the server main storage
+     *  path. Each directory is interpreted as a temporal storage unit. A door
+     *  is created for each found unit.
+     *
+     *  As a door is created for a directory, the function calls a specialised
+     *  pushing function allowing to actually create the door structure for the
+     *  directory but also to insert the door structure in the correct position
+     *  in the linked list.
+     *
+     *  \param le_switch Switch structure
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_switch_set_build( le_switch_t * const le_switch );
 
-    /*! \brief mutator methods ( revoked )
+    /*! \brief mutator methods
      *
-     *  This function adds the unit corresponding to the provided time to the
-     *  provided tree according to the specified mode value.
+     *  This function allows to create and insert a new door, corresponding to
+     *  a temporal unit storage directory, to the linked list of the provided
+     *  switch structure.
      *
-     *  The function searches if the time value points to an existing storage
-     *  structure. As the structure is found, the function creates a new unit in
-     *  the tree stack and initialises it for the found storage structure.
+     *  The new door structure is created in the first place using the provided
+     *  time linking to its storage representation. The created door is then
+     *  inserted in the linked list at it corresponding position according to
+     *  its time value.
      *
-     *  If no unit storage structure is not found, the behaviour of the function
-     *  depends on the access mode : \b LE_UNIT_READ indicates the function to
-     *  fail. Providing \b LE_UNIT_WRITE tells the function to create and
-     *  initialise a new storage structure corresponding to the provided time
-     *  value.
+     *  If the provided mode value is set to \b LE_DOOR_WRITE, the door is
+     *  created even its storage representation is not found, creating it.
      *
-     *  If a new unit is pushed in the provided tree structure stack, it is
-     *  always inserted in such a way the stack gives always unit in growing
-     *  order accroding to their time value.
+     *  The created door is then returned as a pointer after its insertion in
+     *  the linked list.
      *
-     *  \param le_tree Tree structure
-     *  \param le_time Time value
-     *  \param le_mode Access mode value
+     *  \param le_switch Switch structure
+     *  \param le_time   Door time
+     *  \param le_mode   Storage structure access mode
      *
      *  \return Returns unit structure on success, NULL otherwise
      */
 
     le_door_t * le_switch_set_push( le_switch_t * const le_switch, le_time_t const le_time, le_enum_t const le_mode );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to deletes the doors linked list of the provided
+     *  switch structure.
+     *
+     *  The function parses the linked list and deletes all the door using their
+     *  specialised deletion function. The memory of the linked list is released
+     *  along the way.
+     *
+     *  \param le_switch Switch structure
+     */
 
     le_void_t le_switch_set_erase( le_switch_t * const le_switch );
 
-    /*! \brief i/o methods ( revoked )
+    /*! \brief i/o methods
      *
-     *  This i/o method is responsible of answering server configuration request
-     *  from client. It simply packs the server configuration values, that are
-     *  the number of space scale and the time equivalences classes length, in
-     *  an array structure before to send it back to the remote client.
+     *  This function is the front-end to server parameter query from a remote
+     *  client.
      *
-     *  \param le_server Server structure
-     *  \param le_tree   Tree structure
-     *  \param le_stack  Socket-array stack
+     *  The function, after consistency checks, packs the server parameter in
+     *  a socket-array that is returned to the client using the provided
+     *  socket descriptor.
+     *
+     *  \param le_switch Switch structure
+     *  \param le_array  Client socket array
      *  \param le_socket Client socket descriptor
      *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_switch_io_auth( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
-    /*! \brief i/o methods ( revoked )
+    /*! \brief i/o methods
      *
-     *  This i/o methods is responsible of data injection in the server storage
-     *  structure. It expects a time packed in the first client array that is
-     *  used to access the storage structure. If the corresponding unit is
-     *  successfully accessed and locked, the function sends back the first
-     *  client array as a confirmation.
+     *  This function is the front-end to server data injection from a remote
+     *  client.
      *
-     *  It then expects a data array that contains the geographic coordinates
-     *  and colours of the points to inject in the server storage structure. The
-     *  revieved data are then injected in the server storage structure.
+     *  After consistency checks, the function reads the time value packed in
+     *  the provided client socket-array. The function uses this time value to
+     *  query the appropriate door structure.
      *
-     *  \param le_server Server structure
-     *  \param le_tree   Tree structure
-     *  \param le_stack  Socket-array stack
+     *  The gathered door is then locked before the function proceed to the
+     *  injection of the data. In the first place, the client incoming data
+     *  are dispatched using the door specialised function to separate the
+     *  point-based data (mono-vertex) to the polygonal data (poly-vertex).
+     *
+     *  The function then proceed to the data injection of both group of data
+     *  after their sorting. Mono-vertex data are injected in the first place,
+     *  if present, before to inject the poly-vertex data, also if available.
+     *
+     *  At the end of the process, the door used to inject the data is unlocked
+     *  on success. If a failure occurs during dispatch, sorting or injection,
+     *  the door remains locked.
+     *
+     *  In the case of injection, as the amount of data is not known 'a priori',
+     *  the reading of the incoming socket-array carrying the data is performed
+     *  by the dispatch function.
+     *
+     *  \param le_switch Switch structure
+     *  \param le_array  Client socket array
      *  \param le_socket Client socket descriptor
      *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_switch_io_inject( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
-    /*! \brief i/o methods ( revoked )
+    /*! \brief i/o methods
      *
-     *  This function reads the query addresses packed in the client array and
-     *  gather the relevant data through specific tree method.
+     *  This function is the front-end to server data query from a remote
+     *  client.
      *
-     *  As the points are gathered from the storage structure, the function
-     *  writes the resulting data array on the client socket.
+     *  The function allows to have multiple query address packed in the
+     *  provided client socket-array. The function performs then a loop on all
+     *  packed address, repeating the query process for each of them.
      *
-     *  \param le_server Server structure
-     *  \param le_tree   Tree structure
-     *  \param le_stack  Socket-array stack
+     *  For each address, the function starts by checking the mode of the
+     *  address to determine if a parallel query has to be performed.
+     *
+     *  In any cases, the function gather the required door structure to access
+     *  the queried data using the address times and spatial index. The door
+     *  is then used along with its specialised query function for mono-vertex,
+     *  poly-vertex and mixed/parallel queries.
+     *
+     *  Mixed models are answered to the client as the to time of the address
+     *  are active (according to the mode value) and as the data found in the
+     *  door storage structure are not of the same type (mono/poly-vertex). The
+     *  function implements the composition of mixed model logic.
+     *
+     *  As the data are packed in the server socket-array by the door
+     *  specialised function, it is returned to the remote client, for each
+     *  address found in the incoming client socket-array. Two socket array
+     *  are then used in parallel for queries.
+     *
+     *  \param le_switch Switch structure
+     *  \param le_array  Client socket array
      *  \param le_socket Client socket descriptor
      *
-     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
     le_enum_t le_switch_io_query( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
