@@ -134,7 +134,7 @@
      *  \param le_memory Size of the uv3 data memory allocation, in bytes
      *  \param le_scfg   Server spatial configuration parameter
      *
-     *  \return Returns a pointer to the resulting data
+     *  \return Returns a pointer to the resulting data or a NULL pointer
      */
 
     le_byte_t * le_uv3_set_sort( le_byte_t * const le_buffer, le_size_t const le_size, le_size_t le_memory, le_size_t const le_scfg );

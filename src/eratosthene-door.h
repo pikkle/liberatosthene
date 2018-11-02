@@ -124,6 +124,34 @@
      *  pointer are used as \b le_door_t structure link toward the previous and
      *  next structure in the list, NULL being used as termination signal.
      *
+     *  The storage structure of a door is structured into three directories :
+     *
+     *      /.../door_time/0
+     *      /.../door_time/1
+     *      /.../door_time/2
+     *
+     *  The directory 0 is used for the client data reception. Its role is to
+     *  hold the dispatched of the mono and poly-vertex groups of elements. The
+     *  data are kept in small chunks named 10, 11, 12, ... for the mono-vertex
+     *  and 20, 21, 22, ... for the poly-vertex. The 0 directory is also used
+     *  during chunks merge processes.
+     *
+     *  The tree structure for mono-vertex is created and hold in the directory
+     *  1. This directory contains a binary file per scale engaged in the server
+     *  configuration.
+     *
+     *  The tree structure for poly-vertex is created and hold in the directory
+     *  2. This directory contains also a binary file per scale engaged in the
+     *  server configuration.
+     *
+     *  To manage successive and distinct data injection process into the same
+     *  door structure, the results of the merging of the dispatched chunks are
+     *  kept in the door main directory. The file is name 1_ for mono-vertex and
+     *  2_ for poly-vertex. These files are kept to be able to merge them with
+     *  the result of the incoming new data through successive injection process
+     *  to always keep a single sorted uv3 file containing all the injected
+     *  data.
+     *
      *  \var le_door_struct::dr_path
      *  Path of the time unit directory
      *  \var le_door_struct::dr_plen
@@ -417,7 +445,7 @@
      *
      *  The sorting of the chunks is performed considering a merge-sort process
      *  with a comparison function based on the spatial index of the data
-     *  positions coordinates.
+     *  positions coordinates using uv3 specialised function.
      *
      *  At the end of the process performed by the function, the door storage
      *  structure ends with two groups of files containing each the dispatched
@@ -451,7 +479,13 @@
      *
      *  The sorting of the chunks into a single file is made considering a merge
      *  sort based on the spatial index of the element position containing in
-     *  the processed chunks.
+     *  the processed chunks. The merging is performed considering the uv3
+     *  specialised function.
+     *
+     *  For both mono and poly-vertex data, a last merge operation is performed
+     *  in the case previous data have already been injection in the door
+     *  structure in the past. This allows to re-create the tree structure
+     *  taking into account new and old data.
      *
      *  The input data are expected to be in uv3 format. The output data are
      *  kept in the same format.
