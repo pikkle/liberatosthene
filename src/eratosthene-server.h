@@ -74,23 +74,30 @@
     header - structures
  */
 
-    /*! \struct le_server_struct ( revoked )
+    /*! \struct le_server_struct
      *  \brief server structure
      *
      *  This structure is the principal structure of the library as it holds the
      *  server main elements.
      *
      *  The server offers a 4D mapping service of the earth through storage,
-     *  access and network broadcasting of colorimetric points. Its storage
-     *  structure, data injection and data query are driven by the formalism
-     *  of spatiotemporal index. In other words, the server can be seen as a
-     *  4D tile server based on the theoretical framework of index.
+     *  access and network broadcasting of colorimetric points and polygonal
+     *  representation. Its storage structure, data injection and data query are
+     *  driven by the formalism of spatiotemporal index. In other words, the
+     *  server can be seen as a 4D tile server based on the theoretical
+     *  framework of index.
+     *
+     *  For the point based models, the spatial index are defining equivalence
+     *  classes in which points are collected to create a natural multi-scale
+     *  representation of the 4D earth. For polygonal models, these classes are
+     *  used as container of links toward the relevant graphical primitive
+     *  relevant to display at a given scale.
      *
      *  A server is then responsible of receiving data from client during
      *  injection, data broadcasting during client query, broadcasting of its
      *  main parameter through client specific query and the storage management
      *  of the data. This structure is then the heart allowing these operations
-     *  to be fulfilled.
+     *  to be fulfilled, with the help of sub-systems.
      *
      *  A first field is dedicated to store the server socket descriptor. As any
      *  server, an eratosthene server maintain a service on a computer available
@@ -107,17 +114,12 @@
      *  gives the size of the temporal equivalence classes. Both parameters fix
      *  the server resolution power in both space and time.
      *
-     *  The next field, an array of the size corresponding to the amount of
-     *  thread used by the server to handle client connection, is used for
-     *  the communication between the threads. Its elements are used as bit
-     *  container to broadcast specific messages. For example, as a new time
-     *  unit storage has been created by a thread, a message is sent through
-     *  this array to tell the other threads to take into account this new
-     *  data.
-     *
-     *  A last field is used by the structure creation methods to specified the
-     *  creation status of the structure. This allows to creation methods to
-     *  return the structure instead of an error code.
+     *  The last field is used during client connection management. As a client
+     *  connects to the server, the socket descriptor is pushed using this field
+     *  before to broadcast it to the client thread. The server is then creating
+     *  a specific thread for each client connection. This thread is responsible
+     *  of answering any type of query the client performs until the client
+     *  disconnects.
      *
      *  As the server offers a 4D information system through the formalism of
      *  spatiotemporal index, one has to take into account geographic ranges
@@ -125,43 +127,72 @@
      *  ranges are considered (with coordinates always in radian) : [-pi,pi] and
      *  [-pi/2,pi/2]. A more specific range is considered for height values
      *  (with coordinates always in meter above WGS84 ellipsoid) : [-h,h] where
-     *  h equal to \b LE_ADDRESS_MAXH (address module). Any point injected in
-     *  the server has to be inside the defined ranges.
+     *  h equal to \b LE_ADDRESS_MAXH (address module). Any element, in terms of
+     *  it position coordinates, injected in the server has to be inside the
+     *  defined ranges.
      *
-     *  The server data storage and access are driven by the spatiotemporal
-     *  index formalism. As any point is assumed to be referenced in space and
-     *  time, two equivalence relations are defined : one on the time range and
-     *  the other along the spatial scales. The time relation simply establish
-     *  homogeneous ranges along the time dimension collapsing all time in each
-     *  range to a single equivalence class. It follow that two time falling in
-     *  the same class cannot be distinguished anymore after injection. The
-     *  structure time parameter gives the size, in seconds, of time equivalence
-     *  classes.
+     *  As mentionned, for point-based model, storage and access are driven by
+     *  the spatiotmporal index. Any point-based element is assumed to be
+     *  referenced in space and time accroding to the previous frame and ranges.
+     *  Two equivalence relations are then defined, one on the time range and
+     *  the other on the spatial scales. The time relation simply establish
+     *  homogenous ranges along the time dimension collapsing all incoming data
+     *  in within these range, making them indistinguishable from this point of
+     *  view. The temporal parameter of the server then gives the size, in
+     *  seconds of these temporal ranges.
      *
-     *  Each temporal class holds a spatial storage unit. Each unit contain
-     *  scales (files) in amount given by the structure spatial configuration
-     *  value. On the model of the relation defined on time, a similar relation
-     *  is set on each scale : each scale, in term of range, is split in 2^i
-     *  ranges identified as equivalence classes, i being the scale number. Any
-     *  given point then belong to a given class at each scale. Index are used,
-     *  through their digits, to browse the spatial scales to find or store any
-     *  point. Again, two points falling in the same class in a specific scale
-     *  cannot be separated after injection. In other words, index digits are
-     *  the address allowing to go from a scale to another following the logic
-     *  of octrees.
+     *  For polygonal models, the same logic applies from the temporal point of
+     *  view, collapsing all primitive within a time range in a single storage
+     *  structure, making them linked from this point of view.
+     *
+     *  For point-based models, spatial scales are used to defined equivalence
+     *  relation grouping the incoming points. The number of scales is given by
+     *  the server spatial configuation parameter. As the index of the scale
+     *  increase, the more equvalence classes are defined, increasing the power
+     *  of resolution between the injected point. This allows to query low scale
+     *  to get a general view of the earth structure while querying higher scale
+     *  allowing to see smaller strcuture with a much better resolution. On each
+     *  scale, i being the index of the scale, 2 ^ i equivalences classes are
+     *  defined homogenously along each spatial dimension. The points position
+     *  coordinates are used to determine in which class they belong for all the
+     *  defined scale.
+     *
+     *  It follows, for point based models, that querying data is only a
+     *  question of following the index digits to find the equivalence classes
+     *  of the desired data. In other words, due to the storage structure, no
+     *  search is performed, i.e. no comparison, to access the data. Gathering
+     *  the desired data is only a question of an enumeration.
+     *
+     *  For polygonal models, the same equivalence relation are defined on the
+     *  space scale in order to allows the same efficiency in data access. For
+     *  such models, more complicated than simple points, the class are seen as
+     *  container linking to the actual graphical primitive that defines the
+     *  model to broadcast to the clients. The injection logic is to assign a
+     *  graphical primitive to a specific class according to its first vertex
+     *  position and to a specific scale looking at the size of the primitve.
+     *  This allows to make primitive appearing the query according to their
+     *  display relevance. Small primitive, showing a city detail for example,
+     *  has no to be conisdered in case of a query for a general view of the
+     *  earth.
+     *
+     *  The server then allows to consider any type of model, regardless of
+     *  their wieght, complexity or the scale at wich their describe structure
+     *  of the earth. The server allows to browse all these data in both space
+     *  and time to offer a detailed and 4D representation of the earth and
+     *  allowing to compare any kind of geographical data.
      *
      *  \var le_server_struct::sv_sock
      *  Server socket descriptor
-     *  \var le_server_struct::sv_root
+     *  \var le_server_struct::sv_push
+     *  Client socket descriptor exchanger
+     *  \var le_server_struct::sv_path
      *  Server storage structure path
      *  \var le_server_struct::sv_scfg
-     *  Server spatial configuration value : number of scale
+     *  Server spatial configuration parameter (scale count)
      *  \var le_server_struct::sv_tcfg
-     *  Server temporal configuration value : size of temporal classes
-     *  \var le_server_struct::sv_pool
-     *  Server thread pooling message
-     *  \var le_server_struct::_status
-     *  Standard status field
+     *  Server temporal configuration parameter
+     *  \var le_server_struct::sv_mute
+     *  Server/client mutual exclusion descriptor
      */
 
     typedef struct le_server_struct {
@@ -181,7 +212,7 @@
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods ( revoked )
+    /*! \brief constructor/destructor methods
      *
      *  This function creates a server structure and initialises its content
      *  according to the provided parameters. It reads the server configuration
@@ -193,7 +224,7 @@
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
      *
-     *  \param le_root Server storage structure path
+     *  \param le_path Server storage structure path
      *  \param le_port Server service port
      *
      *  \return Returns created server structure
@@ -201,18 +232,18 @@
 
     le_server_t le_server_create( le_char_t * const le_path, le_sock_t const le_port );
 
-    /*! \brief constructor/destructor methods ( revoked )
+    /*! \brief constructor/destructor methods
      *
      *  This function deletes the server structure provided as parameter by
-     *  closing the socket descriptor. The function ends by clearing the fields
-     *  of the structure.
+     *  closing the listening socket descriptor. The function ends by clearing
+     *  the fields of the structure using defaul values.
      *
      *  \param le_server Server structure
      */
 
     le_void_t le_server_delete( le_server_t * const le_server );
 
-    /*! \brief mutator methods ( revoked )
+    /*! \brief mutator methods
      *
      *  This function reads the configuration file at the root of the server
      *  storage structure. To locate the storage structure, this function uses
@@ -228,7 +259,7 @@
 
     le_enum_t le_server_set_config( le_server_t * const le_server );
 
-    /*! \brief i/o methods ( revoked )
+    /*! \brief i/o methods
      *
      *  With the server structure creation and deletion methods, this function
      *  is part of the server main element. As a created structure is provided,
@@ -239,25 +270,30 @@
      *  the function creates a thread for the management of its connection. The
      *  thread is created using pthread library.
      *
-     *  The function packs the required arguments and parameters in a specific
-     *  packing structure before to send it the the created thread. It then
-     *  ensures the reception of the arguments and parameters by the thread
-     *  before listening again for other client connections.
+     *  The function pushes the newly connected clients socket descriptor in the
+     *  server structure reserved field before to create the client thread. The
+     *  function waits, using a mutual exclusion locker, that the thread takes
+     *  its client socket descriptor. The mutual exclusion is then unlock to
+     *  allow the function to accept another client.
      *
      *  \param le_server Server structure
      */
 
     le_void_t le_server_io( le_server_t * const le_server );
 
-    /*! \brief i/o methods ( revoked )
-     * 
+    /*! \brief i/o methods
+     *
      *  This function is the main client connection management procedure. It is
      *  usually called as a pthread function after the acceptation of a new
      *  client connection by the main thread.
      *
+     *  In the first place, the thread uses a mutual exclusion to ensure it got
+     *  the correct client socket descriptor during the reading of the socket
+     *  push field of the provided server structure.
+     *
      *  The function implements the server services through a loop waiting for
      *  client queries. The communication between the client and the server is
-     *  made through socket-arrays that packs the communication information. The
+     *  made through socket-arrays that packs the communicated information. The
      *  loop implements a switch used to determine which query is made by the
      *  client to answer it accordingly. Specialised functions are used through
      *  this switch to properly answer client requests.
@@ -265,9 +301,9 @@
      *  As the client disconnect or if an critical error occurs, the function
      *  closes the client connection and exits returning a NULL pointer.
      *
-     *  \param le_pack pthread arguments and parameters packing structure
+     *  \param le_void Pointer to a server structure (casted as void * )
      *
-     *  \return Always a NULL pointer
+     *  \return Returns always a NULL pointer.
      */
 
     le_void_t * le_server_io_client( le_void_t * le_void );
