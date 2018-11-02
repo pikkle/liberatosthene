@@ -131,12 +131,12 @@
      *  it position coordinates, injected in the server has to be inside the
      *  defined ranges.
      *
-     *  As mentionned, for point-based model, storage and access are driven by
+     *  As mentioned, for point-based model, storage and access are driven by
      *  the spatiotmporal index. Any point-based element is assumed to be
-     *  referenced in space and time accroding to the previous frame and ranges.
+     *  referenced in space and time according to the previous frame and ranges.
      *  Two equivalence relations are then defined, one on the time range and
      *  the other on the spatial scales. The time relation simply establish
-     *  homogenous ranges along the time dimension collapsing all incoming data
+     *  homogeneous ranges along the time dimension collapsing all incoming data
      *  in within these range, making them indistinguishable from this point of
      *  view. The temporal parameter of the server then gives the size, in
      *  seconds of these temporal ranges.
@@ -147,13 +147,13 @@
      *
      *  For point-based models, spatial scales are used to defined equivalence
      *  relation grouping the incoming points. The number of scales is given by
-     *  the server spatial configuation parameter. As the index of the scale
-     *  increase, the more equvalence classes are defined, increasing the power
+     *  the server spatial configuration parameter. As the index of the scale
+     *  increase, the more equivalence classes are defined, increasing the power
      *  of resolution between the injected point. This allows to query low scale
      *  to get a general view of the earth structure while querying higher scale
-     *  allowing to see smaller strcuture with a much better resolution. On each
+     *  allowing to see smaller structure with a much better resolution. On each
      *  scale, i being the index of the scale, 2 ^ i equivalences classes are
-     *  defined homogenously along each spatial dimension. The points position
+     *  defined homogeneously along each spatial dimension. The points position
      *  coordinates are used to determine in which class they belong for all the
      *  defined scale.
      *
@@ -169,14 +169,14 @@
      *  container linking to the actual graphical primitive that defines the
      *  model to broadcast to the clients. The injection logic is to assign a
      *  graphical primitive to a specific class according to its first vertex
-     *  position and to a specific scale looking at the size of the primitve.
+     *  position and to a specific scale looking at the size of the primitive.
      *  This allows to make primitive appearing the query according to their
      *  display relevance. Small primitive, showing a city detail for example,
-     *  has no to be conisdered in case of a query for a general view of the
+     *  has no to be considered in case of a query for a general view of the
      *  earth.
      *
      *  The server then allows to consider any type of model, regardless of
-     *  their wieght, complexity or the scale at wich their describe structure
+     *  their weight, complexity or the scale at which their describe structure
      *  of the earth. The server allows to browse all these data in both space
      *  and time to offer a detailed and 4D representation of the earth and
      *  allowing to compare any kind of geographical data.
@@ -236,7 +236,7 @@
      *
      *  This function deletes the server structure provided as parameter by
      *  closing the listening socket descriptor. The function ends by clearing
-     *  the fields of the structure using defaul values.
+     *  the fields of the structure using default values.
      *
      *  \param le_server Server structure
      */
