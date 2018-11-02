@@ -83,9 +83,91 @@
 
     /* *** documentation note : the function assume a complete uv3 stream chunk (no primitive truncation) */
 
+    /*! \brief mutator methods (implicit)
+     *
+     *  Note :
+     *
+     *  Implicit methods are similar to the detached methods in the way the
+     *  subsequent structure is not explicitly defined. In this case, the
+     *  structure is replaced by data implicitly provided in a specific format.
+     *
+     *  Note :
+     *
+     *  Both \b le_uv3_set_sort() and \b le_uv3_set_merge() implement a global
+     *  merge-sort algorithm adapted to massive uv3 files.
+     *
+     *  This function implements a merge sort algorithm on uv3 data array. The
+     *  comparison is made possible on three dimensional elements as the
+     *  comparison function is made on the corresponding spatial index of each
+     *  elements.
+     *
+     *  A few constraints have to be fulfilled concerning the input uv3 data
+     *  array. In the first place the poly-vertex have to be specified in a
+     *  single rows, with no other data between (such as mono-vertex). The
+     *  second constrain is that poly-vertex can not be truncated at the end of
+     *  the uv3 data.
+     *
+     *  The function implements a primitive type agnostic merging process in the
+     *  way mono-vertex and poly-vertex are not treated separately. In case of
+     *  poly-vertex, the first vertex is considered as the relevant vertex for
+     *  index-based comparison and sorting. The remaining vertex are ignored
+     *  from the comparison point of view and the poly-vertex primitive are
+     *  rearranged as single blocs.
+     *
+     *  The result of the index-based merge-sort process is a uv3 data array,
+     *  with the same size as the input uv3 data array, but containing mono and
+     *  poly-vertex sorted from their spatial point of view.
+     *
+     *  This function is usually used prior to data storage structure creation
+     *  as data are injected in the server. This allows more efficient process
+     *  to take place and it also improves the efficiency with which data are
+     *  accessed.
+     *
+     *  \param le_buffer Pointer to the first byte of the uv3 data
+     *  \param le_size   Size of the uv3 data, in bytes
+     *  \param le_scfg   Server spatial configuration parameter
+     *
+     *  \return Returns a pointer to the resulting data
+     */
+
     le_byte_t * le_uv3_set_sort( le_byte_t * const le_buffer, le_size_t const le_size, le_size_t le_memory, le_size_t const le_scfg );
 
-    /* *** */
+    /*! \brief mutator methods (implicit)
+     *
+     *  Note :
+     *
+     *  Implicit methods are similar to the detached methods in the way the
+     *  subsequent structure is not explicitly defined. In this case, the
+     *  structure is replaced by data implicitly provided in a specific format.
+     *
+     *  Note :
+     *
+     *  Both \b le_uv3_set_sort() and \b le_uv3_set_merge() implement a global
+     *  merge-sort algorithm adapted to massive uv3 files.
+     *
+     *  This function implements a merge sort algorithm at the level of large
+     *  files. It implements the same merge sort algorithm as the function
+     *  \b le_uv3_set_sort() but considering two files as input rather than
+     *  a single memory buffer. In this way, it implements the continuation of
+     *  the merge sort process of the previous function.
+     *
+     *  The function reads the two input files uv3 records and export them in
+     *  the output uv3 files respecting the comparison performed on the spatial
+     *  index to obtain a unique sorted merge of the two input file. It assumes
+     *  then that the content of the two input files is already sorted, usually
+     *  using the previous function.
+     *
+     *  Using this function and the \b le_uv3_set_sort() function allows to sort
+     *  very large uv3 files, based on the spatial index comparison, without
+     *  consuming large amount of memory.
+     *
+     *  \param le_pfile Path to the first uv3 file
+     *  \param le_qfile Path to the second uv3 file
+     *  \param le_efile Path to the output uv3 file
+     *  \param le_scfg  Server spatial configuration parameter
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_uv3_set_merge( le_char_t const * const le_pfile, le_char_t const * const le_qfile, le_char_t const * const le_file, le_size_t const le_scfg );
 
