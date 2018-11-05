@@ -114,31 +114,32 @@
      *
      *  This structure holds the address, or the index, of an equivalence class
      *  defined on the geodetic and time parameter spaces. These addresses are
-     *  used to store and access data linked to spatio-temporal references.
+     *  the central structure used to store and access the data of a server.
      *
      *  The structure holds two distinct times in order to allows comparison
      *  methods between different times to take place. In addition to the two
-     *  time values, a range value is also kept by the structure in order to
-     *  provide a time range around the two time value that has to be considered
-     *  for element pointed by the address structure. These values are stored in
-     *  the \b as_times array.
+     *  time values, a temporal range value is also kept by the structure that
+     *  defines the area around the two previous time that has to be considered
+     *  mainly during data queries. These three values are stored in the array
+     *  \b as_times of the structure.
      *
-     *  Then, the mode parameter, stored in \b as_mode, is used to store the
-     *  information on comparison method :
+     *  The mode parameter stored in \b as_mode, is used to store the way time
+     *  values have to be considered. The following mode are available :
      *
-     *      mode = 1 : first time only
-     *      mode = 2 : second time only
-     *      mode = 3 : first time (logical or) second time
-     *      mode = 4 : first time (logical and) second time
-     *      mode = 5 : first time (logical xor) second time
+     *      1 : first time only
+     *      2 : second time only
+     *      3 : first time (logical or) second time
+     *      4 : first time (logical and) second time
+     *      5 : first time (logical xor) second time
      *
-     *  The proper spatial address of the pointed equivalence class is stored
-     *  in an array holding the digits of the address. The amount of digits is
-     *  provided by the \b as_size field.
+     *  The proper spatial index of the pointed equivalence class is stored in
+     *  the array \b as_digits holding its digits. The amount of active digits
+     *  is provided by the \b as_size field.
      *
      *  In the last place the structure holds an depth parameter that gives,
-     *  usually in case of data query, the additional scale depth where the
-     *  desired data have to be considered/gathered.
+     *  usually in case of data queries, the additional scale depth where the
+     *  desired data have to be considered/gathered, the index itself giving
+     *  the base equivalence class.
      *
      *  Times are understood under the UTC standard in the way they give the
      *  amount of seconds elapsed since EPOCH (UTC) with consideration of leap
@@ -159,11 +160,11 @@
      *  \var le_address_struct::as_mode
      *  Times comparison mode
      *  \var le_address_struct::as_span
-     *  Address additional depth
+     *  Spatial index additional depth
      *  \var le_address_struct::as_times
-     *  Array containing the address times and range
+     *  Array containing the address times and the temporal range
      *  \var le_address_struct::as_digit
-     *  Array containing the address digit
+     *  Array containing the address digits
      */
 
     typedef struct le_address_struct {
@@ -183,12 +184,12 @@
 
     /*! \brief accessor methods
      *
-     *  Returns the size, ie. the number of digits, of the class address stored
-     *  in the address structure.
+     *  Returns the size, ie. the number of digits, of the spatial index stored
+     *  in the provided address structure.
      *
      *  \param le_address Address structure
      *
-     *  \return Address number of digits
+     *  \return Address spatial index number of digits
      */
 
     le_byte_t le_address_get_size( le_address_t const * const le_address );
@@ -206,40 +207,42 @@
 
     /*! \brief accessor methods
      *
-     *  This function returns one of the two address structure time or the time
-     *  range around the two times. The time values can be obtained by passing
-     *  0 or 1 as offset parameter. Provided 3 as offset parameter allows to
-     *  obtain the time range stored in the structure.
+     *  This function returns one of the two times or the temporal range of the
+     *  provided address structure.
+     *
+     *  The time values can be obtained by passing 0 or 1 as offset parameter.
+     *  Providing 3 as offset parameter allows to obtain the temporal range
+     *  stored in the structure.
      *
      *  \param le_address Address structure
-     *  \param le_offset  Offset of time or time range - zero based
+     *  \param le_offset  Offset of time or temporal range - zero based
      *
-     *  \return Desired address time
+     *  \return Desired address time or temporal range
      */
 
     le_time_t le_address_get_time( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
      *
-     *  Returns the desired digit of the index stored in the address structure.
-     *  The provided offset has to be smaller to the address size.
+     *  Returns the desired digit of the spatial index stored in the address
+     *  structure. The provided offset has to be smaller than the address size.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of the digit - zero based
      *
-     *  \return Returns address index digit
+     *  \return Returns address spatial index digit
      */
 
     le_byte_t le_address_get_digit( le_address_t const * const le_address, le_size_t const le_offset );
 
     /*! \brief accessor methods
      *
-     *  Returns the additional depth parameter of the class stored in the
-     *  address structure.
+     *  Returns the additional depth parameter of the spatial index stored in
+     *  the provided address structure.
      *
      *  \param le_address Address structure
      *
-     *  \return Address additional depth
+     *  \return Address spatial index additional depth
      */
 
     le_byte_t le_address_get_span( le_address_t const * const le_address );
@@ -265,26 +268,25 @@
      *  without operating directly on it. Such function are used in optimisation
      *  strategies.
      *
-     *  This detached methods directly compare the two provided geographic
-     *  positions and compare them from the spatial index point of view. The
-     *  implicit digits of the two position are computed and compared to check
-     *  which position lead to an address structure considered as greater from
-     *  the spatial index point of view.
+     *  This detached methods directly compares the two provided geographic
+     *  positions from a spatial index point of view. The implicit digits of the
+     *  two positions are computed and compared to check which position lead to
+     *  a spatial index considered as greater.
      *
      *  If the first position lead to a greater or equal spatial index according
      *  to the second one, the function returns \b _LE_TRUE, \b _LE_FALSE in the
      *  other case.
      *
      *  The \b le_size parameter has to give the size of the spatial index to
-     *  consider for comparison. This size is the implicit size of the address
-     *  computed for each position.
+     *  consider for comparison. This size is the implicit size of the spatial
+     *  index computed for each position.
      *
      *  \param le_fpose Pointer to the first position array
      *  \param le_spose Pointer to the second position array
      *  \param le_size  Implicit size of the subsequent address structure
      *
      *  \return Returns _LE_TRUE if the first position lead to a greater or
-     *  equal address, _LE_FALSE otherwise
+     *  equal spatial index, _LE_FALSE otherwise
      */
 
     le_enum_t le_address_get_greater( le_real_t const * const le_fpose, le_real_t const * const le_spose, le_size_t const le_size );
@@ -297,7 +299,7 @@
      *
      *  The provided size is considered as the common digit number to consider
      *  for the distance computation. This size overrides the two sizes coming
-     *  with the address structures.
+     *  with the provided address structures.
      *
      *  \param le_address Address structure
      *  \param le_origin  Address structure
@@ -320,7 +322,7 @@
      *
      *  This function expects the number of digits of the index to be provided
      *  as parameter, discarding the size field of the address structure. This
-     *  allows optimisation to take place.
+     *  allows specific optimisation to take place.
      *
      *  The \b le_address_get_pose() macro provides a way to invoke the function
      *  without having to explicitly pass the address size as parameter.
@@ -334,8 +336,8 @@
 
     /*! \brief mutator methods
      *
-     *  Sets the number of digits, i.e. the address size of the index stored in
-     *  the provided address structure.
+     *  This function allows to set the number of active digit of the spatial
+     *  index of the provided address structure.
      *
      *  \param le_address Address structure
      *  \param le_size    Number of digits
@@ -345,7 +347,7 @@
 
     /*! \brief mutator methods
      *
-     *  Sets the address time comparison mode.
+     *  Sets the provided address time comparison mode.
      *
      *  \param le_address Address structure
      *  \param le_mode    Times comparison mode
@@ -355,24 +357,25 @@
 
     /*! \brief mutator methods
      *
-     *  This function allows to override the value of the two times or the time
-     *  range of the address structure provided as parameter. If the provided
-     *  offset is set to 0 or 1, the corresponding time value is replaced. If
-     *  2 is provided as offset, the time range is replaced with the provided
-     *  time value.
+     *  This function allows to override the value of the two times or the value
+     *  of the temporal range of the provided address structure.
+     *
+     *  If the provided offset is set to 0 or 1, the corresponding time value is
+     *  replaced. If 2 is provided as offset, the temporal range is replaced
+     *  with the provided time value.
      *
      *  \param le_address Address structure
-     *  \param le_offset  Offset of time or time range - zero based
-     *  \param le_time    Time or time range value
+     *  \param le_offset  Offset of time or temporal range - zero based
+     *  \param le_time    Time or temporal range value
      */
 
     le_void_t le_address_set_time( le_address_t * const le_address, le_size_t const le_offset, le_time_t const le_time );
 
     /*! \brief mutator methods
      *
-     *  Sets the specified digit of the index stored in the address structure.
-     *  The provided offset has to be a whole number smaller that the address
-     *  size.
+     *  Sets the specified digit of the spatial index stored in the provided
+     *  address structure. The provided offset has to be a whole number smaller
+     *  than the address size.
      *
      *  \param le_address Address structure
      *  \param le_offset  Offset of the digit - zero based
@@ -383,7 +386,7 @@
 
     /*! \brief mutator methods
      *
-     *  Sets the address additional depth.
+     *  Sets the provided address spatial index additional depth value.
      *
      *  \param le_address Address structure
      *  \param le_span    Additional depth
@@ -409,22 +412,24 @@
     /*! \brief serialisation method
      *
      *  This functions is used to pack and unpack an address structure in and
-     *  from the provided array. In other words, this function ensure the
-     *  translation between its structure representation and its packing in a
-     *  byte sequence.
+     *  from the provided socket-array. In other words, this function ensure the
+     *  translation between the structure memory representation and its packed
+     *  representation in a bytes array.
      *
      *  The provided \b le_offset parameter indicates at which byte position the
-     *  packing or unpacking of the structure has to take place in the array.
+     *  packing or unpacking of the structure has to take place in the provided
+     *  socket-array.
      *
-     *  The provided array, for both packing and unpacking, as to be an already
-     *  allocated array allowing the packing and unpacking to take place.
+     *  The provided socket-array, for both packing and unpacking, as to be an
+     *  already allocated array allowing the packing and unpacking to take
+     *  place.
      *
      *  \param le_address Address structure
      *  \param le_array   Array structure
-     *  \param le_offset  Serialisation offset, in bytes
-     *  \param le_mode    Serialisation mode : _LE_SET or _LE_GET
+     *  \param le_offset  Serialisation offset in array, in bytes
+     *  \param le_mode    Serialisation mode (_LE_SET or _LE_GET)
      *
-     *  \return Offset of the byte following the structure in the array
+     *  \return Offset of the byte following the structure in the socket-array
      */
 
     le_size_t le_address_serial( le_address_t * const le_address, le_array_t * const le_array, le_size_t const le_offset, le_enum_t const le_mode );
@@ -434,14 +439,15 @@
      *  This function translates the address structure content in human readable
      *  text form.
      *
-     *  Considering m the times comparison mode, t1 and t2 the times, r the time
-     *  range, d the  digits of the spatial index and q the query additional
-     *  depth, the function provides a string structured as follow :
+     *  Considering m the times comparison mode, t1 and t2 the times, r the
+     *  temporal range, d the  digits of the spatial index and q the spatial
+     *  index additional depth, the function provides a string structured as
+     *  follows :
      *
      *      /m/t1,t2/r/ddd...d/q
      *
      *  \param le_address Address structure
-     *  \param le_string  String receiving the converted address structure
+     *  \param le_string  String receiving the address text representation
      */
 
     le_void_t le_address_ct_string( le_address_t const * const le_address, le_char_t * const le_string );
@@ -449,16 +455,11 @@
     /*! \brief conversion methods
      *
      *  This function inverts the conversion made by \b le_address_ct_string()
-     *  function. It expects an address in human readable text string structured
-     *  as defined by this last function :
-     *
-     *      /m/t1,t2/r/ddd...d/q
-     *
-     *  with m the time comparison mode, t1 and t2 the address times, r the time
-     *  range, d the digits of the spatial index and q the additional depth.
+     *  function. It expects an address in human readable text and converts it
+     *  in an address structure.
      *
      *  \param le_address Address structure
-     *  \param le_string  String containing the converted address structure
+     *  \param le_string  String containing the address text representation
      */
 
     le_void_t le_address_cf_string( le_address_t * const le_address, le_char_t const * const le_string );

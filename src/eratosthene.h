@@ -215,7 +215,7 @@
     # define _LE_SOCK_NULL       ( -1 )
     # define _LE_OFFS_NULL       ( ( _LE_MASK_L( 1 ) << ( _LE_USE_BASE * _LE_USE_OFFSET ) ) - _LE_MASK_L( 1 ) )
 
-    /* define type litteral suffix */
+    /* define type literal suffix */
     # define _LE_REAL_L(t)       ( t )
     # define _LE_SIZE_L(t)       ( INT64_C( t ) )
     # define _LE_TIME_L(t)       ( INT64_C( t ) )
