@@ -138,10 +138,10 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function creates and initialise the content of a mono-vertex class
+     *  This function creates and initialises the content of a mono-vertex class
      *  structure.
      *
-     *  The function initialise the structure field with default values and
+     *  The function initialises the structure fields with default values and
      *  assigns null offset values before to return the structure.
      *
      *  \return Returns created structure
@@ -151,7 +151,7 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function allows the reset the provided mono-vertex class structure
+     *  This function allows to reset the provided mono-vertex class structure
      *  to restore its state as it would have been created by the pseudo
      *  constructor function \b le_mclass_create().
      *
@@ -163,7 +163,7 @@
     /*! \brief constructor/destructor methods
      *
      *  This function deletes the provided mono-vertex class structure. It
-     *  simply resets the structure field using default values.
+     *  simply resets the structure fields using default values.
      *
      *  \param le_mclass Mono-vertex class structure
      */
@@ -172,7 +172,7 @@
 
     /*! \brief accessor methods
      *
-     *  This function allows the query the offset value stored in the provided
+     *  This function allows to query the offset value stored in the provided
      *  mono-vertex class structure. The provided index indicates which offset
      *  to return and has to be in the [0,7] range.
      *
@@ -203,9 +203,9 @@
      *  array of the provided mono-vertex class structure. The color is pushed
      *  on the class accumulation array and the counter is updated.
      *
-     *  This function is mainly used during data injection process to compute
+     *  This function is mainly used during data injection processes to compute
      *  the representative color of an equivalence class in the case multiple
-     *  element are present.
+     *  elements are present.
      *
      *  \param le_mclass Mono-vertex class structure
      *  \param le_data   Pointer to the color information, in 8-bits RGB
@@ -237,7 +237,7 @@
      *
      *  This function allows to read the content of a mono-vertex class storage
      *  representation but only in terms of offsets. This function is used to
-     *  provide an efficient way of read the class linking offset for processes
+     *  provide an efficient way to read the class linking offsets for processes
      *  that does not need to read the entire representation.
      *
      *  The provided offset value indicates where to start the representation
@@ -285,7 +285,7 @@
      *  strategies.
      *
      *  This function allows the reads a single offset from a mono-vertex class
-     *  representation in the storage structure. The function only read the
+     *  representation in a tree storage structure. The function only reads the
      *  bytes corresponding the the desired offset.
      *
      *  The provided offset value indicates where to start the representation
@@ -311,8 +311,8 @@
      *  strategies.
      *
      *  This function allows to read the color information from a mono-vertex
-     *  class representation in the storage structure. The function only reads
-     *  the color information, discarding the remaining information.
+     *  class representation in a tree storage structure. The function only
+     *  reads the color information, discarding the remaining information.
      *
      *  The provided offset value indicates where to start the representation
      *  reading in the provided stream. The provided stream has to be an already
