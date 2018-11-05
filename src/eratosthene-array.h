@@ -128,13 +128,12 @@
      *
      *  This structure holds the definition and content of a bytes array. These
      *  arrays are commonly used to transmit data through TCP/IP sockets. These
-     *  arrays of bytes are commonly interpreted through serialisation and
-     *  access macro and functions.
+     *  arrays of bytes are commonly interpreted through serialisation, access
+     *  macro and specialised functions.
      *
      *  More specifically, the structure holds an array in an array. The first
-     *  array, corresponding to the allocated memory, has a virtual size,
-     *  usually greater than the actual data array contain in it. This size
-     *  correspond to the available memory.
+     *  array, corresponding to the allocated memory, has a virtual size usually
+     *  greater than the actual data array size contain in it.
      *
      *  A second array is defined through its base pointer (\b ar_vbyte) and its
      *  size (\b ar_vsize). This pseudo array contains the proper data. From
@@ -155,10 +154,14 @@
      *  When the array is written on TCP/IP socket, the header is filled as
      *  follows :
      *
-     *      [ar_vsize][mode][array_payload] ... [array_payload]
+     *      [ar_vsize][mode][array_data] ... [array_data]
      *
-     *  As the array is received in the remote computer, the header contains
+     *  As the array is received by the remote computer, the header contains
      *  all the information needed to rebuild the array.
+     *
+     *  As an array is written or read from a socket, it is always associated
+     *  to a transfer mode value. This value is used to define the type of the
+     *  data sent through the array and to perform consistency checks.
      *
      *  \var le_array_struct::ar_rsize
      *  Array real memory size, in bytes
@@ -186,10 +189,9 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function initialise and returns an empty socket array structure.
+     *  This function initialise and returns an empty socket-array structure.
      *  This function is mandatory before usage of array method on any array
-     *  structure. Indeed, the pseudo-constructor does not allocate the memory
-     *  of the array initial state.
+     *  structure.
      *
      *  \return Returns the created structure
      */
@@ -198,8 +200,9 @@
 
     /*! \brief constructor/destructor methods
      *
-     *  This function uninitialises the provided array structure. It unallocates
-     *  the array memory and reset the structure fields.
+     *  This function un-initialises the provided array structure. It checks the
+     *  memory allocation state and release it when necessary. The fields of the
+     *  structure are then cleared using default values.
      *
      *  \param le_array Array structure
      */
@@ -224,7 +227,7 @@
      *
      *  \param le_array Array structure
      *
-     *  \return Returns array memory base pointer
+     *  \return Returns data array memory base pointer
      */
 
     le_byte_t * le_array_get_byte( le_array_t const * const le_array );
@@ -232,33 +235,32 @@
     /*! \brief mutator methods
      *
      *  This function is used to build the array header part. It packs the array
-     *  size and compressed size in the header reserved field. In addition, the
-     *  function also packs the array mode value in the header.
+     *  size in the header reserved field. In addition, the function also packs
+     *  the array transfer mode value in the header.
      *
-     *  This function is usually used before to write the array on the specific
-     *  device.
+     *  This function is usually used before to write the array on a specific
+     *  socket.
      *
      *  \param le_array Array structure
-     *  \param le_mode  Array mode
+     *  \param le_mode  Array transfer mode
      */
 
     le_void_t le_array_set_header( le_array_t * const le_array, le_byte_t const le_mode );
 
     /*! \brief mutator methods
      *
-     *  This function extract the array size and compressed size from the header
-     *  of the provided socket array. It sets back the field of the array
+     *  This function extract the array size and transfer mode from the header
+     *  of the provided socket-array. It sets back the field of the array
      *  structure accordingly to the values extracted from the header. It also
-     *  re-allocate the socket array memory according to the extracted size.
-     *  Finally, the function returns the array mode also extracted from the
-     *  header.
+     *  re-allocate the socket-array memory according to the extracted size.
+     *  The function returns the socket-array transfer mode.
      *
      *  This function is usually used while a socket-array is read from a given
-     *  device.
+     *  socket.
      *
      *  \param le_array Array structure
      *
-     *  \return Returns the read socket-array mode
+     *  \return Returns the read socket-array transfer mode
      */
 
     le_byte_t le_array_set_array( le_array_t * const le_array );
@@ -266,12 +268,16 @@
     /*! \brief mutator methods
      *
      *  This function checks if the memory size of the provided array structure
-     *  allows the insertion of an element of size \b le_length.
+     *  allows the insertion of an element of size \b le_length, given in bytes.
      *
      *  If the memory size allows the insertion, the function update the array
      *  data size. Otherwise, it updates the size of the array and also the data
-     *  size. In this case, the array memory is reallocated by the function
+     *  size. In this case, the array memory is re-allocated by the function
      *  according to the updated memory size.
+     *
+     *  When the memory allocation of the array is increased, this function
+     *  always uses default increasing step value in order to minimise the
+     *  amount of required memory re-allocations through time.
      *
      *  \param le_array  Array structure
      *  \param le_length Length, in bytes, of inserted element
@@ -290,7 +296,7 @@
      *  provided size and the function reallocates the array memory.
      *
      *  \param le_array  Array structure
-     *  \param le_size   Size of the array
+     *  \param le_size   Size of the data array, in bytes
      *
      *  \return Return _LE_TRUE on success, _LE_FALSE otherwise
      */
@@ -299,18 +305,18 @@
 
     /*! \brief serialisation methods
      *
-     *  This function is used to pack or unpack variables in the data array
-     *  stored in the provided array structure. It receives a variable and its
-     *  size and pack or unpack it in the array at the specified offset
+     *  This function is used to pack or unpack atomic variables in the data
+     *  array stored in the provided array structure. It receives a variable and
+     *  its size and pack or unpack it in the data array at the specified offset
      *  according to the provided mode.
      *
      *  \param le_array  Array structure
-     *  \param le_bytes  Pointer to the variable to pack/unpack
-     *  \param le_length Size, in bytes, of the variable to pack/unpack
+     *  \param le_bytes  Pointer to the atomic variable to pack/unpack
+     *  \param le_length Size, in bytes, of the atomic variable to pack/unpack
      *  \param le_offset Pack/unpack offset in the data array, in bytes
-     *  \param le_mode   Serialisation mode : _LE_SET or _LE_GET
+     *  \param le_mode   Serialisation mode (_LE_SET or _LE_GET)
      *
-     *  \return Offset of the byte following the variable in the array
+     *  \return Offset of the byte following the variable in the data array
      */
 
     le_size_t le_array_serial( le_array_t * const le_array, le_void_t * const le_bytes, le_size_t const le_length, le_size_t const le_offset, le_enum_t const le_mode );
@@ -321,12 +327,12 @@
      *  the provided socket descriptor. This function also sets the array
      *  structure header before to send it over TCP/IP.
      *
-     *  In addition to the data array size, the header also contains a mode
-     *  value to indicate the type of data carried by the array. This mode
+     *  In addition to the data array size, the header also contains a transfer
+     *  mode value to indicate the type of data carried by the array. This mode
      *  value is set according to the provided \b le_mode parameter.
      *
      *  \param le_array  Array structure
-     *  \param le_mode   Array mode
+     *  \param le_mode   Array tranfert mode
      *  \param le_socket Socket descriptor
      *
      *  \return Returns the array mode on success, LE_MODE_NULL otherwise
@@ -338,7 +344,7 @@
      *
      *  This function reads the provided array bytes from the socket pointed by
      *  the provided socket descriptor. The reading is based on the analysis
-     *  of the read array header.
+     *  of the read array header and the received data.
      *
      *  \param le_array  Array structure
      *  \param le_socket Socket descriptor
