@@ -78,15 +78,15 @@
      *  \brief tree structure
      *
      *  This structure holds the backbone elements to access a server storage
-     *  structure. It maintain a linked list of door structures that are used
-     *  for specialised data access.
+     *  structure. It maintains a linked list of door structures that are used
+     *  for specialised data access through the door module functions.
      *
      *  The structure is mainly responsible of maintaining the door structures
      *  linked list. This linked list is the first element to access for data
      *  query for a remote client. It is used as a search backbone to detect
      *  in which temporal storage structure to search the relevant data.
      *
-     *  The maintained linked list provided a sorted, from the time point of
+     *  The maintained linked list provided a sorted, from the temporal point of
      *  view, of the active doors of a specific server implementation. Each door
      *  is responsible for the management of the data access on its dedicated
      *  temporal storage structure.
@@ -108,7 +108,7 @@
      *
      *  The three next field are a simple copy of the server configuration data
      *  for a given implementation. These data includes storage structure path,
-     *  spatial and time configuration values.
+     *  spatial and temporal configuration values.
      *
      *  The last field is a pointer to the first door structure engaged in the
      *  linked list hold by this switch structure. It is used to search along
@@ -151,8 +151,8 @@
     /*! \brief constructor/destructor method
      *
      *  This function creates a switch structure and returns it. It simply
-     *  initialises the fields of the structure with default value and assigns
-     *  the provided parameter to their respective fields.
+     *  initialises the fields of the structure with default values and assigns
+     *  the provided parameters to their respective fields.
      *
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
@@ -169,13 +169,13 @@
     /*! \brief constructor/destructor methods
      *
      *  This function deletes the content of the provided switch structure and
-     *  resets its field using default values.
+     *  resets its fields using default values.
      *
      *  The function then deletes the created linked list, if present, by
      *  deleting all the engaged door structures using their specialised
      *  deletion function.
      *
-     *  \param le_switch Tree structure
+     *  \param le_switch Switch structure
      */
 
     le_void_t le_switch_delete( le_switch_t * const le_switch );
@@ -209,22 +209,21 @@
      *  provided time value.
      *
      *  In addition, the function checks, using the spatial index provided
-     *  through the address structure, is the door contains data accordingly. If
+     *  through the address structure, if the door contains data accordingly. If
      *  no data are available from the spatial index point of view, the door
      *  is rejected and the door search goes on.
      *
      *  The door search is stopped under two conditions : in case the end of the
      *  linked list is reached or of the considered door is distant, from a
-     *  temporal point view, of more than the comb value coming with the address
-     *  structure.
+     *  temporal point view, of more than the time range value coming with the
+     *  address structure.
      *
      *  The function implements then a dual door search : one going with time
-     *  the other against it. The function starts with the two nearest door
+     *  and the other against it. The function starts with the two nearest doors
      *  surrounding the target time.
      *
-     *  If a relevant door is found filled with data form the spatial index
-     *  point of view, it is returned by the structure. A NULL pointer is
-     *  returned otherwise.
+     *  If a relevant door is found filled with data, it is returned by the
+     *  function. A NULL pointer is returned otherwise.
      *
      *  \param le_switch Switch structure
      *  \param le_time   Target time
@@ -239,13 +238,13 @@
      *
      *  This function allows the rebuild the provided switch structure doors
      *  linked list. According to the provided maximum lifespan of the switch,
-     *  the function erases the linked list before to recreate it.
+     *  the function erases the linked list before to re-create it.
      *
      *  This function is used as each client connection thread are independent
      *  from each other. This allows for thread to keep track of newly injected
-     *  data without having synchronise to each other.
+     *  data without having synchronise to each other directly.
      *
-     *  \param le_switch Switch structure
+     *  \param le_switch   Switch structure
      *  \param le_lifespan Maximum lifetime of the switch structure, in seconds
      *
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
@@ -260,7 +259,7 @@
      *
      *  The function enumerates the directories of the server main storage
      *  path. Each directory is interpreted as a temporal storage unit. A door
-     *  is created for each found unit.
+     *  is created for each found directory.
      *
      *  As a door is created for a directory, the function calls a specialised
      *  pushing function allowing to actually create the door structure for the
@@ -286,7 +285,8 @@
      *  its time value.
      *
      *  If the provided mode value is set to \b LE_DOOR_WRITE, the door is
-     *  created even its storage representation is not found, creating it.
+     *  created even its storage representation is not found, creating its
+     *  storage directory.
      *
      *  The created door is then returned as a pointer after its insertion in
      *  the linked list.
@@ -295,7 +295,7 @@
      *  \param le_time   Door time
      *  \param le_mode   Storage structure access mode
      *
-     *  \return Returns unit structure on success, NULL otherwise
+     *  \return Returns the created door structure on success, NULL otherwise
      */
 
     le_door_t * le_switch_set_push( le_switch_t * const le_switch, le_time_t const le_time, le_enum_t const le_mode );
@@ -305,7 +305,7 @@
      *  This function allows to deletes the doors linked list of the provided
      *  switch structure.
      *
-     *  The function parses the linked list and deletes all the door using their
+     *  The function parses the linked list and deletes all its door using their
      *  specialised deletion function. The memory of the linked list is released
      *  along the way.
      *
@@ -319,7 +319,7 @@
      *  This function is the front-end to server parameter query from a remote
      *  client.
      *
-     *  The function, after consistency checks, packs the server parameter in
+     *  The function, after consistency checks, packs the server parameters in
      *  a socket-array that is returned to the client using the provided
      *  socket descriptor.
      *
@@ -339,7 +339,7 @@
      *
      *  After consistency checks, the function reads the time value packed in
      *  the provided client socket-array. The function uses this time value to
-     *  query the appropriate door structure.
+     *  query or create the appropriate door structure.
      *
      *  The gathered door is then locked before the function proceed to the
      *  injection of the data. In the first place, the client incoming data
@@ -374,7 +374,7 @@
      *
      *  The function allows to have multiple query address packed in the
      *  provided client socket-array. The function performs then a loop on all
-     *  packed address, repeating the query process for each of them.
+     *  packed addresses, repeating the query process for each of them.
      *
      *  For each address, the function starts by checking the mode of the
      *  address to determine if a parallel query has to be performed.
@@ -384,15 +384,14 @@
      *  is then used along with its specialised query function for mono-vertex,
      *  poly-vertex and mixed/parallel queries.
      *
-     *  Mixed models are answered to the client as the to time of the address
+     *  Mixed models are answered to the client as the two times of the address
      *  are active (according to the mode value) and as the data found in the
      *  door storage structure are not of the same type (mono/poly-vertex). The
      *  function implements the composition of mixed model logic.
      *
-     *  As the data are packed in the server socket-array by the door
-     *  specialised function, it is returned to the remote client, for each
-     *  address found in the incoming client socket-array. Two socket array
-     *  are then used in parallel for queries.
+     *  The function uses the door specialised functions to gather the queried
+     *  data into the provided server socket-array and returns one socket-array
+     *  per address found in the client request.
      *
      *  \param le_switch Switch structure
      *  \param le_array  Client socket array
