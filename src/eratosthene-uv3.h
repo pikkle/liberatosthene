@@ -103,31 +103,32 @@
      *
      *  A few constraints have to be fulfilled concerning the input uv3 data
      *  array. In the first place the poly-vertex have to be specified in a
-     *  single rows, with no other data between (such as mono-vertex). The
-     *  second constrain is that poly-vertex can not be truncated at the end of
-     *  the uv3 data.
+     *  single rows, with no other data between their vertex (such as mono
+     *  vertex elements). The second constrain is that poly-vertex can not be
+     *  truncated at the end of the uv3 data.
      *
      *  The function implements a primitive type agnostic merging process in the
      *  way mono-vertex and poly-vertex are not treated separately. In case of
      *  poly-vertex, the first vertex is considered as the relevant vertex for
      *  index-based comparison and sorting. The remaining vertex are ignored
-     *  from the comparison point of view and the poly-vertex primitive are
-     *  rearranged as single blocs.
+     *  from the comparison point of view and the poly-vertex primitives are
+     *  sorted as single blocs.
      *
      *  The result of the index-based merge-sort process is a uv3 data array,
      *  with the same size as the input uv3 data array, but containing mono and
-     *  poly-vertex sorted from their spatial point of view.
+     *  poly-vertex sorted from their spatial index point of view.
      *
      *  This function is usually used prior to data storage structure creation
-     *  as data are injected in the server. This allows more efficient process
+     *  as data are injected in the server. This allows more efficient processes
      *  to take place and it also improves the efficiency with which data are
      *  accessed.
      *
-     *  Two size are provided to the function that are the actual size, in bytes
-     *  of the input uv3 chunk and the size of the memory allocation that holds
-     *  the data. This allows to have larger memory allocation than the data
-     *  it holds and having a function that always returns an array contained
-     *  in a memory allocation that have the same size as the input one.
+     *  Two sizes are provided to the function that are the actual size, in
+     *  bytes of the input uv3 chunk and the size of the memory allocation that
+     *  holds the data. This allows to have larger memory allocation than the
+     *  data it holds and having a function that always returns an array
+     *  contained in a memory allocation that have the same size as the input
+     *  one.
      *
      *  \param le_buffer Pointer to the first byte of the uv3 data
      *  \param le_size   Size of the uv3 data, in bytes
@@ -158,11 +159,11 @@
      *  a single memory buffer. In this way, it implements the continuation of
      *  the merge sort process of the previous function.
      *
-     *  The function reads the two input files uv3 records and export them in
+     *  The function reads the two input files uv3 records and exports them in
      *  the output uv3 files respecting the comparison performed on the spatial
-     *  index to obtain a unique sorted merge of the two input file. It assumes
-     *  then that the content of the two input files is already sorted, usually
-     *  using the previous function.
+     *  index to obtain a unique sorted file from the two input files. It
+     *  assumes then that the content of the two input files is already sorted,
+     *  usually using the previous function.
      *
      *  Using this function and the \b le_uv3_set_sort() function allows to sort
      *  very large uv3 files, based on the spatial index comparison, without
