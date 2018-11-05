@@ -72,7 +72,7 @@
     /*! \brief constructor/destructor methods
      *
      *  This function creates a client socket descriptor. It sets a connection
-     *  toward the provided remote server, specified through it ip address and
+     *  toward the provided remote server, specified through its ip address and
      *  service port, and returns the created socket descriptor.
      *
      *  \param le_ip   Server ip address
