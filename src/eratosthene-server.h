@@ -82,25 +82,25 @@
      *
      *  The server offers a 4D mapping service of the earth through storage,
      *  access and network broadcasting of colorimetric points and polygonal
-     *  representation. Its storage structure, data injection and data query are
-     *  driven by the formalism of spatiotemporal index. In other words, the
+     *  representations. Its storage structure, data injection and data query
+     *  are driven by the formalism of spatiotemporal index. In other words, the
      *  server can be seen as a 4D tile server based on the theoretical
-     *  framework of index.
+     *  framework of spatial index.
      *
      *  For the point based models, the spatial index are defining equivalence
      *  classes in which points are collected to create a natural multi-scale
      *  representation of the 4D earth. For polygonal models, these classes are
-     *  used as container of links toward the relevant graphical primitive
+     *  used as container of links toward the relevant graphical primitives
      *  relevant to display at a given scale.
      *
      *  A server is then responsible of receiving data from client during
      *  injection, data broadcasting during client query, broadcasting of its
      *  main parameter through client specific query and the storage management
      *  of the data. This structure is then the heart allowing these operations
-     *  to be fulfilled, with the help of sub-systems.
+     *  to be fulfilled, with the help of the library sub-systems.
      *
      *  A first field is dedicated to store the server socket descriptor. As any
-     *  server, an eratosthene server maintain a service on a computer available
+     *  server, an eratosthene server maintains a service on a given computer
      *  through a predefined port. This field store the socket descriptor set
      *  to listen to client connections.
      *
@@ -123,35 +123,35 @@
      *
      *  As the server offers a 4D information system through the formalism of
      *  spatiotemporal index, one has to take into account geographic ranges
-     *  allowed by indexation. For both longitude and latitude, the canonical
+     *  allowed for indexation. For both longitude and latitude, the canonical
      *  ranges are considered (with coordinates always in radian) : [-pi,pi] and
      *  [-pi/2,pi/2]. A more specific range is considered for height values
      *  (with coordinates always in meter above WGS84 ellipsoid) : [-h,h] where
      *  h equal to \b LE_ADDRESS_MAXH (address module). Any element, in terms of
-     *  it position coordinates, injected in the server has to be inside the
+     *  its position coordinates, injected in the server has to be inside the
      *  defined ranges.
      *
      *  As mentioned, for point-based model, storage and access are driven by
-     *  the spatiotmporal index. Any point-based element is assumed to be
+     *  the spatio-temporal index. Any point-based element is assumed to be
      *  referenced in space and time according to the previous frame and ranges.
-     *  Two equivalence relations are then defined, one on the time range and
-     *  the other on the spatial scales. The time relation simply establish
-     *  homogeneous ranges along the time dimension collapsing all incoming data
-     *  in within these range, making them indistinguishable from this point of
-     *  view. The temporal parameter of the server then gives the size, in
-     *  seconds of these temporal ranges.
+     *  Two groups of equivalence relations are then defined, one on the time
+     *  range and the others on the spatial scales. The time relation simply
+     *  establish homogeneous ranges along the time dimension collapsing all
+     *  incoming data in within these range, making them indistinguishable from
+     *  this point of view. The temporal parameter of the server then gives the
+     *  size, in seconds of these temporal ranges.
      *
      *  For polygonal models, the same logic applies from the temporal point of
-     *  view, collapsing all primitive within a time range in a single storage
+     *  view, collapsing all primitives within a time range in a single storage
      *  structure, making them linked from this point of view.
      *
      *  For point-based models, spatial scales are used to defined equivalence
      *  relation grouping the incoming points. The number of scales is given by
      *  the server spatial configuration parameter. As the index of the scale
      *  increase, the more equivalence classes are defined, increasing the power
-     *  of resolution between the injected point. This allows to query low scale
+     *  of resolution between the injected data. This allows to query low scale
      *  to get a general view of the earth structure while querying higher scale
-     *  allowing to see smaller structure with a much better resolution. On each
+     *  allows to see smaller structures with a much better resolution. On each
      *  scale, i being the index of the scale, 2 ^ i equivalences classes are
      *  defined homogeneously along each spatial dimension. The points position
      *  coordinates are used to determine in which class they belong for all the
@@ -164,19 +164,19 @@
      *  the desired data is only a question of an enumeration.
      *
      *  For polygonal models, the same equivalence relation are defined on the
-     *  space scale in order to allows the same efficiency in data access. For
+     *  space scale in order to allow the same efficiency in data access. For
      *  such models, more complicated than simple points, the class are seen as
-     *  container linking to the actual graphical primitive that defines the
+     *  container linking to the actual graphical primitives that defines the
      *  model to broadcast to the clients. The injection logic is to assign a
      *  graphical primitive to a specific class according to its first vertex
      *  position and to a specific scale looking at the size of the primitive.
-     *  This allows to make primitive appearing the query according to their
-     *  display relevance. Small primitive, showing a city detail for example,
+     *  This allows to make primitive appearing during query according to their
+     *  display relevance. Small primitives, showing a city detail for example,
      *  has no to be considered in case of a query for a general view of the
      *  earth.
      *
      *  The server then allows to consider any type of model, regardless of
-     *  their weight, complexity or the scale at which their describe structure
+     *  their weight, complexity or the scale at which they describe structures
      *  of the earth. The server allows to browse all these data in both space
      *  and time to offer a detailed and 4D representation of the earth and
      *  allowing to compare any kind of geographical data.
@@ -220,7 +220,7 @@
      *  according to the provided parameters. It reads the server configuration
      *  file hold in the storage structure pointed by the provided path.
      *
-     *  It also create the socket descriptor used by the server to listen to
+     *  It also creates the socket descriptor used by the server to listen to
      *  client connections.
      *
      *  This function returning the created structure, the status is stored in
@@ -251,8 +251,8 @@
      *  storage structure. To locate the storage structure, this function uses
      *  the path hold by the structure itself, assumed to be correctly filled.
      *
-     *  The function opens and reads the two space and time configuration values
-     *  stored in the file (text mode) and perform basic consistency checks.
+     *  The function reads the two space and time configuration values stored in
+     *  the file (text mode) and performs basic consistency checks.
      *
      *  \param le_server Server structure
      *
@@ -265,7 +265,8 @@
      *
      *  With the server structure creation and deletion methods, this function
      *  is part of the server main element. As a created structure is provided,
-     *  the function maintains the server service and addresses clients queries.
+     *  the function maintains the server service and addresses clients remote
+     *  connections.
      *
      *  This function is executed by the main thread and is responsible of the
      *  management of all incoming client connections. As a client is accepted,
@@ -300,7 +301,7 @@
      *  client to answer it accordingly. Specialised functions are used through
      *  this switch to properly answer client requests.
      *
-     *  As the client disconnect or if an critical error occurs, the function
+     *  As the client disconnect or if any critical error occurs, the function
      *  closes the client connection and exits returning a NULL pointer.
      *
      *  \param le_void Pointer to a server structure (casted as void * )
