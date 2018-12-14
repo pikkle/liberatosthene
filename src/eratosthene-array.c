@@ -223,7 +223,6 @@
         /* socket i/o variables */
         le_size_t le_head = 0;
         le_size_t le_sent = 0;
-        le_size_t le_fail = 0;
 
         /* create array header */
         le_array_set_header( le_array, le_mode );
@@ -239,19 +238,8 @@
 
             } else {
 
-                /* check write state */
-                if ( le_sent < 0 ) {
-
-                    /* update and check failure */
-                    if ( ( ++ le_fail ) == _LE_USE_RETRY ) {
-
-                        /* send message */
-                        return( LE_MODE_NULL );
-
-                    }
-
-                /* return array mode */
-                } else { return( LE_MODE_NULL ); }
+                /* send message */
+                return( LE_MODE_NULL );
 
             }
 
@@ -270,7 +258,6 @@
         /* socket i/o variables */
         le_size_t le_head = 0;
         le_size_t le_read = 0;
-        le_size_t le_fail = 0;
 
         /* array mode variable */
         le_byte_t le_mode = LE_MODE_NULL;
@@ -303,19 +290,8 @@
 
             } else {
 
-                /* check read state */
-                if ( le_read < 0 ) {
-
-                    /* update and check failure */
-                    if ( ( ++ le_fail ) == _LE_USE_RETRY ) {
-
-                        /* send message */
-                        return( LE_MODE_NULL );
-
-                    }
-
                 /* send message */
-                } else { return( LE_MODE_NULL ); }
+                return( LE_MODE_NULL );
 
             }
 
