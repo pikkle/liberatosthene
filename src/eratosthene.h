@@ -103,8 +103,8 @@
     # define __LE_ERATOSTHENE__
 
     # ifndef __cplusplus
-    # if ( __STDC_VERSION__ < 199901L )
-    # error "C99 standard required"
+    # if ( __STDC_VERSION__ < 201112L )
+    # error "C11 standard required"
     # endif
     # endif
     # include <limits.h>
