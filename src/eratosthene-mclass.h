@@ -45,6 +45,8 @@
 
     # include "eratosthene.h"
 
+    # include "eratosthene-offset.h"
+
 /*
     header - external includes
  */
@@ -63,7 +65,7 @@
     # define LE_MCLASS_HEAD   ( sizeof( le_byte_t ) * LE_MCLASS_LENGTH )
 
     /* define class structure */
-    # define LE_MCLASS_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
+    # define LE_MCLASS_OFFSET ( LE_OFFSET_MEMORY ) //( _LE_USE_OFFSET * _LE_USE_BASE )
 
     /* define class structure */
     # define LE_MCLASS_FIXED  ( LE_MCLASS_HEAD + LE_MCLASS_OFFSET )

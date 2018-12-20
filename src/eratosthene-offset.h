@@ -53,6 +53,9 @@
     header - preprocessor definitions
  */
 
+    /* define offset stack size */
+    # define LE_OFFSET_MEMORY ( sizeof( le_byte_t ) + ( _LE_USE_OFFSET * _LE_USE_BASE ) + sizeof( le_size_t ) )
+
     /* define configuration count */
     # define LE_OFFSET_COUNT ( 1 << _LE_USE_BASE )
 
@@ -615,6 +618,9 @@
     header - preprocessor macros
  */
 
+    /* define cast macro */
+    # define le_offset_mac_cast( o ) ( * ( ( le_size_t * ) o ) )
+
 /*
     header - type definition
  */
@@ -626,6 +632,30 @@
 /*
     header - function prototypes
  */
+
+    /* *** */
+
+    le_void_t le_offset_create( le_byte_t * const le_offset );
+
+    /* *** */
+
+    le_size_t le_offset_get_offset( le_byte_t const * le_offset, le_size_t const le_index );
+
+    /* *** */
+
+    le_void_t le_offset_set_offset( le_byte_t * le_offset, le_size_t const le_index, le_size_t const le_value );
+
+    /* *** */
+
+    le_enum_t le_offset_io_read( le_byte_t * le_offset, le_file_t const le_stream );
+
+    /* *** */
+
+    le_enum_t le_offset_io_write( le_byte_t * le_offset, le_file_t const le_stream );
+
+    /* *** */
+
+    le_size_t le_offset_io_offset( le_size_t const le_index, le_file_t const le_stream );
 
 /*
     header - C/C++ compatibility
