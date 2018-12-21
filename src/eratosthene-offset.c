@@ -95,14 +95,17 @@
                     /* */
                     le_pattern |= ( * le_offset );
 
-                    /* */ // Instance fault //
-                    le_byte_t * le_base = le_invert[ ( * le_offset ) ];
-
                     /* */
-                    for ( le_size_t le_parse = le_offset_get_count( le_offset ); le_base[le_parse] > le_index; le_parse -- ) {
+                    for ( le_size_t le_parse = 0; le_parse < le_offset_get_count( le_offset ); le_parse ++ ) {
+
+                        /* */ // Instance fault //
+                        le_byte_t * le_src = le_offset + sizeof( le_byte_t ) + le_parse * _LE_USE_OFFSET;
+
+                        /* */ // Instance fault //
+                        le_byte_t * le_dst = le_offset + sizeof( le_byte_t ) + le_direct[le_pattern][ le_invert[(*le_offset)][le_parse] ] * _LE_USE_OFFSET;
 
                         /* */
-                        memcpy( le_offset + sizeof( le_byte_t ) + _LE_USE_OFFSET * le_direct[le_pattern][le_base[le_parse]], le_offset + sizeof( le_byte_t ) + _LE_USE_OFFSET * le_direct[ ( * le_offset ) ][le_parse], _LE_USE_OFFSET );
+                        if ( le_src != le_dst ) memcpy( le_dst, le_src, _LE_USE_OFFSET );
 
                     }
 
@@ -146,6 +149,14 @@
         le_size_t le_read = le_size[ ( * ( le_offset ++ ) ) ] * _LE_USE_OFFSET;
 
         /* */
+        if ( le_read == 0 ) {
+
+            /* */
+            return( LE_ERROR_SUCCESS );
+
+        }
+
+        /* */
         if ( fread( le_offset, sizeof( le_byte_t ), le_read, le_stream ) != le_read ) {
 
             /* */
@@ -169,6 +180,14 @@
         le_size_t le_write = le_size[ ( * ( le_offset ++ ) ) ] * _LE_USE_OFFSET;
 
         /* */
+        if ( le_write == 0 ) {
+
+            /* */
+            return( LE_ERROR_SUCCESS );
+
+        }
+
+        /* */
         if ( fwrite( le_offset, sizeof( le_byte_t ), le_write, le_stream ) != le_write ) {
 
             /* */
@@ -184,9 +203,6 @@
     }
 
     le_size_t le_offset_io_offset( le_size_t const le_index, le_file_t const le_stream ) {
-
-        /* */
-        static le_byte_t le_size[LE_OFFSET_COUNT] = LE_OFFSET_SIZE;
 
         /* */
         static le_byte_t le_direct[LE_OFFSET_COUNT][_LE_USE_BASE] = LE_OFFSET_DIRECT;
@@ -206,7 +222,7 @@
         } else {
 
             /* */
-            if ( le_size[ le_pattern ] == 0xff ) {
+            if ( le_direct[ le_pattern ][ le_index ] == 0xff ) {
 
                 /* */
                 return( _LE_OFFS_NULL );
