@@ -21,13 +21,23 @@
     # include "eratosthene-class.h"
 
 /*
+    source - private static variables
+ */
+
+    /* class size array */
+    static const le_byte_t le_class_size[LE_CLASS_COUNT] = LE_CLASS_SIZE;
+
+    /* direct access array */
+    static const le_byte_t le_class_direct[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_DIRECT;
+
+/*
     source - constructor/destructor methods
  */
 
-    le_void_t le_class_create( le_byte_t * const le_offset ) {
+    le_void_t le_class_create( le_byte_t * const le_class ) {
 
-        /* initialise pattern */
-        ( * le_offset ) = 0x00;
+        /* initialise class descriptor */
+        ( * le_class ) = 0x00;
 
     }
 
@@ -35,34 +45,28 @@
     source - accessor methods
  */
 
-    le_size_t le_class_get_count( le_byte_t const * const le_offset ) { /* un-used */
+    le_size_t le_class_get_count( le_byte_t const * const le_class ) { // necessity to check //
 
-        /* */
-        static le_byte_t le_size[LE_CLASS_COUNT] = LE_CLASS_SIZE;
-
-        /* */
-        return( le_size[ ( * le_offset ) ] );
+        /* return class size */
+        return( le_class_size[ ( * le_class ) ] );
 
     }
 
-    le_size_t le_class_get_offset( le_byte_t const * le_offset, le_size_t const le_index ) {
+    le_size_t le_class_get_offset( le_byte_t const * le_class, le_size_t const le_index ) {
 
-        /* */
-        static le_byte_t le_direct[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_DIRECT;
+        /* check offset availability */
+        if ( le_class_direct[ ( * le_class ) ][le_index] == 0xff ) {
 
-        /* */
-        if ( le_direct[ ( * le_offset ) ][le_index] != 0xff ) {
-
-            /* */
-            le_offset += ( le_direct[ ( * le_offset ) ][le_index] ) * _LE_USE_OFFSET + sizeof( le_byte_t );
-
-            /* */
-            return( le_class_mac_cast( le_offset ) & _LE_OFFS_NULL );
+            /* return null offset */
+            return( _LE_OFFS_NULL );
 
         } else {
 
-            /* */
-            return( _LE_OFFS_NULL );
+            /* move pointer to offset position */
+            le_class += le_class_direct[ ( * le_class ) ][le_index] * _LE_USE_OFFSET + sizeof( le_byte_t );
+
+            /* extract and return offset */
+            return( le_class_mac_cast( le_class ) & _LE_OFFS_NULL );
 
         }
 
