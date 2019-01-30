@@ -18,18 +18,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    /*! \file   eratosthene-mclass.h
+    /*! \file   eratosthene-class-mono.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - mclass (mono-vertex class)
+     *  liberatosthene - class-mono (mono-vertex class)
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_MCLASS__
-    # define __LE_MCLASS__
+    # ifndef __LE_CLASS_MONO__
+    # define __LE_CLASS_MONO__
 
 /*
     header - C/C++ compatibility
@@ -44,8 +44,7 @@
  */
 
     # include "eratosthene.h"
-
-    # include "eratosthene-offset.h"
+    # include "eratosthene-class.h"
 
 /*
     header - external includes
@@ -56,29 +55,29 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_MCLASS_C      { 0, { 0.0 }, { 0 } }
+    # define LE_MONO_C      { 0, { 0.0 }, { 0 } }
 
     /* define class structure */
-    # define LE_MCLASS_LENGTH ( 3 )
+    # define LE_MONO_LENGTH ( 3 )
 
     /* define class structure */
-    # define LE_MCLASS_HEAD   ( sizeof( le_byte_t ) * LE_MCLASS_LENGTH )
+    # define LE_MONO_HEAD   ( sizeof( le_byte_t ) * LE_MONO_LENGTH )
 
     /* define class structure */
-    # define LE_MCLASS_OFFSET ( LE_OFFSET_MEMORY ) //( _LE_USE_OFFSET * _LE_USE_BASE )
+    # define LE_MONO_OFFSET ( LE_CLASS_MEMORY ) //( _LE_USE_OFFSET * _LE_USE_BASE )
 
     /* define class structure */
-    # define LE_MCLASS_FIXED  ( LE_MCLASS_HEAD + LE_MCLASS_OFFSET )
+    # define LE_MONO_FIXED  ( LE_MONO_HEAD + LE_MONO_OFFSET )
 
     /* define class memory */
-    # define LE_MCLASS_MEMORY ( LE_MCLASS_FIXED + _LE_USE_OFFSET )
+    # define LE_MONO_MEMORY ( LE_MONO_FIXED + _LE_USE_OFFSET )
 
 /*
     header - preprocessor macros
  */
 
     /* define offset access */
-    # define le_mclass_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->mc_data + LE_MCLASS_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) )
+    # define le_mono_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->mc_data + LE_MONO_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) )
 
 /*
     header - type definition
@@ -88,7 +87,7 @@
     header - structures
  */
 
-    /*! \struct le_mclass_struct
+    /*! \struct le_mono_struct
      *  \brief mono-vertex class structure
      *
      *  This structure holds the definition and required elements to access mono
@@ -118,21 +117,21 @@
      *  representation. The \b mc_push array and \b mc_size counter are used
      *  during injection process to compute the mean color.
      *
-     *  \var le_mclass_struct::mc_size
+     *  \var le_mono_struct::mc_size
      *  Mean color accumulation counter
-     *  \var le_mclass_struct::mc_push
+     *  \var le_mono_struct::mc_push
      *  Mean color component accumulation values
-     *  \var le_mclass_struct::mc_data
+     *  \var le_mono_struct::mc_data
      *  Buffer used to read storage class representation
      */
 
-    typedef struct le_mclass_struct {
+    typedef struct le_mono_struct {
 
         le_size_t mc_size;
         le_real_t mc_push[3];
-        le_byte_t mc_data[LE_MCLASS_MEMORY];
+        le_byte_t mc_data[LE_MONO_MEMORY];
 
-    } le_mclass_t;
+    } le_mono_t;
 
 /*
     header - function prototypes
@@ -149,18 +148,18 @@
      *  \return Returns created structure
      */
 
-    le_mclass_t le_mclass_create( le_void_t );
+    le_mono_t le_mono_create( le_void_t );
 
     /*! \brief constructor/destructor methods
      *
      *  This function allows to reset the provided mono-vertex class structure
      *  to restore its state as it would have been created by the pseudo
-     *  constructor function \b le_mclass_create().
+     *  constructor function \b le_mono_create().
      *
      *  \param le_mclass Mono-vertex class structure
      */
 
-    le_void_t le_mclass_reset( le_mclass_t * const le_mclass );
+    le_void_t le_mono_reset( le_mono_t * const le_mclass );
 
     /*! \brief constructor/destructor methods
      *
@@ -170,7 +169,7 @@
      *  \param le_mclass Mono-vertex class structure
      */
 
-    le_void_t le_mclass_delete( le_mclass_t * const le_mclass );
+    le_void_t le_mono_delete( le_mono_t * const le_mclass );
 
     /*! \brief accessor methods
      *
@@ -184,7 +183,7 @@
      *  \return Returns the extracted offset from the class structure
      */
 
-    le_size_t le_mclass_get_offset( le_mclass_t const * const le_mclass, le_size_t const le_index );
+    le_size_t le_mono_get_offset( le_mono_t const * const le_mclass, le_size_t const le_index );
 
     /*! \brief mutator methods
      *
@@ -197,7 +196,7 @@
      *  \param le_offset Offset value
      */
 
-    le_void_t le_mclass_set_offset( le_mclass_t * const le_mclass, le_size_t const le_index, le_size_t const le_offset );
+    le_void_t le_mono_set_offset( le_mono_t * const le_mclass, le_size_t const le_index, le_size_t const le_offset );
 
     /*! \brief mutator methods
      *
@@ -213,7 +212,7 @@
      *  \param le_data   Pointer to the color information, in 8-bits RGB
      */
 
-    le_void_t le_mclass_set_push( le_mclass_t * const le_mclass, le_byte_t const * const le_data );
+    le_void_t le_mono_set_push( le_mono_t * const le_mclass, le_byte_t const * const le_data );
 
     /*! \brief i/o methods
      *
@@ -233,7 +232,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_mclass_io_read( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_mono_io_read( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods
      *
@@ -253,7 +252,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_mclass_io_read_fast( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_mono_io_read_fast( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods
      *
@@ -276,7 +275,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_mclass_io_write( le_mclass_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_mono_io_write( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods (detached)
      *
@@ -302,7 +301,7 @@
      *  otherwise
      */
 
-    le_size_t le_mclass_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
+    le_size_t le_mono_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
 
     /*! \brief i/o methods (detached)
      *
@@ -327,7 +326,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_mclass_io_data( le_size_t const le_offset, le_byte_t * const le_data, le_file_t const le_stream );
+    le_enum_t le_mono_io_data( le_size_t const le_offset, le_byte_t * const le_data, le_file_t const le_stream );
 
 /*
     header - C/C++ compatibility

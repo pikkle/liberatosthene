@@ -46,10 +46,16 @@
     # include "eratosthene.h"
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
+
+    # include "eratosthene-class-mono.h" // Addition
+    # include "eratosthene-class-poly.h" // Addition
+
     # include "eratosthene-client.h"
     # include "eratosthene-door.h"
-    # include "eratosthene-mclass.h"
-    # include "eratosthene-pclass.h"
+
+    //# include "eratosthene-mclass.h" // Removal
+    //# include "eratosthene-pclass.h" // Removal
+
     # include "eratosthene-server.h"
     # include "eratosthene-switch.h"
     # include "eratosthene-uv3.h"

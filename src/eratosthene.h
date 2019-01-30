@@ -179,7 +179,7 @@
     # define _LE_USE_BASE        ( 8 )
     # define _LE_USE_OFFSET      ( 5 )
     # if ( _LE_USE_OFFSET < 2 ) ||  ( _LE_USE_OFFSET > 7 )
-    # error "offset range is [2,7]"
+    # error "_LE_USE_OFFSET range is [2,7]"
     # endif
     # define _LE_USE_DEPTH       ( 40 )
     # define _LE_USE_TIMES       ( 3 )

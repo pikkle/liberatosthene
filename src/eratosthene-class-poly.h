@@ -18,18 +18,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    /*! \file   eratosthene-pclass.h
+    /*! \file   eratosthene-class-poly.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - pclass (poly-vertex class)
+     *  liberatosthene - class-poly (poly-vertex class)
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_PCLASS__
-    # define __LE_PCLASS__
+    # ifndef __LE_CLASS_POLY__
+    # define __LE_CLASS_POLY__
 
 /*
     header - C/C++ compatibility
@@ -44,6 +44,7 @@
  */
 
     # include "eratosthene.h"
+    # include "eratosthene-class.h"
 
 /*
     header - external includes
@@ -54,32 +55,32 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_PCLASS_C      { 0, NULL, { 0 } }
+    # define LE_POLY_C      { 0, NULL, { 0 } }
 
     /* define class structure */
-    # define LE_PCLASS_HEAD   ( sizeof( le_pidx_t ) )
+    # define LE_POLY_HEAD   ( sizeof( le_pidx_t ) )
 
     /* define class structure */
-    # define LE_PCLASS_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
+    # define LE_POLY_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
 
     /* define class structure */
-    # define LE_PCLASS_FIXED  ( LE_PCLASS_HEAD + LE_PCLASS_OFFSET )
+    # define LE_POLY_FIXED  ( LE_POLY_HEAD + LE_POLY_OFFSET )
 
     /* define class memory */
-    # define LE_PCLASS_MEMORY ( LE_PCLASS_FIXED + _LE_USE_OFFSET )
+    # define LE_POLY_MEMORY ( LE_POLY_FIXED + _LE_USE_OFFSET )
 
     /* define class management */
-    # define LE_PCLASS_STEP   ( 32 )
+    # define LE_POLY_STEP   ( 32 )
 
     /* define class management */
-    # define LE_PCLASS_LIMIT  ( UINT16_MAX )
+    # define LE_POLY_LIMIT  ( UINT16_MAX )
 
 /*
     header - preprocessor macros
  */
 
     /* define offset access */
-    # define le_pclass_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->pc_data + LE_PCLASS_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) )
+    # define le_poly_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->pc_data + LE_POLY_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) )
 
 /*
     header - type definition
@@ -92,7 +93,7 @@
     header - structures
  */
 
-    /*! \struct le_pclass_struct
+    /*! \struct le_poly_struct
      *  \brief poly-vertex class structure
      *
      *  This structure holds the definition and required elements to access poly
@@ -123,21 +124,21 @@
      *  track of the memory allocation size reserved for links to the graphical
      *  primitives.
      *
-     *  \var le_pclass_struct::pc_size
+     *  \var le_poly_struct::pc_size
      *  Size, in link count, of the links array
-     *  \var le_pclass_struct::pc_link
+     *  \var le_poly_struct::pc_link
      *  Base pointer of the links array
-     *  \var le_pclass_struct::pc_data
+     *  \var le_poly_struct::pc_data
      *  Buffer used to read storage class representation (without links array)
      */
 
-    typedef struct le_pclass_struct {
+    typedef struct le_poly_struct {
 
         le_size_t   pc_size;
         le_size_t * pc_link;
-        le_byte_t   pc_data[LE_PCLASS_MEMORY];
+        le_byte_t   pc_data[LE_POLY_MEMORY];
 
-    } le_pclass_t;
+    } le_poly_t;
 
 /*
     header - function prototypes
@@ -154,20 +155,20 @@
      *  \return Returns the created structure
      */
 
-    le_pclass_t le_pclass_create( le_void_t );
+    le_poly_t le_poly_create( le_void_t );
 
     /*! \brief constructor/destructor methods
      *
      *  This function allows the reset the provided poly-vertex class structure
      *  to restore its state as it would have been created by the pseudo
-     *  constructor function \b le_pclass_create().
+     *  constructor function \b le_poly_create().
      *
      *  The links array is emptied but its memory allocation is kept.
      *
      *  \param le_pclass Poly-vertex class structure
      */
 
-    le_void_t le_pclass_reset( le_pclass_t * const le_pclass );
+    le_void_t le_poly_reset( le_poly_t * const le_pclass );
 
     /*! \brief constructor/destructor methods
      *
@@ -180,7 +181,7 @@
      *  \param le_pclass Poly-vertex class structure
      */
 
-    le_void_t le_pclass_delete( le_pclass_t * const le_pclass );
+    le_void_t le_poly_delete( le_poly_t * const le_pclass );
 
     /*! \brief accessor methods
      *
@@ -193,7 +194,7 @@
      *  \return Returns the size of the class links array
      */
 
-    le_size_t le_pclass_get_size( le_pclass_t const * const le_pclass );
+    le_size_t le_poly_get_size( le_poly_t const * const le_pclass );
 
     /*! \brief accessor methods
      *
@@ -208,7 +209,7 @@
      *  \return Returns the link value found at the desired index
      */
 
-    le_size_t le_pclass_get_link( le_pclass_t const * const le_pclass, le_size_t const le_index );
+    le_size_t le_poly_get_link( le_poly_t const * const le_pclass, le_size_t const le_index );
 
     /*! \brief accessor methods
      *
@@ -222,7 +223,7 @@
      *  \return Returns the extracted offset from the class structure
      */
 
-    le_size_t le_pclass_get_offset( le_pclass_t const * const le_pclass, le_size_t const le_index );
+    le_size_t le_poly_get_offset( le_poly_t const * const le_pclass, le_size_t const le_index );
 
     /*! \brief mutator methods
      *
@@ -240,7 +241,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_pclass_set_memory( le_pclass_t * const le_pclass, le_size_t const le_size );
+    le_enum_t le_poly_set_memory( le_poly_t * const le_pclass, le_size_t const le_size );
 
     /*! \brief mutator methods
      *
@@ -253,7 +254,7 @@
      *  \param le_offset Offset value
      */
 
-    le_void_t le_pclass_set_offset( le_pclass_t * const le_pclass, le_size_t const le_index, le_size_t const le_offset );
+    le_void_t le_poly_set_offset( le_poly_t * const le_pclass, le_size_t const le_index, le_size_t const le_offset );
 
     /*! \brief mutator methods
      *
@@ -270,7 +271,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_pclass_set_push( le_pclass_t * const le_pclass, le_size_t const le_link );
+    le_enum_t le_poly_set_push( le_poly_t * const le_pclass, le_size_t const le_link );
 
     /*! \brief i/o methods
      *
@@ -293,7 +294,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_pclass_io_read( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_poly_io_read( le_poly_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods
      *
@@ -315,12 +316,12 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_pclass_io_read_fast( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_poly_io_read_fast( le_poly_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods
      *
      *  This function allows the to a poly-vertex class storage representation
-     *  remaining links array after a call to \b le_pclass_io_read_fast().
+     *  remaining links array after a call to \b le_poly_io_read_fast().
      *
      *  The function used the size of the links array, read using the previous
      *  function, and update the provided class structure links array memory
@@ -337,7 +338,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_pclass_io_read_next( le_pclass_t * const le_pclass, le_file_t const le_stream );
+    le_enum_t le_poly_io_read_next( le_poly_t * const le_pclass, le_file_t const le_stream );
 
     /*! \brief i/o methods
      *
@@ -358,7 +359,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_pclass_io_write( le_pclass_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_poly_io_write( le_poly_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods (detached)
      *
@@ -384,7 +385,7 @@
      *  otherwise
      */
 
-    le_size_t le_pclass_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
+    le_size_t le_poly_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
 
 /*
     header - C/C++ compatibility

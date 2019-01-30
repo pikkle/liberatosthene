@@ -18,39 +18,39 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    # include "eratosthene-pclass.h"
+    # include "eratosthene-class-poly.h"
 
 /*
     source - constructor/destructor methods
  */
 
-    le_pclass_t le_pclass_create( le_void_t ) {
+    le_poly_t le_poly_create( le_void_t ) {
 
         /* created structure variable */
-        le_pclass_t le_pclass = LE_PCLASS_C;
+        le_poly_t le_pclass = LE_POLY_C;
 
         /* initialise offsets */
-        memset( le_pclass.pc_data + LE_PCLASS_HEAD, 0xff, LE_PCLASS_OFFSET );
+        memset( le_pclass.pc_data + LE_POLY_HEAD, 0xff, LE_POLY_OFFSET );
 
         /* return created structure */
         return( le_pclass );
 
     }
 
-    le_void_t le_pclass_reset( le_pclass_t * const le_pclass ) {
+    le_void_t le_poly_reset( le_poly_t * const le_pclass ) {
 
         /* reset class size */
         memset( le_pclass->pc_data, 0x00, sizeof( le_pidx_t ) );
 
         /* reset class offsets */
-        memset( le_pclass->pc_data + LE_PCLASS_HEAD, 0xff, LE_PCLASS_OFFSET );
+        memset( le_pclass->pc_data + LE_POLY_HEAD, 0xff, LE_POLY_OFFSET );
 
     }
 
-    le_void_t le_pclass_delete( le_pclass_t * const le_pclass ) {
+    le_void_t le_poly_delete( le_poly_t * const le_pclass ) {
 
         /* deleted structure variable */
-        le_pclass_t le_delete = LE_PCLASS_C;
+        le_poly_t le_delete = LE_POLY_C;
 
         /* check memory */
         if ( le_pclass->pc_size > 0 ) {
@@ -69,7 +69,7 @@
     source - accessor methods
  */
 
-    le_size_t le_pclass_get_size( le_pclass_t const * const le_pclass ) {
+    le_size_t le_poly_get_size( le_poly_t const * const le_pclass ) {
 
         /* size variable */
         le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
@@ -79,17 +79,17 @@
 
     }
 
-    le_size_t le_pclass_get_link( le_pclass_t const * const le_pclass, le_size_t const le_index ) {
+    le_size_t le_poly_get_link( le_poly_t const * const le_pclass, le_size_t const le_index ) {
 
         /* return class link */
         return( ( le_pclass->pc_link )[le_index] );
 
     }
 
-    le_size_t le_pclass_get_offset( le_pclass_t const * const le_pclass, le_size_t const le_index ) {
+    le_size_t le_poly_get_offset( le_poly_t const * const le_pclass, le_size_t const le_index ) {
 
         /* extract and return offset */
-        return( ( * le_pclass_mac_offset( le_pclass, le_index ) ) & _LE_OFFS_NULL );
+        return( ( * le_poly_mac_offset( le_pclass, le_index ) ) & _LE_OFFS_NULL );
 
     }
 
@@ -97,7 +97,7 @@
     source - mutator methods
  */
 
-    le_enum_t le_pclass_set_memory( le_pclass_t * const le_pclass, le_size_t const le_size ) {
+    le_enum_t le_poly_set_memory( le_poly_t * const le_pclass, le_size_t const le_size ) {
 
         /* swap variable */
         le_void_t * le_swap = NULL;
@@ -126,23 +126,23 @@
 
     }
 
-    le_void_t le_pclass_set_offset( le_pclass_t * const le_pclass, le_size_t const le_index, le_size_t const le_offset ) {
+    le_void_t le_poly_set_offset( le_poly_t * const le_pclass, le_size_t const le_index, le_size_t const le_offset ) {
 
         /* class pointer variable */
-        le_size_t * le_base = le_pclass_mac_offset( le_pclass, le_index );
+        le_size_t * le_base = le_poly_mac_offset( le_pclass, le_index );
 
         /* assign offset */
         ( * le_base ) = ( ( * le_base ) & ( ~ _LE_OFFS_NULL ) ) | ( le_offset & _LE_OFFS_NULL );
 
     }
 
-    le_enum_t le_pclass_set_push( le_pclass_t * const le_pclass, le_size_t const le_link ) {
+    le_enum_t le_poly_set_push( le_poly_t * const le_pclass, le_size_t const le_link ) {
 
         /* size variable */
         le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
 
         /* check class limit */
-        if ( ( * le_size ) == LE_PCLASS_LIMIT ) {
+        if ( ( * le_size ) == LE_POLY_LIMIT ) {
 
             /* send message */
             return( LE_ERROR_OVERFLOW );
@@ -153,7 +153,7 @@
         if ( le_pclass->pc_size == ( * le_size ) ) {
 
             /* update class memory */
-            if ( le_pclass_set_memory( le_pclass, ( * le_size ) + LE_PCLASS_STEP ) != LE_ERROR_SUCCESS ) {
+            if ( le_poly_set_memory( le_pclass, ( * le_size ) + LE_POLY_STEP ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( LE_ERROR_MEMORY );
@@ -174,7 +174,7 @@
     source - i/o methods
  */
 
-    le_enum_t le_pclass_io_read( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
+    le_enum_t le_poly_io_read( le_poly_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* size variable */
         le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
@@ -183,7 +183,7 @@
         fseek( le_stream, le_offset, SEEK_SET );
 
         /* class importation */
-        if ( fread( le_pclass->pc_data, sizeof( le_byte_t ), LE_PCLASS_FIXED, le_stream ) != LE_PCLASS_FIXED ) {
+        if ( fread( le_pclass->pc_data, sizeof( le_byte_t ), LE_POLY_FIXED, le_stream ) != LE_POLY_FIXED ) {
 
             /* send message */
             return( LE_ERROR_IO_READ );
@@ -191,7 +191,7 @@
         } else {
 
             /* memory management */
-            if ( le_pclass_set_memory( le_pclass, ( * le_size ) ) != LE_ERROR_SUCCESS ) {
+            if ( le_poly_set_memory( le_pclass, ( * le_size ) ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( LE_ERROR_MEMORY );
@@ -217,13 +217,13 @@
 
     }
 
-    le_enum_t le_pclass_io_read_fast( le_pclass_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
+    le_enum_t le_poly_io_read_fast( le_poly_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* stream offset */
         fseek( le_stream, le_offset, SEEK_SET );
 
         /* class importation */
-        if ( fread( le_pclass->pc_data, sizeof( le_byte_t ), LE_PCLASS_FIXED, le_stream ) != LE_PCLASS_FIXED ) {
+        if ( fread( le_pclass->pc_data, sizeof( le_byte_t ), LE_POLY_FIXED, le_stream ) != LE_POLY_FIXED ) {
 
             /* send message */
             return( LE_ERROR_IO_READ );
@@ -237,13 +237,13 @@
 
     }
 
-    le_enum_t le_pclass_io_read_next( le_pclass_t * const le_pclass, le_file_t const le_stream ) {
+    le_enum_t le_poly_io_read_next( le_poly_t * const le_pclass, le_file_t const le_stream ) {
 
         /* size variable */
         le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
 
         /* memory management */
-        if ( le_pclass_set_memory( le_pclass, ( * le_size ) ) != LE_ERROR_SUCCESS ) {
+        if ( le_poly_set_memory( le_pclass, ( * le_size ) ) != LE_ERROR_SUCCESS ) {
 
             /* send message */
             return( LE_ERROR_MEMORY );
@@ -267,7 +267,7 @@
 
     }
 
-    le_enum_t le_pclass_io_write( le_pclass_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
+    le_enum_t le_poly_io_write( le_poly_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream ) {
 
         /* size variable */
         le_pidx_t * le_size = ( le_pidx_t * ) le_pclass->pc_data;
@@ -281,7 +281,7 @@
         }
 
         /* class exportation */
-        if ( fwrite( le_pclass->pc_data, sizeof( le_byte_t ), LE_PCLASS_FIXED, le_stream ) != LE_PCLASS_FIXED ) {
+        if ( fwrite( le_pclass->pc_data, sizeof( le_byte_t ), LE_POLY_FIXED, le_stream ) != LE_POLY_FIXED ) {
 
             /* send message */
             return( LE_ERROR_IO_WRITE );
@@ -305,13 +305,13 @@
 
     }
 
-    le_size_t le_pclass_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream ) {
+    le_size_t le_poly_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream ) {
 
         /* returned value variable */
         le_size_t le_return = _LE_OFFS_NULL;
 
         /* stream position */
-        fseek( le_stream, le_offset + LE_PCLASS_HEAD + ( _LE_USE_OFFSET * le_index ), SEEK_SET );
+        fseek( le_stream, le_offset + LE_POLY_HEAD + ( _LE_USE_OFFSET * le_index ), SEEK_SET );
 
         /* import offset */
         if ( fread( ( le_void_t * ) & le_return, sizeof( le_byte_t ), _LE_USE_OFFSET, le_stream ) != _LE_USE_OFFSET ) {

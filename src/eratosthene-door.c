@@ -854,7 +854,7 @@
         le_address_t le_hold = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
 
         /* class variable */
-        le_mclass_t le_class[_LE_USE_DEPTH];
+        le_mono_t le_class[_LE_USE_DEPTH];
 
         /* offset variable */
         le_size_t le_offset[_LE_USE_DEPTH] = { 0 };
@@ -906,7 +906,7 @@
                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
                     /* initialise class */
-                    le_class[le_depth] = le_mclass_create();
+                    le_class[le_depth] = le_mono_create();
 
                 }
 
@@ -951,10 +951,10 @@
                                 if ( le_flag == _LE_TRUE ) {
 
                                     /* class exportation */
-                                    le_mclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_macc[le_depth] );
+                                    le_mono_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_macc[le_depth] );
 
                                     /* reset class */
-                                    le_mclass_reset( le_class + le_depth );
+                                    le_mono_reset( le_class + le_depth );
 
                                     /* update offset */
                                     le_offset[le_depth] = ftell( le_door->dr_macc[le_depth] );
@@ -969,15 +969,15 @@
                         for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
 
                             /* update class offset */
-                            le_mclass_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
+                            le_mono_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
 
                             /* push primitive */
-                            le_mclass_set_push( le_class + le_depth, ( le_byte_t * ) ( le_buffer + le_parse + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) );
+                            le_mono_set_push( le_class + le_depth, ( le_byte_t * ) ( le_buffer + le_parse + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) );
 
                         }
 
                         /* push primitive */
-                        le_mclass_set_push( le_class + le_door->dr_scfg - 1, ( le_byte_t * ) ( le_buffer + le_parse + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) );
+                        le_mono_set_push( le_class + le_door->dr_scfg - 1, ( le_byte_t * ) ( le_buffer + le_parse + LE_ARRAY_DATA_POSE + LE_ARRAY_DATA_TYPE ) );
 
                         /* update parser */
                         le_parse += LE_ARRAY_DATA;
@@ -993,10 +993,10 @@
                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
                     /* class exportation */
-                    le_mclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_macc[le_depth] );
+                    le_mono_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_macc[le_depth] );
 
                     /* delete class */
-                    le_mclass_delete( le_class + le_depth );
+                    le_mono_delete( le_class + le_depth );
 
                 }
 
@@ -1030,7 +1030,7 @@
         le_address_t le_span = LE_ADDRESS_C_SIZE( le_door->dr_scfg );
 
         /* class variable */
-        le_pclass_t le_class[_LE_USE_DEPTH];
+        le_poly_t le_class[_LE_USE_DEPTH];
 
         /* offset variable */
         le_size_t le_offset[_LE_USE_DEPTH] = { 0 };
@@ -1094,7 +1094,7 @@
                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
                     /* initialise class */
-                    le_class[le_depth] = le_pclass_create();
+                    le_class[le_depth] = le_poly_create();
 
                 }
 
@@ -1117,20 +1117,20 @@
                                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
 
                                     /* update class offset */
-                                    le_pclass_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
+                                    le_poly_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
 
                                     /* check injection depth */
                                     if ( le_depth >= le_inject ) {
 
                                         /* push primitive */
-                                        le_pclass_set_push( le_class + le_depth, le_master );
+                                        le_poly_set_push( le_class + le_depth, le_master );
 
                                     }
 
                                 }
 
                                 /* forced last injection */
-                                le_pclass_set_push( le_class + le_door->dr_scfg - 1, le_master );
+                                le_poly_set_push( le_class + le_door->dr_scfg - 1, le_master );
 
                             }
 
@@ -1166,10 +1166,10 @@
                                     if ( le_flag == _LE_TRUE ) {
 
                                         /* class exportation */
-                                        le_pclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
+                                        le_poly_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
 
                                         /* reset class */
-                                        le_pclass_reset( le_class + le_depth );
+                                        le_poly_reset( le_class + le_depth );
 
                                         /* update offset */
                                         le_offset[le_depth] = ftell( le_door->dr_pacc[le_depth] );
@@ -1218,10 +1218,10 @@
                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
                     /* class exportation */
-                    le_pclass_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
+                    le_poly_io_write( le_class + le_depth, _LE_OFFS_NULL, le_door->dr_pacc[le_depth] );
 
                     /* delete class */
-                    le_pclass_delete( le_class + le_depth );
+                    le_poly_delete( le_class + le_depth );
 
                 }
 
@@ -1255,7 +1255,7 @@
         do {
 
             /* read class offset */
-            le_door->dr_moff = le_mclass_io_offset( le_door->dr_moff, le_address_get_digit( le_addr, le_parse ), * ( le_door->dr_macc + le_parse ) );
+            le_door->dr_moff = le_mono_io_offset( le_door->dr_moff, le_address_get_digit( le_addr, le_parse ), * ( le_door->dr_macc + le_parse ) );
 
             /* check class offset */
             if ( le_door->dr_moff == _LE_OFFS_NULL ) {
@@ -1288,7 +1288,7 @@
         do {
 
             /* read class offset */
-            le_door->dr_poff = le_pclass_io_offset( le_door->dr_poff, le_address_get_digit( le_addr, le_parse ), * ( le_door->dr_pacc + le_parse ) );
+            le_door->dr_poff = le_poly_io_offset( le_door->dr_poff, le_address_get_digit( le_addr, le_parse ), * ( le_door->dr_pacc + le_parse ) );
 
             /* check class offset */
             if ( le_door->dr_poff == _LE_OFFS_NULL ) {
@@ -1309,7 +1309,7 @@
     le_void_t le_door_io_mono_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         /* class variable */
-        le_mclass_t le_class = LE_MCLASS_C;
+        le_mono_t le_class = LE_MONO_C;
 
         /* enumeration boundary */
         if ( le_parse == le_span ) {
@@ -1324,18 +1324,18 @@
             ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
             /* push element data */
-            le_mclass_io_data( le_door->dr_moff, le_array_mac_ldata( le_array ), * ( le_door->dr_macc + le_parse ) );
+            le_mono_io_data( le_door->dr_moff, le_array_mac_ldata( le_array ), * ( le_door->dr_macc + le_parse ) );
 
         } else {
 
             /* read class */
-            le_mclass_io_read_fast( & le_class, le_door->dr_moff, * ( le_door->dr_macc + le_parse ) );
+            le_mono_io_read_fast( & le_class, le_door->dr_moff, * ( le_door->dr_macc + le_parse ) );
 
             /* enumerate daughter classes */
             for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
 
                 /* extract class offset */
-                if ( ( le_door->dr_moff = le_mclass_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
+                if ( ( le_door->dr_moff = le_mono_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
 
                     /* update address digit */
                     le_address_set_digit( le_addr, le_parse, le_digit );
@@ -1354,7 +1354,7 @@
     le_void_t le_door_io_poly_gather( le_door_t * const le_door, le_address_t * const le_addr, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         /* class variable */
-        le_pclass_t le_class = LE_PCLASS_C;
+        le_poly_t le_class = LE_POLY_C;
 
         /* size variable */
         le_size_t le_size = 0;
@@ -1366,16 +1366,16 @@
         le_size_t le_read = 0;
 
         /* read class - partial */
-        le_pclass_io_read_fast( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
+        le_poly_io_read_fast( & le_class, le_door->dr_poff, * ( le_door->dr_pacc + le_parse ) );
 
         /* enumeration boundary */
         if ( le_parse == le_span ) {
 
             /* check class content */
-            if ( ( le_size = le_pclass_get_size( & le_class ) ) > 0 ) {
+            if ( ( le_size = le_poly_get_size( & le_class ) ) > 0 ) {
 
                 /* read class - completion */
-                le_pclass_io_read_next( & le_class, * ( le_door->dr_pacc + le_parse ) );
+                le_poly_io_read_next( & le_class, * ( le_door->dr_pacc + le_parse ) );
 
                 /* parsing class links */
                 for ( le_size_t le_link = 0; le_link < le_size; le_link ++ ) {
@@ -1390,7 +1390,7 @@
                     le_array_set( le_array, le_read );
 
                     /* follow link */
-                    fseek( le_door->dr_pdat, le_pclass_get_link( & le_class, le_link ), SEEK_SET );
+                    fseek( le_door->dr_pdat, le_poly_get_link( & le_class, le_link ), SEEK_SET );
 
                     /* import vertex */
                     if ( fread( le_array_mac_back( le_array, le_read ), sizeof( le_byte_t ), le_read, le_door->dr_pdat ) != le_read ) {
@@ -1421,7 +1421,7 @@
                 }
 
                 /* delete class */
-                le_pclass_delete( & le_class );
+                le_poly_delete( & le_class );
 
             }
 
@@ -1431,7 +1431,7 @@
             for ( le_size_t le_digit = 0; le_digit < _LE_USE_BASE; le_digit ++ ) {
 
                 /* extract class offset */
-                if ( ( le_door->dr_poff = le_pclass_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
+                if ( ( le_door->dr_poff = le_poly_get_offset( & le_class, le_digit ) ) != _LE_OFFS_NULL ) {
 
                     /* update address digit */
                     le_address_set_digit( le_addr, le_parse, le_digit );
@@ -1450,10 +1450,10 @@
     le_void_t le_door_io_mono_parallel( le_door_t * const le_pdoor, le_door_t * const le_sdoor, le_address_t * const le_addr, le_byte_t const le_mode, le_size_t const le_parse, le_size_t const le_span, le_array_t * const le_array ) {
 
         /* class variable */
-        le_mclass_t le_pclass = LE_MCLASS_C;
+        le_mono_t le_pclass = LE_MONO_C;
 
         /* class variable */
-        le_mclass_t le_sclass = LE_MCLASS_C;
+        le_mono_t le_sclass = LE_MONO_C;
 
         /* message variable */
         le_enum_t le_pmessage = LE_ERROR_IO_READ;
@@ -1480,12 +1480,12 @@
                 if ( le_pdoor->dr_moff != _LE_OFFS_NULL ) {
 
                     /* push element data */
-                    le_mclass_io_data( le_pdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_macc + le_parse ) );
+                    le_mono_io_data( le_pdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_macc + le_parse ) );
 
                 } else {
 
                     /* push element data */
-                    le_mclass_io_data( le_sdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_macc + le_parse ) );
+                    le_mono_io_data( le_sdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_macc + le_parse ) );
 
                 }
 
@@ -1504,7 +1504,7 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    le_mclass_io_data( le_pdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_macc + le_parse ) );
+                    le_mono_io_data( le_pdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_macc + le_parse ) );
 
                 }
 
@@ -1523,7 +1523,7 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    le_mclass_io_data( le_pdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_macc + le_parse ) );
+                    le_mono_io_data( le_pdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_pdoor->dr_macc + le_parse ) );
 
                 } else if ( ( le_pdoor->dr_moff == _LE_OFFS_NULL ) && ( le_sdoor->dr_moff != _LE_OFFS_NULL ) ) {
 
@@ -1537,7 +1537,7 @@
                     ( * le_array_mac_ltype( le_array ) ) = LE_UV3_POINT;
 
                     /* push element data */
-                    le_mclass_io_data( le_sdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_macc + le_parse ) );
+                    le_mono_io_data( le_sdoor->dr_moff, le_array_mac_ldata( le_array ), * ( le_sdoor->dr_macc + le_parse ) );
 
                 }
 
@@ -1549,7 +1549,7 @@
             if ( le_pdoor->dr_moff != _LE_OFFS_NULL ) {
 
                 /* read class */
-                le_pmessage = le_mclass_io_read_fast( & le_pclass, le_pdoor->dr_moff, * ( le_pdoor->dr_macc + le_parse ) );
+                le_pmessage = le_mono_io_read_fast( & le_pclass, le_pdoor->dr_moff, * ( le_pdoor->dr_macc + le_parse ) );
 
             }
 
@@ -1557,7 +1557,7 @@
             if ( le_sdoor->dr_moff != _LE_OFFS_NULL ) {
 
                 /* read class */
-                le_smessage = le_mclass_io_read_fast( & le_sclass, le_sdoor->dr_moff, * ( le_sdoor->dr_macc + le_parse ) );
+                le_smessage = le_mono_io_read_fast( & le_sclass, le_sdoor->dr_moff, * ( le_sdoor->dr_macc + le_parse ) );
 
             }
 
@@ -1568,7 +1568,7 @@
                 if ( le_pmessage == LE_ERROR_SUCCESS ) {
 
                     /* extract class offset */
-                    le_pdoor->dr_moff = le_mclass_get_offset( & le_pclass, le_digit );
+                    le_pdoor->dr_moff = le_mono_get_offset( & le_pclass, le_digit );
 
                 /* reset offset */
                 } else { le_pdoor->dr_moff = _LE_OFFS_NULL; }
@@ -1577,7 +1577,7 @@
                 if ( le_smessage == LE_ERROR_SUCCESS ) {
 
                     /* extract class offset */
-                    le_sdoor->dr_moff = le_mclass_get_offset( & le_sclass, le_digit );
+                    le_sdoor->dr_moff = le_mono_get_offset( & le_sclass, le_digit );
 
                 /* reset offset */
                 } else { le_sdoor->dr_moff = _LE_OFFS_NULL; }

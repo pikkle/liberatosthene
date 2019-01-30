@@ -18,18 +18,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    /*! \file   eratosthene-offset.h
+    /*! \file   eratosthene-class.h
      *  \author Nils Hamel <nils.hamel@bluewin.ch>
      *
-     *  liberatosthene - offset
+     *  liberatosthene - class
      */
 
 /*
     header - inclusion guard
  */
 
-    # ifndef __LE_OFFSET__
-    # define __LE_OFFSET__
+    # ifndef __LE_CLASS__
+    # define __LE_CLASS__
 
 /*
     header - C/C++ compatibility
@@ -54,13 +54,13 @@
  */
 
     /* define offset stack size */
-    # define LE_OFFSET_MEMORY ( sizeof( le_byte_t ) + ( _LE_USE_OFFSET * _LE_USE_BASE ) + sizeof( le_size_t ) )
+    # define LE_CLASS_MEMORY ( sizeof( le_byte_t ) + ( _LE_USE_OFFSET * _LE_USE_BASE ) + sizeof( le_size_t ) )
 
     /* define configuration count */
-    # define LE_OFFSET_COUNT ( 1 << _LE_USE_BASE )
+    # define LE_CLASS_COUNT ( 1 << _LE_USE_BASE )
 
     /* define pattern offset length */
-    # define LE_OFFSET_SIZE { \
+    # define LE_CLASS_SIZE { \
     0x00, 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x03, \
     0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, \
     0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, \
@@ -96,7 +96,7 @@
     }
 
     /* define pattern offset index */
-    # define LE_OFFSET_DIRECT { \
+    # define LE_CLASS_DIRECT { \
     { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
     { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
     { 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
@@ -355,7 +355,7 @@
     { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 }, \
     }
 
-    # define LE_OFFSET_INVERT { \
+    # define LE_CLASS_INVERT { \
     { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
     { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
     { 0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
@@ -619,7 +619,7 @@
  */
 
     /* define cast macro */
-    # define le_offset_mac_cast( o ) ( * ( ( le_size_t * ) o ) )
+    # define le_class_mac_cast( o ) ( * ( ( le_size_t * ) o ) )
 
 /*
     header - type definition
@@ -635,27 +635,27 @@
 
     /* *** */
 
-    le_void_t le_offset_create( le_byte_t * const le_offset );
+    le_void_t le_class_create( le_byte_t * const le_offset );
 
     /* *** */
 
-    le_size_t le_offset_get_offset( le_byte_t const * le_offset, le_size_t const le_index );
+    le_size_t le_class_get_offset( le_byte_t const * le_offset, le_size_t const le_index );
 
     /* *** */
 
-    le_void_t le_offset_set_offset( le_byte_t * le_offset, le_size_t const le_index, le_size_t const le_value );
+    le_void_t le_class_set_offset( le_byte_t * le_offset, le_size_t const le_index, le_size_t const le_value );
 
     /* *** */
 
-    le_enum_t le_offset_io_read( le_byte_t * le_offset, le_file_t const le_stream );
+    le_enum_t le_class_io_read( le_byte_t * le_offset, le_file_t const le_stream );
 
     /* *** */
 
-    le_enum_t le_offset_io_write( le_byte_t * le_offset, le_file_t const le_stream );
+    le_enum_t le_class_io_write( le_byte_t * le_offset, le_file_t const le_stream );
 
     /* *** */
 
-    le_size_t le_offset_io_offset( le_size_t const le_index, le_file_t const le_stream );
+    le_size_t le_class_io_offset( le_size_t const le_index, le_file_t const le_stream );
 
 /*
     header - C/C++ compatibility

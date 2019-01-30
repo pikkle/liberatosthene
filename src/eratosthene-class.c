@@ -18,13 +18,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-    # include "eratosthene-offset.h"
+    # include "eratosthene-class.h"
 
 /*
     source - constructor/destructor methods
  */
 
-    le_void_t le_offset_create( le_byte_t * const le_offset ) {
+    le_void_t le_class_create( le_byte_t * const le_offset ) {
 
         /* initialise pattern */
         ( * le_offset ) = 0x00;
@@ -35,20 +35,20 @@
     source - accessor methods
  */
 
-    le_size_t le_offset_get_count( le_byte_t const * const le_offset ) { /* un-used */
+    le_size_t le_class_get_count( le_byte_t const * const le_offset ) { /* un-used */
 
         /* */
-        static le_byte_t le_size[LE_OFFSET_COUNT] = LE_OFFSET_SIZE;
+        static le_byte_t le_size[LE_CLASS_COUNT] = LE_CLASS_SIZE;
 
         /* */
         return( le_size[ ( * le_offset ) ] );
 
     }
 
-    le_size_t le_offset_get_offset( le_byte_t const * le_offset, le_size_t const le_index ) {
+    le_size_t le_class_get_offset( le_byte_t const * le_offset, le_size_t const le_index ) {
 
         /* */
-        static le_byte_t le_direct[LE_OFFSET_COUNT][_LE_USE_BASE] = LE_OFFSET_DIRECT;
+        static le_byte_t le_direct[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_DIRECT;
 
         /* */
         if ( le_direct[ ( * le_offset ) ][le_index] != 0xff ) {
@@ -57,7 +57,7 @@
             le_offset += ( le_direct[ ( * le_offset ) ][le_index] ) * _LE_USE_OFFSET + sizeof( le_byte_t );
 
             /* */
-            return( le_offset_mac_cast( le_offset ) & _LE_OFFS_NULL );
+            return( le_class_mac_cast( le_offset ) & _LE_OFFS_NULL );
 
         } else {
 
@@ -72,13 +72,13 @@
     source - mutator methods
  */
 
-    le_void_t le_offset_set_offset( le_byte_t * le_offset, le_size_t const le_index, le_size_t const le_value ) {
+    le_void_t le_class_set_offset( le_byte_t * le_offset, le_size_t const le_index, le_size_t const le_value ) {
 
         /* */
-        static le_byte_t le_direct[LE_OFFSET_COUNT][_LE_USE_BASE] = LE_OFFSET_DIRECT;
+        static le_byte_t le_direct[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_DIRECT;
 
         /* */
-        static le_byte_t le_invert[LE_OFFSET_COUNT][_LE_USE_BASE] = LE_OFFSET_INVERT;
+        static le_byte_t le_invert[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_INVERT;
 
         /* */
         le_byte_t le_pattern = ( 1 << le_index );
@@ -96,7 +96,7 @@
                     le_pattern |= ( * le_offset );
 
                     /* */
-                    for ( le_size_t le_parse = 0; le_parse < le_offset_get_count( le_offset ); le_parse ++ ) {
+                    for ( le_size_t le_parse = 0; le_parse < le_class_get_count( le_offset ); le_parse ++ ) {
 
                         /* */ // Instance fault //
                         le_byte_t * le_src = le_offset + sizeof( le_byte_t ) + le_parse * _LE_USE_OFFSET;
@@ -132,7 +132,7 @@
         le_offset += ( le_direct[ ( * le_offset ) ][le_index] ) * _LE_USE_OFFSET + sizeof( le_byte_t );
 
         /* */
-        le_offset_mac_cast( le_offset ) = ( le_offset_mac_cast( le_offset ) & ( ~ _LE_OFFS_NULL ) ) | ( le_value & _LE_OFFS_NULL );
+        le_class_mac_cast( le_offset ) = ( le_class_mac_cast( le_offset ) & ( ~ _LE_OFFS_NULL ) ) | ( le_value & _LE_OFFS_NULL );
 
     }
 
@@ -140,10 +140,10 @@
     source - i/o methods
  */
 
-    le_enum_t le_offset_io_read( le_byte_t * le_offset, le_file_t const le_stream ) {
+    le_enum_t le_class_io_read( le_byte_t * le_offset, le_file_t const le_stream ) {
 
         /* */
-        static le_byte_t le_size[LE_OFFSET_COUNT] = LE_OFFSET_SIZE;
+        static le_byte_t le_size[LE_CLASS_COUNT] = LE_CLASS_SIZE;
 
         /* */
         le_size_t le_read = le_size[ ( * ( le_offset ++ ) ) ] * _LE_USE_OFFSET;
@@ -171,10 +171,10 @@
 
     }
 
-    le_enum_t le_offset_io_write( le_byte_t * le_offset, le_file_t const le_stream ) {
+    le_enum_t le_class_io_write( le_byte_t * le_offset, le_file_t const le_stream ) {
 
         /* */
-        static le_byte_t le_size[LE_OFFSET_COUNT] = LE_OFFSET_SIZE;
+        static le_byte_t le_size[LE_CLASS_COUNT] = LE_CLASS_SIZE;
 
         /* */
         le_size_t le_write = le_size[ ( * ( le_offset ++ ) ) ] * _LE_USE_OFFSET;
@@ -202,10 +202,10 @@
 
     }
 
-    le_size_t le_offset_io_offset( le_size_t const le_index, le_file_t const le_stream ) {
+    le_size_t le_class_io_offset( le_size_t const le_index, le_file_t const le_stream ) {
 
         /* */
-        static le_byte_t le_direct[LE_OFFSET_COUNT][_LE_USE_BASE] = LE_OFFSET_DIRECT;
+        static le_byte_t le_direct[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_DIRECT;
 
         /* */
         le_byte_t le_pattern = 0x00;

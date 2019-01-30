@@ -46,8 +46,13 @@
     # include "eratosthene.h"
     # include "eratosthene-address.h"
     # include "eratosthene-array.h"
-    # include "eratosthene-mclass.h"
-    # include "eratosthene-pclass.h"
+
+    # include "eratosthene-class-mono.h"
+    # include "eratosthene-class-poly.h"
+
+    //# include "eratosthene-mclass.h"
+    //# include "eratosthene-pclass.h"
+
     # include "eratosthene-uv3.h"
 
 /*
