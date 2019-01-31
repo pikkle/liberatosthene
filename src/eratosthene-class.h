@@ -645,25 +645,29 @@
 
     /* *** */
 
-    le_void_t le_class_create( le_byte_t * const le_offset );
+    le_void_t le_class_create( le_byte_t * const le_class );
 
     /* *** */
 
-    le_size_t le_class_get_offset( le_byte_t const * le_offset, le_size_t const le_index );
+    le_size_t le_class_get_offset( le_byte_t const * le_class, le_size_t const le_index );
 
     /* *** */
 
-    le_void_t le_class_set_offset( le_byte_t * le_offset, le_size_t const le_index, le_size_t const le_value );
+    le_void_t le_class_set_offset( le_byte_t * le_class, le_size_t const le_index, le_size_t const le_offset );
 
-    /* *** */
+    /* assumes class header has been read by calling function */
 
-    le_enum_t le_class_io_read( le_byte_t * le_offset, le_file_t const le_stream );
+    le_enum_t le_class_io_read( le_byte_t * le_class, le_file_t const le_stream );
 
-    /* *** */
+    /* assumes class header has been written by the calling function */
 
-    le_enum_t le_class_io_write( le_byte_t * le_offset, le_file_t const le_stream );
+    le_enum_t le_class_io_write( le_byte_t * le_class, le_file_t const le_stream );
 
-    /* *** */
+    /* detached method */
+
+    /* assumes nothing has been read by the calling function */
+
+    /* assumes the stream is correctly positionned on the class to read */
 
     le_size_t le_class_io_offset( le_size_t const le_index, le_file_t const le_stream );
 

@@ -48,13 +48,6 @@
     source - accessor methods
  */
 
-    le_size_t le_class_get_count( le_byte_t const * const le_class ) { // necessity to check //
-
-        /* return class size */
-        return( le_class_size[ ( * le_class ) ] );
-
-    }
-
     le_size_t le_class_get_offset( le_byte_t const * le_class, le_size_t const le_index ) {
 
         /* check offset availability */
@@ -146,8 +139,6 @@
     source - i/o methods
  */
 
-    /* assumes class header has been read by calling function */
-
     le_enum_t le_class_io_read( le_byte_t * le_class, le_file_t const le_stream ) {
 
         /* class size variable */
@@ -178,8 +169,6 @@
 
     }
 
-    /* assumes class header has been written by the calling function */
-
     le_enum_t le_class_io_write( le_byte_t * le_class, le_file_t const le_stream ) {
 
         /* class size variable */
@@ -209,12 +198,6 @@
         }
 
     }
-
-    /* detached method */
-
-    /* assumes nothing has been read by the calling function */
-
-    /* assumes the stream is correctly positionned on the class to read */
 
     le_size_t le_class_io_offset( le_size_t const le_index, le_file_t const le_stream ) {
 
