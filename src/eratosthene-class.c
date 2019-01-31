@@ -146,32 +146,33 @@
     source - i/o methods
  */
 
-    le_enum_t le_class_io_read( le_byte_t * le_offset, le_file_t const le_stream ) {
+    /* assumes class header has been read by calling function */
 
-        /* */
-        static le_byte_t le_size[LE_CLASS_COUNT] = LE_CLASS_SIZE;
+    le_enum_t le_class_io_read( le_byte_t * le_class, le_file_t const le_stream ) {
 
-        /* */
-        le_size_t le_read = le_size[ ( * ( le_offset ++ ) ) ] * _LE_USE_OFFSET;
+        /* class size variable */
+        le_size_t le_read = le_class_size[ ( * ( le_class ++ ) ) ] * _LE_USE_OFFSET;
 
-        /* */
+        /* check empty class */
         if ( le_read == 0 ) {
 
-            /* */
+            /* send message */
             return( LE_ERROR_SUCCESS );
-
-        }
-
-        /* */
-        if ( fread( le_offset, sizeof( le_byte_t ), le_read, le_stream ) != le_read ) {
-
-            /* */
-            return( LE_ERROR_IO_READ );
 
         } else {
 
-            /* */
-            return( LE_ERROR_SUCCESS );
+            /* read class offsets */
+            if ( fread( le_class, sizeof( le_byte_t ), le_read, le_stream ) != le_read ) {
+
+                /* send message */
+                return( LE_ERROR_IO_READ );
+
+            } else {
+
+                /* send message */
+                return( LE_ERROR_SUCCESS );
+
+            }
 
         }
 
