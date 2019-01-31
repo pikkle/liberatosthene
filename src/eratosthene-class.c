@@ -210,46 +210,52 @@
 
     }
 
+    /* detached method */
+
+    /* assumes nothing has been read by the calling function */
+
+    /* assumes the stream is correctly positionned on the class to read */
+
     le_size_t le_class_io_offset( le_size_t const le_index, le_file_t const le_stream ) {
 
-        /* */
-        static le_byte_t le_direct[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_DIRECT;
-
-        /* */
+        /* class descriptor variable */
         le_byte_t le_pattern = 0x00;
 
-        /* */
-        le_size_t le_return;
+        /* offset location variable */
+        le_size_t le_location = 0;
 
-        /* */
+        /* returned value variable */
+        le_size_t le_offset;
+
+        /* read class descriptor */
         if ( fread( & le_pattern, sizeof( le_byte_t ), 1, le_stream ) != 1 ) {
 
-            /* */
+            /* send null offset */
             return( _LE_OFFS_NULL );
 
         } else {
 
-            /* */
-            if ( le_direct[ le_pattern ][ le_index ] == 0xff ) {
+            /* check offset availability */
+            if ( ( le_location = le_class_direct[ le_pattern ][ le_index ] ) == 0xff ) {
 
-                /* */
+                /* send null offset */
                 return( _LE_OFFS_NULL );
 
             } else {
 
-                /* */
-                fseek( le_stream, le_direct[le_pattern][le_index] * _LE_USE_OFFSET, SEEK_CUR );
+                /* move to offset location */
+                fseek( le_stream, le_location * _LE_USE_OFFSET, SEEK_CUR );
 
-                /* */
-                if ( fread( & le_return, sizeof( le_byte_t ), _LE_USE_OFFSET, le_stream ) != _LE_USE_OFFSET ) {
+                /* read offset value */
+                if ( fread( & le_offset, sizeof( le_byte_t ), _LE_USE_OFFSET, le_stream ) != _LE_USE_OFFSET ) {
 
-                    /* */
+                    /* send null offset */
                     return( _LE_OFFS_NULL );
 
                 } else {
 
-                    /* */
-                    return( le_return );
+                    /* send read offset */
+                    return( le_offset );
 
                 }
 
