@@ -53,20 +53,20 @@
     header - preprocessor definitions
  */
 
-    /* define class size */
+    /* define class structure */
     # define LE_CLASS_HEADER  ( sizeof( le_byte_t ) )
 
-    /* define class size */
+    /* define class structure */
     # define LE_CLASS_TARGET  ( _LE_USE_OFFSET * _LE_USE_BASE )
 
-    /* define class size */
+    /* define class structure */
     # define LE_CLASS_ALIGNED ( LE_CLASS_TARGET + ( ( sizeof( le_size_t ) - ( LE_CLASS_TARGET % sizeof( le_size_t ) ) ) % sizeof( le_size_t ) ) )
 
-    /* define class size */
+    /* define class structure */
     # define LE_CLASS_MEMORY  ( LE_CLASS_HEADER + LE_CLASS_ALIGNED )
 
     /* define configuration count */
-    # define LE_CLASS_COUNT ( 1 << _LE_USE_BASE )
+    # define LE_CLASS_COUNT   ( 1 << _LE_USE_BASE )
 
     /* define configuration length */
     # define LE_CLASS_SIZE { \

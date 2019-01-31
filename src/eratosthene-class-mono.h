@@ -58,26 +58,20 @@
     # define LE_MONO_C      { 0, { 0.0 }, { 0 } }
 
     /* define class structure */
-    # define LE_MONO_LENGTH ( 3 )
+    # define LE_MONO_HEADER ( sizeof( le_byte_t ) * 3 )
 
     /* define class structure */
-    # define LE_MONO_HEAD   ( sizeof( le_byte_t ) * LE_MONO_LENGTH )
+    # define LE_MONO_EXTEND ( LE_MONO_HEADER + LE_CLASS_HEADER )
 
     /* define class structure */
-    # define LE_MONO_OFFSET ( LE_CLASS_MEMORY ) //( _LE_USE_OFFSET * _LE_USE_BASE )
-
-    /* define class structure */
-    # define LE_MONO_FIXED  ( LE_MONO_HEAD + LE_MONO_OFFSET )
+    # define LE_MONO_CLASS  ( LE_CLASS_MEMORY )
 
     /* define class memory */
-    # define LE_MONO_MEMORY ( LE_MONO_FIXED + _LE_USE_OFFSET )
+    # define LE_MONO_MEMORY ( LE_MONO_HEADER + LE_MONO_CLASS )
 
 /*
     header - preprocessor macros
  */
-
-    /* define offset access */
-    # define le_mono_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->mc_data + LE_MONO_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) )
 
 /*
     header - type definition
@@ -88,7 +82,7 @@
  */
 
     /*! \struct le_mono_struct
-     *  \brief mono-vertex class structure
+     *  \brief mono-vertex class structure (revoked)
      *
      *  This structure holds the definition and required elements to access mono
      *  vertex storage representation in door tree structure.
@@ -137,7 +131,7 @@
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods (revoked)
      *
      *  This function creates and initialises the content of a mono-vertex class
      *  structure.
@@ -150,7 +144,7 @@
 
     le_mono_t le_mono_create( le_void_t );
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods (revoked)
      *
      *  This function allows to reset the provided mono-vertex class structure
      *  to restore its state as it would have been created by the pseudo
@@ -161,7 +155,7 @@
 
     le_void_t le_mono_reset( le_mono_t * const le_mclass );
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods (revoked)
      *
      *  This function deletes the provided mono-vertex class structure. It
      *  simply resets the structure fields using default values.
@@ -171,7 +165,7 @@
 
     le_void_t le_mono_delete( le_mono_t * const le_mclass );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods (revoked)
      *
      *  This function allows to query the offset value stored in the provided
      *  mono-vertex class structure. The provided index indicates which offset
@@ -185,7 +179,7 @@
 
     le_size_t le_mono_get_offset( le_mono_t const * const le_mclass, le_size_t const le_index );
 
-    /*! \brief mutator methods
+    /*! \brief mutator methods (revoked)
      *
      *  This function allows to update the offset of the provided mono-vertex
      *  class structure using the provided value. The index indicates which
@@ -198,7 +192,7 @@
 
     le_void_t le_mono_set_offset( le_mono_t * const le_mclass, le_size_t const le_index, le_size_t const le_offset );
 
-    /*! \brief mutator methods
+    /*! \brief mutator methods (revoked)
      *
      *  This function allows to push the color of an element in the accumulation
      *  array of the provided mono-vertex class structure. The color is pushed
@@ -214,7 +208,7 @@
 
     le_void_t le_mono_set_push( le_mono_t * const le_mclass, le_byte_t const * const le_data );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This function is used to read the class representation from a storage
      *  tree structure in the provided mono-vertex class structure. The function
@@ -234,7 +228,7 @@
 
     le_enum_t le_mono_io_read( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This function allows to read the content of a mono-vertex class storage
      *  representation but only in terms of offsets. This function is used to
@@ -254,7 +248,7 @@
 
     le_enum_t le_mono_io_read_fast( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This function allows to write the content of the provided mono-vertex
      *  class structure in the provided stream to create its tree structure
@@ -277,7 +271,7 @@
 
     le_enum_t le_mono_io_write( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods (detached)
+    /*! \brief i/o methods (detached) (revoked)
      *
      *  Note :
      *
@@ -303,7 +297,7 @@
 
     le_size_t le_mono_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
 
-    /*! \brief i/o methods (detached)
+    /*! \brief i/o methods (detached) (revoked)
      *
      *  Note :
      *
