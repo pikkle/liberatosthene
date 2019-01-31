@@ -30,6 +30,9 @@
     /* direct access array */
     static const le_byte_t le_class_direct[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_DIRECT;
 
+    /* invert access array */
+    static const le_byte_t le_class_invert[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_INVERT;
+
 /*
     source - constructor/destructor methods
  */
@@ -76,67 +79,66 @@
     source - mutator methods
  */
 
-    le_void_t le_class_set_offset( le_byte_t * le_offset, le_size_t const le_index, le_size_t const le_value ) {
+    le_void_t le_class_set_offset( le_byte_t * le_class, le_size_t const le_index, le_size_t const le_offset ) {
 
-        /* */
-        static le_byte_t le_direct[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_DIRECT;
-
-        /* */
-        static le_byte_t le_invert[LE_CLASS_COUNT][_LE_USE_BASE] = LE_CLASS_INVERT;
-
-        /* */
+        /* detection mask variable */
         le_byte_t le_pattern = ( 1 << le_index );
 
-        /* */
-        if ( ( ( * le_offset ) & le_pattern ) == 0 ) {
+        /* swapping variable */
+        le_byte_t le_move = 0;
 
-            /* */
-            if ( ( * le_offset ) != 0 ) {
+        /* swapping variable */
+        le_byte_t * le_base = le_class + sizeof( le_byte_t );
 
-                /* */
-                if ( ( * le_offset ) > le_pattern ) {
+        /* offset presence detection */
+        if ( ( ( * le_class ) & le_pattern ) == 0 ) {
 
-                    /* */
-                    le_pattern |= ( * le_offset );
+            /* check for initialy empty class */
+            if ( ( * le_class ) != 0 ) {
 
-                    /* */
-                    for ( le_size_t le_parse = 0; le_parse < le_class_get_count( le_offset ); le_parse ++ ) {
+                /* distinguish append from insertion */
+                if ( ( * le_class ) > le_pattern ) {
 
-                        /* */ // Instance fault //
-                        le_byte_t * le_src = le_offset + sizeof( le_byte_t ) + le_parse * _LE_USE_OFFSET;
+                    /* push class descriptor with addition of offset marker */
+                    le_pattern |= ( * le_class );
 
-                        /* */ // Instance fault //
-                        le_byte_t * le_dst = le_offset + sizeof( le_byte_t ) + le_direct[le_pattern][ le_invert[(*le_offset)][le_parse] ] * _LE_USE_OFFSET;
+                    /* parsing previous class offsets */
+                    for ( le_size_t le_parse = 0; le_parse < le_class_size[ * le_class ]; le_parse ++ ) {
 
-                        /* */
-                        if ( le_src != le_dst ) memcpy( le_dst, le_src, _LE_USE_OFFSET );
+                        /* compute and check offset swapping */
+                        if ( ( le_move = le_class_direct[ le_pattern ][ le_class_invert[ * le_class ][ le_parse ] ] ) != le_parse ) {
+
+                            /* move offset */
+                            memcpy( le_base + ( le_parse * _LE_USE_OFFSET ), le_base + ( le_move * _LE_USE_OFFSET ), _LE_USE_OFFSET );
+
+                        }
 
                     }
 
-                    /* */
-                    ( * le_offset ) = le_pattern;
+                    /* assign pushed class descriptor */
+                    ( * le_class ) = le_pattern;
 
                 } else {
 
-                    /* */
-                    ( * le_offset ) |= le_pattern;
+                    /* add offset marker */
+                    ( * le_class ) |= le_pattern;
 
                 }
 
             } else {
 
-                /* */
-                ( * le_offset ) |= le_pattern;
+                /* add offset marker */
+                ( * le_class ) |= le_pattern;
 
             }
 
         }
 
-        /* */
-        le_offset += ( le_direct[ ( * le_offset ) ][le_index] ) * _LE_USE_OFFSET + sizeof( le_byte_t );
+        /* move pointer to offset position */
+        le_class += ( le_class_direct[ ( * le_class ) ][le_index] ) * _LE_USE_OFFSET + sizeof( le_byte_t );
 
-        /* */
-        le_class_mac_cast( le_offset ) = ( le_class_mac_cast( le_offset ) & ( ~ _LE_OFFS_NULL ) ) | ( le_value & _LE_OFFS_NULL );
+        /* assign offset value */
+        le_class_mac_cast( le_class ) = ( le_class_mac_cast( le_class ) & ( ~ _LE_OFFS_NULL ) ) | ( le_offset & _LE_OFFS_NULL );
 
     }
 

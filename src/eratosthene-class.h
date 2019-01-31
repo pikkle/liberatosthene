@@ -53,13 +53,22 @@
     header - preprocessor definitions
  */
 
-    /* define offset stack size */
-    # define LE_CLASS_MEMORY ( sizeof( le_byte_t ) + ( _LE_USE_OFFSET * _LE_USE_BASE ) + sizeof( le_size_t ) )
+    /* define class size */
+    # define LE_CLASS_HEADER  ( sizeof( le_byte_t ) )
+
+    /* define class size */
+    # define LE_CLASS_TARGET  ( _LE_USE_OFFSET * _LE_USE_BASE )
+
+    /* define class size */
+    # define LE_CLASS_ALIGNED ( LE_CLASS_TARGET + ( ( sizeof( le_size_t ) - ( LE_CLASS_TARGET % sizeof( le_size_t ) ) ) % sizeof( le_size_t ) ) )
+
+    /* define class size */
+    # define LE_CLASS_MEMORY  ( LE_CLASS_HEADER + LE_CLASS_ALIGNED )
 
     /* define configuration count */
     # define LE_CLASS_COUNT ( 1 << _LE_USE_BASE )
 
-    /* define pattern offset length */
+    /* define configuration length */
     # define LE_CLASS_SIZE { \
     0x00, 0x01, 0x01, 0x02, 0x01, 0x02, 0x02, 0x03, \
     0x01, 0x02, 0x02, 0x03, 0x02, 0x03, 0x03, 0x04, \
@@ -95,7 +104,7 @@
     0x05, 0x06, 0x06, 0x07, 0x06, 0x07, 0x07, 0x08, \
     }
 
-    /* define pattern offset index */
+    /* define configuration direct access */
     # define LE_CLASS_DIRECT { \
     { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
     { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
@@ -355,6 +364,7 @@
     { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 }, \
     }
 
+    /* define configuration invert access */
     # define LE_CLASS_INVERT { \
     { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
     { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }, \
