@@ -50,8 +50,11 @@
 
     le_size_t le_class_get_offset( le_byte_t const * le_class, le_size_t const le_index ) {
 
+        /* offset location variable */
+        le_size_t le_location = le_class_direct[ ( * le_class ) ][ le_index ];
+
         /* check offset availability */
-        if ( le_class_direct[ ( * le_class ) ][le_index] == 0xff ) {
+        if ( le_location == 0xff ) {
 
             /* return null offset */
             return( _LE_OFFS_NULL );
@@ -59,7 +62,7 @@
         } else {
 
             /* move pointer to offset position */
-            le_class += le_class_direct[ ( * le_class ) ][le_index] * _LE_USE_OFFSET + sizeof( le_byte_t );
+            le_class += le_location * _LE_USE_OFFSET + sizeof( le_byte_t );
 
             /* extract and return offset */
             return( le_class_mac_cast( le_class ) & _LE_OFFS_NULL );
@@ -208,13 +211,13 @@
         le_size_t le_location = 0;
 
         /* returned value variable */
-        le_size_t le_offset;
+        le_size_t le_offset = _LE_OFFS_NULL;
 
         /* read class descriptor */
         if ( fread( & le_pattern, sizeof( le_byte_t ), 1, le_stream ) != 1 ) {
 
             /* send null offset */
-            return( _LE_OFFS_NULL );
+            return( le_offset );
 
         } else {
 
@@ -222,7 +225,7 @@
             if ( ( le_location = le_class_direct[ le_pattern ][ le_index ] ) == 0xff ) {
 
                 /* send null offset */
-                return( _LE_OFFS_NULL );
+                return( le_offset );
 
             } else {
 
@@ -233,7 +236,7 @@
                 if ( fread( & le_offset, sizeof( le_byte_t ), _LE_USE_OFFSET, le_stream ) != _LE_USE_OFFSET ) {
 
                     /* send null offset */
-                    return( _LE_OFFS_NULL );
+                    return( le_offset );
 
                 } else {
 
