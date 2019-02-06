@@ -55,39 +55,48 @@
  */
 
     /* define pseudo-constructor */
+    //# define LE_POLY_C      { 0, NULL, { 0 } }
     # define LE_POLY_C      { 0, NULL, { 0 } }
 
     /* define class structure */
-    # define LE_POLY_HEAD   ( sizeof( le_pidx_t ) )
+    //# define LE_POLY_HEAD   ( sizeof( le_pidx_t ) )
+    # define LE_POLY_HEADER ( _LE_USE_OFFSET )
 
     /* define class structure */
-    # define LE_POLY_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
+    # define LE_POLY_EXTEND ( LE_POLY_HEADER + LE_CLASS_HEADER )
 
     /* define class structure */
-    # define LE_POLY_FIXED  ( LE_POLY_HEAD + LE_POLY_OFFSET )
+    //# define LE_POLY_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
 
-    /* define class memory */
-    # define LE_POLY_MEMORY ( LE_POLY_FIXED + _LE_USE_OFFSET )
+    /* define class structure */
+    //# define LE_POLY_FIXED  ( LE_POLY_HEAD + LE_POLY_OFFSET )
+
+    /* define class structure */
+    # define LE_POLY_CLASS ( LE_CLASS_MEMORY )
+
+    /* define class structure */
+    //# define LE_POLY_MEMORY ( LE_POLY_FIXED + _LE_USE_OFFSET )
+    # define LE_POLY_MEMORY ( LE_POLY_HEADER + LE_POLY_CLASS )
 
     /* define class management */
-    # define LE_POLY_STEP   ( 32 )
+    //# define LE_POLY_STEP   ( 32 )
 
     /* define class management */
-    # define LE_POLY_LIMIT  ( UINT16_MAX )
+    //# define LE_POLY_LIMIT  ( UINT16_MAX )
 
 /*
     header - preprocessor macros
  */
 
     /* define offset access */
-    # define le_poly_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->pc_data + LE_POLY_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) )
+    //# define le_poly_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->pc_data + LE_POLY_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) ) // delete //
 
 /*
     header - type definition
  */
 
     /* class data */
-    typedef uint16_t le_pidx_t;
+    //typedef uint16_t le_pidx_t; // delete //
 
 /*
     header - structures
@@ -135,7 +144,8 @@
     typedef struct le_poly_struct {
 
         le_size_t   pc_size;
-        le_size_t * pc_link;
+        //le_size_t * pc_link;
+        le_byte_t * pc_link;
         le_byte_t   pc_data[LE_POLY_MEMORY];
 
     } le_poly_t;
@@ -224,6 +234,10 @@
      */
 
     le_size_t le_poly_get_offset( le_poly_t const * const le_pclass, le_size_t const le_index );
+
+    /* *** */
+
+    le_void_t le_poly_set_size( le_poly_t const * const le_poly, le_size_t const le_size );
 
     /*! \brief mutator methods
      *

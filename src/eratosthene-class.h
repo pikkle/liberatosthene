@@ -661,7 +661,7 @@
 
     /* assumes class header has been written by the calling function */
 
-    le_enum_t le_class_io_write( le_byte_t * le_class, le_file_t const le_stream );
+    le_enum_t le_class_io_write( le_byte_t const * le_class, le_file_t const le_stream );
 
     /* detached method */
 

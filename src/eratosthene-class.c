@@ -172,7 +172,7 @@
 
     }
 
-    le_enum_t le_class_io_write( le_byte_t * le_class, le_file_t const le_stream ) {
+    le_enum_t le_class_io_write( le_byte_t const * le_class, le_file_t const le_stream ) {
 
         /* class size variable */
         le_size_t le_write = le_class_size[ * ( le_class ++ ) ] * _LE_USE_OFFSET;
