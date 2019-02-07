@@ -145,7 +145,7 @@
     le_enum_t le_class_io_read( le_byte_t * le_class, le_file_t const le_stream ) {
 
         /* class size variable */
-        le_size_t le_read = le_class_size[ * ( le_class ++ ) ] * _LE_USE_OFFSET;
+        le_size_t le_read = le_class_size[ * ( le_class ++ ) ];
 
         /* check empty class */
         if ( le_read == 0 ) {
@@ -156,7 +156,7 @@
         } else {
 
             /* read class offsets */
-            if ( fread( le_class, sizeof( le_byte_t ), le_read, le_stream ) != le_read ) {
+            if ( fread( le_class, _LE_USE_OFFSET, le_read, le_stream ) != le_read ) {
 
                 /* send message */
                 return( LE_ERROR_IO_READ );
@@ -175,7 +175,7 @@
     le_enum_t le_class_io_write( le_byte_t const * le_class, le_file_t const le_stream ) {
 
         /* class size variable */
-        le_size_t le_write = le_class_size[ * ( le_class ++ ) ] * _LE_USE_OFFSET;
+        le_size_t le_write = le_class_size[ * ( le_class ++ ) ];
 
         /* check empty class */
         if ( le_write == 0 ) {
@@ -186,7 +186,7 @@
         } else {
 
             /* write class offsets */
-            if ( fwrite( le_class, sizeof( le_byte_t ), le_write, le_stream ) != le_write ) {
+            if ( fwrite( le_class, _LE_USE_OFFSET, le_write, le_stream ) != le_write ) {
 
                 /* send message */
                 return( LE_ERROR_IO_WRITE );
