@@ -55,55 +55,34 @@
  */
 
     /* define pseudo-constructor */
-    //# define LE_POLY_C      { 0, NULL, { 0 } }
     # define LE_POLY_C      { 0, NULL, { 0 } }
 
     /* define class structure */
-    //# define LE_POLY_HEAD   ( sizeof( le_pidx_t ) )
     # define LE_POLY_HEADER ( _LE_USE_OFFSET )
 
     /* define class structure */
     # define LE_POLY_EXTEND ( LE_POLY_HEADER + LE_CLASS_HEADER )
 
     /* define class structure */
-    //# define LE_POLY_OFFSET ( _LE_USE_OFFSET * _LE_USE_BASE )
+    # define LE_POLY_CLASS  ( LE_CLASS_MEMORY )
 
     /* define class structure */
-    //# define LE_POLY_FIXED  ( LE_POLY_HEAD + LE_POLY_OFFSET )
-
-    /* define class structure */
-    # define LE_POLY_CLASS ( LE_CLASS_MEMORY )
-
-    /* define class structure */
-    //# define LE_POLY_MEMORY ( LE_POLY_FIXED + _LE_USE_OFFSET )
     # define LE_POLY_MEMORY ( LE_POLY_HEADER + LE_POLY_CLASS )
-
-    /* define class management */
-    //# define LE_POLY_STEP   ( 32 )
-
-    /* define class management */
-    //# define LE_POLY_LIMIT  ( UINT16_MAX )
 
 /*
     header - preprocessor macros
  */
 
-    /* define offset access */
-    //# define le_poly_mac_offset(c,i) ( ( le_size_t * ) ( ( c )->pc_data + LE_POLY_HEAD + ( _LE_USE_OFFSET * ( i ) ) ) ) // delete //
-
 /*
     header - type definition
  */
-
-    /* class data */
-    //typedef uint16_t le_pidx_t; // delete //
 
 /*
     header - structures
  */
 
     /*! \struct le_poly_struct
-     *  \brief poly-vertex class structure
+     *  \brief poly-vertex class structure ( revoked )
      *
      *  This structure holds the definition and required elements to access poly
      *  vertex storage representation in door tree structure.
@@ -144,7 +123,6 @@
     typedef struct le_poly_struct {
 
         le_size_t   pc_size;
-        //le_size_t * pc_link;
         le_byte_t * pc_link;
         le_byte_t   pc_data[LE_POLY_MEMORY];
 
@@ -154,7 +132,7 @@
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods ( revoked )
      *
      *  This function creates and initialises the content of a poly-vertex class
      *  structure.
@@ -167,7 +145,7 @@
 
     le_poly_t le_poly_create( le_void_t );
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods ( revoked )
      *
      *  This function allows the reset the provided poly-vertex class structure
      *  to restore its state as it would have been created by the pseudo
@@ -180,7 +158,7 @@
 
     le_void_t le_poly_reset( le_poly_t * const le_pclass );
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods ( revoked )
      *
      *  This function deletes the content of the provided poly-vertex class
      *  structure.
@@ -193,7 +171,7 @@
 
     le_void_t le_poly_delete( le_poly_t * const le_pclass );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods ( revoked )
      *
      *  This function allows to query the size of the links array of the
      *  provided poly-vertex class structure. This size corresponds to the
@@ -206,7 +184,7 @@
 
     le_size_t le_poly_get_size( le_poly_t const * const le_pclass );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods ( revoked )
      *
      *  This function allows to retrieve the offset value of the elements of the
      *  links array of the provided poly-vertex class structure. These offset
@@ -221,7 +199,7 @@
 
     le_size_t le_poly_get_link( le_poly_t const * const le_pclass, le_size_t const le_index );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods ( revoked )
      *
      *  This function allows the query the offset value stored in the provided
      *  poly-vertex class structure. The provided index indicates which offset
@@ -239,7 +217,7 @@
 
     le_void_t le_poly_set_size( le_poly_t const * const le_poly, le_size_t const le_size );
 
-    /*! \brief mutator methods
+    /*! \brief mutator methods ( revoked )
      *
      *  This function is used to update the poly-vertex class structure links
      *  array memory allocation.
@@ -257,7 +235,7 @@
 
     le_enum_t le_poly_set_memory( le_poly_t * const le_pclass, le_size_t const le_size );
 
-    /*! \brief mutator methods
+    /*! \brief mutator methods ( revoked )
      *
      *  This function allows to update the offset of the provided poly-vertex
      *  class structure using the provided value. The index indicates which
@@ -270,7 +248,7 @@
 
     le_void_t le_poly_set_offset( le_poly_t * const le_pclass, le_size_t const le_index, le_size_t const le_offset );
 
-    /*! \brief mutator methods
+    /*! \brief mutator methods ( revoked )
      *
      *  This function allows to add a link to the provided poly-vertex class
      *  structure links array.
@@ -287,7 +265,7 @@
 
     le_enum_t le_poly_set_push( le_poly_t * const le_pclass, le_size_t const le_link );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods ( revoked )
      *
      *  This function allows to read the storage representation of a poly-vertex
      *  class into the provided structure.
@@ -310,7 +288,7 @@
 
     le_enum_t le_poly_io_read( le_poly_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods ( revoked )
      *
      *  This function allows the read a poly-vertex class storage representation
      *  reading only the fixed-length header, that are the links array size and
@@ -332,7 +310,7 @@
 
     le_enum_t le_poly_io_read_fast( le_poly_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods ( revoked )
      *
      *  This function allows the to a poly-vertex class storage representation
      *  remaining links array after a call to \b le_poly_io_read_fast().
@@ -354,7 +332,7 @@
 
     le_enum_t le_poly_io_read_next( le_poly_t * const le_pclass, le_file_t const le_stream );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods ( revoked )
      *
      *  This function is used to write the provided poly-vertex class structure
      *  storage representation.
@@ -375,7 +353,7 @@
 
     le_enum_t le_poly_io_write( le_poly_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods (detached)
+    /*! \brief i/o methods (detached) ( revoked )
      *
      *  Note :
      *

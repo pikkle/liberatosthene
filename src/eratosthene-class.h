@@ -60,7 +60,10 @@
     # define LE_CLASS_TARGET  ( _LE_USE_OFFSET * _LE_USE_BASE )
 
     /* define class structure */
-    # define LE_CLASS_ALIGNED ( LE_CLASS_TARGET + ( ( sizeof( le_size_t ) - ( LE_CLASS_TARGET % sizeof( le_size_t ) ) ) % sizeof( le_size_t ) ) )
+    # define LE_CLASS_PADDING ( sizeof( le_size_t ) - _LE_USE_OFFSET )
+
+    /* define class structure */
+    # define LE_CLASS_ALIGNED ( LE_CLASS_TARGET + LE_CLASS_PADDING )
 
     /* define class structure */
     # define LE_CLASS_MEMORY  ( LE_CLASS_HEADER + LE_CLASS_ALIGNED )
