@@ -108,7 +108,7 @@
 
     }
 
-    le_enum_t le_poly_set_push( le_poly_t * const le_poly, le_size_t const le_link ) { // rename to le_poly_set_link //
+    le_enum_t le_poly_set_push( le_poly_t * const le_poly, le_size_t const le_link ) {
 
         /* size variable */
         le_size_t le_size = le_poly_get_size( le_poly );
@@ -120,7 +120,7 @@
         if ( le_size == le_poly->pc_size ) {
 
             /* update memory */
-            if ( le_poly_set_memory( le_poly, le_poly->pc_size + 1 ) != LE_ERROR_SUCCESS ) { // introduce larger increase steps //
+            if ( le_poly_set_memory( le_poly, le_poly->pc_size + LE_POLY_STEP ) != LE_ERROR_SUCCESS ) {
 
                 /* send message */
                 return( LE_ERROR_MEMORY );

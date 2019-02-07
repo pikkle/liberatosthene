@@ -69,6 +69,9 @@
     /* define class structure */
     # define LE_POLY_MEMORY ( LE_POLY_HEADER + LE_POLY_CLASS )
 
+    /* define class memory step */
+    # define LE_POLY_STEP   ( 16 )
+
 /*
     header - preprocessor macros
  */
@@ -245,7 +248,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_poly_set_push( le_poly_t * const le_pclass, le_size_t const le_link );
+    le_enum_t le_poly_set_push( le_poly_t * const le_poly, le_size_t const le_link );
 
     /*! \brief mutator methods ( revoked )
      *
