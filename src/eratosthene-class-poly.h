@@ -159,7 +159,7 @@
      *  \param le_pclass Poly-vertex class structure
      */
 
-    le_void_t le_poly_reset( le_poly_t * const le_pclass );
+    le_void_t le_poly_reset( le_poly_t * const le_poly );
 
     /*! \brief constructor/destructor methods ( revoked )
      *
@@ -172,7 +172,7 @@
      *  \param le_pclass Poly-vertex class structure
      */
 
-    le_void_t le_poly_delete( le_poly_t * const le_pclass );
+    le_void_t le_poly_delete( le_poly_t * const le_poly );
 
     /*! \brief accessor methods ( revoked )
      *
@@ -185,7 +185,7 @@
      *  \return Returns the size of the class links array
      */
 
-    le_size_t le_poly_get_size( le_poly_t const * const le_pclass );
+    le_size_t le_poly_get_size( le_poly_t const * const le_poly );
 
     /*! \brief accessor methods ( revoked )
      *
@@ -200,7 +200,7 @@
      *  \return Returns the link value found at the desired index
      */
 
-    le_size_t le_poly_get_link( le_poly_t const * const le_pclass, le_size_t const le_index );
+    le_size_t le_poly_get_link( le_poly_t const * const le_poly, le_size_t const le_index );
 
     /*! \brief accessor methods ( revoked )
      *
@@ -214,7 +214,7 @@
      *  \return Returns the extracted offset from the class structure
      */
 
-    le_size_t le_poly_get_offset( le_poly_t const * const le_pclass, le_size_t const le_index );
+    le_size_t le_poly_get_offset( le_poly_t const * const le_poly, le_size_t const le_index );
 
     /* *** */
 
@@ -231,7 +231,7 @@
      *  \param le_offset Offset value
      */
 
-    le_void_t le_poly_set_offset( le_poly_t * const le_pclass, le_size_t const le_index, le_size_t const le_offset );
+    le_void_t le_poly_set_offset( le_poly_t * const le_poly, le_size_t const le_index, le_size_t const le_offset );
 
     /*! \brief mutator methods ( revoked )
      *
@@ -266,7 +266,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_poly_set_memory( le_poly_t * const le_pclass, le_size_t const le_size );
+    le_enum_t le_poly_set_memory( le_poly_t * const le_poly, le_size_t const le_size );
 
     /*! \brief i/o methods ( revoked )
      *
@@ -289,7 +289,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_poly_io_read( le_poly_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_poly_io_read( le_poly_t * const le_poly, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods ( revoked )
      *
@@ -311,7 +311,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_poly_io_read_fast( le_poly_t * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_poly_io_read_fast( le_poly_t * const le_poly, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods ( revoked )
      *
@@ -333,7 +333,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_poly_io_read_next( le_poly_t * const le_pclass, le_file_t const le_stream );
+    le_enum_t le_poly_io_read_next( le_poly_t * const le_poly, le_file_t const le_stream );
 
     /*! \brief i/o methods ( revoked )
      *
@@ -354,7 +354,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_poly_io_write( le_poly_t const * const le_pclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_poly_io_write( le_poly_t const * const le_poly, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods (detached) ( revoked )
      *

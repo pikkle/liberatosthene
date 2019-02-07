@@ -153,7 +153,7 @@
      *  \param le_mclass Mono-vertex class structure
      */
 
-    le_void_t le_mono_reset( le_mono_t * const le_mclass );
+    le_void_t le_mono_reset( le_mono_t * const le_mono );
 
     /*! \brief constructor/destructor methods (revoked)
      *
@@ -163,7 +163,7 @@
      *  \param le_mclass Mono-vertex class structure
      */
 
-    le_void_t le_mono_delete( le_mono_t * const le_mclass );
+    le_void_t le_mono_delete( le_mono_t * const le_mono );
 
     /*! \brief accessor methods (revoked)
      *
@@ -177,7 +177,7 @@
      *  \return Returns the extracted offset from the class structure
      */
 
-    le_size_t le_mono_get_offset( le_mono_t const * const le_mclass, le_size_t const le_index );
+    le_size_t le_mono_get_offset( le_mono_t const * const le_mono, le_size_t const le_index );
 
     /*! \brief mutator methods (revoked)
      *
@@ -190,7 +190,7 @@
      *  \param le_offset Offset value
      */
 
-    le_void_t le_mono_set_offset( le_mono_t * const le_mclass, le_size_t const le_index, le_size_t const le_offset );
+    le_void_t le_mono_set_offset( le_mono_t * const le_mono, le_size_t const le_index, le_size_t const le_offset );
 
     /*! \brief mutator methods (revoked)
      *
@@ -206,7 +206,7 @@
      *  \param le_data   Pointer to the color information, in 8-bits RGB
      */
 
-    le_void_t le_mono_set_push( le_mono_t * const le_mclass, le_byte_t const * const le_data );
+    le_void_t le_mono_set_push( le_mono_t * const le_mono, le_byte_t const * const le_data );
 
     /*! \brief i/o methods (revoked)
      *
@@ -226,7 +226,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_mono_io_read( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_mono_io_read( le_mono_t * const le_mono, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods (revoked)
      *
@@ -246,7 +246,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_mono_io_read_fast( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_mono_io_read_fast( le_mono_t * const le_mono, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods (revoked)
      *
@@ -269,7 +269,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_mono_io_write( le_mono_t * const le_mclass, le_size_t const le_offset, le_file_t const le_stream );
+    le_enum_t le_mono_io_write( le_mono_t * const le_mono, le_size_t const le_offset, le_file_t const le_stream );
 
     /*! \brief i/o methods (detached) (revoked)
      *
