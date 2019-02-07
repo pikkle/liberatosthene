@@ -215,25 +215,7 @@
 
     /* *** */
 
-    le_void_t le_poly_set_size( le_poly_t const * const le_poly, le_size_t const le_size );
-
-    /*! \brief mutator methods ( revoked )
-     *
-     *  This function is used to update the poly-vertex class structure links
-     *  array memory allocation.
-     *
-     *  The provided size indicates the amount of links required and the
-     *  function checks if the current allocation is sufficient. In case the
-     *  provided size is higher than the size of the current allocation, the
-     *  function re-allocates the links array memory.
-     *
-     *  \param le_pclass Poly-vertex class structure
-     *  \param le_size   Size of the desired links array, in links count
-     *
-     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
-     */
-
-    le_enum_t le_poly_set_memory( le_poly_t * const le_pclass, le_size_t const le_size );
+    le_void_t le_poly_set_size( le_poly_t * const le_poly, le_size_t const le_size );
 
     /*! \brief mutator methods ( revoked )
      *
@@ -264,6 +246,24 @@
      */
 
     le_enum_t le_poly_set_push( le_poly_t * const le_pclass, le_size_t const le_link );
+
+    /*! \brief mutator methods ( revoked )
+     *
+     *  This function is used to update the poly-vertex class structure links
+     *  array memory allocation.
+     *
+     *  The provided size indicates the amount of links required and the
+     *  function checks if the current allocation is sufficient. In case the
+     *  provided size is higher than the size of the current allocation, the
+     *  function re-allocates the links array memory.
+     *
+     *  \param le_pclass Poly-vertex class structure
+     *  \param le_size   Size of the desired links array, in links count
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
+
+    le_enum_t le_poly_set_memory( le_poly_t * const le_pclass, le_size_t const le_size );
 
     /*! \brief i/o methods ( revoked )
      *

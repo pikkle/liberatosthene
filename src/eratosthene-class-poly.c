@@ -71,11 +71,8 @@
 
     le_size_t le_poly_get_size( le_poly_t const * const le_poly ) {
 
-        /* pointer variable */
-        le_size_t * le_base = ( le_size_t * ) le_poly->pc_data;
-
         /* return class links array size */
-        return( ( * le_base ) & _LE_OFFS_NULL );
+        return( le_class_mac_cast( le_poly->pc_data ) & _LE_OFFS_NULL );
 
     }
 
@@ -97,13 +94,52 @@
     source - mutator methods
  */
 
-    le_void_t le_poly_set_size( le_poly_t const * const le_poly, le_size_t const le_size ) {
+    le_void_t le_poly_set_size( le_poly_t * const le_poly, le_size_t const le_size ) {
 
-        /* pointer variable */
-        le_size_t * le_base = ( le_size_t * ) le_poly->pc_data;
+        /* reset and assign links array size */
+        le_class_mac_cast( le_poly->pc_data ) = ( le_class_mac_cast( le_poly->pc_data ) & ( ~ _LE_OFFS_NULL ) ) | ( le_size & _LE_OFFS_NULL );
 
-        /* reset previous value */
-        ( * le_base ) = ( ( * le_base ) & ( ~ _LE_OFFS_NULL ) ) | ( le_size & _LE_OFFS_NULL );
+    }
+
+    le_void_t le_poly_set_offset( le_poly_t * const le_poly, le_size_t const le_index, le_size_t const le_offset ) {
+
+        /* assign offset */
+        le_class_set_offset( le_poly->pc_data + LE_POLY_HEADER, le_index, le_offset );
+
+    }
+
+    le_enum_t le_poly_set_push( le_poly_t * const le_poly, le_size_t const le_link ) { // rename to le_poly_set_link //
+
+        /* size variable */
+        le_size_t le_size = le_poly_get_size( le_poly );
+
+        /* offset variable */
+        le_size_t * le_offset = NULL;
+
+        /* check memory allocation */
+        if ( le_size == le_poly->pc_size ) {
+
+            /* update memory */
+            if ( le_poly_set_memory( le_poly, le_poly->pc_size + 1 ) != LE_ERROR_SUCCESS ) { // introduce larger increase steps //
+
+                /* send message */
+                return( LE_ERROR_MEMORY );
+
+            }
+
+        }
+
+        /* update size */
+        le_poly_set_size( le_poly, le_size + 1 );
+
+        /* compute link array offset */
+        le_offset = ( le_size_t * ) ( le_poly->pc_link + ( le_size * _LE_USE_OFFSET ) );
+
+        /* assign link value in array */
+        ( * le_offset ) = ( ( * le_offset ) & ( ~ _LE_OFFS_NULL ) ) | ( le_link & _LE_OFFS_NULL );
+
+        /* send message */
+        return( LE_ERROR_SUCCESS );
 
     }
 
@@ -125,45 +161,6 @@
 
         /* validate memory allocation */
         le_poly->pc_link = le_swap;
-
-        /* send message */
-        return( LE_ERROR_SUCCESS );
-
-    }
-
-    le_void_t le_poly_set_offset( le_poly_t * const le_poly, le_size_t const le_index, le_size_t const le_offset ) {
-
-        /* assign offset */
-        le_class_set_offset( le_poly->pc_data + LE_POLY_HEADER, le_index, le_offset );
-
-    }
-
-    le_enum_t le_poly_set_push( le_poly_t * const le_poly, le_size_t const le_link ) {
-
-        /* size variable */
-        le_size_t le_size = le_poly_get_size( le_poly );
-
-        /* check memory allocation */
-        if ( le_size == le_poly->pc_size ) {
-
-            /* update memory */
-            if ( le_poly_set_memory( le_poly, le_poly->pc_size + 1 ) != LE_ERROR_SUCCESS ) {
-
-                /* send message */
-                return( LE_ERROR_MEMORY );
-
-            }
-
-        }
-
-        /* offset variable */
-        le_size_t * le_base = ( le_size_t * ) ( le_poly->pc_link + ( le_size * _LE_USE_OFFSET ) ); // instance fault //
-
-        /* assign link */
-        ( * le_base ) = ( ( * le_base ) & ( ~ _LE_OFFS_NULL ) ) | ( le_link & _LE_OFFS_NULL );
-
-        /* update size */
-        le_poly_set_size( le_poly, le_size + 1 );
 
         /* send message */
         return( LE_ERROR_SUCCESS );
