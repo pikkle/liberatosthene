@@ -82,7 +82,7 @@
  */
 
     /*! \struct le_mono_struct
-     *  \brief mono-vertex class structure (revoked)
+     *  \brief mono-vertex class structure
      *
      *  This structure holds the definition and required elements to access mono
      *  vertex storage representation in door tree structure.
@@ -91,19 +91,17 @@
      *  storage representation.
      *
      *  The first element is the color of the element injected in the tree
-     *  structure. The color are three bytes hold in the first positions.
+     *  structure. The color are three bytes hold in the first positions of the
+     *  storage representation \b mc_data.
      *
-     *  The next main element is the link to the daughter classes in the scale
-     *  directly below the scale of the considered class. These links are simple
-     *  offsets packed just after the color information.
+     *  The next main element is the implicit class structure to gives access
+     *  to the daughter mono-vertex classes links in the scale just below. These
+     *  links are simple offset managed by the implicit class structure.
      *
      *  The storage representation of one mono-vertex class can then be seen as
      *  follows :
      *
-     *      [r][g][b][offset_0] ... [offset_7]
-     *
-     *  The color component are stored on one byte each while the amount of
-     *  byte per offset is given by the \b _LE_USE_OFFSET constant.
+     *      [r][g][b][implicit class bytes]
      *
      *  The last main element of the structure is the color accumulation array
      *  and its corresponding size. As many point can be injected in the same
@@ -131,68 +129,74 @@
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods (revoked)
+    /*! \brief constructor/destructor methods
      *
      *  This function creates and initialises the content of a mono-vertex class
      *  structure.
      *
      *  The function initialises the structure fields with default values and
-     *  assigns null offset values before to return the structure.
+     *  call the initialisation function of its implicit class structure.
      *
      *  \return Returns created structure
      */
 
     le_mono_t le_mono_create( le_void_t );
 
-    /*! \brief constructor/destructor methods (revoked)
+    /*! \brief constructor/destructor methods
      *
      *  This function allows to reset the provided mono-vertex class structure
      *  to restore its state as it would have been created by the pseudo
      *  constructor function \b le_mono_create().
      *
-     *  \param le_mclass Mono-vertex class structure
+     *  \param le_mono Mono-vertex class structure
      */
 
     le_void_t le_mono_reset( le_mono_t * const le_mono );
 
-    /*! \brief constructor/destructor methods (revoked)
+    /*! \brief constructor/destructor methods
      *
      *  This function deletes the provided mono-vertex class structure. It
      *  simply resets the structure fields using default values.
      *
-     *  \param le_mclass Mono-vertex class structure
+     *  \param le_mono Mono-vertex class structure
      */
 
     le_void_t le_mono_delete( le_mono_t * const le_mono );
 
-    /*! \brief accessor methods (revoked)
+    /*! \brief accessor methods
      *
      *  This function allows to query the offset value stored in the provided
      *  mono-vertex class structure. The provided index indicates which offset
      *  to return and has to be in the [0,7] range.
      *
-     *  \param le_mclass Mono-vertex class structure
-     *  \param le_index  Offset index
+     *  The function uses the specialised implicit class function to access the
+     *  desired offset.
+     *
+     *  \param le_mono  Mono-vertex class structure
+     *  \param le_index Offset index
      *
      *  \return Returns the extracted offset from the class structure
      */
 
     le_size_t le_mono_get_offset( le_mono_t const * const le_mono, le_size_t const le_index );
 
-    /*! \brief mutator methods (revoked)
+    /*! \brief mutator methods
      *
      *  This function allows to update the offset of the provided mono-vertex
      *  class structure using the provided value. The index indicates which
      *  offset to update and has to be in the [0,7] range.
      *
-     *  \param le_mclass Mono-vertex class structure
+     *  The function uses the specialised implicit class function to update the
+     *  desired offset.
+     *
+     *  \param le_mono   Mono-vertex class structure
      *  \param le_index  Offset index
      *  \param le_offset Offset value
      */
 
     le_void_t le_mono_set_offset( le_mono_t * const le_mono, le_size_t const le_index, le_size_t const le_offset );
 
-    /*! \brief mutator methods (revoked)
+    /*! \brief mutator methods
      *
      *  This function allows to push the color of an element in the accumulation
      *  array of the provided mono-vertex class structure. The color is pushed
@@ -202,24 +206,25 @@
      *  the representative color of an equivalence class in the case multiple
      *  elements are present.
      *
-     *  \param le_mclass Mono-vertex class structure
-     *  \param le_data   Pointer to the color information, in 8-bits RGB
+     *  \param le_mono Mono-vertex class structure
+     *  \param le_data Pointer to the color information, in 8-bits RGB
      */
 
     le_void_t le_mono_set_push( le_mono_t * const le_mono, le_byte_t const * const le_data );
 
-    /*! \brief i/o methods (revoked)
+    /*! \brief i/o methods
      *
      *  This function is used to read the class representation from a storage
      *  tree structure in the provided mono-vertex class structure. The function
      *  reads the entire representation in the storage structure in one single
-     *  reading, including the color information and the offsets array.
+     *  reading, including the color information and its implicit class
+     *  structure.
      *
      *  The provided offset value indicates where to start the representation
      *  reading in the provided stream. The provided stream has to be an already
-     *  opened stream in read-binary mode.
+     *  opened stream in binary read mode.
      *
-     *  \param le_mclass Mono-vertex class structure
+     *  \param le_mono   Mono-vertex class structure
      *  \param le_offset Class reading offset, in bytes
      *  \param le_stream Stream descriptor
      *
@@ -228,18 +233,18 @@
 
     le_enum_t le_mono_io_read( le_mono_t * const le_mono, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods (revoked)
+    /*! \brief i/o methods
      *
      *  This function allows to read the content of a mono-vertex class storage
-     *  representation but only in terms of offsets. This function is used to
-     *  provide an efficient way to read the class linking offsets for processes
-     *  that does not need to read the entire representation.
+     *  representation but only in terms of its implicit class. This function is
+     *  used to provide an efficient way to read the class linking offsets for
+     *  processes that does not need to read the entire representation.
      *
      *  The provided offset value indicates where to start the representation
      *  reading in the provided stream. The provided stream has to be an already
      *  opened stream in read-binary mode.
      *
-     *  \param le_mclass Mono-vertex class structure
+     *  \param le_mono   Mono-vertex class structure
      *  \param le_offset Class reading offset, in bytes
      *  \param le_stream Stream descriptor
      *
@@ -248,11 +253,11 @@
 
     le_enum_t le_mono_io_read_fast( le_mono_t * const le_mono, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods (revoked)
+    /*! \brief i/o methods
      *
      *  This function allows to write the content of the provided mono-vertex
      *  class structure in the provided stream to create its tree structure
-     *  storage representation.
+     *  storage representation in the specified stream.
      *
      *  Before to write the class in the stream, the function computes the mean
      *  color of the class by reading the content of the accumulation array and
@@ -260,9 +265,9 @@
      *
      *  If a null offset is provided, the function assumes that the class has to
      *  be written at the current position of the provided stream. The provided
-     *  stream has to be an already opened stream in write-binary mode.
+     *  stream has to be an already opened stream in binary write mode.
      *
-     *  \param le_mclass Mono-vertex class structure
+     *  \param le_mono   Mono-vertex class structure
      *  \param le_offset Class writing offset, in bytes
      *  \param le_stream Stream descriptor
      *
@@ -271,7 +276,7 @@
 
     le_enum_t le_mono_io_write( le_mono_t * const le_mono, le_size_t const le_offset, le_file_t const le_stream );
 
-    /*! \brief i/o methods (detached) (revoked)
+    /*! \brief i/o methods (detached)
      *
      *  Note :
      *
@@ -280,12 +285,12 @@
      *  strategies.
      *
      *  This function allows the reads a single offset from a mono-vertex class
-     *  representation in a tree storage structure. The function only reads the
-     *  bytes corresponding the the desired offset.
+     *  representation in a tree storage structure. The function invokes the
+     *  specialised implicit class function to read the desired offset.
      *
      *  The provided offset value indicates where to start the representation
      *  reading in the provided stream. The provided stream has to be an already
-     *  opened stream in read-binary mode.
+     *  opened stream in binary read mode.
      *
      *  \param le_offset Class reading offset, in bytes
      *  \param le_index  Class index
@@ -297,7 +302,7 @@
 
     le_size_t le_mono_io_offset( le_size_t const le_offset, le_size_t const le_index, le_file_t const le_stream );
 
-    /*! \brief i/o methods (detached) (revoked)
+    /*! \brief i/o methods (detached)
      *
      *  Note :
      *
@@ -311,7 +316,7 @@
      *
      *  The provided offset value indicates where to start the representation
      *  reading in the provided stream. The provided stream has to be an already
-     *  opened stream in read-binary mode.
+     *  opened stream in binary read mode.
      *
      *  \param le_offset Class reading offset, in bytes
      *  \param le_data   Pointer to the color array, in 8-bits RGB
