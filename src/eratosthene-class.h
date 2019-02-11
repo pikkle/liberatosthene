@@ -646,31 +646,131 @@
     header - function prototypes
  */
 
-    /* *** */
+    /*! \brief constructor/destructor methods
+     *
+     *  This function initialise the bytes structure of the provided implicit
+     *  class structure.
+     *
+     *  The function simply sets the class descriptor to zero indicating that
+     *  the class does not store any offset.
+     *
+     *  \param le_class Class bytes structure
+     */
 
     le_void_t le_class_create( le_byte_t * const le_class );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function allows to get the offset stored in the provided implicit
+     *  class structure.
+     *
+     *  The function starts by reading the class descriptor to detect if the
+     *  required offset, pointed by its index \b le_index, is available or not.
+     *  As the class is available, the function returns it after its extraction.
+     *
+     *  If the desired offset is missing in the class, the function returns the
+     *  \b _LE_OFFS_NULL value.
+     *
+     *  \param le_class Class bytes structure
+     *  \param le_index Offset index
+     *
+     *  \return Return the class offset on success, _LE_OFFS_NULL otherwise
+     */
 
     le_size_t le_class_get_offset( le_byte_t const * le_class, le_size_t const le_index );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to set the value of the offset of the provided
+     *  class of index \b le_index.
+     *
+     *  The function starts by checking if the offset is already present in the
+     *  class. In such case, its value is simply overridden.
+     *
+     *  If the offset is not available in the provided class, the function
+     *  starts by inserting the offset moving the previous content, when
+     *  necessary.
+     *
+     *  \param le_class  Class bytes structure
+     *  \param le_index  Offset index
+     *  \param le_offset Offset value
+     *
+     *  \return Returns the class offset on success, _LE_OFFS_NULL otherwise
+     */
 
     le_void_t le_class_set_offset( le_byte_t * le_class, le_size_t const le_index, le_size_t const le_offset );
 
-    /* assumes class header has been read by calling function */
+    /*! \brief i/o methods
+     *
+     *  This function is used to read the content of the provided implicit class
+     *  structure from the provided stream.
+     *
+     *  The function assumes, for subsequent efficiency reason, that the class
+     *  descriptor has already been read and stored in the provided class. The
+     *  function then reads the remaining elements of the class based on the
+     *  value of the descriptor.
+     *
+     *  The provided stream has to be an already open stream in binary read
+     *  mode.
+     *
+     *  \param le_class  Class byte structure
+     *  \param le_stream Stream descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_class_io_read( le_byte_t * le_class, le_file_t const le_stream );
 
-    /* assumes class header has been written by the calling function */
+    /*! \brief i/o methods
+     *
+     *  This function is used to write the content of the provided implicit
+     *  class structure un the provided stream.
+     *
+     *  The function assumes, for subsequent efficiency reason, that the class
+     *  descriptor has already been written in the provided stream. The function
+     *  then writes the remaining elements of the class based on the exported
+     *  descriptor.
+     *
+     *  The provided stream has to be an already open stream in binary write
+     *  mode.
+     *
+     *  \param le_class  Class byte structure
+     *  \param le_stream Stream descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_class_io_write( le_byte_t const * le_class, le_file_t const le_stream );
 
-    /* detached method */
-
-    /* assumes nothing has been read by the calling function */
-
-    /* assumes the stream is correctly positionned on the class to read */
+    /*! \brief i/o methods (detached)
+     *
+     *  Note :
+     *
+     *  Detached methods are specific functions associated to a structure but
+     *  without operating directly on it. Such function are used in optimisation
+     *  strategies.
+     *
+     *  This function allows to retrieve the offset value of a class stored in
+     *  the provided stream. This function allows to read a single offset out of
+     *  a storage structure without having to read to entire class.
+     *
+     *  The function starts by reading the implicit class structure descriptor
+     *  from the provided stream. The availability of the offset of index
+     *  \b le_index is then checked. If the offset is available, the function
+     *  reads and returns it.
+     *
+     *  On error or if the offset is not available, the function returns the
+     *  \b _LE_OFFS_NULL value.
+     *
+     *  The function assumes that the provided stream is an already open stream
+     *  in binary read mode and that the reading offset of the stream is on the
+     *  implicit class descriptor.
+     *
+     *  \param le_index Offset index
+     *  \param le_stream Stream descriptor
+     *
+     *  \return Returns the class offset on success, _LE_OFFS_NULL otherwise
+     */
 
     le_size_t le_class_io_offset( le_size_t const le_index, le_file_t const le_stream );
 
