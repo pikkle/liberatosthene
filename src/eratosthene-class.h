@@ -638,6 +638,52 @@
     header - type definition
  */
 
+    /*! \brief generic implicit class structure
+     *
+     *  Implicit class structures are used for both mono-vertex and poly-vertex
+     *  storage strategy. They allows the management of the mono and poly-vertex
+     *  class offset storage.
+     *
+     *  The main role of implicit class structure is to hold, write, read and
+     *  give access to the management of the class offsets. They are implicitly
+     *  constituted of a sequence of bytes storing the required information. It
+     *  follows that these classes are not defined through a proper structure
+     *  due to their simplicity, explaining why their are called implicit.
+     *
+     *  The byte structure of the class is architectures as follows :
+     *
+     *      [descriptor][offset_i]...[offset_j]
+     *
+     *  The class descriptor holds a bit pattern giving the content of the class
+     *  itself. If the first bit is set to one, it indicates that the first link
+     *  offset is active in the class. The second bit give the same information
+     *  for the second offset. Doing so allows to only store the active offset,
+     *  the other being implicitly assumed to be null (\b _LE_OFFS_NULL).
+     *
+     *  To access a class offset, the descriptor has to be read in the first
+     *  place to determine if the offset is active. Depending of the content of
+     *  the descriptor, optimised array are used to determine the position of the
+     *  offset before to read it.
+     *
+     *  If an offset has to be set, the descriptor has to be read in the first
+     *  place to determine if the offset is already active in the class. If not,
+     *  the content of the class has to be modified to be able to insert the
+     *  offset at the correct position. Again, optimised arrays are used for
+     *  such operation.
+     *
+     *  The descriptor is stored on a single byte while the active offset values
+     *  are coded on a number of byte given by the \b _LE_USE_OFFSET definition.
+     *
+     *  Considering such classes in common for both mono and poly-vertex allows
+     *  to implement the same optimisation that will affect both storage
+     *  strategy all at once. This also allows to avoid code redundancy as mono
+     *  and poly-vertex works in the same way in term of managing the access
+     *  offsets.
+     */
+
+    /* implicit class structure */
+    typedef le_byte_t le_class_t;
+
 /*
     header - structures
  */
@@ -657,7 +703,7 @@
      *  \param le_class Class bytes structure
      */
 
-    le_void_t le_class_create( le_byte_t * const le_class );
+    le_void_t le_class_create( le_class_t * const le_class );
 
     /*! \brief accessor methods
      *
@@ -698,7 +744,7 @@
      *  \return Returns the class offset on success, _LE_OFFS_NULL otherwise
      */
 
-    le_void_t le_class_set_offset( le_byte_t * le_class, le_size_t const le_index, le_size_t const le_offset );
+    le_void_t le_class_set_offset( le_class_t * le_class, le_size_t const le_index, le_size_t const le_offset );
 
     /*! \brief i/o methods
      *
@@ -719,7 +765,7 @@
      *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
      */
 
-    le_enum_t le_class_io_read( le_byte_t * le_class, le_file_t const le_stream );
+    le_enum_t le_class_io_read( le_class_t * le_class, le_file_t const le_stream );
 
     /*! \brief i/o methods
      *

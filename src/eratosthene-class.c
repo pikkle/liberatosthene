@@ -37,7 +37,7 @@
     source - constructor/destructor methods
  */
 
-    le_void_t le_class_create( le_byte_t * const le_class ) {
+    le_void_t le_class_create( le_class_t * const le_class ) {
 
         /* initialise class descriptor */
         ( * le_class ) = 0x00;
@@ -75,7 +75,7 @@
     source - mutator methods
  */
 
-    le_void_t le_class_set_offset( le_byte_t * le_class, le_size_t const le_index, le_size_t const le_offset ) {
+    le_void_t le_class_set_offset( le_class_t * le_class, le_size_t const le_index, le_size_t const le_offset ) {
 
         /* detection mask variable */
         le_byte_t le_pattern = ( 1 << le_index );
@@ -84,7 +84,7 @@
         le_byte_t le_move = 0;
 
         /* swapping variable */
-        le_byte_t * le_base = le_class + sizeof( le_byte_t );
+        le_class_t * le_base = le_class + sizeof( le_byte_t );
 
         /* offset presence detection */
         if ( ( ( * le_class ) & le_pattern ) == 0 ) {
@@ -142,7 +142,7 @@
     source - i/o methods
  */
 
-    le_enum_t le_class_io_read( le_byte_t * le_class, le_file_t const le_stream ) {
+    le_enum_t le_class_io_read( le_class_t * le_class, le_file_t const le_stream ) {
 
         /* class size variable */
         le_size_t le_read = le_class_size[ * ( le_class ++ ) ];
