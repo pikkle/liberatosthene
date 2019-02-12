@@ -91,7 +91,7 @@
         le_time_t le_reduced = le_time / le_switch->sw_tcfg;
 
         /* reduced comb variable */
-        le_time_t le_comb = le_address_get_time( le_addr, 2 ) / le_switch->sw_tcfg;
+        le_time_t le_comb = ( le_address_get_time( le_addr, 2 ) / 2 ) / le_switch->sw_tcfg;
 
         /* parsing variable */
         le_door_t * le_prev = NULL;
