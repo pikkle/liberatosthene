@@ -81,8 +81,6 @@
     header - function prototypes
  */
 
-    /* *** documentation note : the function assume a complete uv3 stream chunk (no primitive truncation) */
-
     /*! \brief mutator methods (implicit)
      *
      *  Note :
