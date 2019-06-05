@@ -537,7 +537,7 @@
 
     le_enum_t le_door_io_mono_inject( le_door_t const * const le_door );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (Patched - need reformulation/re-implementation)
      *
      *  This function creates the storage tree structure using the sorted and
      *  merged files of the data injected by a client for poly-vertex data. This
