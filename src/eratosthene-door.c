@@ -1214,6 +1214,31 @@
 
                 }
 
+                // PATCH // last primitive forced injection //
+                if ( le_index > 0 ) {
+
+                    /* primitive injection and offset assignation */
+                    for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
+
+                        /* update class offset */
+                        le_poly_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
+
+                        /* check injection depth */
+                        if ( le_depth >= le_inject ) {
+
+                            /* push primitive */
+                            le_poly_set_push( le_class + le_depth, le_master );
+
+                        }
+
+                    }
+
+                    /* forced last injection */
+                    le_poly_set_push( le_class + le_door->dr_scfg - 1, le_master );
+
+                }
+                // PATCH //
+
                 /* terminal transversal exportation */
                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
 
