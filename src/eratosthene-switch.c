@@ -88,7 +88,7 @@
     le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time ) {
 
         /* get address query mode */
-        if ( le_address_get_query( le_addr ) == LE_ADDRESS_DEEP ) {
+        if ( le_address_get_query( le_addr ) == LE_ADDRESS_NEAR ) {
 
             /* door query - near mode */
             return( le_switch_get_query_near( le_switch, le_addr, le_time ) );
