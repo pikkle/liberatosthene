@@ -85,10 +85,74 @@
 
     }
 
-    le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_time_t const le_time, le_address_t const * const le_addr ) {
+    le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time ) {
+
+        /* get address query mode */
+        if ( le_address_get_query( le_addr ) == LE_ADDRESS_DEEP ) {
+
+            /* door query - near mode */
+            return( le_switch_get_query_near( le_switch, le_addr, le_time ) );
+
+        } else {
+
+            /* door query - deep mode */
+            return( le_switch_get_query_deep( le_switch, le_addr, le_time ) );
+
+        }
+
+    }
+
+    le_door_t * le_switch_get_query_near( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time ) {
+
+        /* parsing variable */
+        le_door_t * le_parse = le_switch->sw_door;
+
+        /* buffer variable */
+        le_door_t * le_selected = NULL;
 
         /* reduced time variable */
-        le_time_t le_reduced = le_time / le_switch->sw_tcfg;
+        le_time_t le_reduced = le_address_get_time( le_addr, le_time ) / le_switch->sw_tcfg;
+
+        /* time difference variable */
+        le_time_t le_diff = _LE_TIME_NULL;
+
+        /* minimal difference variable */
+        le_time_t le_minimum = _LE_TIME_MAX;
+
+        /* parsing switch */
+        while ( le_parse != NULL ) {
+
+            /* compute time difference */
+            if ( ( le_diff = le_time_abs( le_reduced - le_door_get_reduced( le_parse ) ) ) < le_minimum ) {
+
+                /* update minimal distance */
+                le_minimum = le_diff;
+
+                /* update selected door */
+                le_selected = le_parse;
+
+            }
+
+            /* update parser */
+            le_parse = le_door_get_next( le_parse );
+
+        }
+
+        /* create cell pointer - mono-vertex */
+        le_door_io_mono_detect( le_selected, le_addr );
+
+        /* create cell pointer - poly-vertex */
+        le_door_io_poly_detect( le_selected, le_addr );
+
+        /* return selected door */
+        return( le_selected );
+
+    }
+
+    le_door_t * le_switch_get_query_deep( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time ) {
+
+        /* reduced time variable */
+        le_time_t le_reduced = le_address_get_time( le_addr, le_time ) / le_switch->sw_tcfg;
 
         /* reduced comb variable */
         le_time_t le_comb = ( le_address_get_time( le_addr, 2 ) / 2 ) / le_switch->sw_tcfg;
@@ -432,6 +496,7 @@
 
         /* send message */
         return( LE_ERROR_SUCCESS );
+
     }
 
     le_enum_t le_switch_io_inject( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket ) {
@@ -597,7 +662,7 @@
             if ( ( le_mode = le_address_get_mode( & le_addr ) ) < LE_ADDRESS_OR ) {
 
                 /* query and check door */
-                if ( ( le_pdoor = le_switch_get_query( le_switch, le_address_get_time( & le_addr, le_mode - 1 ), & le_addr ) ) != NULL ) {
+                if ( ( le_pdoor = le_switch_get_query( le_switch, & le_addr, le_mode - 1 ) ) != NULL ) {
 
                     /* check mono-vertex detection */
                     if ( le_door_get_mono( le_pdoor ) == _LE_TRUE ) {
@@ -620,10 +685,10 @@
             } else {
 
                 /* query door */
-                le_pdoor = le_switch_get_query( le_switch, le_address_get_time( & le_addr, 0 ), & le_addr );
+                le_pdoor = le_switch_get_query( le_switch, & le_addr, 0 );
 
                 /* query door */
-                le_sdoor = le_switch_get_query( le_switch, le_address_get_time( & le_addr, 1 ), & le_addr );
+                le_sdoor = le_switch_get_query( le_switch, & le_addr, 1 );
 
                 /* check door - mono-vertex */
                 if ( le_door_get_mono( le_pdoor ) == _LE_TRUE ) {

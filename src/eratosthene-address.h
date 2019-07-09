@@ -58,10 +58,14 @@
     # define LE_ADDRESS_C             { 0, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
     # define LE_ADDRESS_C_SIZE(s)     { s, 0, 0, { _LE_TIME_NULL, _LE_TIME_NULL, _LE_TIME_NULL }, { 0 } }
 
-    /* define address mode */
+    /* define address convolution mode */
     # define LE_ADDRESS_OR            ( 3 )
     # define LE_ADDRESS_AND           ( 4 )
     # define LE_ADDRESS_XOR           ( 5 )
+
+    /* define address query mode */
+    # define LE_ADDRESS_NEAR          ( 0 )
+    # define LE_ADDRESS_DEEP          ( 1 )
 
     /* asynchronous dimension */
     # define LE_ADDRESS_DEPTH_P       ( 1 )
@@ -204,6 +208,10 @@
      */
 
     le_byte_t le_address_get_mode( le_address_t const * const le_address );
+
+    /* *** */
+
+    le_byte_t le_address_get_query( le_address_t const * const le_address );
 
     /*! \brief accessor methods
      *

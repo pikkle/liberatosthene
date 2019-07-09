@@ -33,8 +33,15 @@
 
     le_byte_t le_address_get_mode( le_address_t const * const le_address ) {
 
-        /* return mode */
-        return( le_address->as_mode );
+        /* return convolution mode */
+        return( le_address->as_mode % 16 );
+
+    }
+
+    le_byte_t le_address_get_query( le_address_t const * const le_address ) {
+
+        /* return query mode */
+        return( le_address->as_mode >> 4 );
 
     }
 
@@ -418,8 +425,11 @@
 
     le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode ) {
 
+        /* reset convolution mode */
+        le_address->as_mode &= 0xf0;
+
         /* assign mode */
-        le_address->as_mode = le_mode;
+        le_address->as_mode |= le_mode % 16;
 
     }
 

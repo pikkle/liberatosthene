@@ -202,6 +202,14 @@
 
     le_door_t * le_switch_get_inject( le_switch_t * const le_switch, le_time_t const le_time, le_enum_t const le_mode );
 
+    /* *** */
+
+    le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
+
+    /* *** */
+
+    le_door_t * le_switch_get_query_near( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
+
     /*! \brief accessor methods
      *
      *  This function searches in the provided switch structure door linked
@@ -232,7 +240,7 @@
      *  \return Returns a door structure on success, NULL otherwise
      */
 
-    le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_time_t const le_time, le_address_t const * const le_addr );
+    le_door_t * le_switch_get_query_deep( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
 
     /*! \brief mutator methods
      *
