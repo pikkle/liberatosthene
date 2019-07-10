@@ -114,7 +114,7 @@
  */
 
     /*! \struct le_address_struct
-     *  \brief address structure
+     *  \brief address structure (revoked)
      *
      *  This structure holds the address, or the index, of an equivalence class
      *  defined on the geodetic and time parameter spaces. These addresses are
@@ -128,13 +128,25 @@
      *  \b as_times of the structure.
      *
      *  The mode parameter stored in \b as_mode, is used to store the way time
-     *  values have to be considered. The following mode are available :
+     *  values have to be considered. The following convolution modes are
+     *  available :
      *
      *      1 : first time only
      *      2 : second time only
      *      3 : first time (logical or) second time
      *      4 : first time (logical and) second time
      *      5 : first time (logical xor) second time
+     *
+     *  The convolution mode is stored on the four least significant bits of the
+     *  \b as_mode byte. The four most significant bits are used to store the
+     *  address query mode. Two modes are available :
+     *
+     *      0 : strict-near search
+     *      1 : deep-data search
+     *
+     *  The first mode indicates that the closest equivalent class has to be
+     *  considered, regardless of its content. The second mode indicates that
+     *  the closest non-empty equivalence class has to be considered.
      *
      *  The proper spatial index of the pointed equivalence class is stored in
      *  the array \b as_digits holding its digits. The amount of active digits
@@ -200,16 +212,23 @@
 
     /*! \brief accessor methods
      *
-     *  Returns the address times comparison mode.
+     *  Returns the address times convolution mode.
      *
      *  \param le_address Address structure
      *
-     *  \return Address times comparison mode
+     *  \return Address times convolution mode
      */
 
     le_byte_t le_address_get_mode( le_address_t const * const le_address );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  Returns the address query mode.
+     *
+     *  \param le_address Address structure
+     *
+     *  \return Address query mode
+     */
 
     le_byte_t le_address_get_query( le_address_t const * const le_address );
 
@@ -355,15 +374,21 @@
 
     /*! \brief mutator methods
      *
-     *  Sets the provided address time comparison mode.
+     *  Sets the provided address times convolution mode.
      *
      *  \param le_address Address structure
-     *  \param le_mode    Times comparison mode
+     *  \param le_mode    Times convolution mode
      */
 
     le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  Sets the provided address query mode.
+     *
+     *  \param le_address Address structure
+     *  \param le_query   Query mode
+     */
 
     le_void_t le_address_set_query( le_address_t * const le_address, le_byte_t const le_query );
 
