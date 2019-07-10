@@ -202,24 +202,62 @@
 
     le_door_t * le_switch_get_inject( le_switch_t * const le_switch, le_time_t const le_time, le_enum_t const le_mode );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function searches in the provided switch structure door list the
+     *  one that fits the provided query address specified time.
+     *
+     *  This function implements a simple switch between the two door detection
+     *  methods implemented in this module which are the strict near and deep
+     *  search.
+     *
+     *  The provided address drives the search method choice. As the subsequent
+     *  method answer the found door, this function broadcast it to the calling
+     *  function.
+     *
+     *  \param le_switch Switch structure
+     *  \param le_addr   Address structure
+     *  \param le_time   Address structure time index (0 or 1)
+     *
+     *  \return Returns a pointer to the found door structure
+     */
 
     le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function searches in the provided switch structure door list the
+     *  one that fits the provided query address specified time applying a
+     *  near-strict methodology, meaning that the closest door is considered
+     *  even no data are available for the provided address spatial index.
+     *
+     *  In addition, the detection of the spatial cell is performed by the
+     *  function. The content of the cell is not checked by the function, the
+     *  detection being mandatory for subsequent query process.
+     *
+     *  The function returns a pointer to the nearest door, from a temporal
+     *  point of view.
+     *
+     *  \param le_switch Switch structure
+     *  \param le_addr   Address structure
+     *  \param le_time   Address structure time index (0 or 1)
+     *
+     *  \return Returns a pointer to the found door structure
+     */
 
     le_door_t * le_switch_get_query_near( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
 
-    /*! \brief accessor methods (revoked)
+    /*! \brief accessor methods
      *
-     *  This function searches in the provided switch structure door linked
-     *  list the door that is the closest, from a temporal point of view, to the
-     *  provided time value.
+     *  This function searches in the provided switch structure door list the
+     *  one that fits the provided query address specified time applying a
+     *  deep methodology, meaning that doors are rejected if they contain no
+     *  data according to the provided address spatial index.
      *
-     *  In addition, the function checks, using the spatial index provided
-     *  through the address structure, if the door contains data accordingly. If
-     *  no data are available from the spatial index point of view, the door
-     *  is rejected and the door search goes on.
+     *  The function then checks, using the spatial index provided through the
+     *  address structure, if the door contains data accordingly. If no data are
+     *  available from the spatial index point of view, the door is rejected and
+     *  the door search goes on.
      *
      *  The door search is stopped under two conditions : in case the end of the
      *  linked list is reached or of the considered door is distant, from a
@@ -234,10 +272,10 @@
      *  function. A NULL pointer is returned otherwise.
      *
      *  \param le_switch Switch structure
-     *  \param le_time   Target time
-     *  \param le_addr   Target address structure
+     *  \param le_addr   Address structure
+     *  \param le_time   Address structure time index (0 or 1)
      *
-     *  \return Returns a door structure on success, NULL otherwise
+     *  \return Returns a pointer to the found door structure, NULL otherwise
      */
 
     le_door_t * le_switch_get_query_deep( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
