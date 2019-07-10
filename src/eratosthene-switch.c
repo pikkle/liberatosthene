@@ -113,6 +113,9 @@
         /* reduced time variable */
         le_time_t le_reduced = le_address_get_time( le_addr, le_time ) / le_switch->sw_tcfg;
 
+        /* reduced comb variable */
+        le_time_t le_comb = ( le_address_get_time( le_addr, 2 ) / 2 ) / le_switch->sw_tcfg;
+
         /* time difference variable */
         le_time_t le_diff = _LE_TIME_NULL;
 
@@ -122,14 +125,19 @@
         /* parsing switch */
         while ( le_parse != NULL ) {
 
-            /* compute time difference */
-            if ( ( le_diff = le_time_abs( le_reduced - le_door_get_reduced( le_parse ) ) ) < le_minimum ) {
+            /* compute time difference - apply temporal comb condition */
+            if ( ( le_diff = le_time_abs( le_reduced - le_door_get_reduced( le_parse ) ) ) < le_comb ) {
 
-                /* update minimal distance */
-                le_minimum = le_diff;
+                /* minimal distance detection */
+                if ( le_diff < le_minimum ) {
 
-                /* update selected door */
-                le_selected = le_parse;
+                    /* update minimal distance */
+                    le_minimum = le_diff;
+
+                    /* update selected door */
+                    le_selected = le_parse;
+
+                }
 
             }
 
@@ -138,11 +146,16 @@
 
         }
 
-        /* create cell pointer - mono-vertex */
-        le_door_io_mono_detect( le_selected, le_addr );
+        /* check door pointer */
+        if ( le_selected != NULL ) {
 
-        /* create cell pointer - poly-vertex */
-        le_door_io_poly_detect( le_selected, le_addr );
+            /* create cell pointer - mono-vertex */
+            le_door_io_mono_detect( le_selected, le_addr );
+
+            /* create cell pointer - poly-vertex */
+            le_door_io_poly_detect( le_selected, le_addr );
+
+        }
 
         /* return selected door */
         return( le_selected );

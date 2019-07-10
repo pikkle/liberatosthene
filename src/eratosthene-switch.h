@@ -231,6 +231,11 @@
      *  near-strict methodology, meaning that the closest door is considered
      *  even no data are available for the provided address spatial index.
      *
+     *  The time range provided by the address structure is used to limit the
+     *  search in the time dimension. It follows that the closest cell, in time,
+     *  has to remains within this time limit in order to be returned by the
+     *  function.
+     *
      *  In addition, the detection of the spatial cell is performed by the
      *  function. The content of the cell is not checked by the function, the
      *  detection being mandatory for subsequent query process.
