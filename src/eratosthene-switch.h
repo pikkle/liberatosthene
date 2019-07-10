@@ -210,7 +210,7 @@
 
     le_door_t * le_switch_get_query_near( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods (revoked)
      *
      *  This function searches in the provided switch structure door linked
      *  list the door that is the closest, from a temporal point of view, to the

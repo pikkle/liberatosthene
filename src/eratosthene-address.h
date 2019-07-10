@@ -363,6 +363,10 @@
 
     le_void_t le_address_set_mode( le_address_t * const le_address, le_byte_t const le_mode );
 
+    /* *** */
+
+    le_void_t le_address_set_query( le_address_t * const le_address, le_byte_t const le_query );
+
     /*! \brief mutator methods
      *
      *  This function allows to override the value of the two times or the value
