@@ -338,6 +338,101 @@
     source - mutator methods
  */
 
+    le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_state, le_enum_t const le_mode ) {
+
+        /* path variable */
+        le_char_t le_path[_LE_USE_PATH] = { 0 };
+
+        /* check state */
+        if ( le_state == LE_DOOR_CLOSE ) {
+
+            /* parsing each-vertex stream */
+            for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
+
+                /* check stream */
+                if ( le_door->dr_macc[le_parse] != NULL ) {
+
+                    /* delete stream */
+                    fclose( le_door->dr_macc[le_parse] );
+
+                }
+
+                /* check stream */
+                if ( le_door->dr_pacc[le_parse] != NULL ) {
+
+                    /* delete stream */
+                    fclose( le_door->dr_pacc[le_parse] );
+
+                }
+
+            }
+
+            /* check stream - poly-vertex specific */
+            if ( le_door->dr_pdat != NULL ) {
+
+                /* delete stream */
+                fclose( le_door->dr_pdat );
+
+            }
+
+            /* send message */
+            return( _LE_TRUE );
+
+        } else {
+
+            /* compose path */
+            sprintf( ( char * ) le_path, "%s/2_", le_door->dr_path );
+
+        // dev : need mode check //
+            /* create stream */
+            if ( ( le_door->dr_pdat = fopen( ( char * ) le_path, "rb" ) ) == NULL ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+        // //
+
+            /* parsing each vertex stream */
+            for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
+
+                /* compose path */
+                sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
+
+                /* create and check stream */
+                if ( ( le_door->dr_macc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
+
+                    /* delete already created streams */
+                    le_door_set_stream( le_door, LE_DOOR_CLOSE, 0 );
+
+                    /* send message */
+                    return( _LE_FALSE );
+
+                }
+
+                /* compose path */
+                sprintf( ( char * ) le_path, "%s/2/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
+
+                /* create and check stream */
+                if ( ( le_door->dr_pacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
+
+                    /* delete already created streams */
+                    le_door_set_stream( le_door, LE_DOOR_CLOSE, 0 );
+
+                    /* send message */
+                    return( _LE_FALSE );
+
+                }
+
+            }
+
+            /* send message */
+            return( _LE_TRUE );
+
+        }
+
+    }
+
     le_enum_t le_door_set_state( le_door_t const * const le_door, le_enum_t const le_state ) {
 
         /* path variable */

@@ -558,6 +558,8 @@
 
         }
 
+        // open door //
+
         /* array stream dispatch */
         if ( ( le_message = le_door_io_each_inject_dispatch( le_door, le_array, le_socket ) ) != LE_ERROR_SUCCESS ) {
 
@@ -611,6 +613,8 @@
             }
 
         }
+
+        // close door //
 
         /* unlock door */
         if ( le_door_set_state( le_door, LE_DOOR_UNLOCK ) == _LE_FALSE ) {

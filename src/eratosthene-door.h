@@ -81,6 +81,10 @@
     # define LE_DOOR_LOCK         ( 0 )
     # define LE_DOOR_UNLOCK       ( 1 )
 
+    /* define door stream */
+    # define LE_DOOR_CLOSE        ( 0 )
+    # define LE_DOOR_OPEN         ( 1 )
+
 /*
     header - preprocessor macros
  */
