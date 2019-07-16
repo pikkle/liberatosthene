@@ -102,7 +102,7 @@
  */
 
     /*! \struct le_door_struct
-     *  \brief door structure
+     *  \brief door structure (revoked)
      *
      *  This structure holds the required information and data for accessing
      *  the storage structure of a server time unit.
@@ -217,7 +217,7 @@
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods (revoked)
      *
      *  This function creates a door structure toward the time unit pointed by
      *  the provided time value.
@@ -253,7 +253,7 @@
 
     le_door_t le_door_create( le_char_t const * const le_root, le_size_t const le_scfg, le_time_t const le_tcfg, le_time_t const le_time, le_enum_t const le_mode );
 
-    /*! \brief constructor/destructor methods
+    /*! \brief constructor/destructor methods (revoked)
      *
      *  This function is used to delete the content of the provided door
      *  structure.
@@ -406,6 +406,10 @@
      */
 
     le_enum_t le_door_get_dispatch( le_door_t const * const le_door, le_size_t const le_suffix );
+
+    /* *** */
+
+    le_enum_t le_door_set_bootstrap( le_door_t * const le_door );
 
     /* *** */
 

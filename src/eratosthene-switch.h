@@ -224,7 +224,7 @@
 
     le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods (revoked)
      *
      *  This function searches in the provided switch structure door list the
      *  one that fits the provided query address specified time applying a
@@ -252,7 +252,7 @@
 
     le_door_t * le_switch_get_query_near( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
 
-    /*! \brief accessor methods
+    /*! \brief accessor methods (revoked)
      *
      *  This function searches in the provided switch structure door list the
      *  one that fits the provided query address specified time applying a
@@ -383,7 +383,7 @@
 
     le_enum_t le_switch_io_auth( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This function is the front-end to server data injection from a remote
      *  client.
@@ -418,7 +418,7 @@
 
     le_enum_t le_switch_io_inject( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
-    /*! \brief i/o methods
+    /*! \brief i/o methods (revoked)
      *
      *  This function is the front-end to server data query from a remote
      *  client.
