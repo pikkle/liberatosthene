@@ -149,6 +149,10 @@
         /* check door pointer */
         if ( le_selected != NULL ) {
 
+            // open door // symmetry fault //
+            le_door_set_stream( le_selected, LE_DOOR_OPEN, LE_DOOR_READ );
+            // //
+
             /* create cell pointer - mono-vertex */
             le_door_io_mono_detect( le_selected, le_addr );
 
@@ -238,6 +242,10 @@
             /* apply temporal comb condition */
             if ( le_time_abs( le_door_get_reduced( le_parse ) - le_reduced ) < le_comb ) {
 
+                // open door // partial symmetry fault //
+                le_door_set_stream( le_parse, LE_DOOR_OPEN, LE_DOOR_READ );
+                // //
+
                 /* empty-cell detection */
                 if ( ( le_door_io_mono_detect( le_parse, le_addr ) | le_door_io_poly_detect( le_parse, le_addr ) ) == _LE_TRUE ) {
 
@@ -245,6 +253,10 @@
                     return( le_parse );
 
                 }
+
+                // close door // partial symmetry fault //
+                le_door_set_stream( le_parse, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                // //
 
                 /* compare doors */
                 if ( le_door_get_nearest( le_prev, le_next, le_reduced ) == LE_DOOR_PREV ) {
@@ -559,6 +571,7 @@
         }
 
         // open door //
+        le_door_set_stream( le_door, LE_DOOR_OPEN, LE_DOOR_WRITE );
 
         /* array stream dispatch */
         if ( ( le_message = le_door_io_each_inject_dispatch( le_door, le_array, le_socket ) ) != LE_ERROR_SUCCESS ) {
@@ -615,6 +628,7 @@
         }
 
         // close door //
+        le_door_set_stream( le_door, LE_DOOR_CLOSE, LE_DOOR_NULL );
 
         /* unlock door */
         if ( le_door_set_state( le_door, LE_DOOR_UNLOCK ) == _LE_FALSE ) {
@@ -696,6 +710,10 @@
                         le_door_io_poly_gather( le_pdoor, & le_addr, le_size, le_span, le_array + 1 );
 
                     }
+
+                    // close door // symmetry fault //
+                    le_door_set_stream( le_pdoor, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                    // //
 
                 }
 
@@ -780,6 +798,14 @@
                     }
 
                 }
+
+                // close door // partial symmetry fault //
+                le_door_set_stream( le_pdoor, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                // //
+
+                // close door // partial symmetry fault //
+                le_door_set_stream( le_sdoor, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                // //
 
             }
 

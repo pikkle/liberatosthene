@@ -74,8 +74,9 @@
     # define LE_DOOR_NEXT         ( 1 )
 
     /* define door mode */
-    # define LE_DOOR_READ         ( 0 )
-    # define LE_DOOR_WRITE        ( 1 )
+    # define LE_DOOR_NULL         ( 0 )
+    # define LE_DOOR_READ         ( 1 )
+    # define LE_DOOR_WRITE        ( 2 )
 
     /* define door state */
     # define LE_DOOR_LOCK         ( 0 )
@@ -405,6 +406,10 @@
      */
 
     le_enum_t le_door_get_dispatch( le_door_t const * const le_door, le_size_t const le_suffix );
+
+    /* *** */
+
+    le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_state, le_enum_t const le_mode );
 
     /*! \brief mutator methods
      *

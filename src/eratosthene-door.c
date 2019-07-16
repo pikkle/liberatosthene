@@ -30,7 +30,7 @@
         le_door_t le_door = LE_DOOR_C_SCT( le_scfg, le_tcfg, le_time / le_tcfg );
 
         /* parsing variable */
-        le_size_t le_parse = 0;
+        //le_size_t le_parse = 0;
 
         /* path variable */
         le_char_t le_path[_LE_USE_PATH] = { 0 };
@@ -98,46 +98,46 @@
         }
 
         /* compose path */
-        sprintf( ( char * ) le_path, "%s/2_", le_door.dr_path );
+        //sprintf( ( char * ) le_path, "%s/2_", le_door.dr_path );
 
         /* create poly-vertex specific stream */
-        le_door.dr_pdat = fopen( ( char * ) le_path, "rb" );
+        //le_door.dr_pdat = fopen( ( char * ) le_path, "rb" );
 
         /* create each-vertex stream */
-        while ( le_parse < le_door.dr_scfg ) {
+        //while ( le_parse < le_door.dr_scfg ) {
 
             /* compose path */
-            sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
+        //    sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
 
             /* create and check stream */
-            if ( ( le_door.dr_macc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
+        //    if ( ( le_door.dr_macc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
 
                 /* delete structure */
-                le_door_delete( & le_door );
+        //        le_door_delete( & le_door );
 
                 /* return created structure */
-                return( le_set_status( le_door, LE_ERROR_IO_ACCESS ) );
+        //        return( le_set_status( le_door, LE_ERROR_IO_ACCESS ) );
 
-            }
+        //    }
 
             /* compose path */
-            sprintf( ( char * ) le_path, "%s/2/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
+        //    sprintf( ( char * ) le_path, "%s/2/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
 
             /* create and check stream */
-            if ( ( le_door.dr_pacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
+        //    if ( ( le_door.dr_pacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
 
                 /* delete structure */
-                le_door_delete( & le_door );
+        //        le_door_delete( & le_door );
 
                 /* return created strcuture */
-                return( le_set_status( le_door, LE_ERROR_IO_ACCESS ) );
+        //        return( le_set_status( le_door, LE_ERROR_IO_ACCESS ) );
 
-            }
+        //    }
 
             /*  update parser */
-            le_parse ++;
+        //    le_parse ++;
 
-        }
+        //}
 
         /* return created structure */
         return( le_door );
@@ -150,33 +150,33 @@
         le_door_t le_delete = LE_DOOR_C;
 
         /* parsing each-vertex stream */
-        for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
+        //for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
 
             /* check stream */
-            if ( le_door->dr_macc[le_parse] != NULL ) {
+        //    if ( le_door->dr_macc[le_parse] != NULL ) {
 
                 /* delete stream */
-                fclose( le_door->dr_macc[le_parse] );
+        //        fclose( le_door->dr_macc[le_parse] );
 
-            }
+        //    }
 
             /* check stream */
-            if ( le_door->dr_pacc[le_parse] != NULL ) {
+        //    if ( le_door->dr_pacc[le_parse] != NULL ) {
 
                 /* delete stream */
-                fclose( le_door->dr_pacc[le_parse] );
+        //        fclose( le_door->dr_pacc[le_parse] );
 
-            }
+        //    }
 
-        }
+        //}
 
         /* delete poly-vertex specific stream */
-        if ( le_door->dr_pdat != NULL ) {
+        //if ( le_door->dr_pdat != NULL ) {
 
             /* delete stream */
-            fclose( le_door->dr_pdat );
+        //    fclose( le_door->dr_pdat );
 
-        }
+        //}
 
         /* delete structure */
         ( * le_door ) = le_delete;
@@ -343,6 +343,14 @@
         /* path variable */
         le_char_t le_path[_LE_USE_PATH] = { 0 };
 
+        /* check door */
+        if ( le_door == NULL ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
         /* check state */
         if ( le_state == LE_DOOR_CLOSE ) {
 
@@ -385,12 +393,7 @@
 
         // dev : need mode check //
             /* create stream */
-            if ( ( le_door->dr_pdat = fopen( ( char * ) le_path, "rb" ) ) == NULL ) {
-
-                /* send message */
-                return( _LE_FALSE );
-
-            }
+            le_door->dr_pdat = fopen( ( char * ) le_path, "rb" );
         // //
 
             /* parsing each vertex stream */
@@ -403,7 +406,7 @@
                 if ( ( le_door->dr_macc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
 
                     /* delete already created streams */
-                    le_door_set_stream( le_door, LE_DOOR_CLOSE, 0 );
+                    le_door_set_stream( le_door, LE_DOOR_CLOSE, LE_DOOR_NULL );
 
                     /* send message */
                     return( _LE_FALSE );
@@ -417,7 +420,7 @@
                 if ( ( le_door->dr_pacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
 
                     /* delete already created streams */
-                    le_door_set_stream( le_door, LE_DOOR_CLOSE, 0 );
+                    le_door_set_stream( le_door, LE_DOOR_CLOSE, LE_DOOR_NULL );
 
                     /* send message */
                     return( _LE_FALSE );
