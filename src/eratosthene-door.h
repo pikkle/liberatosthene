@@ -74,9 +74,8 @@
     # define LE_DOOR_NEXT         ( 1 )
 
     /* define door mode */
-    # define LE_DOOR_NULL         ( 0 )
-    # define LE_DOOR_READ         ( 1 )
-    # define LE_DOOR_WRITE        ( 2 )
+    # define LE_DOOR_READ         ( 0 )
+    # define LE_DOOR_WRITE        ( 1 )
 
     /* define door state */
     # define LE_DOOR_LOCK         ( 0 )
@@ -89,9 +88,6 @@
 /*
     header - preprocessor macros
  */
-
-    /* define stream mode */
-    # define le_door_mode(m)      ( ( m ) == LE_DOOR_READ ? "r+" : "w+" )
 
 /*
     header - type definition
