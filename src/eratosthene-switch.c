@@ -149,9 +149,8 @@
         /* check door pointer */
         if ( le_selected != NULL ) {
 
-            // open door // symmetry fault //
+            /* door stream management */ // DevNote : Symmetry fault //
             le_door_set_stream( le_selected, LE_DOOR_OPEN );
-            // //
 
             /* create cell pointer - mono-vertex */
             le_door_io_mono_detect( le_selected, le_addr );
@@ -242,9 +241,8 @@
             /* apply temporal comb condition */
             if ( le_time_abs( le_door_get_reduced( le_parse ) - le_reduced ) < le_comb ) {
 
-                // open door // partial symmetry fault //
+                /* door stream management */ // DevNote : Symmetry fault //
                 le_door_set_stream( le_parse, LE_DOOR_OPEN );
-                // //
 
                 /* empty-cell detection */
                 if ( ( le_door_io_mono_detect( le_parse, le_addr ) | le_door_io_poly_detect( le_parse, le_addr ) ) == _LE_TRUE ) {
@@ -254,9 +252,8 @@
 
                 }
 
-                // close door // partial symmetry fault //
+                /* door stream management */ // DevNote : Symmetry fault //
                 le_door_set_stream( le_parse, LE_DOOR_CLOSE );
-                // //
 
                 /* compare doors */
                 if ( le_door_get_nearest( le_prev, le_next, le_reduced ) == LE_DOOR_PREV ) {
@@ -570,7 +567,7 @@
 
         }
 
-        // open door //
+        /* door stream management */
         le_door_set_stream( le_door, LE_DOOR_OPEN );
 
         /* array stream dispatch */
@@ -627,7 +624,7 @@
 
         }
 
-        // close door //
+        /* door stream management */
         le_door_set_stream( le_door, LE_DOOR_CLOSE );
 
         /* unlock door */
@@ -711,9 +708,8 @@
 
                     }
 
-                    // close door // symmetry fault //
+                    /* door stream management */ // DevNote : Symmetry fault //
                     le_door_set_stream( le_pdoor, LE_DOOR_CLOSE );
-                    // //
 
                 }
 
@@ -799,13 +795,11 @@
 
                 }
 
-                // close door // partial symmetry fault //
+                /* door stream management */ // DevNote : Symmetry fault //
                 le_door_set_stream( le_pdoor, LE_DOOR_CLOSE );
-                // //
 
-                // close door // partial symmetry fault //
+                /* door stream management */ // DevNote : Symmetry fault //
                 le_door_set_stream( le_sdoor, LE_DOOR_CLOSE );
-                // //
 
             }
 
