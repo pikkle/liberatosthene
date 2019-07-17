@@ -150,7 +150,7 @@
         if ( le_selected != NULL ) {
 
             // open door // symmetry fault //
-            le_door_set_stream( le_selected, LE_DOOR_OPEN, LE_DOOR_READ );
+            le_door_set_stream( le_selected, LE_DOOR_OPEN );
             // //
 
             /* create cell pointer - mono-vertex */
@@ -243,7 +243,7 @@
             if ( le_time_abs( le_door_get_reduced( le_parse ) - le_reduced ) < le_comb ) {
 
                 // open door // partial symmetry fault //
-                le_door_set_stream( le_parse, LE_DOOR_OPEN, LE_DOOR_READ );
+                le_door_set_stream( le_parse, LE_DOOR_OPEN );
                 // //
 
                 /* empty-cell detection */
@@ -255,7 +255,7 @@
                 }
 
                 // close door // partial symmetry fault //
-                le_door_set_stream( le_parse, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                le_door_set_stream( le_parse, LE_DOOR_CLOSE );
                 // //
 
                 /* compare doors */
@@ -571,7 +571,7 @@
         }
 
         // open door //
-        le_door_set_stream( le_door, LE_DOOR_OPEN, LE_DOOR_WRITE );
+        le_door_set_stream( le_door, LE_DOOR_OPEN );
 
         /* array stream dispatch */
         if ( ( le_message = le_door_io_each_inject_dispatch( le_door, le_array, le_socket ) ) != LE_ERROR_SUCCESS ) {
@@ -628,7 +628,7 @@
         }
 
         // close door //
-        le_door_set_stream( le_door, LE_DOOR_CLOSE, LE_DOOR_NULL );
+        le_door_set_stream( le_door, LE_DOOR_CLOSE );
 
         /* unlock door */
         if ( le_door_set_state( le_door, LE_DOOR_UNLOCK ) == _LE_FALSE ) {
@@ -712,7 +712,7 @@
                     }
 
                     // close door // symmetry fault //
-                    le_door_set_stream( le_pdoor, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                    le_door_set_stream( le_pdoor, LE_DOOR_CLOSE );
                     // //
 
                 }
@@ -800,11 +800,11 @@
                 }
 
                 // close door // partial symmetry fault //
-                le_door_set_stream( le_pdoor, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                le_door_set_stream( le_pdoor, LE_DOOR_CLOSE );
                 // //
 
                 // close door // partial symmetry fault //
-                le_door_set_stream( le_sdoor, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                le_door_set_stream( le_sdoor, LE_DOOR_CLOSE );
                 // //
 
             }

@@ -61,123 +61,6 @@
         /* return created structure */
         return( le_door );
 
-
-        /* created structure variable */
-        //le_door_t le_door = LE_DOOR_C_SCT( le_scfg, le_tcfg, le_time / le_tcfg );
-
-        /* parsing variable */
-        //le_size_t le_parse = 0;
-
-        /* path variable */
-        //le_char_t le_path[_LE_USE_PATH] = { 0 };
-
-        /* compute path */
-        //sprintf( ( char * ) le_door.dr_path, "%s/%" _LE_TIME_P, le_root, le_time / le_tcfg );
-
-        /* compute path length */
-        //le_door.dr_plen = strlen( ( char * ) le_door.dr_path );
-
-        /* check unit state */
-        //if ( le_get_exist( le_door.dr_path ) == _LE_FALSE ) {
-
-            /* check door mode */
-        //    if ( le_mode == LE_DOOR_READ ) {
-
-                /* send message */
-        //        return( le_set_status( le_door, LE_ERROR_IO_READ ) );
-
-        //    } else {
-
-                /* create directory */
-        //        if ( mkdir( ( char * ) le_door.dr_path, 0755 ) != 0 ) {
-
-                    /* send message */
-        //            return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
-
-        //        }
-
-                /* compose path */
-        //        sprintf( ( char * ) le_path, "%s/0", le_door.dr_path );
-
-                /* create directory */
-        //        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
-
-                    /* send message */
-        //            return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
-
-        //        }
-
-                /* compose path */
-        //        sprintf( ( char * ) le_path, "%s/1", le_door.dr_path );
-
-                /* create directory */
-        //        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
-
-                    /* send message */
-        //            return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
-
-        //        }
-
-                /* compose path */
-        //        sprintf( ( char * ) le_path, "%s/2", le_door.dr_path );
-
-                /* create directory */
-        //        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
-
-                    /* send message */
-        //            return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
-
-        //        }
-
-        //    }
-
-        //}
-
-        /* compose path */
-        //sprintf( ( char * ) le_path, "%s/2_", le_door.dr_path );
-
-        /* create poly-vertex specific stream */
-        //le_door.dr_pdat = fopen( ( char * ) le_path, "rb" );
-
-        /* create each-vertex stream */
-        //while ( le_parse < le_door.dr_scfg ) {
-
-            /* compose path */
-        //    sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
-
-            /* create and check stream */
-        //    if ( ( le_door.dr_macc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
-
-                /* delete structure */
-        //        le_door_delete( & le_door );
-
-                /* return created structure */
-        //        return( le_set_status( le_door, LE_ERROR_IO_ACCESS ) );
-
-        //    }
-
-            /* compose path */
-        //    sprintf( ( char * ) le_path, "%s/2/%02" _LE_SIZE_P, le_door.dr_path, le_parse );
-
-            /* create and check stream */
-        //    if ( ( le_door.dr_pacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
-
-                /* delete structure */
-        //        le_door_delete( & le_door );
-
-                /* return created strcuture */
-        //        return( le_set_status( le_door, LE_ERROR_IO_ACCESS ) );
-
-        //    }
-
-            /*  update parser */
-        //    le_parse ++;
-
-        //}
-
-        /* return created structure */
-        //return( le_door );
-
     }
 
     le_void_t le_door_delete( le_door_t * const le_door ) {
@@ -436,7 +319,7 @@
 
     }
 
-    le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_state, le_enum_t const le_mode ) {
+    le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_mode ) {
 
         /* path variable */
         le_char_t le_path[_LE_USE_PATH] = { 0 };
@@ -450,7 +333,7 @@
         }
 
         /* check state */
-        if ( le_state == LE_DOOR_CLOSE ) {
+        if ( le_mode == LE_DOOR_CLOSE ) {
 
             /* parsing each-vertex stream */
             for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
@@ -489,10 +372,8 @@
             /* compose path */
             sprintf( ( char * ) le_path, "%s/2_", le_door->dr_path );
 
-        // dev : need mode check //
             /* create stream */
-            le_door->dr_pdat = fopen( ( char * ) le_path, "rb" );
-        // //
+            le_door->dr_pdat = fopen( ( char * ) le_path, "r+" );
 
             /* parsing each vertex stream */
             for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
@@ -501,10 +382,10 @@
                 sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
 
                 /* create and check stream */
-                if ( ( le_door->dr_macc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
+                if ( ( le_door->dr_macc[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
 
                     /* delete already created streams */
-                    le_door_set_stream( le_door, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                    le_door_set_stream( le_door, LE_DOOR_CLOSE );
 
                     /* send message */
                     return( _LE_FALSE );
@@ -515,10 +396,10 @@
                 sprintf( ( char * ) le_path, "%s/2/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
 
                 /* create and check stream */
-                if ( ( le_door->dr_pacc[le_parse] = fopen( ( char * ) le_path, le_door_mode( le_mode ) ) ) == NULL ) {
+                if ( ( le_door->dr_pacc[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
 
                     /* delete already created streams */
-                    le_door_set_stream( le_door, LE_DOOR_CLOSE, LE_DOOR_NULL );
+                    le_door_set_stream( le_door, LE_DOOR_CLOSE );
 
                     /* send message */
                     return( _LE_FALSE );

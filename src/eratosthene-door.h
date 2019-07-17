@@ -413,7 +413,7 @@
 
     /* *** */
 
-    le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_state, le_enum_t const le_mode );
+    le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_mode );
 
     /*! \brief mutator methods
      *
