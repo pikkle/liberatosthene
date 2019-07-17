@@ -30,10 +30,13 @@
         le_door_t le_door = LE_DOOR_C_SCT( le_scfg, le_tcfg, le_time / le_tcfg );
 
         /* compute path */
-        sprintf( ( char * ) le_door.dr_path, "%s/%" _LE_TIME_P, le_root, le_door.dr_time );
+        sprintf( ( char * ) le_door.dr_path, "%s/%" _LE_TIME_P "/", le_root, le_door.dr_time );
 
         /* compute path length */
         le_door.dr_plen = strlen( ( char * ) le_door.dr_path );
+
+        /* create path copy for stream management */
+        strcpy( ( char * ) le_door.dr_strp, ( char * ) le_door.dr_path );
 
         /* check mode */
         if ( le_mode == LE_DOOR_WRITE ) {
@@ -217,7 +220,7 @@
         le_char_t le_path[_LE_USE_PATH] = { 0 };
 
         /* compose path */
-        sprintf( ( char * ) le_path, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+        sprintf( ( char * ) le_path, "%s0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
 
         /* check chunk */
         return( le_get_exist( le_path ) );
@@ -253,7 +256,7 @@
         }
 
         /* compose path */
-        sprintf( ( char * ) le_path, "%s/0", le_door->dr_path );
+        sprintf( ( char * ) le_path, "%s0", le_door->dr_path );
 
         /* create directory */
         if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
@@ -264,7 +267,7 @@
         }
 
         /* compose path */
-        sprintf( ( char * ) le_path, "%s/1", le_door->dr_path );
+        sprintf( ( char * ) le_path, "%s1", le_door->dr_path );
 
         /* create directory */
         if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
@@ -275,7 +278,7 @@
         }
 
         /* compose path */
-        sprintf( ( char * ) le_path, "%s/2", le_door->dr_path );
+        sprintf( ( char * ) le_path, "%s2", le_door->dr_path );
 
         /* create directory */
         if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
@@ -289,7 +292,7 @@
         for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
 
             /* compose path */
-            sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
+            sprintf( ( char * ) le_path, "%s1/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
 
             /* create and check stream */
             if ( ( le_stream = fopen( ( char * ) le_path, "w" ) ) == NULL ) {
@@ -301,7 +304,7 @@
             } else { fclose( le_stream ); }
 
             /* compose path */
-            sprintf( ( char * ) le_path, "%s/2/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
+            sprintf( ( char * ) le_path, "%s2/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
 
             /* create and check stream */
             if ( ( le_stream = fopen( ( char * ) le_path, "w" ) ) == NULL ) {
@@ -320,9 +323,6 @@
     }
 
     le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_mode ) {
-
-        /* path variable */
-        le_char_t le_path[_LE_USE_PATH] = { 0 };
 
         /* check door */
         if ( le_door == NULL ) {
@@ -369,20 +369,29 @@
 
         } else {
 
-            /* compose path */
-            sprintf( ( char * ) le_path, "%s/2_", le_door->dr_path );
+            /* path tail specification */
+            le_door_mac_tail( le_door, 0, '2' );
+            le_door_mac_tail( le_door, 1, '_' );
+
+            /* path tail termination */
+            le_door_mac_tail( le_door, 2, 0 );
 
             /* create stream */
-            le_door->dr_pdat = fopen( ( char * ) le_path, "r+" );
+            le_door->dr_pdat = fopen( ( char * ) le_door->dr_strp, "r+" );
 
             /* parsing each vertex stream */
             for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
 
-                /* compose path */
-                sprintf( ( char * ) le_path, "%s/1/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
+                /* path tail specification */
+                le_door_mac_tail( le_door, 0, '1' );
+                le_door_mac_tail( le_door, 1, '/' );
+
+                /* path scale index specification */
+                le_door_mac_tail( le_door, 2, ( le_parse / 10 ) + 48 );
+                le_door_mac_tail( le_door, 3, ( le_parse % 10 ) + 48 );
 
                 /* create and check stream */
-                if ( ( le_door->dr_macc[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
+                if ( ( le_door->dr_macc[le_parse] = fopen( ( char * ) le_door->dr_strp, "r+" ) ) == NULL ) {
 
                     /* delete already created streams */
                     le_door_set_stream( le_door, LE_DOOR_CLOSE );
@@ -392,11 +401,11 @@
 
                 }
 
-                /* compose path */
-                sprintf( ( char * ) le_path, "%s/2/%02" _LE_SIZE_P, le_door->dr_path, le_parse );
+                /* path tail specification */
+                le_door_mac_tail( le_door, 0, '2' );
 
                 /* create and check stream */
-                if ( ( le_door->dr_pacc[le_parse] = fopen( ( char * ) le_path, "r+" ) ) == NULL ) {
+                if ( ( le_door->dr_pacc[le_parse] = fopen( ( char * ) le_door->dr_strp, "r+" ) ) == NULL ) {
 
                     /* delete already created streams */
                     le_door_set_stream( le_door, LE_DOOR_CLOSE );
@@ -424,7 +433,7 @@
         le_file_t le_stream = NULL;
 
         /* compose path */
-        sprintf( ( char * ) le_path, "%s/lock", le_door->dr_path );
+        sprintf( ( char * ) le_path, "%slock", le_door->dr_path );
 
         /* check target state */
         if ( le_state == LE_DOOR_LOCK ) {
@@ -608,7 +617,7 @@
                         } else {
 
                             /* compose path */
-                            sprintf( ( char * ) le_path, "%s/0/1%" _LE_SIZE_P, le_door->dr_path, le_mstack ++ );
+                            sprintf( ( char * ) le_path, "%s0/1%" _LE_SIZE_P, le_door->dr_path, le_mstack ++ );
 
                             /* create and check stream */
                             if ( ( le_stream = fopen( ( char * ) le_path, "wb" ) ) == NULL ) {
@@ -652,7 +661,7 @@
                         } else {
 
                             /* compose path */
-                            sprintf( ( char * ) le_path, "%s/0/2%" _LE_SIZE_P, le_door->dr_path, le_pstack ++ );
+                            sprintf( ( char * ) le_path, "%s0/2%" _LE_SIZE_P, le_door->dr_path, le_pstack ++ );
 
                             /* create and check stream */
                             if ( ( le_stream = fopen( ( char * ) le_path, "wb" ) ) == NULL ) {
@@ -769,10 +778,10 @@
             while ( ( le_index != 0 ) && ( le_message == LE_ERROR_SUCCESS ) ) {
 
                 /* compose chunk path */
-                sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index - 1 );
+                sprintf( ( char * ) le_pchunk, "%s0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index - 1 );
 
                 /* compose chunk path */
-                sprintf( ( char * ) le_qchunk, "%s/0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index );
+                sprintf( ( char * ) le_qchunk, "%s0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index );
 
                 /* check chunk */
                 if ( le_get_exist( le_qchunk ) == _LE_TRUE ) {
@@ -795,7 +804,7 @@
                             } else {
 
                                 /* compose next path */
-                                sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index >> 1 );
+                                sprintf( ( char * ) le_pchunk, "%s0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index >> 1 );
 
                                 /* move chunk */
                                 if ( rename( ( char * ) le_derive, ( char * ) le_pchunk ) != 0 ) {
@@ -830,7 +839,7 @@
                     if ( le_get_exist( le_pchunk ) == _LE_TRUE ) {
 
                         /* compose next path */
-                        sprintf( ( char * ) le_derive, "%s/0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index >> 1 );
+                        sprintf( ( char * ) le_derive, "%s0/%" _LE_SIZE_P "%" _LE_SIZE_P, le_door->dr_path, le_suffix, le_index >> 1 );
 
                         /* avoid single-chunk dispatch */
                         if ( le_index > 1 ) {
@@ -860,10 +869,10 @@
         }
 
         /* compose chunk path */
-        sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+        sprintf( ( char * ) le_pchunk, "%s0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
 
         /* compose chunk path */
-        sprintf( ( char * ) le_qchunk, "%s/%" _LE_SIZE_P "_", le_door->dr_path, le_suffix );
+        sprintf( ( char * ) le_qchunk, "%s%" _LE_SIZE_P "_", le_door->dr_path, le_suffix );
 
         /* check state */
         if ( le_get_exist( le_pchunk ) == _LE_TRUE ) {
@@ -872,7 +881,7 @@
             if ( le_get_exist( le_qchunk ) == _LE_TRUE ) {
 
                 /* compose derivation path */
-                sprintf( ( char * ) le_derive, "%s/0/%" _LE_SIZE_P "1", le_door->dr_path,le_suffix );
+                sprintf( ( char * ) le_derive, "%s0/%" _LE_SIZE_P "1", le_door->dr_path,le_suffix );
 
                 /* merge stream with persistant */
                 if ( ( le_message = le_uv3_set_merge( le_pchunk, le_qchunk, le_derive, le_door->dr_scfg ) ) == LE_ERROR_SUCCESS ) {
@@ -900,7 +909,7 @@
             } else {
 
                 /* compose chunk path */
-                sprintf( ( char * ) le_pchunk, "%s/0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
+                sprintf( ( char * ) le_pchunk, "%s0/%" _LE_SIZE_P "0", le_door->dr_path, le_suffix );
 
                 /* update persistant chunk */
                 if ( rename( ( char * ) le_pchunk, ( char * ) le_qchunk ) != 0 ) {
@@ -961,7 +970,7 @@
         le_enum_t le_message = LE_ERROR_SUCCESS;
 
         /* compose path */
-        sprintf( ( char * ) le_path, "%s/1_", le_door->dr_path );
+        sprintf( ( char * ) le_path, "%s1_", le_door->dr_path );
 
         /* create stream */
         if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) == NULL ) {
@@ -1149,7 +1158,7 @@
         le_enum_t le_message = LE_ERROR_SUCCESS;
 
         /* compose path */
-        sprintf( ( char * ) le_path, "%s/2_", le_door->dr_path );
+        sprintf( ( char * ) le_path, "%s2_", le_door->dr_path );
 
         /* create stream */
         if ( ( le_stream = fopen( ( char * ) le_path, "rb" ) ) == NULL ) {

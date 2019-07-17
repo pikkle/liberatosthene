@@ -64,10 +64,10 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_DOOR_C            { { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C            { { 0 }, { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define door link */
     # define LE_DOOR_PREV         ( 0 )
@@ -88,6 +88,9 @@
 /*
     header - preprocessor macros
  */
+
+    /* stream path tail */
+    #define le_door_mac_tail( d, o, c ) ( d )->dr_strp[( d )->dr_plen + ( o )] = ( char ) ( c )
 
 /*
     header - type definition
@@ -191,6 +194,7 @@
     typedef struct le_door_struct {
 
         le_char_t   dr_path[_LE_USE_PATH];
+        le_char_t   dr_strp[_LE_USE_PATH];
         le_size_t   dr_plen;
 
         le_size_t   dr_scfg;
