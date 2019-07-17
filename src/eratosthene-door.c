@@ -29,66 +29,27 @@
         /* created structure variable */
         le_door_t le_door = LE_DOOR_C_SCT( le_scfg, le_tcfg, le_time / le_tcfg );
 
-        /* parsing variable */
-        //le_size_t le_parse = 0;
-
-        /* path variable */
-        le_char_t le_path[_LE_USE_PATH] = { 0 };
-
         /* compute path */
-        sprintf( ( char * ) le_door.dr_path, "%s/%" _LE_TIME_P, le_root, le_time / le_tcfg );
+        sprintf( ( char * ) le_door.dr_path, "%s/%" _LE_TIME_P, le_root, le_door.dr_time );
 
         /* compute path length */
         le_door.dr_plen = strlen( ( char * ) le_door.dr_path );
 
-        /* check unit state */
-        if ( le_get_exist( le_door.dr_path ) == _LE_FALSE ) {
+        /* check mode */
+        if ( le_mode == LE_DOOR_WRITE ) {
 
-            /* check door mode */
-            if ( le_mode == LE_DOOR_READ ) {
+            /* check door implementation */
+            if ( le_get_exist( le_door.dr_path ) == _LE_TRUE ) {
 
-                /* send message */
-                return( le_set_status( le_door, LE_ERROR_IO_READ ) );
+                /* return created structure */
+                return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
 
             } else {
 
-                /* create directory */
-                if ( mkdir( ( char * ) le_door.dr_path, 0755 ) != 0 ) {
+                /* bootstrap door implementation */
+                if ( le_door_set_bootstrap( & le_door ) == _LE_FALSE ) {
 
-                    /* send message */
-                    return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
-
-                }
-
-                /* compose path */
-                sprintf( ( char * ) le_path, "%s/0", le_door.dr_path );
-
-                /* create directory */
-                if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
-
-                    /* send message */
-                    return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
-
-                }
-
-                /* compose path */
-                sprintf( ( char * ) le_path, "%s/1", le_door.dr_path );
-
-                /* create directory */
-                if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
-
-                    /* send message */
-                    return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
-
-                }
-
-                /* compose path */
-                sprintf( ( char * ) le_path, "%s/2", le_door.dr_path );
-
-                /* create directory */
-                if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
-
-                    /* send message */
+                    /* return created structure */
                     return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
 
                 }
@@ -96,6 +57,81 @@
             }
 
         }
+
+        /* return created structure */
+        return( le_door );
+
+
+        /* created structure variable */
+        //le_door_t le_door = LE_DOOR_C_SCT( le_scfg, le_tcfg, le_time / le_tcfg );
+
+        /* parsing variable */
+        //le_size_t le_parse = 0;
+
+        /* path variable */
+        //le_char_t le_path[_LE_USE_PATH] = { 0 };
+
+        /* compute path */
+        //sprintf( ( char * ) le_door.dr_path, "%s/%" _LE_TIME_P, le_root, le_time / le_tcfg );
+
+        /* compute path length */
+        //le_door.dr_plen = strlen( ( char * ) le_door.dr_path );
+
+        /* check unit state */
+        //if ( le_get_exist( le_door.dr_path ) == _LE_FALSE ) {
+
+            /* check door mode */
+        //    if ( le_mode == LE_DOOR_READ ) {
+
+                /* send message */
+        //        return( le_set_status( le_door, LE_ERROR_IO_READ ) );
+
+        //    } else {
+
+                /* create directory */
+        //        if ( mkdir( ( char * ) le_door.dr_path, 0755 ) != 0 ) {
+
+                    /* send message */
+        //            return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
+
+        //        }
+
+                /* compose path */
+        //        sprintf( ( char * ) le_path, "%s/0", le_door.dr_path );
+
+                /* create directory */
+        //        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+
+                    /* send message */
+        //            return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
+
+        //        }
+
+                /* compose path */
+        //        sprintf( ( char * ) le_path, "%s/1", le_door.dr_path );
+
+                /* create directory */
+        //        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+
+                    /* send message */
+        //            return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
+
+        //        }
+
+                /* compose path */
+        //        sprintf( ( char * ) le_path, "%s/2", le_door.dr_path );
+
+                /* create directory */
+        //        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
+
+                    /* send message */
+        //            return( le_set_status( le_door, LE_ERROR_IO_WRITE ) );
+
+        //        }
+
+        //    }
+
+        //}
 
         /* compose path */
         //sprintf( ( char * ) le_path, "%s/2_", le_door.dr_path );
@@ -140,7 +176,7 @@
         //}
 
         /* return created structure */
-        return( le_door );
+        //return( le_door );
 
     }
 
@@ -148,35 +184,6 @@
 
         /* deleted structure variable */
         le_door_t le_delete = LE_DOOR_C;
-
-        /* parsing each-vertex stream */
-        //for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
-
-            /* check stream */
-        //    if ( le_door->dr_macc[le_parse] != NULL ) {
-
-                /* delete stream */
-        //        fclose( le_door->dr_macc[le_parse] );
-
-        //    }
-
-            /* check stream */
-        //    if ( le_door->dr_pacc[le_parse] != NULL ) {
-
-                /* delete stream */
-        //        fclose( le_door->dr_pacc[le_parse] );
-
-        //    }
-
-        //}
-
-        /* delete poly-vertex specific stream */
-        //if ( le_door->dr_pdat != NULL ) {
-
-            /* delete stream */
-        //    fclose( le_door->dr_pdat );
-
-        //}
 
         /* delete structure */
         ( * le_door ) = le_delete;
@@ -366,7 +373,7 @@
         sprintf( ( char * ) le_path, "%s/0", le_door->dr_path );
 
         /* create directory */
-        if ( mkdir( ( char * ) le_door->dr_path, 0755 ) != 0 ) {
+        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -377,7 +384,7 @@
         sprintf( ( char * ) le_path, "%s/1", le_door->dr_path );
 
         /* create directory */
-        if ( mkdir( ( char * ) le_door->dr_path, 0755 ) != 0 ) {
+        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
 
             /* send message */
             return( _LE_FALSE );
@@ -388,7 +395,7 @@
         sprintf( ( char * ) le_path, "%s/2", le_door->dr_path );
 
         /* create directory */
-        if ( mkdir( ( char * ) le_door->dr_path, 0755 ) != 0 ) {
+        if ( mkdir( ( char * ) le_path, 0755 ) != 0 ) {
 
             /* send message */
             return( _LE_FALSE );
