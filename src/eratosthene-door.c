@@ -397,7 +397,7 @@
                 le_door_mac_tail( le_door, 0, '1' );
                 le_door_mac_tail( le_door, 1, '/' );
 
-                /* path scale index specification */
+                /* path tail specification - scale */
                 le_door_mac_tail( le_door, 2, ( le_parse / 10 ) + 48 );
                 le_door_mac_tail( le_door, 3, ( le_parse % 10 ) + 48 );
 
@@ -435,6 +435,48 @@
             return( _LE_TRUE );
 
         }
+
+    }
+
+    le_enum_t le_door_set_reset( le_door_t * const le_door, le_size_t const le_type ) {
+
+        /* stream stack variable */
+        le_file_t * le_stack = NULL;
+
+        /* check door state */
+        if ( le_door->dr_mode != LE_DOOR_OPEN ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* check mode */
+        if ( le_type == 1 ) {
+
+            /* assign desired stream stack */
+            le_stack = le_door->dr_macc;
+
+        } else {
+
+            /* assign desired stream stack */
+            le_stack = le_door->dr_pacc;
+
+        }
+
+        /* parsing stream stack */
+        for ( le_size_t le_parse = 0; le_parse < le_door->dr_scfg; le_parse ++ ) {
+
+            /* reset stream offset */
+            fseek( le_stack[le_parse], 0, SEEK_SET );
+
+            /* reset stream content */
+            ftruncate( fileno( le_stack[le_parse] ), 0 );
+
+        }
+
+        /* send message */
+        return( _LE_TRUE );
 
     }
 

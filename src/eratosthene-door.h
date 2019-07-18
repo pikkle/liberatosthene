@@ -416,6 +416,10 @@
 
     le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_mode );
 
+    /* *** */
+
+    le_enum_t le_door_set_reset( le_door_t * const le_door, le_size_t const le_type );
+
     /*! \brief mutator methods
      *
      *  This function allows to update the storage structure state pointed by
