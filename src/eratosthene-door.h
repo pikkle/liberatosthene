@@ -200,7 +200,7 @@
         le_size_t   dr_scfg;
         le_time_t   dr_tcfg;
         le_time_t   dr_time;
-        le_enum_t   dr_state;
+        le_enum_t   dr_mode;
 
         le_file_t   dr_macc[_LE_USE_DEPTH];
         le_size_t   dr_moff;
