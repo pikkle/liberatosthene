@@ -333,6 +333,14 @@
         }
 
         /* check state */
+        if ( le_door->dr_state == le_mode ) {
+
+            /* send message */
+            return( _LE_TRUE );
+
+        }
+
+        /* check state */
         if ( le_mode == LE_DOOR_CLOSE ) {
 
             /* parsing each-vertex stream */
@@ -363,6 +371,9 @@
                 fclose( le_door->dr_pdat );
 
             }
+
+            /* update door state */
+            le_door->dr_state = LE_DOOR_CLOSE;
 
             /* send message */
             return( _LE_TRUE );
@@ -416,6 +427,9 @@
                 }
 
             }
+
+            /* update door state */
+            le_door->dr_state = LE_DOOR_OPEN;
 
             /* send message */
             return( _LE_TRUE );

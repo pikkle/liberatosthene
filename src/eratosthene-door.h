@@ -64,10 +64,10 @@
  */
 
     /* define pseudo-constructor */
-    # define LE_DOOR_C            { { 0 }, { 0 }, 0, 0, 0, 0, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C            { { 0 }, { 0 }, 0, 0, 0, 0, LE_DOOR_CLOSE, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define pseudo-constructor */
-    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, { 0 }, 0, s, c, t, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
+    # define LE_DOOR_C_SCT(s,c,t) { { 0 }, { 0 }, 0, s, c, t, LE_DOOR_CLOSE, { NULL }, _LE_OFFS_NULL, { NULL }, _LE_OFFS_NULL, NULL, NULL, NULL, LE_ERROR_SUCCESS }
 
     /* define door link */
     # define LE_DOOR_PREV         ( 0 )
@@ -200,6 +200,7 @@
         le_size_t   dr_scfg;
         le_time_t   dr_tcfg;
         le_time_t   dr_time;
+        le_enum_t   dr_state;
 
         le_file_t   dr_macc[_LE_USE_DEPTH];
         le_size_t   dr_moff;
