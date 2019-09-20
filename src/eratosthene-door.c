@@ -1199,7 +1199,8 @@
         le_size_t le_master = 0;
 
         /* stack variable */
-        le_size_t le_stack = 1;
+        //le_size_t le_stack = 1;
+        le_size_t le_stack = 0;
 
         /* depth variable */
         le_size_t le_inject = 0;
@@ -1250,31 +1251,7 @@
                     while ( le_parse < le_read ) {
 
                         /* primitive detection */
-                        if ( ( -- le_stack ) == 0 ) {
-
-                            /* wait first primitive */
-                            if ( le_index > 0 ) {
-
-                                /* primitive injection and offset assignation */
-                                for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
-
-                                    /* update class offset */
-                                    le_poly_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
-
-                                    /* check injection depth */
-                                    if ( le_depth >= le_inject ) {
-
-                                        /* push primitive */
-                                        le_poly_set_push( le_class + le_depth, le_master );
-
-                                    }
-
-                                }
-
-                                /* forced last injection */
-                                le_poly_set_push( le_class + le_door->dr_scfg - 1, le_master );
-
-                            }
+                        if ( le_stack == 0 ) {
 
                             /* hold address */
                             le_hold = le_addr;
@@ -1282,7 +1259,7 @@
                             /* compute address */
                             le_address_set_pose( & le_addr, ( le_real_t * ) ( le_buffer + le_parse ) );
 
-                            /* wait first primitive */
+                            /* wait for initial injection */
                             if ( le_index > 0 ) {
 
                                 /* reset continuous exportation */
@@ -1346,6 +1323,30 @@
 
                         }
 
+                        /* anticipated primitive detection */
+                        if ( ( -- le_stack ) == 0 ) {
+
+                            /* primitive injection and offset assignation */
+                            for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
+
+                                /* update class offset */
+                                le_poly_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
+
+                                /* check injection depth */
+                                if ( le_depth >= le_inject ) {
+
+                                    /* push primitive */
+                                    le_poly_set_push( le_class + le_depth, le_master );
+
+                                }
+
+                            }
+
+                            /* forced last injection */
+                            le_poly_set_push( le_class + le_door->dr_scfg - 1, le_master );
+
+                        }
+
                         /* update parser */
                         le_parse += LE_ARRAY_DATA;
 
@@ -1355,31 +1356,6 @@
                     }
 
                 }
-
-                // PATCH // last primitive forced injection //
-                if ( le_index > 0 ) {
-
-                    /* primitive injection and offset assignation */
-                    for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
-
-                        /* update class offset */
-                        le_poly_set_offset( le_class + le_depth, le_address_get_digit( & le_addr, le_depth ), le_offset[le_depth + 1] );
-
-                        /* check injection depth */
-                        if ( le_depth >= le_inject ) {
-
-                            /* push primitive */
-                            le_poly_set_push( le_class + le_depth, le_master );
-
-                        }
-
-                    }
-
-                    /* forced last injection */
-                    le_poly_set_push( le_class + le_door->dr_scfg - 1, le_master );
-
-                }
-                // PATCH //
 
                 /* terminal transversal exportation */
                 for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg; le_depth ++ ) {
