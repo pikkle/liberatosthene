@@ -1326,6 +1326,9 @@
                         /* anticipated primitive detection */
                         if ( ( -- le_stack ) == 0 ) {
 
+                            /* apply injection condition correction */
+                            le_inject -= 2;
+
                             /* primitive injection and offset assignation */
                             for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
 
