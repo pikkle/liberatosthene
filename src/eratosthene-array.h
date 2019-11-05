@@ -95,7 +95,10 @@
     # define le_array_mac_delete(p,s) { for ( le_size_t _i_ = 0; _i_ < s; _i_ ++ ) le_array_delete( p + _i_ ); }
 
     /* define array access macro */
-    # define le_array_mac_back(a,s)    ( ( a )->ar_vbyte + ( a )->ar_vsize - ( s ) )
+    # define le_array_mac_byte(a,i)   ( ( a )->ar_vbyte + i )
+
+    /* define array access macro */
+    # define le_array_mac_back(a,s)   ( ( a )->ar_vbyte + ( a )->ar_vsize - ( s ) )
 
     /* define array access macro */
     # define le_array_mac_pose(a,i)   ( ( le_real_t * ) ( ( a )->ar_vbyte + i ) )

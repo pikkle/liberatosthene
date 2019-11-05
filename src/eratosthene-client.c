@@ -60,15 +60,15 @@
         }
 
         /* socket option */
-        //if ( setsockopt( le_socket, IPPROTO_TCP, TCP_NODELAY, & le_option, sizeof( int ) ) == _LE_SOCK_NULL ) {
+        if ( setsockopt( le_socket, IPPROTO_TCP, TCP_NODELAY, & le_option, sizeof( int ) ) == _LE_SOCK_NULL ) {
 
             /* close socket */
-        //    close( le_socket );
+            close( le_socket );
 
             /* send message */
-        //    return( _LE_SOCK_NULL );
+            return( _LE_SOCK_NULL );
 
-        //}
+        }
 
         /* socket connection */
         if ( connect( le_socket, ( struct sockaddr * ) & le_addr, sizeof( struct sockaddr_in ) ) == _LE_SOCK_NULL ) {
@@ -128,15 +128,15 @@
         }
 
         /* socket option */
-        //if ( setsockopt( le_socket, IPPROTO_TCP, TCP_NODELAY, & le_option, sizeof( int ) ) == _LE_SOCK_NULL ) {
+        if ( setsockopt( le_socket, IPPROTO_TCP, TCP_NODELAY, & le_option, sizeof( int ) ) == _LE_SOCK_NULL ) {
 
             /* close socket */
-        //    close( le_socket );
+            close( le_socket );
 
             /* send message */
-        //    return( _LE_SOCK_NULL );
+            return( _LE_SOCK_NULL );
 
-        //}
+        }
 
         /* return socket */
         return( le_socket );

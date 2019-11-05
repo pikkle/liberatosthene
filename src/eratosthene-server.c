@@ -298,6 +298,13 @@
 
                         } break;
 
+                        case ( LE_MODE_DETE ) : {
+
+                            /* service management */
+                            le_message = le_switch_io_detect( & le_switch, le_array, le_socket );
+
+                        } break;
+
                         case ( LE_MODE_QUER ) : {
 
                             /* service management */

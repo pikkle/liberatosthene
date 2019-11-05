@@ -258,6 +258,9 @@
     /* define server/client modes */
     # define LE_MODE_NULL        ( 0x00 )
     # define LE_MODE_AUTH        ( 0x01 )
+
+    # define LE_MODE_DETE        ( 0x02 )
+
     # define LE_MODE_QUER        ( 0x03 )
     # define LE_MODE_INJE        ( 0x04 )
 
