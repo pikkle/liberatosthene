@@ -142,6 +142,42 @@
 
     }
 
+    le_enum_t le_address_get_equal_index( le_address_t const * const le_addra, le_address_t const * const le_addrb ) {
+
+        /* array pointer variables */
+        le_byte_t * le_pa = ( le_byte_t * ) le_addra->as_digit;
+        le_byte_t * le_pb = ( le_byte_t * ) le_addrb->as_digit;
+
+        /* size comparison */
+        if ( le_addra->as_size != le_addrb->as_size ) {
+
+            /* send message */
+            return( _LE_FALSE );
+
+        }
+
+        /* end of array */
+        le_pa += le_addra->as_size;
+        le_pb += le_addrb->as_size;
+
+        /* parse address digits */
+        while ( ( -- le_pb, --le_pa ) >= le_addra->as_digit ) {
+
+            /* digit comparison */
+            if ( ( * le_pa ) != ( * le_pb ) ) {
+
+                /* send message */
+                return( _LE_FALSE );
+
+            }
+
+        }
+
+        /* send message */
+        return( _LE_TRUE );
+
+    }
+
     le_enum_t le_address_get_greater( le_real_t const * const le_fpose, le_real_t const * const le_spose, le_size_t const le_size ) {
 
         /* vector variable */
