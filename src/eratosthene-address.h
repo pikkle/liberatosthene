@@ -322,6 +322,10 @@
 
     le_enum_t le_address_get_greater( le_real_t const * const le_fpose, le_real_t const * const le_spose, le_size_t const le_size );
 
+    /* *** */
+
+    le_size_t le_address_get_scale( le_real_t const * const le_vertex, le_real_t const * const le_origin );
+
     /*! \brief accessor methods
      *
      *  This function compute the spatial index distance between the two
