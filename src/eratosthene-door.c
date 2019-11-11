@@ -1247,6 +1247,8 @@
                     /* reset parser */
                     le_parse = 0;
 
+                    le_real_t le_origin[3] = { 0.0 };
+
                     /* stream chunk parsing */
                     while ( le_parse < le_read ) {
 
@@ -1255,6 +1257,10 @@
 
                             /* hold address */
                             le_hold = le_addr;
+
+                            le_origin[0] = ( ( le_real_t * ) ( le_buffer + le_parse ) )[0];
+                            le_origin[1] = ( ( le_real_t * ) ( le_buffer + le_parse ) )[1];
+                            le_origin[2] = ( ( le_real_t * ) ( le_buffer + le_parse ) )[2];
 
                             /* compute address */
                             le_address_set_pose( & le_addr, ( le_real_t * ) ( le_buffer + le_parse ) );
@@ -1314,7 +1320,8 @@
                             le_address_set_pose( & le_span, ( le_real_t * ) ( le_buffer + le_parse ) );
 
                             /* compute and check distance */
-                            if ( ( le_split = le_address_get_dist( & le_span, & le_addr, le_door->dr_scfg - 1 ) ) < le_inject ) {
+                            //if ( ( le_split = le_address_get_dist( & le_span, & le_addr, le_door->dr_scfg - 1 ) ) < le_inject ) {
+                            if ( ( le_split = le_geodesy_get_optimal_scale( ( le_real_t * ) ( le_buffer + le_parse ), le_origin ) ) < le_inject ) {
 
                                 /* update injection depth */
                                 le_inject = le_split;
@@ -1327,7 +1334,7 @@
                         if ( ( -- le_stack ) == 0 ) {
 
                             /* apply injection condition correction */
-                            le_inject -= 2;
+                            //le_inject -= 2;
 
                             /* primitive injection and offset assignation */
                             for ( le_size_t le_depth = 0; le_depth < le_door->dr_scfg - 1; le_depth ++ ) {
