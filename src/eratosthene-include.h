@@ -50,6 +50,7 @@
     # include "eratosthene-class-poly.h"
     # include "eratosthene-client.h"
     # include "eratosthene-door.h"
+    # include "eraoosthene-geodesy.h"
     # include "eratosthene-server.h"
     # include "eratosthene-switch.h"
     # include "eratosthene-uv3.h"
