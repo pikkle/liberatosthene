@@ -81,6 +81,10 @@
     header - function prototypes
  */
 
+    /* *** */
+
+    le_void_t le_uv3_get_record_pose( le_byte_t const * const le_record, le_real_t * const le_pose );
+
     /*! \brief mutator methods (implicit)
      *
      *  Note :

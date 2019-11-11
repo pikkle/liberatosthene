@@ -21,6 +21,17 @@
     # include "eratosthene-uv3.h"
 
 /*
+    source - accessor methods
+ */
+
+    le_void_t le_uv3_get_record_pose( le_byte_t const * const le_record, le_real_t * const le_pose ) {
+
+        /* copy uv3 record coordinates */
+        memcpy( le_pose, le_record, sizeof( le_real_t ) * 3 );
+
+    }
+
+/*
     source - mutator methods
  */
 
