@@ -252,21 +252,27 @@
 
     le_byte_t le_array_io_read( le_array_t * const le_array, le_sock_t const le_socket ) {
 
-        /* array size variables */
+        /* array size variable */
         le_size_t le_size = LE_ARRAY_HEADER;
 
-        /* socket i/o variables */
+        /* socket i/o variable */
         le_size_t le_head = 0;
         le_size_t le_read = 0;
 
         /* array mode variable */
         le_byte_t le_mode = LE_MODE_NULL;
 
+        /* timeout variable */
+        le_time_t le_fail = 0;
+
         /* array size */
         le_array_set_size( le_array, 0 );
 
         /* array reading */
         while ( le_head < le_size ) {
+
+            /* read clock */
+            le_fail = clock();
 
             /* read array */
             if ( ( le_read = read( le_socket, le_array->ar_rbyte + le_head, le_size - le_head ) ) > 0 ) {
@@ -290,8 +296,13 @@
 
             } else {
 
-                /* send message */
-                return( LE_MODE_NULL );
+                /* retry timeout conditoin */
+                if ( ( clock() - le_fail ) > _LE_USE_TIMEOUT ) {
+
+                    /* send message */
+                    return( LE_MODE_NULL );
+
+                }
 
             }
 

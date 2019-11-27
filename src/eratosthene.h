@@ -188,6 +188,7 @@
     # define _LE_USE_RETRY       ( 3 )
     # define _LE_USE_ARRAY       ( 2 )
     # define _LE_USE_PATH        ( PATH_MAX + FILENAME_MAX )
+    # define _LE_USE_TIMEOUT     ( CLOCKS_PER_SEC >> 2 )
 
     /* define types */
     # define _LE_VOID            void
