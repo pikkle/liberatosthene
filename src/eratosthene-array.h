@@ -152,7 +152,7 @@
      *  sent over TCP/IP without additional memory allocation and copy. The
      *  second reason is the possibility to only reallocate memory when the
      *  real array is not sufficient to holds the data array, again saving
-     *  memory allocation and copy.
+     *  memory allocation and copies.
      *
      *  When the array is written on TCP/IP socket, the header is filled as
      *  follows :
@@ -348,6 +348,10 @@
      *  This function reads the provided array bytes from the socket pointed by
      *  the provided socket descriptor. The reading is based on the analysis
      *  of the read array header and the received data.
+     *
+     *  A timeout condition is implemented for transmission failures. As a chunk
+     *  read fails, the function retries the read until it succeed or until the
+     *  timeout is reached.
      *
      *  \param le_array  Array structure
      *  \param le_socket Socket descriptor
