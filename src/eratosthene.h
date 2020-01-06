@@ -327,7 +327,7 @@
 
     /*! \brief accessor methods
      *
-     *  This function answers \b _LE_TRUE if the provided path points to an file
+     *  This function answers \b _LE_TRUE if the provided path points to a file
      *  or a directory that exists. The function returns \b _LE_FALSE otherwise.
      *
      *  \param le_path Entity path

@@ -307,46 +307,6 @@
 
     }
 
-    le_size_t le_address_get_scale( le_real_t const * const le_vertex, le_real_t const * const le_origin ) {
-
-        /* position variable */
-        le_real_t le_corigin[3] = { 0.0 };
-        le_real_t le_cvertex[3] = { 0.0 };
-
-        /* distance variable */
-        le_real_t le_component = 0.0;
-        le_real_t le_distance  = 0.0;
-
-        /* compute radial position */
-        le_corigin[2] = le_origin[2] + LE_ADDRESS_WGS_A;
-        le_cvertex[2] = le_vertex[2] + LE_ADDRESS_WGS_A;
-
-        /* compute coordinates conversion */
-        le_corigin[1] = le_corigin[2] * sin( le_origin[1] );
-        le_corigin[2] = le_corigin[2] * cos( le_origin[1] );
-        le_corigin[0] = le_corigin[2] * sin( le_origin[0] );
-        le_corigin[2] = le_corigin[2] * cos( le_origin[0] );
-        le_cvertex[1] = le_cvertex[2] * sin( le_vertex[1] );
-        le_cvertex[2] = le_cvertex[2] * cos( le_vertex[1] );
-        le_cvertex[0] = le_cvertex[2] * sin( le_vertex[0] );
-        le_cvertex[2] = le_cvertex[2] * cos( le_vertex[0] );
-
-        /* compute distance components */
-        le_component = le_corigin[0] - le_cvertex[0];
-        le_distance += le_component * le_component;
-        le_component = le_corigin[1] - le_cvertex[1];
-        le_distance += le_component * le_component;
-        le_component = le_corigin[2] - le_cvertex[2];
-        le_distance += le_component * le_component;
-
-        /* compute distance */
-        le_distance = sqrt( le_distance );
-
-        /* compute and return optimal scale */
-        return( ( le_size_t ) ceil( log( ( LE_2P * LE_ADDRESS_WGS_A ) / le_distance ) / log( 2. ) ) );
-
-    }
-
     le_size_t le_address_get_dist( le_address_t const * const le_address, le_address_t const * const le_origin, le_size_t const le_size ) {
 
         /* parsing variable */

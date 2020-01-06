@@ -114,7 +114,7 @@
  */
 
     /*! \struct le_address_struct
-     *  \brief address structure (revoked)
+     *  \brief address structure
      *
      *  This structure holds the address, or the index, of an equivalence class
      *  defined on the geodetic and time parameter spaces. These addresses are
@@ -163,13 +163,13 @@
      *
      *  As an example, the following address, written in its text form :
      *
-     *      /3/950486422,-7258032000/864000/122010001340232/7
+     *      /19/950486422,-7258032000/864000/122010001340232/7
      *
      *  represents the data located in Venice in 2000 and in 1740. The first
-     *  number correspond to the times comparison mode. The two times are given
-     *  followed by the time range. The digits of the spatial address are then
-     *  provided. The last number gives the additional depth where the desired
-     *  data have to be searched.
+     *  number correspond to the times comparison and query modes. The two times    
+     *  are given followed by the time range. The digits of the spatial address
+     *  are then provided. The last number gives the additional depth where the
+     *  desired data have to be searched.
      *
      *  \var le_address_struct::as_size
      *  Address number of digits
@@ -238,7 +238,7 @@
      *  provided address structure.
      *
      *  The time values can be obtained by passing 0 or 1 as offset parameter.
-     *  Providing 3 as offset parameter allows to obtain the temporal range
+     *  Providing 2 as offset parameter allows to obtain the temporal range
      *  stored in the structure.
      *
      *  \param le_address Address structure
@@ -276,7 +276,7 @@
 
     /*! \brief accessor methods
      *
-     *  This function compare the two provided address structures and returns a
+     *  This function compares the two provided address structures and returns a
      *  Boolean value indicating their identity.
      *
      *  \param le_addra Address structure
@@ -287,7 +287,17 @@
 
     le_enum_t le_address_get_equal( le_address_t const * const le_addra, le_address_t const * const le_addrb );
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function compares the two provided address structures in terms of
+     *  their spatial index digits and returns a Boolean value indicating the
+     *  identity of the digits value and count.
+     * 
+     *  \param le_addra Address structure
+     *  \param le_addrb Address structure
+     *
+     *  \return Returns _LE_TRUE on index digits identity, _LE_FALSE otherwise
+     */
 
     le_enum_t le_address_get_equal_index( le_address_t const * const le_addra, le_address_t const * const le_addrb );
 
@@ -321,10 +331,6 @@
      */
 
     le_enum_t le_address_get_greater( le_real_t const * const le_fpose, le_real_t const * const le_spose, le_size_t const le_size );
-
-    /* *** */
-
-    le_size_t le_address_get_scale( le_real_t const * const le_vertex, le_real_t const * const le_origin );
 
     /*! \brief accessor methods
      *
