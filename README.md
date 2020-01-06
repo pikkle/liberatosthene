@@ -17,7 +17,7 @@ The ability of indexation formalism to consider polygonal models in addition to 
 ## Copyright and License
 
 **liberatosthene** - Nils Hamel <br >
-Copyright (c) 2016-2019 DHLAB, EPFL
+Copyright (c) 2016-2020 DHLAB, EPFL
 
 This program is licensed under the terms of the GNU GPLv3.
 
