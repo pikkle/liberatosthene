@@ -70,7 +70,22 @@
     header - function prototypes
  */
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to compute the optimal scale at which a poly-vertex
+     *  primitive has to appear for the first time according to the size of the
+     *  edge of the primitive.
+     *
+     *  The function starts by computing the cartesian length of the primitive
+     *  edge from the geographical coordinates. Based on the computed edge
+     *  length, the function determine the optimal scale at which the primitive
+     *  should appear.
+     *
+     *  \param le_vertex Primitive vertex
+     *  \param le_origin Primitive vertex
+     *
+     *  \return Returns the primitive optimal injection scale
+     */
 
     le_size_t le_geodesy_get_optimal_scale( le_real_t const * const le_vertex, le_real_t const * const le_origin );
 
