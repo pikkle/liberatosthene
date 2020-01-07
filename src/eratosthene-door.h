@@ -102,8 +102,10 @@
      *  This structure holds the required information and data for accessing
      *  the storage structure of a server time unit.
      *
-     *  The two first fields store the path of the time unit and the length of
-     *  the path itself.
+     *  The three first fields store the path of the time unit, a copy if this
+     *  path and the length of the path itself. The path copy is used as a
+     *  dynamic path that is completed for data access while the path itself
+     *  stays unchanged in the first string.
      *
      *  The two next fields store a copy of the server space and time parameters
      *  in order for the structure to properly access the data.
@@ -111,6 +113,9 @@
      *  The next field stores the time value of the time unit. The time unit
      *  is stored in its reduced form, that is the proper time divided by the
      *  value of the server time parameter.
+     *
+     *  The next field holds the stream state flag. It indicates if the stream
+     *  used to access the door storage representation are open or closed.
      *
      *  The next two fields, an array and a size, are used to access mono-vertex
      *  related data in the storage structure. The array is used to store the
@@ -152,15 +157,17 @@
      *
      *  To manage successive and distinct data injection processes into the same
      *  door structure, the results of the merging of the dispatched chunks are
-     *  kept in the door main directory. The file is name 1_ for mono-vertex and
-     *  2_ for poly-vertex. These files are kept to be able to merge them with
-     *  the result of the incoming new data through successive injections to
-     *  always keep a single sorted uv3 file containing all the injected data.
-     *  This allows to use transverse injection processes in any cases, leading
-     *  to mode efficient data management.
+     *  kept in the door main directory. The file is named 1_ for mono-vertex
+     *  and 2_ for poly-vertex. These files are kept to be able to merge them
+     *  with the result of the incoming new data through successive injections
+     *  to always keep a single sorted uv3 file containing all the injected
+     *  data. This allows to use transverse injection processes in any cases,
+     *  leading to more efficient data management.
      *
      *  \var le_door_struct::dr_path
      *  Path of the time unit directory
+     *  \var le_door_struct::dr_strp
+     *  Path of the time unit directory - copy
      *  \var le_door_struct::dr_plen
      *  Length of the path of the time unit directory
      *  \var le_door_struct::dr_scfg
@@ -169,6 +176,8 @@
      *  Server temporal configuration parameter - copy
      *  \var le_door_struct::dr_time
      *  Door unit time value, in reduced form
+     *  \var le_door_struct::dr_mode
+     *  State of the door access streams (open/close)
      *  \var le_door_struct::dr_macc
      *  Stream stack toward mono-vertex tree structure
      *  \var le_door_struct::dr_moff
@@ -219,22 +228,15 @@
      *  This function creates a door structure toward the time unit pointed by
      *  the provided time value.
      *
-     *  The function starts by checking the state of the pointed directory
-     *  according to the provided read/write mode. In case \b LE_DOOR_READ is
-     *  provided as mode parameter and the corresponding storage directory is
-     *  missing, the function throw and error and returns.
+     *  After the copy of the provided path and parameters, the function checks
+     *  the door creation mode.
      *
-     *  In the case \b LE_DOOR_WRITE is provided as mode parameter and the
-     *  corresponding storage directory is missing, the function creates it and
-     *  initialises its content.
+     *  If the mode \b LE_DOOR_WRITE is provided, the function checks if the
+     *  storage of the temporal unit associated with the created door already
+     *  exists. In such case, an error is raised.
      *
-     *  The function then creates the streams toward the poly-vertex storage
-     *  file and toward the tree structures of the mono-vertex and poly-vertex
-     *  data.
-     *
-     *  If any stream of the tree structures leads to an error during opening
-     *  operation, the function fails and deletes the partially created
-     *  structure, ensuring no stream descriptor remains open.
+     *  If the storage does not exist, the function creates it and initialise
+     *  its content in terms of files and directory.
      *
      *  This function returning the created structure, the status is stored in
      *  the structure itself using the reserved \b _status field.
@@ -243,20 +245,22 @@
      *  \param le_scfg Server spatial parameter
      *  \param le_tcfg Server temporal parameter
      *  \param le_time Temporal unit time
-     *  \param le_mode Structure creation mode
+     *  \param le_mode Structure creation mode (write/read)
      *
      *  \return Returns the created structure
      */
 
     le_door_t le_door_create( le_char_t const * const le_root, le_size_t const le_scfg, le_time_t const le_tcfg, le_time_t const le_time, le_enum_t const le_mode );
 
-    /*! \brief constructor/destructor methods (revoked)
+    /*! \brief constructor/destructor methods
      *
      *  This function is used to delete the content of the provided door
-     *  structure.
+     *  structure. The fields of the provided door structure are simply erased
+     *  using default values.
      *
-     *  The function deletes all the opened stream descriptors and erase the
-     *  structure fields using default values.
+     *  The state of the access stream is not checked by the function. It
+     *  follows that the function assumes that the stream have been already
+     *  been closed by previous processes.
      *
      *  \param le_door Door structure
      */
@@ -404,15 +408,61 @@
 
     le_enum_t le_door_get_dispatch( le_door_t const * const le_door, le_size_t const le_suffix );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to initialise the content of the storage structure
+     *  of a temporal unit.
+     *
+     *  It creates the three needed directories (0,1,2) and initialises the
+     *  files in the 1 and 2 directories in which data are written for mono- and
+     *  poly-vertex, respectively.
+     *
+     *  \param le_door Door structure
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
+     */
 
     le_enum_t le_door_set_bootstrap( le_door_t * const le_door );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function creates or deletes the stream descriptors needed to access
+     *  the files of the provided door structure linked to a temporal unit
+     *  storage.
+     *
+     *  If the provided mode is \b LE_DOOR_OPEN, the function creates the needed
+     *  stream descriptor towards the storage files of the temporal unit. If a
+     *  stream descriptor creation fails, all other descriptors are deleted.
+     *
+     *  If the provided mode is \b LE_MODE_CLOSE, the function deletes all the
+     *  access stream of the provided door structure. The state of each stream
+     *  is tested to only close formally open access stream.
+     *
+     *  \param le_door Door structure
+     *  \param le_mode Stream mode
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise
+     */
 
     le_enum_t le_door_set_stream( le_door_t * const le_door, le_enum_t const le_mode );
 
-    /* *** */
+    /*! \brief mutator methods
+     *
+     *  This function allows to resets the files in which data are stored in
+     *  order to reset a temporal unit storage.
+     *
+     *  Depending on the provided type, 1 for mono-vertex and 2 for poly-vertex,    
+     *  the function resets all files to a length of zero, clearing all their
+     *  content.
+     *
+     *  This function only resets the files associated to the scales of the
+     *  storage structure.
+     *
+     *  \param le_door Door structure
+     *  \param le_type Stream type
+     *
+     *  \return Returns _LE_TRUE on success, _LE_FALSE otherwise    
+     */
 
     le_enum_t le_door_set_reset( le_door_t * const le_door, le_size_t const le_type );
 
