@@ -81,7 +81,17 @@
     header - function prototypes
  */
 
-    /* *** */
+    /*! \brief accessor methods
+     *
+     *  This function allows to copy the spatial coordinates of an uv3 record in
+     *  the provided vector.
+     *
+     *  The \b le_record pointer has to point to a valid uv3 record first byte  
+     *  and the \b le_pose has to be the base-pointer of a 3-value vector.
+     *
+     *  \param le_record Record pointer
+     *  \param le_pose   Coordinates vector
+     */
 
     le_void_t le_uv3_get_record_pose( le_byte_t const * const le_record, le_real_t * const le_pose );
 
