@@ -224,7 +224,7 @@
 
     le_door_t * le_switch_get_query( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
 
-    /*! \brief accessor methods (revoked)
+    /*! \brief accessor methods
      *
      *  This function searches in the provided switch structure door list the
      *  one that fits the provided query address specified time applying a
@@ -252,7 +252,7 @@
 
     le_door_t * le_switch_get_query_near( le_switch_t const * const le_switch, le_address_t const * const le_addr, le_size_t const le_time );
 
-    /*! \brief accessor methods (revoked)
+    /*! \brief accessor methods
      *
      *  This function searches in the provided switch structure door list the
      *  one that fits the provided query address specified time applying a
@@ -265,7 +265,7 @@
      *  the door search goes on.
      *
      *  The door search is stopped under two conditions : in case the end of the
-     *  linked list is reached or of the considered door is distant, from a
+     *  linked list is reached or when the considered door is distant, from a
      *  temporal point view, of more than the time range value coming with the
      *  address structure.
      *
@@ -383,7 +383,7 @@
 
     le_enum_t le_switch_io_auth( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
-    /*! \brief i/o methods (revoked)
+    /*! \brief i/o methods
      *
      *  This function is the front-end to server data injection from a remote
      *  client.
@@ -418,11 +418,32 @@
 
     le_enum_t le_switch_io_inject( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
-    /* *** */
+    /*! \brief i/o methods
+     *
+     *  This function is the front-end to server cell-state query from a remote
+     *  client.
+     *
+     *  The function reads the socket-array send by the client and parses all
+     *  addresses it contains. for each address, the function performs a
+     *  standard access to the cell data but only to check their availability.
+     *
+     *  The function builds and answer array in which each by value gives the
+     *  information on the cell state. In case data are available for the cell
+     *  0xff is set, 0x00 otherwise, in the corresponding byte of the answer    
+     *  array.
+     *
+     *  The built answer array is then send back to the client.
+     *
+     *  \param le_switch Switch structure
+     *  \param le_array  Client socket array
+     *  \param le_socket Client socket descriptor
+     *
+     *  \return Returns LE_ERROR_SUCCESS on success, an error code otherwise
+     */
 
     le_enum_t le_switch_io_detect( le_switch_t * const le_switch, le_array_t * const le_array, le_sock_t const le_socket );
 
-    /*! \brief i/o methods (revoked)
+    /*! \brief i/o methods
      *
      *  This function is the front-end to server data query from a remote
      *  client.
