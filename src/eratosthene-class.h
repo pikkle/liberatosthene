@@ -662,8 +662,8 @@
      *
      *  To access a class offset, the descriptor has to be read in the first
      *  place to determine if the offset is active. Depending of the content of
-     *  the descriptor, optimised array are used to determine the position of the
-     *  offset before to read it.
+     *  the descriptor, optimised array are used to determine the position of
+     *  the offset before to read it.
      *
      *  If an offset has to be set, the descriptor has to be read in the first
      *  place to determine if the offset is already active in the class. If not,
@@ -712,7 +712,7 @@
      *
      *  The function starts by reading the class descriptor to detect if the
      *  required offset, pointed by its index \b le_index, is available or not.
-     *  As the class is available, the function returns it after its extraction.
+     *  As the offset is available, the function returns its value.
      *
      *  If the desired offset is missing in the class, the function returns the
      *  \b _LE_OFFS_NULL value.
