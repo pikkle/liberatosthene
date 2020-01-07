@@ -97,12 +97,12 @@
      *  class seen as a primitive container. The value is stored in the storage
      *  representation on a \b _LE_USE_OFFSET byte long integer.
      *
-     *  The second main element hold by the structure storage representation is
+     *  The last main element hold by the structure storage representation is
      *  the content of its implicit class that gives access to its daughter
      *  links to classes one scale below. These links are simple offsets managed
      *  by its implicit class.
      *
-     *  The last main element hold by the structure is the array containing the
+     *  The second main element hold by the structure is the array containing the
      *  offsets of the primitive stored by the class. These offset corresponds
      *  to offset of the primitive in the kept injected uv3 stream.
      *
@@ -113,6 +113,10 @@
      *
      *  It follows that the storage representation size of a poly-vertex class
      *  is a function of its content.
+     *
+     *  The first elements of the storage representation are hold in the
+     *  \b pc_data array while the seconds, the links, are hold in the dynamic
+     *  memory allocation pointed by \b pc_link.
      *
      *  An additional size is also kept in the structure, \b pc_size, that keep
      *  track of the memory allocation size reserved for links to the graphical
