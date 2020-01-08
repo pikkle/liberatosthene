@@ -271,14 +271,14 @@
         /* array reading */
         while ( le_head < le_size ) {
 
-            /* read clock */
-            le_fail = clock();
-
             /* read array */
             if ( ( le_read = read( le_socket, le_array->ar_rbyte + le_head, le_size - le_head ) ) > 0 ) {
 
                 /* update head */
                 le_head += le_read;
+
+                /* read clock */
+                le_fail = clock();
 
                 /* socket array size */
                 if ( ( le_mode == LE_MODE_NULL ) && ( le_head >= LE_ARRAY_HEADER ) ) {
