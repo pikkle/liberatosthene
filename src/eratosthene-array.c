@@ -262,9 +262,6 @@
         /* array mode variable */
         le_byte_t le_mode = LE_MODE_NULL;
 
-        /* timeout variable */
-        le_time_t le_fail = 0;
-
         /* array size */
         le_array_set_size( le_array, 0 );
 
@@ -276,9 +273,6 @@
 
                 /* update head */
                 le_head += le_read;
-
-                /* read clock */
-                le_fail = clock();
 
                 /* socket array size */
                 if ( ( le_mode == LE_MODE_NULL ) && ( le_head >= LE_ARRAY_HEADER ) ) {
@@ -296,11 +290,16 @@
 
             } else {
 
-                /* retry timeout conditoin */
-                if ( ( clock() - le_fail ) > _LE_USE_TIMEOUT ) {
+                /* error detection */
+                if ( le_read < 0 ) {
 
-                    /* send message */
-                    return( LE_MODE_NULL );
+                    /* error management */
+                    if ( errno != EFAULT ) {
+
+                        /* send message */
+                        return( LE_MODE_NULL );
+
+                    }
 
                 }
 

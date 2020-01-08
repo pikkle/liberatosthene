@@ -161,6 +161,7 @@
     # include <netinet/in.h>
     # include <netinet/tcp.h>
     # include <arpa/inet.h>
+    # include <errno.h>
 
 /*
     header - preprocessor definitions
@@ -188,7 +189,6 @@
     # define _LE_USE_RETRY       ( 3 )
     # define _LE_USE_ARRAY       ( 2 )
     # define _LE_USE_PATH        ( PATH_MAX + FILENAME_MAX )
-    # define _LE_USE_TIMEOUT     ( CLOCKS_PER_SEC * 30 )
 
     /* define types */
     # define _LE_VOID            void
