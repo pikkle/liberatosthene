@@ -294,7 +294,7 @@
                 if ( le_read < 0 ) {
 
                     /* error management */
-                    if ( errno != EFAULT ) {
+                    if ( ( errno != EFAULT ) && ( errno != EINTR ) ) {
 
                         /* send message */
                         return( LE_MODE_NULL );
