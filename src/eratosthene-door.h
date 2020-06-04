@@ -97,7 +97,7 @@
  */
 
     /*! \struct le_door_struct
-     *  \brief door structure (revoked)
+     *  \brief door structure
      *
      *  This structure holds the required information and data for accessing
      *  the storage structure of a server time unit.
@@ -223,7 +223,7 @@
     header - function prototypes
  */
 
-    /*! \brief constructor/destructor methods (revoked)
+    /*! \brief constructor/destructor methods
      *
      *  This function creates a door structure toward the time unit pointed by
      *  the provided time value.
