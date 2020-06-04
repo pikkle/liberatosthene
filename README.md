@@ -1,18 +1,106 @@
 ## Overview
 
-The _liberatosthene_ library implements an Earth scale 4D tile server through a dedicated multi-scale space-time indexation formalism. Using the theoretical framework of the index, it implements a simple and reliable 4D geographical data storage and access system. This allows software developed using this library to perform large-scale data injection and browsing with high efficiency over the network to provide remote 4D geographic services and information systems. Initially designed for point-based data, the indexation formalism and the library implementation allow now to manage polygonal representations along with large scale point-based models to create a rich 4D model of the Earth.
+The _liberatosthene_ and [_eratosthene-suite_]([_eratosthene-suite_](https://github.com/nils-hamel/eratosthene-suite) offer an four dimensional indexation framework for large scale three dimensional models. It allows to organize, store and broadcast network access to large scale models referenced in both space and time in an efficient manner.
 
-## Eratosthene Project
+Initially, the framework solved the problem of large scale point-based models management and visualization. As _LIDAR_ and _structure from motion_ being able to produce large point-based models, their storage and exploitation become a major challenge with the increase of their size. In addition, these technologies also allow to create models of the same location at different times increasing the data management problem.
 
-The Eratosthene Project was initially designed to address the challenge of very large point-based models of cities and environments. Indeed, mapping a whole city at the level of the centimeter induces very large and heavy models that are difficult to manipulate, explore and exploit. Moreover, considering the time dimension implies a quick increase of the size of the models, making them impossible to handle as a single and monolithic object.
+To solve the initial challenge, the _eratosthene_ framework implemented an _Earth-attached_ indexation formalism for point based models. This allows to browse arbitrary large models through a simple series of multi-scale and time-attached queries. On the following image, a graphical view created with the framework shows the ability of managing large scale models such as the _SRTM_ topographic model weighting around _500_ Gio as a monolithic object :
 
-The Eratosthene Project is designed to provide a solution by considering a space-time indexation formalism. This indexation formalism is used to implement a server able to manage, store and broadcast over the network very large 4D models distributed all over the Earth surface and covering large periods of time. In addition to the server, the Eratosthene Project also implements a graphical client able to communicate with the remote servers to offer a convenient way to browse the models in both space and time.
+<br />
+<p align="center">
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-1a.jpg?raw=true" width="384">
+&nbsp;
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-1b.jpg?raw=true" width="384">
+<br />
+<i>View of Europa and the Swiss Alps - Data : NASA SRTM topographic model colored using NASA Visible Earth images</i>
+</p>
+<br />
 
-The space-time indexation formalism is designed to efficiently manage the storage of the incoming 4D models and to offer a simple and efficient way of addressing queries to the server to allow models broadcasting. The space-time indexation also allows to perform queries to the server in an intuitive way giving the possibility to both address the challenge of the Earth structures level of details and time management. This allows to explore the entire Earth surface in terms of 4D structures from large mountain chains in 2000 to very small details of cities in 1850.
+Another example of large scale model being able to be efficiently stored and accessed through the _eratosthene_ framework are the following _LIDAR_ model of the _Geneva_ state weighting up to _256_ Gio as a monolithic object :
 
-The subsequent indexation formalism used to drive the storage and access of the data also naturally brings a standardised discretisation of space and time. Point-based models injected in the Eratosthene information system are then standardised from both spatial and temporal point of views. This allows the implementation of binary and logical operators when considering a model at two different times. The operators allow to deduce a third model on the fly providing a differential point of view of the two models separated in time. The evolution of cities and environments can be enhanced and analysed in an efficient way, opening the way to more advanced geographic services.
+<br />
+<p align="center">
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-2a.jpg?raw=true" width="384">
+&nbsp;
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-2b.jpg?raw=true" width="384">
+<br />
+<i>View of the city of Geneva - Data : aerial LIDAR campaign conducted by the Geneva SITG in 2009</i>
+</p>
+<br />
 
-The ability of indexation formalism to consider polygonal models in addition to large scale point-based models allows to enhance the possibilities in terms of 4D geographic services. More than the possibility to automatically manage the polygonal models level of details and large scale display, the indexation formalism also allows compositions on the fly of mixed models allowing to compare different type of models, from lidar point-based models to land registers.
+Of course, any type of point-based models can be considered through the _eratosthene_ framework as for example model computed from images and _strcutrue from motion_ :
+
+<br />
+<p align="center">
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-3a.jpg?raw=true" width="384">
+&nbsp;
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-3b.jpg?raw=true" width="384">
+<br />
+<i>View of the city of Venice in 2010 - Data : photogrammetric model computed at the DHLAB using IUAV University aerial images, openMVG and openMVS open source solutions</i>
+</p>
+<br />
+
+The indexation formalism implemented initially for the point-based models allows to deal with model coming with any type of scale, from large scale topographic models to very specifically located models in order to ensure a continuity in the space dimensions :
+
+<br />
+<p align="center">
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-4a.jpg?raw=true" width="384">
+&nbsp;
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-4b.jpg?raw=true" width="384">
+<br />
+<i>View of the Fontainebleau Castle in 2017 - Data : photogrammetric model computed at the DHLAB using openMVG and openMVS open source solutions</i>
+</p>
+<br />
+
+The implemented indexation formalism is then able to store and broadcast wide variety of models through a single and unified formalism creating a spatial and temporal continuity between the models. An example of temporal continuity is shown on the following images showing the same location at different position in time :
+
+<br />
+<p align="center">
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-5a.jpg?raw=true" width="384">
+&nbsp;
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-5b.jpg?raw=true" width="384">
+<br />
+<i>View of the city of Geneva in 2009 and 2013 - Data : photogrammetric model computed at the DHLAB using SITG aerial images, openMVG and openMVS open source solutions</i>
+</p>
+<br />
+
+In addition, the indexation formalism applied on point based models offer a natural spatio-temporal grid on which specific operations can be easily performed. For example, logical convolutions can be computed on the fly on point-based models. This allows for example to apply an _AND_ logical operator between two different positions in time to show only the elements identical on both time as illustrated on the following images :
+
+<br />
+<p align="center">
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-6a.jpg?raw=true" width="384">
+&nbsp;
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-6b.jpg?raw=true" width="384">
+<br />
+<i>View of the AND logical operator applied on the LIDAR models of Geneva in 2005 and 2009 - Data : aerial LIDAR campaigns conducted by the Geneva SITG in 2005 and 2009</i>
+</p>
+<br />
+
+In a second evolution, the framework and indexation formalism were adapted to be able to ingest, store and broadcast all types of graphical primitives. The temporal and spatial multi-scale architecture were then extended to take into account such type of primitives. As a result, arbitrary large vector models can be handled by the framework :
+
+<br />
+<p align="center">
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-7a.jpg?raw=true" width="384">
+&nbsp;
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-7b.jpg?raw=true" width="384">
+<br />
+<i>View of a volumetric polygonal of the city of Geneva in 2018 and the land register of the city of Chaux-de-Fonds in 2004 - Data : SITG building model and SITN land register</i>
+</p>
+<br />
+
+This evolution lead to a much richer framework able to ensure the continuity between space, time and the different types of model. As an example, the following image shows example of communication between different type of data such as vector models and point-based models :
+
+<br />
+<p align="center">
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-8a.jpg?raw=true" width="384">
+&nbsp;
+<img src="https://github.com/nils-hamel/eratosthene-suite/blob/master/doc/image-8b.jpg?raw=true" width="384">
+<br />
+<i>View of mixed models of the city of Chaux-de-Fonds : 2004 land register and 2018 volumetric model (left) 2004 land register and 2016 colored lidar model (right) - Data : SITN</i>
+</p>
+<br />
+
+The [_eratosthene-suite_](https://github.com/nils-hamel/eratosthene-suite) repository stores the front-end elements of the _eratosthene_ framework while the _liberatosthene_ repository hold the library implementing the details of the framework and its generalized _Earth-attached_ space-time indexation formalism.
 
 ## Copyright and License
 
