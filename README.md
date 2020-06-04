@@ -1,6 +1,6 @@
 ## Overview
 
-The _liberatosthene_ and [_eratosthene-suite_]([_eratosthene-suite_](https://github.com/nils-hamel/eratosthene-suite) offer an four dimensional indexation framework for large scale three dimensional models. It allows to organize, store and broadcast network access to large scale models referenced in both space and time in an efficient manner.
+The _liberatosthene_ and [_eratosthene-suite_](https://github.com/nils-hamel/eratosthene-suite) offer an four dimensional indexation framework for large scale three dimensional models. It allows to organize, store and broadcast network access to large scale models referenced in both space and time in an efficient manner.
 
 Initially, the framework solved the problem of large scale point-based models management and visualization. As _LIDAR_ and _structure from motion_ being able to produce large point-based models, their storage and exploitation become a major challenge with the increase of their size. In addition, these technologies also allow to create models of the same location at different times increasing the data management problem.
 
